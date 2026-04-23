@@ -1,0 +1,41 @@
+version: '3.9'
+
+# Local dev dependencies for the Medusa backend (apps/backend).
+# Run:  docker compose up -d
+# Then in apps/backend:  pnpm install && pnpm db:create && pnpm db:migrate && pnpm dev
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ravisweets-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: medusa
+      POSTGRES_PASSWORD: medusa
+      POSTGRES_DB: ravisweets
+    ports:
+      - '5432:5432'
+    volumes:
+      - ravisweets_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U medusa -d ravisweets']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ravisweets-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - ravisweets_redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  ravisweets_pg:
+  ravisweets_redis:

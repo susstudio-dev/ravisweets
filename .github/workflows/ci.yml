@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.15.9'
+
+jobs:
+  # ─── Fast feedback: lint + typecheck on every commit ───────────────────────
+  lint:
+    name: Lint & typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck all workspaces
+        run: pnpm -r typecheck
+
+      - name: Lint storefront
+        run: pnpm --filter @ravisweets/storefront lint
+
+      - name: Format check
+        run: pnpm format:check
+
+  # ─── Build + bundle-size gate ──────────────────────────────────────────────
+  build:
+    name: Build & size budget
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build storefront
+        run: pnpm --filter @ravisweets/storefront build
+
+      - name: Bundle-size budget (size-limit)
+        run: npx --yes size-limit
+        working-directory: apps/storefront
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: storefront-build
+          path: apps/storefront/.next
+          retention-days: 1
+
+  # ─── Lighthouse CI — performance + accessibility budgets ───────────────────
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: storefront-build
+          path: apps/storefront/.next
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.14.x autorun
+        working-directory: apps/storefront
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

@@ -1,0 +1,26 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "overrides": [
+    {
+      "files": ["src/app/**/*.{ts,tsx}"],
+      "excludedFiles": ["src/app/**/layout.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "motion/react",
+                "message": "Page files must import motion via '@/components/motion/*' or '@/lib/motion/*', not 'motion/react' directly. See: openspec/changes/elevate-storefront-visual-experience/specs/motion-system/spec.md → 'Motion primitives live in one library'."
+              },
+              {
+                "name": "framer-motion",
+                "message": "Framer Motion is replaced by 'motion'. Use '@/components/motion/*' primitives."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

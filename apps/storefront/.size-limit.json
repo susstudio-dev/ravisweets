@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Critical route (home) — First Load JS",
+    "path": ".next/static/chunks/pages/index-*.js",
+    "limit": "180 KB",
+    "gzip": true,
+    "why": "openspec/changes/build-ravisweets-storefront/specs/customer-storefront/spec.md → Performance budget"
+  },
+  {
+    "name": "Motion subsystem — custom components",
+    "path": "src/components/motion/**/*.{ts,tsx}",
+    "limit": "7 KB",
+    "gzip": true,
+    "why": "openspec/changes/elevate-storefront-visual-experience/specs/motion-system/spec.md → Motion code ≤ 25 KB total (7 KB custom + 18 KB framer)"
+  }
+]
