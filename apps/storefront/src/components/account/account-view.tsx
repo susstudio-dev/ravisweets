@@ -71,7 +71,7 @@ export function AccountView() {
             return (
               <Link
                 key={o.id}
-                href={`/orders/${o.id}`}
+                href={`/orders?id=${o.id}`}
                 className="group grid gap-4 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted sm:grid-cols-[auto_1fr_auto] sm:items-center"
               >
                 {firstLine?.imageUrl ? (

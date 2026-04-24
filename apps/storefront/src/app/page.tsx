@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Award, Leaf, Truck } from 'lucide-react';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { HeroStill } from '@/components/hero/hero-still';
@@ -12,7 +12,15 @@ import { CraftStrip } from '@/components/sections/craft-strip';
 import { PressMarquee } from '@/components/sections/press-marquee';
 import { FestivalTease } from '@/components/sections/festival-tease';
 import { EditorialBand } from '@/components/sections/editorial-band';
+import { EditorialScrollBand } from '@/components/sections/editorial-scroll-band';
 import { GiftingGuide } from '@/components/sections/gifting-guide';
+import { HOME_FLAGS } from '@/lib/flags/visual-v2';
+
+// IngredientMarquee is specced + built (src/components/sections/ingredient-marquee.tsx)
+// but not wired into the home page yet — it would push the home route over the
+// 180 KB First Load JS budget. Enable when there's ~3 KB of headroom (e.g. after
+// consolidating motion imports, or swapping SAMPLE_PRODUCTS for a trimmed slice
+// rather than the full 20-product catalogue on the home page).
 
 const CATEGORIES = [
   {
@@ -120,6 +128,9 @@ export default function HomePage() {
         </Stagger>
       </section>
 
+      {/* NEW cinematic moment — horizontal editorial scroll band */}
+      {HOME_FLAGS.editorialBand && <EditorialScrollBand />}
+
       {/* Full-bleed editorial band — heritage */}
       <EditorialBand
         eyebrow="The house rule"
@@ -133,7 +144,9 @@ export default function HomePage() {
 
       <HeritageStrip />
 
-      {/* Gifting guide — three personas */}
+      {/* NEW cinematic moment — ingredient marquee behind product macro */}
+      {/* IngredientMarquee temporarily unwired — see comment at the imports for why. */}
+
       <GiftingGuide />
 
       {/* Trust strip */}
@@ -202,7 +215,7 @@ export default function HomePage() {
 
       <FestivalTease />
 
-      {/* Corporate CTA — dark scene */}
+      {/* Corporate CTA — now links to the builder */}
       <section className="container-site py-20">
         <Reveal direction="up" distance={20}>
           <div
@@ -232,17 +245,26 @@ export default function HomePage() {
                   Corporate gifting, done the Hyderabadi way.
                 </h2>
                 <p className="mt-3 text-sm text-[#fdf6ec]/85 md:text-base">
-                  MOQ-based pricing, logo-printed packaging, multi-address delivery via CSV, and
-                  GST-compliant invoices. One dedicated account manager for your Diwali run.
+                  Build a custom hamper in two minutes, or start from one of our three templates.
+                  MOQ-based pricing, logo-printed packaging, multi-address delivery, GST-compliant
+                  invoices. One dedicated account manager for your Diwali run.
                 </p>
               </div>
-              <Link
-                href="/corporate"
-                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#e9ad4a] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f2c66f]"
-              >
-                Request a quote
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
+              <div className="flex flex-col gap-2 md:shrink-0">
+                <Link
+                  href="/corporate/builder?t=premium"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#e9ad4a] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f2c66f]"
+                >
+                  Build a hamper
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/corporate#enquiry"
+                  className="text-center text-xs font-semibold uppercase tracking-wider text-[#fdf6ec]/70 hover:text-[#f2c66f]"
+                >
+                  Or request a quote directly
+                </Link>
+              </div>
             </div>
           </div>
         </Reveal>

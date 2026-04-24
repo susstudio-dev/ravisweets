@@ -1,0 +1,7 @@
+# Ravi Sweets — staging / dev environment
+# All indexing disallowed until production photography lands and the apex
+# domain is flipped (see photography-gating requirement in
+# elevate-storefront-visual-experience spec).
+
+User-agent: *
+Disallow: /

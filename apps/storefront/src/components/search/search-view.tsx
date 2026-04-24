@@ -7,7 +7,7 @@ import { Search as SearchIcon, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Badge } from '@ravisweets/ui';
 import { ProductCard } from '@/components/product-card';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { searchProducts } from '@/lib/search/score';
 import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';

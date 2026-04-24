@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import {
   ArrowRight,
   Calendar,
@@ -72,6 +73,7 @@ const HOW_IT_WORKS = [
 const HAMPERS = [
   {
     title: 'Essence',
+    templateId: 'essence',
     tier: 'Starter',
     priceFrom: '₹899',
     moq: '50 units',
@@ -81,6 +83,7 @@ const HAMPERS = [
   },
   {
     title: 'Premium',
+    templateId: 'premium',
     tier: 'Bestseller',
     priceFrom: '₹1,499',
     moq: '50 units',
@@ -90,6 +93,7 @@ const HAMPERS = [
   },
   {
     title: 'Grande',
+    templateId: 'grande',
     tier: 'Signature',
     priceFrom: '₹2,499',
     moq: '25 units',
@@ -180,12 +184,12 @@ export default function CorporatePage() {
                     aria-hidden="true"
                   />
                 </a>
-                <a
-                  href="#catalogue"
+                <Link
+                  href="/corporate/builder?t=premium"
                   className="inline-flex items-center gap-2 rounded-full border border-[#fdf6ec]/30 px-6 py-3 text-sm font-semibold text-[#fdf6ec] transition-colors duration-300 hover:border-[#f2c66f] hover:text-[#f2c66f]"
                 >
-                  See hampers
-                </a>
+                  Build your own hamper
+                </Link>
               </div>
             </Reveal>
             <Reveal delay={0.3}>
@@ -253,9 +257,10 @@ export default function CorporatePage() {
 
         <Stagger gap={85} className="grid gap-5 md:grid-cols-3">
           {HAMPERS.map((h) => (
-            <article
+            <Link
               key={h.title}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated shadow-soft transition-shadow duration-300 hover:shadow-lifted"
+              href={`/corporate/builder?t=${h.templateId}`}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
@@ -291,8 +296,12 @@ export default function CorporatePage() {
                   </div>
                   <p className="text-theme-ink/60">MOQ · {h.moq}</p>
                 </div>
+                <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-theme-accent transition-transform duration-300 group-hover:translate-x-1">
+                  Build from this template
+                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                </div>
               </div>
-            </article>
+            </Link>
           ))}
         </Stagger>
 
@@ -401,7 +410,9 @@ export default function CorporatePage() {
           </Reveal>
         </div>
 
-        <CorporateEnquiry />
+        <Suspense fallback={<div className="h-96 animate-pulse rounded-3xl bg-theme-ink/5" />}>
+          <CorporateEnquiry />
+        </Suspense>
       </section>
 
       <PaisleyDivider className="container-site" />

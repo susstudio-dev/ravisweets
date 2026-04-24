@@ -114,7 +114,7 @@ export function CheckoutFlow() {
       };
       saveOrder(order);
       clear();
-      router.push(`/orders/${id}`);
+      router.push(`/orders?id=${id}`);
     });
   }
 

@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: 'Ravi Sweets',
     locale: 'en_IN',
   },
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false }, // staging-gated — flip when photography lands
   icons: { icon: '/favicon.ico' },
 };
 

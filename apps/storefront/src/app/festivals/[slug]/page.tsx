@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Gift, Handshake, Users } from 'lucide-react';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
 import { ThemeVars } from '@/lib/theme/theme-provider';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';

@@ -1,0 +1,86 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, but don't cancel an in-progress one;
+# queue the next so a late commit still gets deployed.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.15.9'
+  # Set PAGES_BASE_PATH if the site lives at /{repo}/ (e.g., for a project Pages site).
+  # Leave empty for a user/org Pages site or a custom apex/subdomain.
+  # Example: PAGES_BASE_PATH: /ravisweets
+  PAGES_BASE_PATH: ''
+
+jobs:
+  build:
+    name: Build static export
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Disable intercept route (unsupported in static export)
+        run: pnpm --filter @ravisweets/storefront prepare-export:disable
+
+      - name: Build storefront (static export)
+        run: pnpm --filter @ravisweets/storefront build
+        env:
+          BUILD_TARGET: github-pages
+          PAGES_BASE_PATH: ${{ env.PAGES_BASE_PATH }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}
+
+      - name: Sanity-check output
+        run: |
+          if [ ! -f apps/storefront/out/index.html ]; then
+            echo "::error::Static export did not produce apps/storefront/out/index.html"
+            exit 1
+          fi
+          echo "Static export size:"
+          du -sh apps/storefront/out
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/storefront/out
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ThemeVars } from '@/lib/theme/theme-provider';
 import { QuickViewModal } from '@/components/product/quick-view-modal';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  return SAMPLE_PRODUCTS.map((p) => ({ slug: p.slug }));
 }
 
 /**

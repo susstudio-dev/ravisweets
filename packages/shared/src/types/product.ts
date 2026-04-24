@@ -67,6 +67,12 @@ export interface Product {
   theme_palette: ThemePalette;
   /** Which garnish mark the one-shot accent uses on product detail. */
   garnish: GarnishMark;
+  /** Whether this product can be composed into a corporate hamper in the builder. */
+  builder_eligible: boolean;
+  /** ISO date when a human confirmed the primary image passes the imagery rubric. */
+  rubric_passed_on: string;
+  /** Where the image came from. Free-to-use licence (Unsplash / Pexels / public domain) or internal. */
+  source_url: string;
 }
 
 export interface Money {

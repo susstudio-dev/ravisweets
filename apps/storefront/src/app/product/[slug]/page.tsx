@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Leaf, Package, Snowflake } from 'lucide-react';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ThemeVars } from '@/lib/theme/theme-provider';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { VariantSelector } from '@/components/product/variant-selector';

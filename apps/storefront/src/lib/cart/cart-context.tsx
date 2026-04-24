@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Money, Product, ProductVariant } from '@ravisweets/shared';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
+import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 
 const STORAGE_KEY = 'ravi.cart.v1';
 

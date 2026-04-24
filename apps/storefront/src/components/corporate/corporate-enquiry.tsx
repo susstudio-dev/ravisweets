@@ -1,8 +1,9 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { CheckCircle2, Send, Sparkles } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { CheckCircle2, Send, Sparkles, Wand2 } from 'lucide-react';
+import { useEffect, useState, useTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -43,8 +44,30 @@ export function CorporateEnquiry() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [state, setState] = useState<State>('idle');
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [fromBuilder, setFromBuilder] = useState(false);
   const [, startSubmit] = useTransition();
   const reduced = useReducedMotion();
+  const searchParams = useSearchParams();
+
+  // Pre-fill from builder hand-off on mount.
+  useEffect(() => {
+    if (searchParams.get('from') !== 'builder') return;
+    setFromBuilder(true);
+    const summary = searchParams.get('summary') ?? '';
+    const state = searchParams.get('state') ?? '';
+    const stateParams = new URLSearchParams(state);
+    const tier = stateParams.get('t');
+    const qty = stateParams.get('qty');
+    setForm((f) => ({
+      ...f,
+      customisation: summary,
+      quantity: qty ?? f.quantity,
+      hamperTier:
+        tier === 'essence' || tier === 'premium' || tier === 'grande'
+          ? tier
+          : 'custom',
+    }));
+  }, [searchParams]);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -189,8 +212,14 @@ export function CorporateEnquiry() {
       </div>
 
       <fieldset className="mt-6">
-        <legend className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+        <legend className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
           Preferred hamper tier
+          {fromBuilder && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-theme-glow/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+              <Wand2 className="h-3 w-3" aria-hidden="true" />
+              From builder
+            </span>
+          )}
         </legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {(['essence', 'premium', 'grande', 'custom'] as const).map((t) => {

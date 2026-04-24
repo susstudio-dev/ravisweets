@@ -1,18 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import type { CategorySlug } from '@ravisweets/shared';
-import { SAMPLE_PRODUCTS } from '@/lib/sample-products';
-import { ProductCard } from '@/components/product-card';
+import { CATALOGUE, type CategorySlug } from '@ravisweets/shared';
 import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
-import { Stagger } from '@/components/motion/stagger';
-import { CategoryFilters } from '@/components/category/category-filters';
+import { CategoryBrowser } from '@/components/category/category-browser';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 const CATEGORY_META: Record<
@@ -27,7 +24,7 @@ const CATEGORY_META: Record<
   sweets: {
     title: 'Sweets',
     eyebrow: 'Fresh daily',
-    body: 'Kaju Katli, Soan Papdi, seasonal ladoos — made fresh in small batches with no preservatives.',
+    body: 'Kaju Katli, Gulab Jamun, seasonal ladoos — made fresh in small batches with no preservatives.',
   },
   namkeens: {
     title: 'Namkeens',
@@ -80,49 +77,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-function asArray(v: string | string[] | undefined): string[] {
-  if (!v) return [];
-  return Array.isArray(v) ? v : v.split(',').filter(Boolean);
-}
-
-export default async function CategoryPage({ params, searchParams }: PageProps) {
+export default async function CategoryPage({ params }: PageProps) {
   const { slug } = await params;
   const meta = CATEGORY_META[slug as CategorySlug];
   if (!meta) notFound();
 
-  const sp = await searchParams;
-
-  const dietaryFilters = asArray(sp.diet);
-  const sort = (typeof sp.sort === 'string' ? sp.sort : 'featured') as
-    | 'featured'
-    | 'price-asc'
-    | 'price-desc'
-    | 'newest';
-  const inStockOnly = sp.stock === 'in';
-
-  let products = SAMPLE_PRODUCTS.filter((p) => p.category === slug);
-  if (dietaryFilters.length > 0) {
-    products = products.filter((p) =>
-      dietaryFilters.every((d) => p.dietary_tags.includes(d as (typeof p.dietary_tags)[number])),
-    );
-  }
-  if (inStockOnly) {
-    products = products.filter((p) => p.variants.some((v) => v.stock_available > 0));
-  }
-
-  if (sort === 'price-asc') {
-    products.sort((a, b) => (a.variants[0]?.price.amount ?? 0) - (b.variants[0]?.price.amount ?? 0));
-  } else if (sort === 'price-desc') {
-    products.sort((a, b) => (b.variants[0]?.price.amount ?? 0) - (a.variants[0]?.price.amount ?? 0));
-  } else if (sort === 'newest') {
-    products.sort((a, b) => Number(b.new) - Number(a.new));
-  } else {
-    products.sort((a, b) => Number(b.featured) - Number(a.featured));
-  }
+  const products = CATALOGUE.filter((p) => p.category === slug);
 
   return (
     <>
-      {/* Breadcrumb */}
       <div className="container-site pt-6">
         <Link
           href="/"
@@ -133,7 +96,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         </Link>
       </div>
 
-      {/* Category header */}
       <section
         aria-labelledby="cat-heading"
         className="container-site grid gap-6 py-10 md:grid-cols-[1.4fr_1fr] md:items-end md:gap-10 md:py-14"
@@ -159,50 +121,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         </Reveal>
       </section>
 
-      {/* Filters + grid */}
-      <section className="container-site grid gap-8 pb-20 md:grid-cols-[220px_1fr] md:gap-10">
-        <CategoryFilters
-          categorySlug={slug as CategorySlug}
-          activeDietary={dietaryFilters}
-          activeSort={sort}
-          inStockOnly={inStockOnly}
-          total={products.length}
-        />
-
-        <div>
-          <div className="mb-6 flex items-center justify-between">
-            <p className="text-sm text-theme-ink/60">
-              Showing <span className="font-semibold text-theme-ink">{products.length}</span>{' '}
-              {products.length === 1 ? 'product' : 'products'}
-            </p>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-8">
-              <Paisley size="md" />
-              <p className="font-display text-lg font-semibold text-theme-ink">
-                Nothing matches those filters.
-              </p>
-              <p className="text-sm text-theme-ink/70">Try removing a dietary tag, or browse all.</p>
-              <Link
-                href={`/category/${slug}`}
-                className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-theme-accent hover:underline"
-              >
-                Clear filters
-              </Link>
-            </div>
-          ) : (
-            <Stagger
-              gap={75}
-              className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </Stagger>
-          )}
-        </div>
-      </section>
+      <Suspense fallback={<div className="container-site pb-20" />}>
+        <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />
+      </Suspense>
     </>
   );
 }

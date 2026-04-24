@@ -30,3 +30,32 @@ export function getHeroVariant(): HeroVariant {
   }
   return 'still';
 }
+
+/**
+ * Home-page amplification flags (default ON). Set to `off` / `false` / `0` to
+ * disable the corresponding cinematic moment — useful for festival-day incidents
+ * or per-moment A/B testing. Each flag is read at module-import time; set via
+ * NEXT_PUBLIC_* env vars before `next build`.
+ */
+function envFlag(name: string): boolean {
+  if (typeof process === 'undefined') return true;
+  const v = process.env[name];
+  if (v === undefined) return true;
+  return v !== 'off' && v !== 'false' && v !== '0';
+}
+
+export const HOME_FLAGS = {
+  /** Ambient theme-glow wash on section entry. */
+  sectionEntry: envFlag('NEXT_PUBLIC_HOME_SECTION_ENTRY'),
+  /** Multi-layer separated hero scroll. */
+  separatedHero: envFlag('NEXT_PUBLIC_HOME_SEP_HERO'),
+  /** Horizontal editorial scroll band. */
+  editorialBand: envFlag('NEXT_PUBLIC_HOME_EDITORIAL_BAND'),
+  /** Ingredient marquee behind product macro. */
+  ingredientMarquee: envFlag('NEXT_PUBLIC_HOME_INGREDIENT_MARQUEE'),
+} as const;
+
+/** Hamper builder flag — if off, /corporate/builder shows a "coming soon" fallback. */
+export function isHamperBuilderEnabled(): boolean {
+  return envFlag('NEXT_PUBLIC_HAMPER_BUILDER');
+}

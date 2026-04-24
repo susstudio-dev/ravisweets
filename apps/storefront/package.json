@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
+    "prepare-export:disable": "node scripts/prepare-export.mjs disable",
+    "prepare-export:restore": "node scripts/prepare-export.mjs restore",
     "start": "next start -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
