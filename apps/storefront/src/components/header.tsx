@@ -59,6 +59,14 @@ export function Header() {
   const reduced = useReducedMotion();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Cart count is read from localStorage on first client render. SSR doesn't
+  // see localStorage, so SSR always renders 0. Without gating, the badge +
+  // aria-label flip on hydration → React throws a hydration mismatch and
+  // re-renders the whole tree (which also breaks <Image> mid-flight).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cmd/Ctrl+K to open search overlay
   useEffect(() => {
@@ -100,12 +108,16 @@ export function Header() {
           <UserMenu />
           <Link
             href="/cart"
-            aria-label={`Cart — ${lineCount} ${lineCount === 1 ? 'item' : 'items'}`}
+            aria-label={
+              mounted
+                ? `Cart — ${lineCount} ${lineCount === 1 ? 'item' : 'items'}`
+                : 'Cart'
+            }
             className="relative rounded-full p-2 text-theme-ink/70 transition-colors hover:bg-[color:var(--theme-glow)]/20 hover:text-theme-ink"
           >
             <ShoppingBag className="h-5 w-5" aria-hidden="true" />
             <AnimatePresence mode="popLayout">
-              {lineCount > 0 && (
+              {mounted && lineCount > 0 && (
                 <motion.span
                   key={lineCount}
                   initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.4 }}

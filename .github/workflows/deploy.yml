@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch:
 
 # Allow only one concurrent deployment, but don't cancel an in-progress one;
@@ -19,10 +19,9 @@ permissions:
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.15.9'
-  # Set PAGES_BASE_PATH if the site lives at /{repo}/ (e.g., for a project Pages site).
-  # Leave empty for a user/org Pages site or a custom apex/subdomain.
-  # Example: PAGES_BASE_PATH: /ravisweets
-  PAGES_BASE_PATH: ''
+  # Project Pages live at https://{user}.github.io/{repo}/, so all asset paths
+  # need the /{repo} prefix. Repo is named V1.0 — escape the dot is unnecessary.
+  PAGES_BASE_PATH: '/V1.0'
 
 jobs:
   build:
