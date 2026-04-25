@@ -47,6 +47,11 @@ jobs:
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
+        with:
+          # Auto-enable Pages on first run instead of requiring a manual click
+          # in repo Settings → Pages. The action's PAT (GITHUB_TOKEN with the
+          # `pages: write` permission already granted above) is sufficient.
+          enablement: true
 
       - name: Disable intercept route (unsupported in static export)
         run: pnpm --filter @ravisweets/storefront prepare-export:disable
