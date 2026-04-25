@@ -616,6 +616,20 @@ export const CATALOGUE: Product[] = [
 // from ravisweets.com (image URLs verified 2026-04-25).
 // ─────────────────────────────────────────────────────────────────────────
 
+/**
+ * Pretty-print grams. 1000 → "1 kg", 1500 → "1.5 kg", 250 → "250 g".
+ * Avoids the awkward "1000 g" / "2000 g" reading on auto-generated variant
+ * titles (the user spotted these on Sweet Bites and similar SKUs).
+ */
+function formatWeight(grams: number): string {
+  if (grams >= 1000) {
+    const kg = grams / 1000;
+    // Drop trailing .0 so 1000 → "1 kg", 1500 → "1.5 kg".
+    return `${Number.isInteger(kg) ? kg : kg.toFixed(1).replace(/\.0$/, '')} kg`;
+  }
+  return `${grams} g`;
+}
+
 interface MiniSku {
   slug: string;
   title: string;
@@ -651,8 +665,8 @@ function makeProduct(
   const id = `p_${prefix}_${s.slug.replace(/-/g, '_')}`;
   const smallGrams = defaults.smallGrams ?? 250;
   const largeGrams = defaults.largeGrams ?? 1000;
-  const smallTitle = defaults.smallTitle ?? `${smallGrams} g`;
-  const largeTitle = defaults.largeTitle ?? `${largeGrams} g`;
+  const smallTitle = defaults.smallTitle ?? formatWeight(smallGrams);
+  const largeTitle = defaults.largeTitle ?? formatWeight(largeGrams);
   return {
     id,
     slug: s.slug,

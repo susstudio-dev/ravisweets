@@ -2,14 +2,46 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowRight, Plus, Save, Search, X } from 'lucide-react';
-import { CATALOGUE, type Product } from '@ravisweets/shared';
+import { CATALOGUE, type CategorySlug, type DietaryTag, type Product } from '@ravisweets/shared';
 import {
+  upsertProductBuilderEligible,
+  upsertProductCategory,
+  upsertProductDescription,
+  upsertProductDietaryTags,
   upsertProductFlags,
+  upsertProductPrimaryImage,
+  upsertProductShelfLifeDays,
   upsertProductUnitMode,
   upsertVariantPrice,
   upsertVariantStock,
   upsertVariantTitle,
 } from '@/lib/supabase/products';
+
+const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
+  { value: 'hyderabadi-specials', label: 'Hyderabadi specials' },
+  { value: 'sweets', label: 'Sweets' },
+  { value: 'sweet-bites', label: 'Sweet bites' },
+  { value: 'healthy-sweets', label: 'Healthy sweets' },
+  { value: 'namkeens', label: 'Namkeens' },
+  { value: 'savouries', label: 'Savouries' },
+  { value: 'dry-fruits', label: 'Dry fruits' },
+  { value: 'pickles', label: 'Pickles' },
+  { value: 'powders', label: 'Podis & powders' },
+  { value: 'biscuits', label: 'Biscuits' },
+  { value: 'combos', label: 'Combos' },
+  { value: 'gift-hampers', label: 'Gift hampers' },
+  { value: 'festival-specials', label: 'Festival specials' },
+];
+
+const DIETARY_OPTIONS: DietaryTag[] = [
+  'eggless',
+  'sugar-free',
+  'vegan',
+  'gluten-free',
+  'nuts',
+  'dairy',
+  'contains-ghee',
+];
 import { logAdminAction } from '@/lib/supabase/orders';
 import { useSession } from '@/lib/supabase/session-context';
 
@@ -138,6 +170,14 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   const [unitMode, setUnitMode] = useState<'weight' | 'quantity'>(
     product.unit_mode ?? 'weight',
   );
+  const [description, setDescription] = useState(product.description);
+  const [category, setCategory] = useState<CategorySlug>(product.category);
+  const [dietaryTags, setDietaryTags] = useState<DietaryTag[]>(product.dietary_tags);
+  const [shelfLifeDays, setShelfLifeDays] = useState(product.shelf_life_days);
+  const [builderEligible, setBuilderEligible] = useState(product.builder_eligible);
+  const primaryImage = product.images[0];
+  const [imageUrl, setImageUrl] = useState(primaryImage?.url ?? '');
+  const [imageAlt, setImageAlt] = useState(primaryImage?.alt ?? product.title);
   const [variants, setVariants] = useState(
     product.variants.map((v) => ({
       id: v.id,
@@ -149,6 +189,10 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   );
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  function toggleDietary(t: DietaryTag) {
+    setDietaryTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
+  }
 
   async function save() {
     if (!configured) {
@@ -194,6 +238,71 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         { unit_mode: product.unit_mode ?? 'weight' },
         { unit_mode: unitMode },
       );
+    }
+
+    if (description !== product.description) {
+      const r = await upsertProductDescription(product.id, description);
+      if (!r.ok) {
+        window.alert(`Description save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-description', 'product', product.id, { description: product.description }, { description });
+    }
+
+    if (category !== product.category) {
+      const r = await upsertProductCategory(product.id, category);
+      if (!r.ok) {
+        window.alert(`Category save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-category', 'product', product.id, { category: product.category }, { category });
+    }
+
+    const tagsChanged =
+      dietaryTags.length !== product.dietary_tags.length ||
+      dietaryTags.some((t) => !product.dietary_tags.includes(t));
+    if (tagsChanged) {
+      const r = await upsertProductDietaryTags(product.id, dietaryTags);
+      if (!r.ok) {
+        window.alert(`Dietary tags save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-dietary-tags', 'product', product.id, { dietary_tags: product.dietary_tags }, { dietary_tags: dietaryTags });
+    }
+
+    if (shelfLifeDays !== product.shelf_life_days) {
+      const r = await upsertProductShelfLifeDays(product.id, shelfLifeDays);
+      if (!r.ok) {
+        window.alert(`Shelf life save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-shelf-life', 'product', product.id, { shelf_life_days: product.shelf_life_days }, { shelf_life_days: shelfLifeDays });
+    }
+
+    if (builderEligible !== product.builder_eligible) {
+      const r = await upsertProductBuilderEligible(product.id, builderEligible);
+      if (!r.ok) {
+        window.alert(`Builder-eligible save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-builder-eligible', 'product', product.id, { builder_eligible: product.builder_eligible }, { builder_eligible: builderEligible });
+    }
+
+    if (imageUrl !== (primaryImage?.url ?? '') || imageAlt !== (primaryImage?.alt ?? '')) {
+      if (imageUrl.trim()) {
+        const r = await upsertProductPrimaryImage(product.id, imageUrl, imageAlt);
+        if (!r.ok) {
+          window.alert(`Image save failed: ${r.reason}`);
+          setBusy(false);
+          return;
+        }
+        await logAdminAction('update-primary-image', 'product', product.id, { url: primaryImage?.url, alt: primaryImage?.alt }, { url: imageUrl, alt: imageAlt });
+      }
     }
 
     // Update each variant if changed
@@ -270,7 +379,129 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         </button>
       </div>
       <p className="mt-1 font-mono text-xs text-theme-ink/55">/product/{product.slug}</p>
-      <p className="mt-4 text-sm text-theme-ink/85">{product.description}</p>
+
+      {/* Description */}
+      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        Description
+      </h3>
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        rows={5}
+        className="mt-2 w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm leading-relaxed text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+      />
+
+      {/* Category + shelf life — paired row */}
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <label className="flex flex-col gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            Category
+          </span>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as CategorySlug)}
+            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          >
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            Shelf life (days)
+          </span>
+          <input
+            type="number"
+            min={1}
+            value={shelfLifeDays}
+            onChange={(e) => setShelfLifeDays(Math.max(1, Number(e.target.value) || 1))}
+            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          />
+        </label>
+      </div>
+
+      {/* Dietary tags */}
+      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        Dietary tags
+      </h3>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {DIETARY_OPTIONS.map((t) => {
+          const on = dietaryTags.includes(t);
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => toggleDietary(t)}
+              aria-pressed={on}
+              className={`rounded-full border px-3 py-1 text-[11px] font-semibold capitalize transition-colors ${
+                on
+                  ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
+                  : 'border-[color:var(--color-border)] text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent'
+              }`}
+            >
+              {t.replace(/-/g, ' ')}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Primary image */}
+      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        Primary image
+      </h3>
+      <div className="mt-2 grid gap-2">
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            URL
+          </span>
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="https://ravisweets.com/wp-content/uploads/..."
+            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-xs font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            Alt text (accessibility)
+          </span>
+          <input
+            type="text"
+            value={imageAlt}
+            onChange={(e) => setImageAlt(e.target.value)}
+            placeholder={`${product.title} — photographed at the Khammam kitchen`}
+            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          />
+        </label>
+        {imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageUrl}
+            alt={imageAlt}
+            className="mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] bg-theme-glow/15 object-contain p-2"
+          />
+        )}
+      </div>
+
+      {/* Builder eligibility */}
+      <label className="mt-6 flex items-start gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={builderEligible}
+          onChange={(e) => setBuilderEligible(e.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+        />
+        <span>
+          <span className="font-medium text-theme-ink">Available in the corporate hamper builder</span>
+          <span className="block text-[11px] text-theme-ink/55">
+            Uncheck for fragile / cold-chain SKUs (e.g. Gulab Jamun, full hampers themselves).
+          </span>
+        </span>
+      </label>
 
       {/* Unit mode toggle — drives the variant-picker label on the storefront */}
       <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
