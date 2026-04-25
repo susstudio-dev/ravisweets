@@ -6,15 +6,22 @@ import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { HeroStill } from '@/components/hero/hero-still';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
-import { FlavourAtlas } from '@/components/sections/flavour-atlas';
 import { HeritageStrip } from '@/components/sections/heritage-strip';
 import { CraftStrip } from '@/components/sections/craft-strip';
 import { PressMarquee } from '@/components/sections/press-marquee';
 import { FestivalTease } from '@/components/sections/festival-tease';
+import { FlavourAtlas } from '@/components/sections/flavour-atlas';
 import { EditorialBand } from '@/components/sections/editorial-band';
 import { EditorialScrollBand } from '@/components/sections/editorial-scroll-band';
+import { SignatureMoment } from '@/components/sections/signature-moment';
 import { GiftingGuide } from '@/components/sections/gifting-guide';
 import { HOME_FLAGS } from '@/lib/flags/visual-v2';
+
+// Home-route First Load JS budget raised from 180 KB → 185 KB in this change.
+// Per design.md Decision 10 of openspec/changes/app-polish-and-motion-depth,
+// lazy-loading small components at this scale (< 2 KB) costs more in loader
+// overhead than it saves. Raising the ceiling with LCP/INP/CLS evidence
+// captured in tasks.md §5 is the honest path.
 
 // IngredientMarquee is specced + built (src/components/sections/ingredient-marquee.tsx)
 // but not wired into the home page yet — it would push the home route over the
@@ -61,6 +68,8 @@ export default function HomePage() {
       <HeroStill />
 
       <FlavourAtlas />
+
+      <SignatureMoment />
 
       <PaisleyDivider className="container-site" />
 

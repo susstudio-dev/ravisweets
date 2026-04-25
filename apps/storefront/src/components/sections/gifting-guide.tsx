@@ -22,7 +22,7 @@ const PERSONAS = [
     eyebrow: 'For weddings',
     title: 'Weddings',
     body: 'Custom trousseau boxes, bulk sangeet favours, and personalised name-cards. Minimum 50 units.',
-    href: '/weddings',
+    href: '/corporate#enquiry',
     image:
       'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1200&q=85&auto=format&fit=crop',
     accent: '#c0592b',

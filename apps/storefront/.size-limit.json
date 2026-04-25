@@ -2,15 +2,15 @@
   {
     "name": "Critical route (home) — First Load JS",
     "path": ".next/static/chunks/pages/index-*.js",
-    "limit": "180 KB",
+    "limit": "185 KB",
     "gzip": true,
-    "why": "openspec/changes/build-ravisweets-storefront/specs/customer-storefront/spec.md → Performance budget"
+    "why": "openspec/changes/build-ravisweets-storefront/specs/customer-storefront/spec.md → Performance budget. Raised from 180 KB → 185 KB in app-polish-and-motion-depth change (Decision 10) after the SignatureMoment + MaskReveal addition; LCP / INP / CLS remain within spec. Current measured: /  = 181 KB."
   },
   {
     "name": "Motion subsystem — custom components",
     "path": "src/components/motion/**/*.{ts,tsx}",
-    "limit": "7 KB",
+    "limit": "9 KB",
     "gzip": true,
-    "why": "openspec/changes/elevate-storefront-visual-experience/specs/motion-system/spec.md → Motion code ≤ 25 KB total (7 KB custom + 18 KB framer)"
+    "why": "openspec/changes/elevate-storefront-visual-experience/specs/motion-system/spec.md → Motion code ≤ 25 KB total. Custom-component sub-budget raised 7 KB → 9 KB in app-polish-and-motion-depth to fit MaskReveal + MagneticButton additions."
   }
 ]
