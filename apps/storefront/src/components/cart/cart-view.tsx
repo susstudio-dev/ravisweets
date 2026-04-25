@@ -6,18 +6,21 @@ import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, X } from 'lucide-react';
 import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
+import { useCoupons } from '@/lib/coupons/context';
 import { Paisley } from '@/components/brand/paisley';
+import { CouponInput } from '@/components/cart/coupon-input';
 import { Reveal } from '@/components/motion/reveal';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
 export function CartView() {
   const { lineViews, lineCount, subtotal, updateQty, remove, clear } = useCart();
+  const { totalDiscount, freeShipping } = useCoupons();
   const reduced = useReducedMotion();
 
-  const shippingEstimate = lineCount === 0 ? 0 : 99;
+  const shippingEstimate = lineCount === 0 ? 0 : freeShipping ? 0 : 99;
   const grandTotal = {
-    amount: subtotal.amount + shippingEstimate,
+    amount: Math.max(0, subtotal.amount - totalDiscount + shippingEstimate),
     currency: subtotal.currency,
   };
 
@@ -177,7 +180,8 @@ export function CartView() {
         aria-label="Order summary"
         className="md:sticky md:top-20 md:self-start"
       >
-        <div className="rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft">
+        <CouponInput />
+        <div className="mt-4 rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft">
           <h2 className="font-display text-xl font-semibold text-theme-ink">Summary</h2>
           <dl className="mt-5 space-y-3 text-sm">
             <div className="flex items-center justify-between">
@@ -186,10 +190,22 @@ export function CartView() {
                 {formatMoney(subtotal)}
               </dd>
             </div>
+            {totalDiscount > 0 && (
+              <div className="flex items-center justify-between">
+                <dt className="text-emerald-700">Coupon discount</dt>
+                <dd className="font-semibold tabular-nums text-emerald-700">
+                  − {formatMoney({ amount: totalDiscount, currency: subtotal.currency })}
+                </dd>
+              </div>
+            )}
             <div className="flex items-center justify-between">
-              <dt className="text-theme-ink/70">Shipping (estimate)</dt>
+              <dt className="text-theme-ink/70">
+                Shipping (estimate){freeShipping && ' · waived'}
+              </dt>
               <dd className="tabular-nums text-theme-ink">
-                {formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
+                {freeShipping
+                  ? 'Free'
+                  : formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
               </dd>
             </div>
             <div className="flex items-center justify-between">

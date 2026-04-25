@@ -24,7 +24,7 @@ const INGREDIENTS = [
 ];
 
 const MACRO =
-  'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1600&q=90&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
 
 /**
  * A foreground product macro with a slow-moving horizontal marquee of ingredient

@@ -108,6 +108,8 @@ export function HamperBuilder() {
 
   const addItem = useCallback((productId: string, variantId: string) => {
     setConfig((prev) => {
+      // Same product + same variant collapses into qty bump; same product +
+      // different variant becomes a new line (per hamper-variant-depth spec).
       const existing = prev.items.find(
         (it) => it.productId === productId && it.variantId === variantId,
       );
@@ -115,46 +117,47 @@ export function HamperBuilder() {
         return {
           ...prev,
           items: prev.items.map((it) =>
-            it.productId === productId && it.variantId === variantId
+            it.lineId === existing.lineId
               ? { ...it, qtyPerHamper: Math.min(10, it.qtyPerHamper + 1) }
               : it,
           ),
         };
       }
       if (prev.items.length >= 30) return prev;
+      const lineId = `${productId}:${variantId}`;
       return {
         ...prev,
-        items: [...prev.items, { productId, variantId, qtyPerHamper: 1 }],
+        items: [...prev.items, { lineId, productId, variantId, qtyPerHamper: 1 }],
       };
     });
   }, []);
 
-  const updateQty = useCallback((productId: string, variantId: string, qty: number) => {
+  const updateQty = useCallback((lineId: string, qty: number) => {
     setConfig((prev) => {
       if (qty <= 0) {
-        return {
-          ...prev,
-          items: prev.items.filter(
-            (it) => !(it.productId === productId && it.variantId === variantId),
-          ),
-        };
+        return { ...prev, items: prev.items.filter((it) => it.lineId !== lineId) };
       }
       return {
         ...prev,
         items: prev.items.map((it) =>
-          it.productId === productId && it.variantId === variantId
-            ? { ...it, qtyPerHamper: Math.min(10, qty) }
-            : it,
+          it.lineId === lineId ? { ...it, qtyPerHamper: Math.min(10, qty) } : it,
         ),
       };
     });
   }, []);
 
-  const removeItem = useCallback((productId: string, variantId: string) => {
+  const removeItem = useCallback((lineId: string) => {
     setConfig((prev) => ({
       ...prev,
-      items: prev.items.filter(
-        (it) => !(it.productId === productId && it.variantId === variantId),
+      items: prev.items.filter((it) => it.lineId !== lineId),
+    }));
+  }, []);
+
+  const swapVariant = useCallback((lineId: string, newVariantId: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      items: prev.items.map((it) =>
+        it.lineId === lineId ? { ...it, variantId: newVariantId } : it,
       ),
     }));
   }, []);
@@ -320,8 +323,10 @@ export function HamperBuilder() {
                 box={config.box}
                 logoPrint={config.logoPrint}
                 message={config.message}
+                totalUnits={config.totalUnits}
                 onUpdateQty={updateQty}
                 onRemove={removeItem}
+                onSwapVariant={swapVariant}
               />
             </motion.div>
           )}
@@ -352,8 +357,10 @@ export function HamperBuilder() {
                   box={config.box}
                   logoPrint={config.logoPrint}
                   message={config.message}
+                  totalUnits={config.totalUnits}
                   onUpdateQty={updateQty}
                   onRemove={removeItem}
+                  onSwapVariant={swapVariant}
                 />
               </div>
               <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">

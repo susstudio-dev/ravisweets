@@ -21,8 +21,11 @@ interface HamperCanvasProps {
   box: BoxFinish;
   logoPrint: boolean;
   message: string;
-  onUpdateQty: (productId: string, variantId: string, qty: number) => void;
-  onRemove: (productId: string, variantId: string) => void;
+  /** Hamper unit count — used for per-variant stock validation. */
+  totalUnits: number;
+  onUpdateQty: (lineId: string, qty: number) => void;
+  onRemove: (lineId: string) => void;
+  onSwapVariant: (lineId: string, newVariantId: string) => void;
 }
 
 const BOX_COLOUR: Record<BoxFinish, { bg: string; border: string; label: string }> = {
@@ -37,8 +40,10 @@ export function HamperCanvas({
   box,
   logoPrint,
   message,
+  totalUnits,
   onUpdateQty,
   onRemove,
+  onSwapVariant,
 }: HamperCanvasProps) {
   const reduced = useReducedMotion();
   const boxColour = BOX_COLOUR[box];
@@ -107,19 +112,22 @@ export function HamperCanvas({
                 const variant = product?.variants.find((v) => v.id === it.variantId);
                 const img = product?.images[0];
                 if (!product || !variant || !img) return null;
+                const stockNeeded = it.qtyPerHamper * totalUnits;
+                const stockShort = stockNeeded > variant.stock_available;
+                const maxFeasibleUnits = Math.floor(variant.stock_available / Math.max(1, it.qtyPerHamper));
                 return (
                   <motion.div
-                    key={`${it.productId}-${it.variantId}`}
+                    key={it.lineId}
                     layout
-                    layoutId={reduced ? undefined : `hitem-${it.productId}-${it.variantId}`}
+                    layoutId={reduced ? undefined : `hitem-${it.lineId}`}
                     initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.7 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.7 }}
                     transition={{ duration: DURATION.quick, ease: EASE.emphasised }}
-                    className="group relative flex w-32 flex-col gap-1 rounded-xl p-2"
+                    className="group relative flex w-36 flex-col gap-1 rounded-xl p-2"
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.85)',
-                      border: `1px solid ${boxColour.border}`,
+                      border: `1px solid ${stockShort ? '#c0392b' : boxColour.border}`,
                     }}
                   >
                     <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -127,13 +135,13 @@ export function HamperCanvas({
                         src={img.url}
                         alt={img.alt}
                         fill
-                        sizes="128px"
+                        sizes="144px"
                         className="object-cover"
                       />
                       <button
                         type="button"
                         aria-label={`Remove ${product.title}`}
-                        onClick={() => onRemove(it.productId, it.variantId)}
+                        onClick={() => onRemove(it.lineId)}
                         className="absolute right-1 top-1 rounded-full bg-black/55 p-1 text-white opacity-0 backdrop-blur transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
@@ -142,13 +150,27 @@ export function HamperCanvas({
                     <p className="line-clamp-2 text-[11px] font-semibold leading-tight text-theme-ink">
                       {product.title}
                     </p>
-                    <p className="text-[10px] text-theme-ink/55">{variant.title}</p>
+                    {/* Variant swap dropdown — preserves lineId on change */}
+                    {product.variants.length > 1 ? (
+                      <select
+                        aria-label={`Variant for ${product.title}`}
+                        value={it.variantId}
+                        onChange={(e) => onSwapVariant(it.lineId, e.target.value)}
+                        className="w-full rounded border border-[color:var(--color-border)] bg-surface px-1.5 py-0.5 text-[10px] font-medium text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                      >
+                        {product.variants.map((v) => (
+                          <option key={v.id} value={v.id}>
+                            {v.title} · ₹{v.price.amount}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="text-[10px] text-theme-ink/55">{variant.title}</p>
+                    )}
                     <div className="mt-1 inline-flex items-center justify-between rounded-full border border-[color:var(--color-border)] bg-surface">
                       <button
                         type="button"
-                        onClick={() =>
-                          onUpdateQty(it.productId, it.variantId, it.qtyPerHamper - 1)
-                        }
+                        onClick={() => onUpdateQty(it.lineId, it.qtyPerHamper - 1)}
                         aria-label={`Decrease ${product.title}`}
                         className="rounded-full p-1 text-theme-ink/60 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
                       >
@@ -159,15 +181,18 @@ export function HamperCanvas({
                       </span>
                       <button
                         type="button"
-                        onClick={() =>
-                          onUpdateQty(it.productId, it.variantId, it.qtyPerHamper + 1)
-                        }
+                        onClick={() => onUpdateQty(it.lineId, it.qtyPerHamper + 1)}
                         aria-label={`Increase ${product.title}`}
                         className="rounded-full p-1 text-theme-ink/60 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
                       >
                         <Plus className="h-3 w-3" aria-hidden="true" />
                       </button>
                     </div>
+                    {stockShort && (
+                      <p className="text-[10px] font-semibold text-[#c0392b]">
+                        Only {maxFeasibleUnits} hampers possible at this size
+                      </p>
+                    )}
                   </motion.div>
                 );
               })}

@@ -12,7 +12,13 @@ export type DietaryTag =
 export type CategorySlug =
   | 'sweets'
   | 'namkeens'
+  | 'savouries'
+  | 'sweet-bites'
   | 'dry-fruits'
+  | 'pickles'
+  | 'powders'
+  | 'biscuits'
+  | 'healthy-sweets'
   | 'combos'
   | 'gift-hampers'
   | 'festival-specials'
@@ -45,6 +51,14 @@ export interface ThemePalette {
 
 export type GarnishMark = 'saffron' | 'pistachio' | 'silver' | 'paisley' | 'rose';
 
+/**
+ * Whether a product's variants represent grams (250 g · 500 g · 1 kg) or
+ * a fixed-pack count (Box of 6 · Box of 12 · Tray). Drives the variant-picker
+ * label ("Size" vs "Pack"), the cart-line subtitle, and the corporate
+ * builder's preview text. Configurable per product from the admin.
+ */
+export type UnitMode = 'weight' | 'quantity';
+
 export interface Product {
   id: string;
   slug: string;
@@ -69,6 +83,8 @@ export interface Product {
   garnish: GarnishMark;
   /** Whether this product can be composed into a corporate hamper in the builder. */
   builder_eligible: boolean;
+  /** How variants are displayed — by weight (default) or by pack count. */
+  unit_mode?: UnitMode;
   /** ISO date when a human confirmed the primary image passes the imagery rubric. */
   rubric_passed_on: string;
   /** Where the image came from. Free-to-use licence (Unsplash / Pexels / public domain) or internal. */

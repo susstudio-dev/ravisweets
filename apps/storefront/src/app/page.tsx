@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { ArrowRight, Award, Leaf, Truck } from 'lucide-react';
+import Image from 'next/image';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { HeroStill } from '@/components/hero/hero-still';
+import { SweetEssencePanel } from '@/components/sections/sweet-essence-panel';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { HeritageStrip } from '@/components/sections/heritage-strip';
 import { CraftStrip } from '@/components/sections/craft-strip';
@@ -29,16 +31,51 @@ import { HOME_FLAGS } from '@/lib/flags/visual-v2';
 // consolidating motion imports, or swapping SAMPLE_PRODUCTS for a trimmed slice
 // rather than the full 20-product catalogue on the home page).
 
+// Six headline categories pictured with a real ravisweets product shot.
+// The full list of 13 categories lives in the header megamenu.
 const CATEGORIES = [
   {
     slug: 'hyderabadi-specials',
     title: 'Hyderabadi Specials',
     blurb: 'Deccan classics',
     accent: '#c0592b',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
   },
-  { slug: 'sweets', title: 'Sweets', blurb: 'Fresh daily', accent: '#a56a0f' },
-  { slug: 'namkeens', title: 'Namkeens', blurb: 'Chai-time favourites', accent: '#8b3a1f' },
-  { slug: 'gift-hampers', title: 'Gift Hampers', blurb: 'Festival-ready', accent: '#7a4e0a' },
+  {
+    slug: 'sweets',
+    title: 'Sweets',
+    blurb: 'Kaju Katli · Boondi Laddu · Mysore Pak',
+    accent: '#a56a0f',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+  },
+  {
+    slug: 'savouries',
+    title: 'Savouries',
+    blurb: 'Andhra chai-time crunch',
+    accent: '#7b4610',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/08/karapusa.webp',
+  },
+  {
+    slug: 'pickles',
+    title: 'Pickles',
+    blurb: 'Gongura · Allam · Mamidikaya',
+    accent: '#a83c10',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/08/gongura.webp',
+  },
+  {
+    slug: 'gift-hampers',
+    title: 'Gift Hampers',
+    blurb: 'Diwali · Wedding · Corporate',
+    accent: '#7a4e0a',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+  },
+  {
+    slug: 'healthy-sweets',
+    title: 'Healthy Sweets',
+    blurb: 'Sugar-free laddu range',
+    accent: '#6e4810',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
+  },
 ];
 
 const TRUST = [
@@ -60,42 +97,102 @@ const TRUST = [
 ];
 
 export default function HomePage() {
-  const featured = SAMPLE_PRODUCTS.filter((p) => p.featured).slice(0, 4);
-  const bestsellers = SAMPLE_PRODUCTS.filter((p) => p.bestseller).slice(0, 4);
+  // Bestsellers shown above the fold so first-time visitors can buy immediately.
+  // Featured items still surface inside FlavourAtlas + SignatureMoment downstream;
+  // the standalone Featured grid was removed to keep the home page tight.
+  const bestsellers = SAMPLE_PRODUCTS.filter((p) => p.bestseller).slice(0, 8);
 
   return (
     <>
       <HeroStill />
 
-      <FlavourAtlas />
+      {/* Today's bestsellers — quick-buy */}
+      <section
+        aria-labelledby="bestsellers-top-heading"
+        className="container-site pt-10 md:pt-14"
+      >
+        <Reveal className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <Paisley size="sm" />
+              Loved by Telangana — buy in one tap
+            </p>
+            <h2
+              id="bestsellers-top-heading"
+              className="mt-2 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
+            >
+              Today&rsquo;s bestsellers
+            </h2>
+          </div>
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-1 text-sm font-medium text-theme-ink transition-colors hover:text-theme-accent"
+          >
+            Shop all 80+ products <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </Reveal>
+        <Stagger
+          gap={50}
+          className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+        >
+          {bestsellers.map((p) => (
+            <ProductCard key={p.id} product={p} quickAdd />
+          ))}
+        </Stagger>
+      </section>
 
-      <SignatureMoment />
+      {/* Image-led category showcase */}
+      <section
+        aria-labelledby="categories-heading"
+        className="container-site py-16 md:py-20"
+      >
+        <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <Paisley size="sm" />
+              Browse the kitchen
+            </p>
+            <h2
+              id="categories-heading"
+              className="mt-2 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
+            >
+              What we make.
+            </h2>
+          </div>
+          <p className="hidden max-w-sm text-sm text-theme-ink/65 md:block">
+            Six headline ranges. Pickles, podis, biscuits, dry fruits and combos sit
+            inside the <Link href="/shop" className="font-semibold text-theme-accent hover:underline">full shop</Link>.
+          </p>
+        </Reveal>
 
-      <PaisleyDivider className="container-site" />
-
-      {/* Categories */}
-      <section aria-labelledby="categories-heading" className="container-site pb-12">
-        <h2 id="categories-heading" className="sr-only">
-          Browse categories
-        </h2>
-        <Stagger gap={70} className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Stagger gap={70} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.slug}
               href={`/category/${cat.slug}`}
-              className="group relative flex flex-col items-start justify-between gap-4 overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted"
+              className="group relative flex min-h-[14rem] flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--color-border)] p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lifted"
+              style={{
+                background: `radial-gradient(ellipse at 30% 30%, color-mix(in oklab, ${cat.accent} 18%, var(--theme-base)) 0%, var(--theme-base) 75%)`,
+              }}
             >
-              <div
-                className="absolute inset-x-0 -bottom-12 h-24 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
-                style={{ backgroundColor: cat.accent }}
-                aria-hidden="true"
-              />
-              <div className="relative">
-                <h3 className="font-display text-lg font-semibold text-theme-ink">{cat.title}</h3>
-                <p className="mt-1 text-xs text-theme-ink/60">{cat.blurb}</p>
+              {/* Floating product cutout */}
+              <div className="pointer-events-none absolute -right-6 -top-4 h-36 w-36 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 md:h-44 md:w-44">
+                <Image
+                  src={cat.image}
+                  alt=""
+                  fill
+                  sizes="200px"
+                  className="object-contain drop-shadow-[0_18px_28px_rgba(60,30,5,0.18)]"
+                />
+              </div>
+              <div className="relative max-w-[60%]">
+                <h3 className="font-display text-xl font-semibold text-theme-ink md:text-2xl">
+                  {cat.title}
+                </h3>
+                <p className="mt-1 text-xs text-theme-ink/65">{cat.blurb}</p>
               </div>
               <div
-                className="relative flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1"
+                className="relative inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1"
                 style={{ color: cat.accent }}
               >
                 Explore
@@ -106,33 +203,54 @@ export default function HomePage() {
         </Stagger>
       </section>
 
+      <SweetEssencePanel />
+
+      <FlavourAtlas />
+
+      <SignatureMoment />
+
+      <PaisleyDivider className="container-site" />
+
       <PressMarquee />
 
-      {/* Featured */}
-      <section aria-labelledby="featured-heading" className="container-site py-20">
-        <Reveal className="mb-10 flex items-end justify-between gap-4">
+      {/* Spacer where Featured used to be — kept as a brand-quote band */}
+      <section className="container-site py-14 md:py-20">
+        <Reveal className="mb-6 flex items-end justify-between gap-4">
           <div>
             <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
               <Paisley size="sm" />
-              Handpicked
+              The kitchen rule
             </p>
             <h2
-              id="featured-heading"
               className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
             >
-              This season&rsquo;s featured
+              No preservatives, ever.
             </h2>
           </div>
           <Link
-            href="/shop"
+            href="/about"
             className="hidden items-center gap-1 text-sm font-medium text-theme-ink transition-colors hover:text-theme-accent sm:inline-flex"
           >
-            Shop all <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            Read our story <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </Reveal>
-        <Stagger gap={80} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <Stagger gap={70} className="grid gap-5 md:grid-cols-3">
+          {TRUST.map((item) => (
+            <div
+              key={item.title}
+              className="flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-6"
+            >
+              <div
+                className="flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)]"
+                style={{ backgroundColor: 'var(--theme-accent)' }}
+              >
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <h3 className="font-display text-lg font-semibold text-theme-ink">
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-theme-ink/75">{item.body}</p>
+            </div>
           ))}
         </Stagger>
       </section>
@@ -146,8 +264,8 @@ export default function HomePage() {
         headline="If a sweet can be made faster, it can also be made less well."
         body="A simple promise we keep. Slow-cooked rabri, hand-cut diamonds, silver leaf laid by hand — every box leaves the kitchen checked by two pairs of eyes."
         cta={{ label: 'Read our story', href: '/about' }}
-        image="https://images.unsplash.com/photo-1606491048802-8342506d6471?w=1800&q=90&auto=format&fit=crop"
-        imageAlt=""
+        image="https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png"
+        imageAlt="Cashew mithai stacked on a brass plate"
         align="center"
       />
 
@@ -158,57 +276,6 @@ export default function HomePage() {
 
       <GiftingGuide />
 
-      {/* Trust strip */}
-      <section
-        aria-labelledby="trust-heading"
-        className="border-y border-[color:var(--color-border)] bg-[color:var(--theme-ink)]/[0.03]"
-      >
-        <div className="container-site grid gap-8 py-14 md:grid-cols-3">
-          <h2 id="trust-heading" className="sr-only">
-            Why Ravi Sweets
-          </h2>
-          <Stagger gap={90} className="contents">
-            {TRUST.map((item) => (
-              <div key={item.title} className="flex gap-4">
-                <div
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[color:var(--theme-base)]"
-                  style={{ backgroundColor: 'var(--theme-accent)' }}
-                >
-                  <item.icon className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-theme-ink">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-theme-ink/70">{item.body}</p>
-                </div>
-              </div>
-            ))}
-          </Stagger>
-        </div>
-      </section>
-
-      {/* Bestsellers */}
-      <section aria-labelledby="bestsellers-heading" className="container-site py-20">
-        <Reveal className="mb-10">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
-            <Paisley size="sm" />
-            Loved across Telangana
-          </p>
-          <h2
-            id="bestsellers-heading"
-            className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
-          >
-            Bestsellers
-          </h2>
-        </Reveal>
-        <Stagger gap={80} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {bestsellers.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </Stagger>
-      </section>
-
       <CraftStrip />
 
       {/* Full-bleed editorial band — festival */}
@@ -217,8 +284,8 @@ export default function HomePage() {
         headline="Wrapped by hand, in brass and silk."
         body="Six hampers, three price bands, logo-ready for corporate runs. Priority list opens first to our earlier customers and corporate accounts."
         cta={{ label: 'Join the priority list', href: '/festivals/diwali' }}
-        image="https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=1800&q=90&auto=format&fit=crop"
-        imageAlt=""
+        image="https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png"
+        imageAlt="Diwali hamper assortment — kaju, anjeer, dry-fruit chikki"
         align="left"
       />
 

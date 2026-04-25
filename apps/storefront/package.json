@@ -16,6 +16,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@ravisweets/shared": "workspace:*",
     "@ravisweets/ui": "workspace:*",
+    "@supabase/supabase-js": "^2.104.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "culori": "^4.0.2",

@@ -17,11 +17,12 @@ import { Grain } from '@/components/brand/grain';
 
 export const metadata: Metadata = {
   title: 'Visit us',
-  description: 'Our Khammam flagship store, plus how to reach us by phone, email, or WhatsApp.',
+  description: 'Our Khammam flagship and Hyderabad (Kondapur) branch — addresses, hours, and ways to reach us.',
 };
 
 interface Store {
   name: string;
+  tagline: string;
   address: string;
   city: string;
   state: string;
@@ -29,21 +30,55 @@ interface Store {
   hours: { days: string; time: string }[];
   phone: string;
   mapsQuery: string;
+  since?: number;
 }
 
 const STORES: Store[] = [
   {
-    name: 'Ravi Sweets · Flagship',
-    address: 'Wyra Road, opp. Bus Station',
+    name: 'Ravi Sweets · Khammam Flagship',
+    tagline: 'Where it began — same kitchen since 1985.',
+    address: 'Door No 10-1-25, Near Mamillagudem, Beside Over Bridge',
     city: 'Khammam',
     state: 'Telangana',
     pincode: '507001',
     hours: [
-      { days: 'Mon — Sat', time: '9:00 am — 9:30 pm' },
+      { days: 'Mon — Sat', time: '9:30 am — 9:30 pm' },
       { days: 'Sunday', time: '10:00 am — 9:00 pm' },
     ],
-    phone: '+91 98765 43210',
+    phone: '+91 93988 59978',
+    mapsQuery: 'Ravi+Sweets+Mamillagudem+Khammam',
+    since: 1985,
+  },
+  {
+    name: 'Ravi Sweets · Khammam (Second branch)',
+    tagline: 'Our second Khammam counter — same recipes, closer to you.',
+    // NOTE: address pending confirmation from owner — share Google Maps link
+    // returned empty when WebFetched; placeholder until you update with the
+    // exact street address.
+    address: 'Khammam — second branch (address to be confirmed)',
+    city: 'Khammam',
+    state: 'Telangana',
+    pincode: '507001',
+    hours: [
+      { days: 'Mon — Sat', time: '9:30 am — 9:30 pm' },
+      { days: 'Sunday', time: '10:00 am — 9:00 pm' },
+    ],
+    phone: '+91 93988 59978',
     mapsQuery: 'Ravi+Sweets+Khammam',
+  },
+  {
+    name: 'Ravi Sweets · Kondapur',
+    tagline: 'Our Hyderabad branch — closer to the city, same recipes.',
+    address: 'Kondapur, Hyderabad',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    pincode: '500084',
+    hours: [
+      { days: 'Mon — Sat', time: '7:00 am — 8:00 pm' },
+      { days: 'Sunday', time: '8:00 am — 6:00 pm' },
+    ],
+    phone: '+91 93988 59978',
+    mapsQuery: 'Ravi+Sweets+Kondapur+Hyderabad',
   },
 ];
 
@@ -51,35 +86,37 @@ const CONTACT = [
   {
     icon: Phone,
     label: 'Call',
-    value: '+91 98765 43210',
-    href: 'tel:+919876543210',
+    value: '+91 93988 59978',
+    href: 'tel:+919398859978',
     note: 'Mon – Sat · 9 am – 9 pm IST',
   },
   {
     icon: MessageCircle,
     label: 'WhatsApp',
-    value: '+91 98765 43210',
-    href: 'https://wa.me/919876543210',
+    value: '+91 93988 59978',
+    href: 'https://wa.me/919398859978',
     note: 'Fastest way to reach us',
   },
   {
     icon: Mail,
     label: 'Email',
-    value: 'hello@ravisweets.com',
-    href: 'mailto:hello@ravisweets.com',
+    value: 'ravisweetshyd@gmail.com',
+    href: 'mailto:ravisweetshyd@gmail.com',
     note: 'Replies within a business day',
   },
   {
     icon: Instagram,
     label: 'Instagram',
-    value: '@ravisweets',
-    href: 'https://instagram.com/ravisweets',
+    value: '@ravi_sweets',
+    href: 'https://instagram.com/ravi_sweets',
     note: 'Kitchen stories and seasonal runs',
   },
 ];
 
 const STORE_IMAGE =
-  'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=1800&q=90&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png';
+const STORE_BACKDROP =
+  'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 65%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 28%, var(--theme-base)) 50%, var(--theme-base) 90%)';
 
 export default function StoresPage() {
   return (
@@ -107,36 +144,30 @@ export default function StoresPage() {
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-theme-ink/75">
-                Our kitchen and flagship store sits in Khammam, in the heart of Telangana.
-                Walk in, or call ahead to reserve a seasonal hamper — especially around Diwali.
+                Three counters, one kitchen. The original Khammam shop has been near
+                Mamillagudem since 1985, with a second Khammam branch nearby. The Hyderabad
+                branch sits in Kondapur, stocked from the same kitchen each morning. Walk in,
+                or call ahead to reserve a seasonal hamper.
               </p>
             </Reveal>
           </div>
           <Parallax offset={30}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+            <div
+              className="relative aspect-[4/5] overflow-hidden rounded-[2rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+              style={{ background: STORE_BACKDROP }}
+            >
               <Image
                 src={STORE_IMAGE}
-                alt="Khammam sweet-shop counter with assorted boxes and a copper scale"
+                alt="Hand-packed Diwali hamper assortment from the Khammam kitchen"
                 fill
                 priority
                 fetchPriority="high"
                 sizes="(min-width: 768px) 460px, 90vw"
-                className="object-cover"
-              />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 50%, transparent) 0%, transparent 50%)',
-                }}
-                aria-hidden="true"
+                className="object-contain drop-shadow-[0_30px_40px_rgba(60,30,5,0.22)]"
               />
               <Grain />
-              <div className="absolute bottom-4 left-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/85">
-                Khammam · Telangana
-              </div>
-              <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                Dev only
+              <div className="pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+                Khammam · Telangana · Since 1985
               </div>
             </div>
           </Parallax>
@@ -153,10 +184,11 @@ export default function StoresPage() {
             Where to find us
           </p>
           <h2 id="stores-heading" className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg">
-            Our flagship.
+            Three counters, one kitchen.
           </h2>
         </Reveal>
 
+        <div className="flex flex-col gap-6">
         {STORES.map((s) => (
           <Reveal key={s.name}>
             <article className="grid gap-8 rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft md:grid-cols-[1fr_1.2fr] md:gap-12 md:p-10">
@@ -164,6 +196,12 @@ export default function StoresPage() {
                 <h3 className="font-display text-2xl font-semibold text-theme-ink md:text-3xl">
                   {s.name}
                 </h3>
+                <p className="mt-2 text-sm italic text-theme-ink/65">{s.tagline}</p>
+                {s.since && (
+                  <p className="mt-2 inline-block rounded-full border border-theme-accent/30 bg-theme-glow/10 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                    Since {s.since}
+                  </p>
+                )}
                 <dl className="mt-6 flex flex-col gap-4 text-sm">
                   <div className="flex items-start gap-3">
                     <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-theme-accent" aria-hidden="true" />
@@ -247,6 +285,7 @@ export default function StoresPage() {
             </article>
           </Reveal>
         ))}
+        </div>
       </section>
 
       {/* Contact */}
@@ -301,7 +340,7 @@ export default function StoresPage() {
               </p>
             </div>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919398859978"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-theme-ink px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"

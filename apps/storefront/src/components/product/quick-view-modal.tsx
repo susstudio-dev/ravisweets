@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { ArrowRight, X } from 'lucide-react';
@@ -224,17 +223,22 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               transition={{ duration: DURATION.quick, delay: 0.42, ease: EASE.standard }}
               className="mt-auto pt-2"
             >
-              <Link
+              {/*
+                Plain anchor (not <Link>) so the navigation BYPASSES the
+                @modal/(.)product/[slug] intercepting route — Next.js only
+                intercepts soft navigations. A regular href triggers a hard
+                navigation that lands on the real /product/[slug] page.
+              */}
+              <a
                 href={`/product/${product.slug}`}
                 className="group inline-flex items-center gap-1.5 text-sm font-semibold text-theme-ink/80 transition-colors hover:text-theme-accent"
-                scroll={false}
               >
                 View full details
                 <ArrowRight
                   className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                   aria-hidden="true"
                 />
-              </Link>
+              </a>
             </motion.div>
           </div>
         </motion.div>

@@ -19,8 +19,14 @@ interface ItemPaletteProps {
 const CATEGORY_LABEL: Record<CategorySlug, string> = {
   'hyderabadi-specials': 'Hyderabadi',
   sweets: 'Sweets',
+  'sweet-bites': 'Sweet bites',
+  'healthy-sweets': 'Healthy',
   namkeens: 'Namkeens',
+  savouries: 'Savouries',
   'dry-fruits': 'Dry fruits',
+  pickles: 'Pickles',
+  powders: 'Podis',
+  biscuits: 'Biscuits',
   combos: 'Combos',
   'gift-hampers': 'Gift hampers',
   'festival-specials': 'Festival',
@@ -29,7 +35,9 @@ const CATEGORY_LABEL: Record<CategorySlug, string> = {
 const CATEGORY_ORDER: CategorySlug[] = [
   'hyderabadi-specials',
   'sweets',
+  'sweet-bites',
   'namkeens',
+  'savouries',
   'dry-fruits',
 ];
 
@@ -37,7 +45,17 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
   const [query, setQuery] = useState('');
   const reduced = useReducedMotion();
   const [previewId, setPreviewId] = useState<string | null>(null);
+  const [variantSheet, setVariantSheet] = useState<Product | null>(null);
   const hoverTimer = useRef<number | null>(null);
+
+  function handleAdd(p: Product) {
+    if (p.variants.length <= 1) {
+      const v = p.variants[0];
+      if (v) onAdd(p.id, v.id);
+      return;
+    }
+    setVariantSheet(p);
+  }
 
   function schedulePreview(id: string) {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
@@ -129,7 +147,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                     >
                       <button
                         type="button"
-                        onClick={() => onAdd(p.id, primary.id)}
+                        onClick={() => handleAdd(p)}
                         className={cn(
                           'group flex w-full items-center gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface px-3 py-2 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
                         )}
@@ -210,6 +228,81 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           <p className="text-sm text-theme-ink/60">No matches for &ldquo;{query}&rdquo;.</p>
         )}
       </div>
+
+      {/* Variant picker sheet — opens for multi-variant products before insertion */}
+      <AnimatePresence>
+        {variantSheet && (
+          <motion.div
+            key="variant-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Pick a size for ${variantSheet.title}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduced ? DURATION.fast : DURATION.base }}
+            className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+          >
+            <button
+              type="button"
+              aria-label="Close variant picker"
+              onClick={() => setVariantSheet(null)}
+              className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+            />
+            <motion.div
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
+              animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: reduced ? DURATION.fast : DURATION.slow, ease: EASE.emphasised }}
+              className="relative z-10 w-full max-w-md overflow-hidden rounded-t-3xl bg-surface-elevated p-6 shadow-lifted ring-1 ring-[color:var(--color-border)] sm:rounded-3xl"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                Pick a size
+              </p>
+              <h3 className="mt-1 font-display text-2xl font-semibold text-theme-ink">
+                {variantSheet.title}
+              </h3>
+              <ul className="mt-5 flex flex-col gap-2">
+                {variantSheet.variants.map((v) => {
+                  const oos = v.stock_available <= 0;
+                  return (
+                    <li key={v.id}>
+                      <button
+                        type="button"
+                        disabled={oos}
+                        onClick={() => {
+                          onAdd(variantSheet.id, v.id);
+                          setVariantSheet(null);
+                        }}
+                        className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-[color:var(--color-border)] bg-surface px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <span>
+                          <span className="block font-display text-base font-semibold text-theme-ink">
+                            {v.title}
+                          </span>
+                          <span className="block text-xs text-theme-ink/60">
+                            {oos ? 'Out of stock' : `${v.stock_available} units in stock`}
+                          </span>
+                        </span>
+                        <span className="font-display text-base font-semibold text-theme-accent">
+                          {formatMoney(v.price)}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <button
+                type="button"
+                onClick={() => setVariantSheet(null)}
+                className="mt-5 w-full rounded-full border border-theme-ink/25 px-5 py-2 text-sm font-semibold text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </aside>
   );
 }

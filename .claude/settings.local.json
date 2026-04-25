@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter @ravisweets/storefront add @supabase/supabase-js)",
+      "Bash(command -v supabase)",
+      "Bash(supabase --version)"
+    ]
+  }
+}

@@ -7,7 +7,6 @@ import { ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { TextKinetic } from '@/components/motion/text-kinetic';
 import { Reveal } from '@/components/motion/reveal';
-import { MouseParallax } from '@/components/motion/mouse-parallax';
 import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -19,10 +18,10 @@ import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 // so scroll feels cinematic rather than flat. Replace when production
 // photography lands per the photography-gating requirement.
 const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=2000&q=92&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
 
-const PICK_IMAGE =
-  'https://images.unsplash.com/photo-1631206753348-db44968fd440?w=600&q=85&auto=format&fit=crop';
+const HERO_BACKDROP =
+  'radial-gradient(ellipse at 40% 35%, color-mix(in oklab, var(--theme-glow) 70%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 30%, var(--theme-base)) 50%, var(--theme-base) 90%)';
 
 // 8 saffron strands scattered with deterministic positions for SSR-stable layout
 const SAFFRON_STRANDS = [
@@ -51,7 +50,6 @@ export function HeroStill() {
   const imageY = useTransform(scrollYProgress, [0, 1], [0, -110]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const strandsY = useTransform(scrollYProgress, [0, 1], [0, -220]);
-  const pickY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const ornamentTopY = useTransform(scrollYProgress, [0, 1], [0, 70]);
   const ornamentBottomY = useTransform(scrollYProgress, [0, 1], [0, -70]);
   const ornamentMidX = useTransform(scrollYProgress, [0, 1], [0, -30]);
@@ -185,117 +183,159 @@ export function HeroStill() {
           </Reveal>
         </div>
 
-        {/* Visual column */}
-        <div className="relative z-10">
+        {/* Visual column — premium showcase + quick browse strip + trust pill */}
+        <div className="relative z-10 flex flex-col gap-5">
           <motion.div
             style={reduced ? undefined : { y: imageY, scale: imageScale }}
-            className="relative aspect-[4/5] md:aspect-[5/6]"
+            className="relative mx-auto w-full max-w-[460px]"
           >
-            <MouseParallax strength={14} rotate={3.5} className="h-full w-full">
-              <div className="relative h-full w-full overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+            {/*
+              Gold-foil gradient ring. The aspect-ratio sits on THIS div so the
+              inner card fills h-full w-full predictably. MouseParallax is dropped
+              — it was wrapping the inner card without forwarding height, which
+              caused the inner card to collapse and the gold ring to dominate.
+            */}
+            <div
+              className="relative aspect-square rounded-[2rem] p-[3px] shadow-lifted"
+              style={{
+                background:
+                  'linear-gradient(135deg, #f2c66f 0%, #c08a18 35%, #fff5d4 60%, #c08a18 80%, #8a5a10 100%)',
+              }}
+            >
+              <div
+                className="relative h-full w-full overflow-hidden rounded-[1.85rem]"
+                style={{ background: HERO_BACKDROP }}
+              >
+                {/* Premium stamp — top-left */}
+                <span className="absolute left-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full bg-theme-ink/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--theme-base)] backdrop-blur">
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: '#f2c66f' }}
+                  />
+                  Limited batch
+                </span>
+                {/* Italic eyebrow — top-right */}
+                <span
+                  className="absolute right-6 top-5 z-10 font-display text-sm italic"
+                  style={{ color: '#8a5a10' }}
+                >
+                  Today&rsquo;s pick
+                </span>
+
+                {/* Image fills the card centre (object-contain keeps the cutout intact) */}
                 <Image
                   src={HERO_IMAGE}
-                  alt="Macro close-up of Qubani ka Meetha in saffron syrup, slivered almonds catching the directional light"
+                  alt="Premium Kaju Katli — silver-leaf cashew diamonds from our Khammam kitchen"
                   fill
                   priority
                   fetchPriority="high"
-                  sizes="(min-width: 1024px) 520px, (min-width: 640px) 60vw, 90vw"
-                  className="object-cover [transform:scale(1.04)]"
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 55%, transparent) 0%, transparent 40%), radial-gradient(ellipse at 40% 30%, transparent 55%, color-mix(in oklab, var(--theme-ink) 25%, transparent) 100%)',
-                  }}
-                  aria-hidden="true"
+                  sizes="(min-width: 1024px) 460px, (min-width: 640px) 60vw, 90vw"
+                  className="object-contain p-12 drop-shadow-[0_30px_50px_rgba(60,30,5,0.28)] md:p-16"
                 />
                 <Grain />
-                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-3 p-5">
-                  <div>
-                    <p
-                      className="font-display text-sm italic"
-                      style={{ color: 'color-mix(in oklab, var(--theme-base) 90%, transparent)' }}
+
+                {/* Caption + CTA — anchored to the bottom */}
+                <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[#fdf6ec] via-[#fdf6ec]/85 to-transparent px-6 pb-5 pt-10">
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <p className="font-display text-lg font-semibold text-theme-ink md:text-xl">
+                        Premium Kaju Katli
+                      </p>
+                      <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-theme-ink/55">
+                        250 g · silver leaf · cardamom
+                      </p>
+                    </div>
+                    <Link
+                      href="/product/kaju-katli"
+                      className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-theme-ink px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5"
                     >
-                      Pictured
-                    </p>
-                    <p
-                      className="font-display text-lg font-semibold"
-                      style={{ color: 'var(--theme-base)' }}
-                    >
-                      Qubani ka Meetha
-                    </p>
-                  </div>
-                  <div
-                    className="rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur"
-                    aria-label="Placeholder image — dev only"
-                  >
-                    Dev only
+                      ₹449
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </Link>
                   </div>
                 </div>
               </div>
-            </MouseParallax>
+            </div>
           </motion.div>
 
-          {/* Floating "pick of the season" card */}
+          {/* Single subtle ornament — anchors the visual without crowding. */}
           <motion.div
-            style={reduced ? undefined : { y: pickY }}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, x: -30, y: 30 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-auto absolute -bottom-6 -left-4 hidden w-56 overflow-hidden rounded-2xl bg-surface-elevated shadow-lifted ring-1 ring-[color:var(--color-border)] md:flex"
-          >
-            <Link
-              href="/product/badam-ki-jali"
-              className="flex w-full items-center gap-3 p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
-              scroll={false}
-            >
-              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-                <Image
-                  src={PICK_IMAGE}
-                  alt="Badam ki Jali almond discs"
-                  fill
-                  sizes="56px"
-                  className="object-cover"
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
-                  Pick of the season
-                </p>
-                <p className="truncate font-display text-sm font-semibold text-theme-ink">
-                  Badam ki Jali
-                </p>
-                <p className="text-xs text-theme-ink/60">₹549 · 250 g</p>
-              </div>
-              <ArrowRight className="h-4 w-4 text-theme-ink/40" aria-hidden="true" />
-            </Link>
-          </motion.div>
-
-          {/* Ornament: top-right */}
-          <motion.div
-            style={reduced ? undefined : { y: ornamentTopY }}
-            className="pointer-events-none absolute -right-4 -top-8 hidden text-theme-accent opacity-75 md:block"
+            style={reduced ? undefined : { y: ornamentTopY, x: ornamentMidX }}
+            className="pointer-events-none absolute -right-2 -top-6 hidden text-theme-accent/40 md:block"
             aria-hidden="true"
           >
             <Paisley size="lg" rotate={20} />
           </motion.div>
-          {/* Ornament: mid-right x-drifting */}
           <motion.div
-            style={reduced ? undefined : { x: ornamentMidX, y: ornamentBottomY }}
-            className="pointer-events-none absolute -right-6 top-1/2 hidden text-theme-glow opacity-50 lg:block"
+            style={reduced ? undefined : { y: ornamentBottomY }}
+            className="pointer-events-none absolute -bottom-4 -left-2 hidden text-theme-glow/45 md:block"
             aria-hidden="true"
           >
             <Paisley size="md" rotate={200} />
           </motion.div>
-          {/* Ornament: floating top-left on very large screens */}
-          <motion.div
-            style={reduced ? undefined : { y: ornamentTopY }}
-            className="pointer-events-none absolute left-8 top-1/3 hidden text-theme-glow opacity-40 lg:block"
-            aria-hidden="true"
-          >
-            <Paisley size="sm" rotate={70} />
-          </motion.div>
+
+          {/* Quick browse strip — fills the space below the showcase card with
+              three one-tap entry points into the most-loved categories. */}
+          <Reveal delay={0.55}>
+            <ul className="mx-auto grid w-full max-w-[460px] grid-cols-3 gap-2 md:gap-3">
+              {[
+                { slug: 'sweets', label: 'Sweets', sub: 'Bestsellers' },
+                { slug: 'gift-hampers', label: 'Hampers', sub: 'Festival-ready' },
+                { slug: 'savouries', label: 'Savoury', sub: 'Chai-time' },
+              ].map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/category/${c.slug}`}
+                    className="group flex h-full flex-col items-start justify-between gap-1 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated/85 p-3 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft"
+                  >
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                      {c.sub}
+                    </span>
+                    <span className="flex w-full items-center justify-between gap-1.5">
+                      <span className="font-display text-sm font-semibold text-theme-ink">
+                        {c.label}
+                      </span>
+                      <ArrowRight
+                        className="h-3.5 w-3.5 text-theme-ink/40 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-theme-accent"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+
+          {/* Trust + delivery pill — closes the right column with confidence */}
+          <Reveal delay={0.7}>
+            <div className="mx-auto flex w-full max-w-[460px] flex-wrap items-center justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated/70 px-5 py-3 backdrop-blur">
+              <div className="flex items-center gap-2.5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{ backgroundColor: '#f2c66f' }}
+                >
+                  <Paisley size="sm" color="#3a1505" />
+                </span>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                    Made fresh in Khammam
+                  </p>
+                  <p className="text-xs text-theme-ink/65">
+                    Free shipping above ₹999 · ships across India
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/shop"
+                className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-theme-ink/75 hover:text-theme-accent"
+              >
+                Shop all
+                <ArrowRight className="h-3 w-3" aria-hidden="true" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </motion.div>
 

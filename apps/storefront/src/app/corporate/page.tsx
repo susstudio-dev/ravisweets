@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=1800&q=90&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png';
 
 const TRUST_BADGES = [
   { icon: FileText, label: 'GST invoicing' },
@@ -79,7 +79,7 @@ const HAMPERS = [
     moq: '50 units',
     contents: 'Kaju Katli · Badam ki Jali · Pistachios · Brass diya',
     image:
-      'https://images.unsplash.com/photo-1631206753348-db44968fd440?w=1200&q=85&auto=format&fit=crop',
+      'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
   },
   {
     title: 'Premium',
@@ -89,7 +89,7 @@ const HAMPERS = [
     moq: '50 units',
     contents: 'Qubani ka Meetha · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
     image:
-      'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=1200&q=85&auto=format&fit=crop',
+      'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
   },
   {
     title: 'Grande',
@@ -99,7 +99,7 @@ const HAMPERS = [
     moq: '25 units',
     contents: 'Full Hyderabadi spread · custom silk wrap · hand-painted brass box',
     image:
-      'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1200&q=85&auto=format&fit=crop',
+      'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
   },
 ];
 
@@ -133,40 +133,30 @@ const FAQS = [
 export default function CorporatePage() {
   return (
     <>
-      {/* Hero — dark, confident */}
+      {/* Hero — warm cream with brass accents */}
       <section
         className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
-        style={{ backgroundColor: '#2a1505', color: '#fdf6ec' }}
+        style={{
+          background:
+            'radial-gradient(ellipse at 75% 35%, color-mix(in oklab, var(--theme-glow) 32%, transparent) 0%, transparent 65%), radial-gradient(ellipse at 8% 92%, color-mix(in oklab, var(--theme-accent) 10%, transparent) 0%, transparent 55%), var(--theme-base)',
+        }}
       >
-        <div
-          aria-hidden="true"
-          className="absolute -left-24 -top-32 h-96 w-96 rounded-full opacity-30 blur-3xl"
-          style={{ backgroundColor: '#e9ad4a' }}
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -bottom-32 -right-24 h-96 w-96 rounded-full opacity-20 blur-3xl"
-          style={{ backgroundColor: '#f2c66f' }}
-        />
-
         <div className="container-site relative grid gap-10 py-20 md:grid-cols-[1.1fr_1fr] md:items-center md:py-28">
           <div>
             <Reveal>
-              <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#f2c66f]">
-                <Paisley size="sm" color="#f2c66f" />
+              <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+                <Paisley size="sm" />
                 For HR &amp; Admin teams
               </p>
             </Reveal>
             <Reveal delay={0.06}>
-              <h1 className="mt-4 font-display text-display-lg font-semibold leading-[1.02] md:text-display-xl">
+              <h1 className="mt-4 font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl">
                 Corporate gifting,{' '}
-                <span className="italic" style={{ color: '#f2c66f' }}>
-                  done the Hyderabadi way.
-                </span>
+                <span className="italic text-theme-accent">done the Hyderabadi way.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.14}>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#fdf6ec]/85">
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-theme-ink/75">
                 MOQ-based pricing. Logo-printed packaging. Multi-address CSV delivery.
                 GST-compliant invoices. One account manager, one phone number, one box arriving
                 exactly when it should.
@@ -176,7 +166,7 @@ export default function CorporatePage() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <a
                   href="#enquiry"
-                  className="group inline-flex items-center gap-2 rounded-full bg-[#f2c66f] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#fdf6ec]"
+                  className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
                 >
                   Request a quote
                   <ArrowRight
@@ -186,17 +176,17 @@ export default function CorporatePage() {
                 </a>
                 <Link
                   href="/corporate/builder?t=premium"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#fdf6ec]/30 px-6 py-3 text-sm font-semibold text-[#fdf6ec] transition-colors duration-300 hover:border-[#f2c66f] hover:text-[#f2c66f]"
+                  className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-6 py-3 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
                 >
                   Build your own hamper
                 </Link>
               </div>
             </Reveal>
             <Reveal delay={0.3}>
-              <dl className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-[#fdf6ec]/70">
+              <dl className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-theme-ink/65">
                 {TRUST_BADGES.map((b) => (
                   <div key={b.label} className="flex items-center gap-2">
-                    <b.icon className="h-3.5 w-3.5 text-[#f2c66f]" aria-hidden="true" />
+                    <b.icon className="h-3.5 w-3.5 text-theme-accent" aria-hidden="true" />
                     <span className="font-semibold uppercase tracking-wider">{b.label}</span>
                   </div>
                 ))}
@@ -205,7 +195,7 @@ export default function CorporatePage() {
           </div>
 
           <Parallax offset={30}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[#fdf6ec]/10">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
               <Image
                 src={HERO_IMAGE}
                 alt="A premium Diwali hamper wrapped in silk with brass accents"
@@ -219,16 +209,16 @@ export default function CorporatePage() {
                 className="pointer-events-none absolute inset-0"
                 style={{
                   background:
-                    'linear-gradient(to top, rgba(15,10,5,0.55) 0%, transparent 55%)',
+                    'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 45%, transparent) 0%, transparent 55%)',
                 }}
                 aria-hidden="true"
               />
               <Grain />
               <div className="absolute bottom-4 left-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f2c66f]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-glow">
                   Pictured
                 </p>
-                <p className="font-display text-lg font-semibold" style={{ color: '#fdf6ec' }}>
+                <p className="font-display text-lg font-semibold" style={{ color: 'var(--theme-base)' }}>
                   Premium hamper, 2024 Diwali run
                 </p>
               </div>

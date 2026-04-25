@@ -5,7 +5,9 @@ import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 
 const PORTRAIT =
-  'https://images.unsplash.com/photo-1606491048802-8342506d6471?w=1200&q=85&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png';
+const PORTRAIT_BACKDROP =
+  'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 60%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 25%, var(--theme-base)) 50%, var(--theme-base) 90%)';
 
 export function HeritageStrip() {
   return (
@@ -20,31 +22,20 @@ export function HeritageStrip() {
       <div className="container-site grid gap-12 py-20 md:grid-cols-2 md:items-center md:py-28">
         {/* Portrait with parallax */}
         <Parallax offset={40} className="order-2 md:order-1">
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+          <div
+            className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+            style={{ background: PORTRAIT_BACKDROP }}
+          >
             <Image
               src={PORTRAIT}
-              alt="Hands preparing traditional Telangana sweets in our Khammam kitchen"
+              alt="Anjeer Katli — figs and almonds slow-folded into bite-sized pieces"
               fill
               sizes="(min-width: 768px) 420px, 90vw"
-              className="object-cover"
-            />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 55%, transparent) 0%, transparent 50%)',
-              }}
-              aria-hidden="true"
+              className="object-contain drop-shadow-[0_24px_32px_rgba(60,30,5,0.2)]"
             />
             <Grain />
-            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.18em] text-white/85">
-              <span>The kitchen, every morning</span>
-              <span
-                aria-hidden="true"
-                className="rounded-full bg-black/50 px-2 py-0.5 backdrop-blur"
-              >
-                Dev only
-              </span>
+            <div className="pointer-events-none absolute bottom-4 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+              Anjeer Katli · Khammam kitchen
             </div>
           </div>
         </Parallax>

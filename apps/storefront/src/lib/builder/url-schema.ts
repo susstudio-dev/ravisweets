@@ -7,7 +7,7 @@ import type {
 } from '@ravisweets/shared';
 import { TEMPLATES } from '@ravisweets/shared';
 
-export const BUILDER_SCHEMA_VERSION = 1;
+export const BUILDER_SCHEMA_VERSION = 2;
 
 /**
  * Compact URL schema for hamper configuration.
@@ -101,10 +101,16 @@ export function serialiseConfig(config: HamperConfig): string {
   return params.toString();
 }
 
-/** Returns null when version mismatch / unknown template / otherwise invalid. */
+/**
+ * Returns null when version is unknown future / unknown template / otherwise invalid.
+ * Accepts both v=1 (legacy) and v=2 (current) URLs — wire format is identical;
+ * v=2 only signals that lineIds are part of the in-memory model. v1 → v2 migration
+ * is a no-op on the URL side: the parser synthesises stable lineIds from
+ * `${productId}:${variantId}` so v1 URLs round-trip cleanly.
+ */
 export function parseConfig(search: URLSearchParams): HamperConfig | null {
   const v = Number(search.get('v'));
-  if (v !== BUILDER_SCHEMA_VERSION) return null;
+  if (v !== 1 && v !== BUILDER_SCHEMA_VERSION) return null;
 
   const t = search.get('t') as TemplateId | null;
   const templateId: TemplateId = t && VALID_TEMPLATES.includes(t) ? t : 'blank';
@@ -112,6 +118,8 @@ export function parseConfig(search: URLSearchParams): HamperConfig | null {
   const itemsRaw = search.get('items') ?? '';
   const items: HamperItem[] = [];
   if (itemsRaw) {
+    const seenCombos = new Set<string>();
+    let dupSuffix = 0;
     for (const entry of itemsRaw.split(',')) {
       const [pA, vA, qA] = entry.split(':');
       if (!pA || !vA) continue;
@@ -119,7 +127,10 @@ export function parseConfig(search: URLSearchParams): HamperConfig | null {
       const variantKey = `${pA}:${vA}`;
       const variantId = VARIANT_ALIAS_REVERSE[variantKey] ?? vA;
       const qty = Math.max(1, Math.min(50, Number(qA) || 1));
-      items.push({ productId, variantId, qtyPerHamper: qty });
+      const baseLine = `${productId}:${variantId}`;
+      const lineId = seenCombos.has(baseLine) ? `${baseLine}:${++dupSuffix}` : baseLine;
+      seenCombos.add(baseLine);
+      items.push({ lineId, productId, variantId, qtyPerHamper: qty });
     }
   }
 

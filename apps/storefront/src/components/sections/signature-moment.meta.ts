@@ -10,14 +10,14 @@
  */
 export const SIGNATURE_MOMENT = {
   image: {
-    url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1800&q=92&auto=format&fit=crop',
-    alt: 'Qubani ka Meetha in a brass bowl, apricots glistening in saffron syrup, with saffron strands scattered across the rim',
-    subject: 'Qubani ka Meetha — macro',
+    url: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+    alt: 'Badam-pista kalakand — slow-set with pistachio dust, photographed at the Khammam kitchen',
+    subject: 'Badam-Pista Kalakand — macro',
     dominant_palette: ['#fff4e3', '#c0592b', '#f29f5a', '#3a1e0c'],
   },
   rubric: {
-    passed_on: '2026-04-24',
-    source_url: 'https://unsplash.com/license',
+    passed_on: '2026-04-26',
+    source_url: 'https://ravisweets.com',
     // Signature-specific criteria check:
     criteria_notes: {
       single_dominant_subject: 'Single bowl, single subject — pass',

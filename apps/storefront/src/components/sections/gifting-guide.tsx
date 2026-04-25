@@ -14,8 +14,9 @@ const PERSONAS = [
     body: 'Silk-wrapped hampers, brass tags, and a signature paisley seal. Priority list opens in September.',
     href: '/festivals/diwali',
     image:
-      'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=1200&q=85&auto=format&fit=crop',
+      'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
     accent: '#e9ad4a',
+    bg: 'linear-gradient(135deg, #2a1505 0%, #4a2a08 60%, #6a3a10 100%)',
   },
   {
     slug: 'weddings',
@@ -24,8 +25,9 @@ const PERSONAS = [
     body: 'Custom trousseau boxes, bulk sangeet favours, and personalised name-cards. Minimum 50 units.',
     href: '/corporate#enquiry',
     image:
-      'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1200&q=85&auto=format&fit=crop',
+      'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
     accent: '#c0592b',
+    bg: 'linear-gradient(135deg, #1a0606 0%, #4a1a10 60%, #7a2c1e 100%)',
   },
   {
     slug: 'corporate',
@@ -34,8 +36,9 @@ const PERSONAS = [
     body: 'Logo-printed packaging, multi-address CSV dispatch, GST-compliant invoices. One account manager per order.',
     href: '/corporate',
     image:
-      'https://images.unsplash.com/photo-1631206753348-db44968fd440?w=1200&q=85&auto=format&fit=crop',
-    accent: '#8a6a2e',
+      'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
+    accent: '#d6c796',
+    bg: 'linear-gradient(135deg, #1a1408 0%, #2c220e 60%, #4a3c20 100%)',
   },
 ];
 
@@ -67,33 +70,29 @@ export function GiftingGuide() {
             key={p.slug}
             href={p.href}
             className="group relative flex min-h-[24rem] flex-col overflow-hidden rounded-[1.75rem] text-white shadow-lifted ring-1 ring-[color:var(--color-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+            style={{ background: p.bg }}
           >
-            <Parallax offset={i === 1 ? 28 : 18} className="absolute inset-0">
+            {/* Brass radial glow */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse at 70% 30%, ${p.accent}33 0%, transparent 60%)`,
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Floating cutout PNG, top-right */}
+            <Parallax offset={i === 1 ? 28 : 18} className="absolute -right-8 -top-8 h-56 w-56">
               <div className="relative h-full w-full">
                 <Image
                   src={p.image}
                   alt=""
                   fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  sizes="240px"
+                  className="object-contain opacity-90 drop-shadow-[0_30px_40px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:rotate-3"
                 />
               </div>
             </Parallax>
-            {/* Legibility gradient */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(180deg, rgba(15,10,5,0.1) 0%, rgba(15,10,5,0.55) 60%, rgba(15,10,5,0.8) 100%)',
-              }}
-              aria-hidden="true"
-            />
-            {/* Coloured tinted wash on hover */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-0 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-60"
-              style={{ backgroundColor: p.accent }}
-              aria-hidden="true"
-            />
 
             <div className="relative z-10 mt-auto flex flex-col gap-2 p-6">
               <p
@@ -109,14 +108,6 @@ export function GiftingGuide() {
                 Explore
                 <ArrowRight className="h-3 w-3" aria-hidden="true" />
               </div>
-            </div>
-
-            {/* Dev watermark */}
-            <div
-              className="absolute right-3 top-3 z-10 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur"
-              aria-label="Placeholder image — dev only"
-            >
-              Dev only
             </div>
           </Link>
         ))}

@@ -52,11 +52,16 @@ const PILLARS = [
   },
 ];
 
+// Real Ravi Sweets product photography — kept on a warm gradient backdrop in
+// the hero/quote sections so the cutout PNGs read as editorial stills.
 const PORTRAIT =
-  'https://images.unsplash.com/photo-1606491048802-8342506d6471?w=1400&q=90&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
 
 const KITCHEN =
-  'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1400&q=90&auto=format&fit=crop';
+  'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png';
+
+const PORTRAIT_BACKDROP =
+  'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 60%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 25%, var(--theme-base)) 50%, var(--theme-base) 90%)';
 
 export default function AboutPage() {
   return (
@@ -94,30 +99,22 @@ export default function AboutPage() {
             </Reveal>
           </div>
           <Parallax offset={30}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+            <div
+              className="relative aspect-[4/5] overflow-hidden rounded-[2rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+              style={{ background: PORTRAIT_BACKDROP }}
+            >
               <Image
                 src={PORTRAIT}
-                alt="Hands preparing traditional Telangana sweets in our Khammam kitchen"
+                alt="Premium Kaju Katli — slow-cooked in our Khammam kitchen"
                 fill
                 priority
                 fetchPriority="high"
                 sizes="(min-width: 768px) 460px, 90vw"
-                className="object-cover"
-              />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 55%, transparent) 0%, transparent 45%)',
-                }}
-                aria-hidden="true"
+                className="object-contain drop-shadow-[0_30px_40px_rgba(60,30,5,0.22)]"
               />
               <Grain />
-              <div className="absolute bottom-4 left-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/85">
-                The kitchen, every morning
-              </div>
-              <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                Dev only
+              <div className="pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+                Kaju Katli · Khammam kitchen
               </div>
             </div>
           </Parallax>
@@ -166,15 +163,21 @@ export default function AboutPage() {
       >
         <div className="container-site grid gap-10 py-20 md:grid-cols-2 md:items-center">
           <Parallax offset={40}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+            <div
+              className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+              style={{ background: PORTRAIT_BACKDROP }}
+            >
               <Image
                 src={KITCHEN}
-                alt="Almonds being roasted in small trays"
+                alt="Boondi Laddu — saffron pearls dropped one ladle at a time"
                 fill
                 sizes="(min-width: 768px) 420px, 90vw"
-                className="object-cover"
+                className="object-contain drop-shadow-[0_24px_32px_rgba(60,30,5,0.2)]"
               />
               <Grain />
+              <div className="pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+                Boondi Laddu · made fresh each morning
+              </div>
             </div>
           </Parallax>
           <div>

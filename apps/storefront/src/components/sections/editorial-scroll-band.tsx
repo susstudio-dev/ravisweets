@@ -15,55 +15,92 @@ interface Frame {
   body: string;
   image: string;
   alt: string;
+  /** Where this frame's CTA points — usually the matching product detail page. */
+  shopHref: string;
+  shopLabel: string;
+  /** Two-stop palette per frame so each card has its own warmth. */
+  bgFrom: string;
+  bgTo: string;
 }
 
+/**
+ * Five frames, all real Ravi Sweets product photography. Hot-linked from
+ * ravisweets.com (allowed in next.config remotePatterns). The PNGs are
+ * background-removed product cutouts; we present them on a warm radial
+ * gradient inside each frame so they read as still-life mithai stills,
+ * not catalogue thumbnails.
+ */
 const FRAMES: Frame[] = [
   {
-    key: 'copper',
-    eyebrow: '01 · Copper',
-    title: 'We still reduce rabri by hand.',
-    body: 'Four hours over a low flame, stirred clockwise so the milk catches at the sides and gives up its caramel.',
-    image:
-      'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1600&q=85&auto=format&fit=crop',
-    alt: 'Hands stirring a reduction in a copper pan',
+    key: 'pan',
+    eyebrow: '01 · The pan',
+    title: 'Kova, reduced for hours.',
+    body:
+      'Full-fat milk over a low flame, stirred clockwise until it gives up its caramel. The Chitti Kova in our gift boxes still starts here — never a shortcut, never a thickener.',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/chitti_kova-removebg-preview.png',
+    alt: 'Slabs of fresh Chitti Kova still warm from the pan',
+    shopHref: '/category/sweets',
+    shopLabel: 'Shop sweets',
+    bgFrom: '#f4d68a',
+    bgTo: '#fdf6ec',
   },
   {
-    key: 'apricots',
-    eyebrow: '02 · Apricots',
-    title: 'Qubani gets its own time.',
-    body: 'We soak the dried apricots overnight before reducing them in their own syrup — no added water, no shortcuts.',
-    image:
-      'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1600&q=85&auto=format&fit=crop',
-    alt: 'Dried apricots in a bowl, waiting to be cooked',
+    key: 'soak',
+    eyebrow: '02 · The soak',
+    title: 'Some things take overnight.',
+    body:
+      'Anjeer, badam, kaju — laid down in their own bowls the evening before, so the Anjeer Katli the next morning slices clean and the cashew gives up its sweetness.',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
+    alt: 'Anjeer Katli pieces with whole figs and almonds visible at the edge',
+    shopHref: '/category/dry-fruits',
+    shopLabel: 'Shop dry-fruit sweets',
+    bgFrom: '#e9b87a',
+    bgTo: '#fdf3df',
   },
   {
-    key: 'silver',
-    eyebrow: '03 · Silver leaf',
-    title: 'Laid on, one diamond at a time.',
-    body: 'Edible silver leaf is the last touch. It lifts on a breath. Two people, two pairs of tweezers, a quiet hour.',
-    image:
-      'https://images.unsplash.com/photo-1631206753348-db44968fd440?w=1600&q=85&auto=format&fit=crop',
-    alt: 'Silver leaf being placed on Kaju Katli diamonds',
+    key: 'finish',
+    eyebrow: '03 · The finish',
+    title: 'Silver leaf, placed by breath.',
+    body:
+      'The last act on a tray of Kaju Katli is varak — edible silver leaf, lifted with two pairs of tweezers in a quiet hour. It catches the light differently every box.',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    alt: 'Premium Kaju Katli diamonds finished with edible silver leaf',
+    shopHref: '/product/kaju-katli',
+    shopLabel: 'Shop Kaju Katli',
+    bgFrom: '#d6c796',
+    bgTo: '#f8f4ea',
   },
   {
-    key: 'almonds',
-    eyebrow: '04 · Almonds',
-    title: 'Roasted in trays, never machines.',
-    body: 'A small tray, a low oven, and a minute’s flip. Industrial roasters scorch one side; ours come out even.',
-    image:
-      'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1600&q=85&auto=format&fit=crop',
-    alt: 'Almonds spread across a roasting tray',
+    key: 'fry',
+    eyebrow: '04 · The fry',
+    title: 'Boondi, one bowl at a time.',
+    body:
+      'Saffron-gold pearls dropped through a brass jhara into hot ghee — a single ladleful, never a vat. The Boondi Laddu we tie up in the afternoon starts as 200,000 of these.',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
+    alt: 'Boondi Laddu spheres, saffron pearls visible across the surface',
+    shopHref: '/product/motichoor-ladoo',
+    shopLabel: 'Shop ladoos',
+    bgFrom: '#ecb562',
+    bgTo: '#fff3d6',
   },
   {
     key: 'pack',
-    eyebrow: '05 · Pack',
+    eyebrow: '05 · The pack',
     title: 'Boxed the morning they ship.',
-    body: 'Every hamper leaves with a date stamp and a paisley tag, sealed by hand. Two pairs of eyes before the lid closes.',
-    image:
-      'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=1600&q=85&auto=format&fit=crop',
-    alt: 'A wrapped gift hamper on the packing table',
+    body:
+      'From the Khammam counter or the Kondapur branch, every hamper leaves with a date stamp and a paisley tag — sealed by hand, two pairs of eyes before the lid closes.',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/besan_laddu-removebg-preview.png',
+    alt: 'Soft Besan Laddu rounds laid out for the gift box',
+    shopHref: '/category/gift-hampers',
+    shopLabel: 'Shop gift hampers',
+    bgFrom: '#d6a85c',
+    bgTo: '#faf2dc',
   },
 ];
+
+function frameBackdrop(f: Frame): string {
+  return `radial-gradient(ellipse at 35% 30%, ${f.bgFrom} 0%, ${f.bgTo} 75%)`;
+}
 
 export function EditorialScrollBand() {
   const ref = useRef<HTMLElement>(null);
@@ -107,24 +144,30 @@ export function EditorialScrollBand() {
               key={f.key}
               className="flex w-[88vw] shrink-0 snap-center flex-col gap-3 px-4"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-soft ring-1 ring-[color:var(--color-border)]">
+              <div
+                className="relative aspect-[4/5] overflow-hidden rounded-2xl p-6 shadow-soft ring-1 ring-[color:var(--color-border)]"
+                style={{ background: frameBackdrop(f) }}
+              >
                 <Image
                   src={f.image}
                   alt={f.alt}
                   fill
                   sizes="88vw"
-                  className="object-cover"
+                  className="object-contain p-4 drop-shadow-[0_18px_24px_rgba(60,30,5,0.18)]"
                 />
                 <Grain />
-                <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                  Dev only
-                </div>
               </div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
                 {f.eyebrow}
               </p>
               <h3 className="font-display text-xl font-semibold text-theme-ink">{f.title}</h3>
               <p className="text-sm leading-relaxed text-theme-ink/75">{f.body}</p>
+              <a
+                href={f.shopHref}
+                className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-theme-accent hover:underline"
+              >
+                {f.shopLabel} →
+              </a>
             </article>
           ))}
         </div>
@@ -165,8 +208,18 @@ export function EditorialScrollBand() {
             <div className="container-site mt-10 grid grid-cols-1 gap-8 pb-16">
               {FRAMES.map((f) => (
                 <article key={f.key} className="grid gap-4 md:grid-cols-[1fr_1.2fr]">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-soft">
-                    <Image src={f.image} alt={f.alt} fill sizes="50vw" className="object-cover" />
+                  <div
+                    className="relative aspect-[4/5] overflow-hidden rounded-2xl p-8 shadow-soft ring-1 ring-[color:var(--color-border)]"
+                    style={{ background: frameBackdrop(f) }}
+                  >
+                    <Image
+                      src={f.image}
+                      alt={f.alt}
+                      fill
+                      sizes="50vw"
+                      className="object-contain drop-shadow-[0_24px_32px_rgba(60,30,5,0.2)]"
+                    />
+                    <Grain />
                   </div>
                   <div className="flex flex-col justify-center gap-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
@@ -186,41 +239,59 @@ export function EditorialScrollBand() {
                 className="flex h-full gap-8 pl-[max(1rem,calc((100vw-1200px)/2))] pr-8"
                 style={{ x, width: `${FRAMES.length * 100}%` }}
               >
-                {FRAMES.map((f) => (
+                {FRAMES.map((f, i) => (
                   <article
                     key={f.key}
-                    className="flex h-full w-full max-w-[92vw] shrink-0 items-center gap-10"
+                    className="flex h-full w-full max-w-[92vw] shrink-0 items-center gap-12"
                     style={{ flex: `0 0 ${100 / FRAMES.length}%` }}
                   >
-                    <div className="relative aspect-[4/5] w-[36vw] max-w-[560px] shrink-0 overflow-hidden rounded-[1.75rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+                    <div
+                      className="relative aspect-[4/5] w-[32vw] max-w-[480px] shrink-0 overflow-hidden rounded-[1.75rem] p-10 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+                      style={{ background: frameBackdrop(f) }}
+                    >
                       <Image
                         src={f.image}
                         alt={f.alt}
                         fill
-                        sizes="560px"
-                        className="object-cover"
-                      />
-                      <div
-                        className="pointer-events-none absolute inset-0"
-                        style={{
-                          background:
-                            'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 40%, transparent) 0%, transparent 50%)',
-                        }}
-                        aria-hidden="true"
+                        sizes="480px"
+                        className="object-contain drop-shadow-[0_30px_40px_rgba(60,30,5,0.22)]"
                       />
                       <Grain />
-                      <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                        Dev only
+                      {/* Big step numeral, bottom-right of the still — anchors the eye */}
+                      <span
+                        className="pointer-events-none absolute -bottom-3 -right-1 select-none font-display text-[14rem] font-bold leading-none text-theme-ink/[0.08]"
+                        aria-hidden="true"
+                      >
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="pointer-events-none absolute bottom-4 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+                        Photographed at our Khammam kitchen
                       </div>
                     </div>
-                    <div className="flex max-w-lg flex-col gap-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-                        {f.eyebrow}
+                    <div className="flex max-w-xl flex-col gap-4">
+                      <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+                        <span
+                          className="flex h-7 w-7 items-center justify-center rounded-full font-mono"
+                          style={{
+                            backgroundColor: f.bgFrom,
+                            color: '#2a1505',
+                          }}
+                        >
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        {f.eyebrow.split('·')[1]?.trim() ?? f.eyebrow}
                       </p>
                       <h3 className="font-display text-display-md font-semibold leading-[1.05] text-theme-ink">
                         {f.title}
                       </h3>
                       <p className="text-lg leading-relaxed text-theme-ink/75">{f.body}</p>
+                      <a
+                        href={f.shopHref}
+                        className="group mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-theme-ink px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+                      >
+                        {f.shopLabel}
+                        <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+                      </a>
                     </div>
                   </article>
                 ))}

@@ -76,6 +76,14 @@ export function tierFor(totalUnits: number): Tier {
 }
 
 export interface HamperItem {
+  /**
+   * Stable identifier for this canvas line. Survives variant swaps so motion
+   * layoutIds keep morphing the same card. Format: `${productId}:${variantId}:${rand}`
+   * or `${productId}:${variantId}` for template-seeded items. Two lines may share
+   * (productId, variantId) only as a transient artefact of v1 URL parsing; runtime
+   * dedup collapses them on next interaction.
+   */
+  lineId: string;
   /** Product id (from catalogue). */
   productId: string;
   /** Variant id within the product. */

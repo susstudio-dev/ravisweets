@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, ShoppingBag, Sparkles } from 'lucide-react';
+import { Check, Minus, Plus, ShoppingBag, Sparkles } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
@@ -12,6 +12,8 @@ interface AddToCartProps {
   productId: string;
   variantId: string;
   disabled?: boolean;
+  /** Cap the stepper. Defaults to 99 — we don't expose stock_available here yet. */
+  maxQty?: number;
 }
 
 type State = 'idle' | 'pending' | 'success' | 'error';
@@ -21,8 +23,9 @@ type State = 'idle' | 'pending' | 'success' | 'error';
  * No real cart wiring yet — simulates the network call so the animation can be reviewed.
  * Replace simulateAdd() with a real API call once the Medusa backend is wired.
  */
-export function AddToCart({ productId, variantId, disabled }: AddToCartProps) {
+export function AddToCart({ productId, variantId, disabled, maxQty = 99 }: AddToCartProps) {
   const [state, setState] = useState<State>('idle');
+  const [qty, setQty] = useState(1);
   const [toastKey, setToastKey] = useState(0);
   const [, startTransition] = useTransition();
   const reduced = useReducedMotion();
@@ -36,7 +39,7 @@ export function AddToCart({ productId, variantId, disabled }: AddToCartProps) {
         // Simulated latency so the pending state is visible. When real cart
         // backend lands, replace with the API call and surface real errors.
         await new Promise((r) => setTimeout(r, 320));
-        add(productId, variantId, 1);
+        add(productId, variantId, qty);
         setState('success');
         setToastKey((k) => k + 1);
         window.setTimeout(() => setState('idle'), 2400);
@@ -59,7 +62,45 @@ export function AddToCart({ productId, variantId, disabled }: AddToCartProps) {
       : 'Add to cart';
 
   return (
-    <div className="relative flex items-center gap-3">
+    <div className="relative flex flex-wrap items-center gap-3">
+      {/* Quantity stepper */}
+      <div
+        className="inline-flex items-center rounded-full border border-[color:var(--color-border)] bg-surface-elevated p-1"
+        role="group"
+        aria-label="Quantity"
+      >
+        <button
+          type="button"
+          onClick={() => setQty((q) => Math.max(1, q - 1))}
+          disabled={disabled || qty <= 1}
+          aria-label="Decrease quantity"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+        >
+          <Minus className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <input
+          type="number"
+          min={1}
+          max={maxQty}
+          value={qty}
+          onChange={(e) => {
+            const n = Number(e.target.value);
+            if (Number.isFinite(n)) setQty(Math.min(maxQty, Math.max(1, Math.floor(n))));
+          }}
+          aria-label="Quantity"
+          className="w-12 bg-transparent text-center text-sm font-semibold tabular-nums text-theme-ink outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+        <button
+          type="button"
+          onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+          disabled={disabled || qty >= maxQty}
+          aria-label="Increase quantity"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+        >
+          <Plus className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+
       <button
         type="button"
         onClick={handleClick}

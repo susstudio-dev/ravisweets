@@ -3,8 +3,11 @@ import type { ReactNode } from 'react';
 import { Fraunces, Inter, Tiro_Telugu } from 'next/font/google';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
+import { SweetCursor } from '@/components/cursor/sweet-cursor';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
+import { CouponsProvider } from '@/lib/coupons/context';
+import { SupabaseProvider } from '@/lib/supabase/session-context';
 import { DemoSeed } from '@/components/demo-seed';
 import './globals.css';
 
@@ -74,17 +77,22 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <CartProvider>
-          <LayoutGroup>
-            <DemoSeed />
-            <Header />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            {modal}
-          </LayoutGroup>
-        </CartProvider>
+        <SupabaseProvider>
+          <CartProvider>
+            <CouponsProvider>
+              <LayoutGroup>
+                <DemoSeed />
+                <Header />
+                <main id="main" className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+                <SweetCursor />
+                {modal}
+              </LayoutGroup>
+            </CouponsProvider>
+          </CartProvider>
+        </SupabaseProvider>
       </body>
     </html>
   );

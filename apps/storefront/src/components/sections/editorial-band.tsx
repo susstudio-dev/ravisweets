@@ -60,43 +60,41 @@ export function EditorialBand({
       ref={ref}
       aria-label={headline}
       className="relative isolate overflow-hidden"
+      style={{
+        background:
+          'radial-gradient(ellipse at 80% 30%, #5a3010 0%, #2a1505 55%, #150a02 100%)',
+      }}
     >
-      {/* Background image with parallax */}
+      {/* Background product accent — a brand-tinted PNG contained on the right.
+          Dropped to opacity-70 + blur so the foreground type wins, but the warm
+          glow of the sweet still anchors the panel. */}
       <motion.div
         style={reduced ? undefined : { y: bgY, scale: bgScale }}
-        className="absolute inset-0"
+        className="pointer-events-none absolute -right-10 top-1/2 hidden h-[110%] w-[55%] -translate-y-1/2 md:block"
       >
         <Image
           src={image}
           alt={imageAlt}
           fill
-          sizes="100vw"
-          className="object-cover"
+          sizes="55vw"
+          className="object-contain opacity-70 mix-blend-screen drop-shadow-[0_40px_60px_rgba(242,198,111,0.25)]"
         />
       </motion.div>
-      {/* Dark gradient overlay for legibility */}
+      {/* Soft brass radial glow behind the product */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute right-0 top-0 h-full w-1/2"
         style={{
           background:
-            'linear-gradient(180deg, rgba(15,10,5,0.35) 0%, rgba(15,10,5,0.65) 60%, rgba(15,10,5,0.85) 100%)',
+            'radial-gradient(ellipse at 70% 50%, rgba(242,198,111,0.18) 0%, transparent 60%)',
         }}
         aria-hidden="true"
       />
       <Grain />
 
-      {/* Dev-only watermark */}
-      <div
-        className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur"
-        aria-label="Placeholder image — dev only"
-      >
-        Dev only
-      </div>
-
       {/* Foreground content */}
       <motion.div
         style={reduced ? undefined : { y: textY }}
-        className={`container-site relative z-10 flex min-h-[70vh] flex-col justify-center gap-5 py-28 md:min-h-[80vh] md:py-36 ${alignCls}`}
+        className={`container-site relative z-10 flex min-h-[60vh] flex-col justify-center gap-5 py-24 md:min-h-[70vh] md:py-32 ${alignCls}`}
       >
         <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] ${align !== 'center' ? '' : 'justify-center'}`}>
           <Paisley size="sm" color="#f2c66f" />
@@ -107,7 +105,7 @@ export function EditorialBand({
           text={headline}
           split="word"
           gap={60}
-          className="max-w-4xl font-display text-display-lg font-semibold leading-[1.02] text-[#fdf6ec] md:text-display-xl"
+          className="max-w-3xl font-display text-display-lg font-semibold leading-[1.02] text-[#fdf6ec] md:text-display-xl"
         />
         <p className="max-w-2xl text-[#fdf6ec]/85 md:text-lg">{body}</p>
         <Link

@@ -89,7 +89,7 @@ export function FlavourAtlas() {
               className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
             >
               Hover a sweet.{' '}
-              <span className="italic text-theme-accent">Watch the page take on its flavour.</span>
+              <span className="italic text-theme-accent">Watch our accents take on its flavour.</span>
             </h2>
           </div>
         </Reveal>
@@ -97,7 +97,7 @@ export function FlavourAtlas() {
           <p className="text-theme-ink/70 md:text-lg">
             {reduced
               ? 'Each sweet carries its own palette — saffron amber for Qubani, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. (Motion reduced for you.)'
-              : 'Each sweet carries its own palette — saffron amber for Qubani, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. The entire page retunes around the flavour you choose.'}
+              : 'Each sweet carries its own palette — saffron amber for Qubani, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. Hover one and the accent colour, paisleys, and call-to-actions retune around it. Move away to return to the house tone.'}
           </p>
         </Reveal>
       </div>
@@ -115,7 +115,14 @@ export function FlavourAtlas() {
               type="button"
               onPointerEnter={() => onEnter(f)}
               onFocus={() => onEnter(f)}
-              className="group relative flex items-center gap-3 overflow-hidden rounded-full border border-[color:var(--color-border)] bg-surface-elevated px-5 py-3 text-sm font-medium text-theme-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+              className="group relative flex items-center gap-3 overflow-hidden rounded-full border-2 px-5 py-3 text-sm font-medium text-theme-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+              style={{
+                borderColor: isActive ? f.palette.accent : 'var(--color-border)',
+                background: isActive
+                  ? `linear-gradient(135deg, color-mix(in oklab, ${f.palette.glow} 18%, var(--surface-elevated)), var(--surface-elevated))`
+                  : 'var(--surface-elevated)',
+                boxShadow: isActive ? `0 8px 28px -10px ${f.palette.accent}66` : undefined,
+              }}
               aria-pressed={isActive}
             >
               <span

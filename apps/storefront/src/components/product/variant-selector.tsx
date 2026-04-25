@@ -52,7 +52,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
       {product.variants.length > 1 && (
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
-            Size
+            {product.unit_mode === 'quantity' ? 'Pack' : 'Size'}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.variants.map((v) => {
@@ -103,6 +103,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
         productId={product.id}
         variantId={active.id}
         disabled={outOfStock}
+        maxQty={Math.max(1, active.stock_available)}
       />
     </div>
   );

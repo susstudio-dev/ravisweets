@@ -7,6 +7,10 @@ import { ArrowLeft, ArrowRight, Check, Lock, ShoppingBag } from 'lucide-react';
 import { useMemo, useState, useTransition } from 'react';
 import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
+import { useCoupons } from '@/lib/coupons/context';
+import { useSession } from '@/lib/supabase/session-context';
+import { commitOrderToSupabase } from '@/lib/supabase/orders';
+import { AuthModal } from '@/components/auth/auth-modal';
 import { generateOrderId, generateOrderNumber, saveOrder } from '@/lib/orders/store';
 import type { Order, OrderAddress, PaymentMethod } from '@/lib/orders/types';
 import { Paisley } from '@/components/brand/paisley';
@@ -44,17 +48,29 @@ export function CheckoutFlow() {
   const router = useRouter();
   const reduced = useReducedMotion();
   const { lineViews, lineCount, subtotal, clear } = useCart();
+  const {
+    applied: appliedCoupons,
+    totalDiscount,
+    freeShipping,
+    primaryCode,
+    clear: clearCoupons,
+  } = useCoupons();
+  const { configured: authConfigured, user, isAnonymous } = useSession();
   const [step, setStep] = useState<Step>('address');
   const [address, setAddress] = useState<OrderAddress>(emptyAddress());
   const [payment, setPayment] = useState<PaymentMethod>('upi');
   const [errors, setErrors] = useState<Partial<Record<keyof OrderAddress, string>>>({});
   const [placing, startPlacing] = useTransition();
+  const [authOpen, setAuthOpen] = useState(false);
 
   const stepIndex = STEP_ORDER.indexOf(step);
-  const shippingEstimate = lineCount === 0 ? 0 : 99;
+  const shippingEstimate = lineCount === 0 ? 0 : freeShipping ? 0 : 99;
   const grandTotal = useMemo(
-    () => ({ amount: subtotal.amount + shippingEstimate, currency: subtotal.currency }),
-    [subtotal, shippingEstimate],
+    () => ({
+      amount: Math.max(0, subtotal.amount - totalDiscount + shippingEstimate),
+      currency: subtotal.currency,
+    }),
+    [subtotal, shippingEstimate, totalDiscount],
   );
 
   function validateAddress(): boolean {
@@ -85,6 +101,14 @@ export function CheckoutFlow() {
   }
 
   function placeOrder() {
+    // Anonymous-then-claim: when Supabase is configured, require a real
+    // identity (phone OTP, email OTP, or password) before order commit.
+    // When not configured, the storefront falls back to localStorage-only
+    // and orders are written under the demo identity.
+    if (authConfigured && (!user || isAnonymous)) {
+      setAuthOpen(true);
+      return;
+    }
     startPlacing(async () => {
       // Simulated payment latency — real Razorpay/Stripe flow replaces this.
       await new Promise((r) => setTimeout(r, 900));
@@ -112,8 +136,25 @@ export function CheckoutFlow() {
         shipping: { amount: shippingEstimate, currency: subtotal.currency },
         total: grandTotal,
       };
+      // Always mirror to localStorage (so /orders pages and /account work
+      // immediately + survive Supabase outages). When Supabase is configured,
+      // also commit the row server-side under the customer's auth.uid().
       saveOrder(order);
+      if (authConfigured) {
+        const result = await commitOrderToSupabase({
+          order,
+          discount: totalDiscount,
+          primaryCouponCode: primaryCode,
+          redeemedCouponCodes: appliedCoupons.map((a) => a.coupon.code),
+        });
+        if (!result.ok) {
+          // Non-fatal: localStorage write succeeded; warn for debugging.
+
+          console.warn('Supabase order commit failed:', result.reason);
+        }
+      }
       clear();
+      clearCoupons();
       router.push(`/orders?id=${id}`);
     });
   }
@@ -488,8 +529,18 @@ export function CheckoutFlow() {
               <dt className="text-theme-ink/70">Subtotal</dt>
               <dd className="tabular-nums text-theme-ink">{formatMoney(subtotal)}</dd>
             </div>
+            {totalDiscount > 0 && (
+              <div className="flex items-center justify-between">
+                <dt className="text-theme-ink/70">
+                  Discount{primaryCode ? ` · ${primaryCode}` : ''}
+                </dt>
+                <dd className="tabular-nums text-emerald-700">
+                  −{formatMoney({ amount: totalDiscount, currency: subtotal.currency })}
+                </dd>
+              </div>
+            )}
             <div className="flex items-center justify-between">
-              <dt className="text-theme-ink/70">Shipping</dt>
+              <dt className="text-theme-ink/70">Shipping{freeShipping ? ' · free' : ''}</dt>
               <dd className="tabular-nums text-theme-ink">
                 {formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
               </dd>
@@ -507,6 +558,16 @@ export function CheckoutFlow() {
           </dl>
         </div>
       </aside>
+
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onSuccess={() => {
+          setAuthOpen(false);
+          // Re-trigger placeOrder once the new identity is in session.
+          window.setTimeout(placeOrder, 200);
+        }}
+      />
     </section>
   );
 }

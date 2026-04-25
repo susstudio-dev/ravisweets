@@ -51,13 +51,49 @@ const CATEGORY_META: Record<
     eyebrow: 'By season',
     body: "Diwali, Raksha Bandhan, Eid, and more — curated runs that open when the festival does, and close when it's over.",
   },
+  savouries: {
+    title: 'Savouries',
+    eyebrow: 'Andhra-style chai-time',
+    body: 'Chegodilu, Janthikalu, Karapusa, Murukulu — Andhra savoury classics fried in cold-pressed oil, sealed the same day.',
+  },
+  'sweet-bites': {
+    title: 'Sweet Bites',
+    eyebrow: 'Small-batch flavour',
+    body: 'Single-bite mithai in twelve flavours — kaju, kesar, mango, butterscotch and more. The pick-and-choose box.',
+  },
+  pickles: {
+    title: 'Pickles',
+    eyebrow: 'Andhra-style achaar',
+    body: 'Gongura, allam, chintakaya, mamidikaya — small-batch Andhra pickles in cold-pressed sesame oil.',
+  },
+  powders: {
+    title: 'Podis & Powders',
+    eyebrow: 'South Indian rice mixes',
+    body: 'Karam podi, kandi podi, sambar podi — fresh-ground in small batches so the aroma is still alive when the bag opens.',
+  },
+  biscuits: {
+    title: 'Biscuits',
+    eyebrow: 'Bakery',
+    body: 'House-baked biscuits with no preservatives or raising agents. Vegan, butter-rich, chai-friendly.',
+  },
+  'healthy-sweets': {
+    title: 'Healthy Sweets',
+    eyebrow: 'Laddu range',
+    body: 'Booster, Gondh, Millet, Protein, Nuvvula laddus — sugar-free and ingredient-led. The new-mother / gym-bag / school-tiffin range.',
+  },
 };
 
 const ALL_SLUGS: CategorySlug[] = [
   'hyderabadi-specials',
   'sweets',
+  'sweet-bites',
+  'healthy-sweets',
   'namkeens',
+  'savouries',
   'dry-fruits',
+  'pickles',
+  'powders',
+  'biscuits',
   'combos',
   'gift-hampers',
   'festival-specials',

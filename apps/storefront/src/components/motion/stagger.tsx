@@ -22,7 +22,11 @@ export function Stagger({
   initialDelay = 0,
   direction = 'up',
   distance = 14,
-  amount = 0.15,
+  // 0 means "trigger as soon as ANY pixel of the container enters the viewport".
+  // Critical for huge grids (e.g. /shop with 80+ cards) where a 0.15 amount means
+  // ~1200 px of the container must be in view before children start animating —
+  // which never happens above the fold and looks like a blank page.
+  amount = 0,
   className,
   as = 'div',
 }: StaggerProps) {

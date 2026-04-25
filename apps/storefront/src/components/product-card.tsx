@@ -2,19 +2,31 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { usePathname } from 'next/navigation';
+import { Check, Plus } from 'lucide-react';
+import { useState, useTransition } from 'react';
 import { formatMoney, type Product } from '@ravisweets/shared';
 import { HoverLift } from '@/components/motion/hover-lift';
 import { CursorGlow } from '@/components/motion/cursor-glow';
 import { Paisley } from '@/components/brand/paisley';
+import { useCart } from '@/lib/cart/cart-context';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
-export function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: Product;
+  /** Show a quick-add button on the card (e.g. on home / shop / category grids). */
+  quickAdd?: boolean;
+}
+
+export function ProductCard({ product, quickAdd }: ProductCardProps) {
   const primaryImage = product.images[0];
   const primaryVariant = product.variants[0];
   const pathname = usePathname();
   const reduced = useReducedMotion();
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const [, startTransition] = useTransition();
 
   if (!primaryImage || !primaryVariant) return null;
 
@@ -82,14 +94,53 @@ export function ProductCard({ product }: { product: Product }) {
               {product.title}
             </h3>
             <p className="line-clamp-2 text-sm text-theme-ink/70">{product.description}</p>
-            <div className="mt-auto flex items-baseline justify-between pt-3">
-              <span
-                className="font-display text-lg font-semibold"
-                style={{ color: theme_palette.accent }}
-              >
-                {formatMoney(primaryVariant.price)}
-              </span>
-              <span className="text-xs text-theme-ink/60">{primaryVariant.title}</span>
+            <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+              <div className="flex flex-col">
+                <span
+                  className="font-display text-lg font-semibold"
+                  style={{ color: theme_palette.accent }}
+                >
+                  {formatMoney(primaryVariant.price)}
+                </span>
+                <span className="text-xs text-theme-ink/60">{primaryVariant.title}</span>
+              </div>
+              {quickAdd && (
+                <button
+                  type="button"
+                  aria-label={`Add ${product.title} to cart`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (added) return;
+                    startTransition(() => {
+                      add(product.id, primaryVariant.id, 1);
+                      setAdded(true);
+                      window.setTimeout(() => setAdded(false), 1800);
+                    });
+                  }}
+                  className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{
+                    backgroundColor: added ? '#15803d' : theme_palette.accent,
+                  }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={added ? 'added' : 'add'}
+                      initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+                      animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+                      exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex"
+                    >
+                      {added ? (
+                        <Check className="h-4 w-4" aria-hidden="true" />
+                      ) : (
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
+                </button>
+              )}
             </div>
           </div>
           {/* Theme-glow ring on hover */}
