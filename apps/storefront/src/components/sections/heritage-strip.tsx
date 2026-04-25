@@ -23,7 +23,7 @@ export function HeritageStrip() {
           <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
             <Image
               src={PORTRAIT}
-              alt="Hands preparing traditional Hyderabadi sweets"
+              alt="Hands preparing traditional Telangana sweets in our Khammam kitchen"
               fill
               sizes="(min-width: 768px) 420px, 90vw"
               className="object-cover"
@@ -62,7 +62,7 @@ export function HeritageStrip() {
               id="heritage-heading"
               className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
             >
-              From the Nizami kitchens,{' '}
+              From a Khammam family kitchen,{' '}
               <span className="italic text-theme-accent">a sweetness that remembers.</span>
             </h2>
           </Reveal>
@@ -70,8 +70,8 @@ export function HeritageStrip() {
             <p className="mt-6 text-lg leading-relaxed text-theme-ink/75">
               For generations our family has stirred rabri in copper, folded almond into sugar-lace,
               and slow-cooked apricots until they gave up their amber. Nothing rushed. Nothing
-              substituted. The Hyderabad in every bite is not a marketing line — it is the only way
-              we know how.
+              substituted. The Telangana sweet tradition in every bite is not a marketing line —
+              it is the only way we know how.
             </p>
           </Reveal>
           <Reveal delay={0.24}>

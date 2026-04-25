@@ -119,7 +119,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A platter worth the long day.',
     eyebrow: 'Eid al-Fitr · 2026',
     body:
-      "Our Hyderabadi roots show brightest here. Double ka Meetha, Qubani, Badam ki Jali — the Nizami table, as it was always meant.",
+      "The Deccan table shines brightest here. Double ka Meetha, Qubani, Badam ki Jali — Hyderabadi classics, plated the slow way in our Khammam kitchen.",
     date: '2026-03-30T00:00:00+05:30',
     heroImage:
       'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1800&q=90&auto=format&fit=crop',
@@ -134,7 +134,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
       {
         icon: Gift,
         title: 'For family',
-        body: 'The full Hyderabadi spread in a single box — hand-delivered in Hyderabad.',
+        body: 'The full Hyderabadi spread in a single box — hand-shipped across Telangana.',
         href: '/category/hyderabadi-specials',
       },
       {

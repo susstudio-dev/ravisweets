@@ -9,16 +9,14 @@ import type { Product } from '../types/product';
  * at render time) until the production photography shoot lands per the
  * photography-gating requirement in elevate-storefront-visual-experience.
  *
- * Coverage by category (Jan 2026 — 20 total):
+ * Coverage by category (Apr 2026 — 24 total):
  *   hyderabadi-specials    5   (Qubani, Double ka Meetha, Badam ki Jali, Sheer Khurma, Khubani Mithai)
- *   sweets                 3   (Kaju Katli, Gulab Jamun, Motichoor Ladoo)
+ *   sweets                 4   (Kaju Katli, Gulab Jamun, Motichoor Ladoo, Cardamom Soan Papdi)
  *   namkeens               3   (Hyderabadi Mixture, Peanut Chivda, Besan Sev)
  *   dry-fruits             2   (Roasted Almonds, Saffron Pistachios)
- *   combos                 2   (Chai-time Combo, Festival Essentials)
- *   gift-hampers           3   (Diwali Premium, Classic Gifting Box, Corporate Essentials)
- *   festival-specials      2   (Raksha Bandhan Thali, Eid Signature)
- *
- * Expand to 24 by adding: one more sweet, one more dry-fruit, one more gift-hamper, one more namkeen.
+ *   combos                 3   (Chai-time Combo, Festival Essentials, Office Chai Tray)
+ *   gift-hampers           4   (Diwali Premium, Classic Gifting Box, Corporate Essentials, Wedding Trousseau Box)
+ *   festival-specials      3   (Raksha Bandhan Thali, Eid Signature, Pongal Pot Set)
  */
 
 const TODAY = '2026-04-23';
@@ -496,6 +494,96 @@ export const CATALOGUE: Product[] = [
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#fff4e3', accent: '#a56a0f', glow: '#e9ad4a', ink: '#2a1a04', grainOpacity: 0.06 },
     garnish: 'rose',
+    builder_eligible: false, rubric_passed_on: TODAY, source_url: UNSPLASH_LICENCE,
+  },
+
+  // ─── Catalogue expansion (Apr 2026) ─────────────────────────────────────
+  {
+    id: 'p_soan_papdi',
+    slug: 'cardamom-soan-papdi',
+    title: 'Cardamom Soan Papdi',
+    description:
+      'Flaky, ribbon-thin layers of cardamom-scented sugar and gram flour, folded by hand and pressed into a tin. Each square holds together until you bite, then dissolves like spun silk. Made in our Khammam kitchen the morning it ships.',
+    category: 'sweets',
+    dietary_tags: ['eggless', 'nuts', 'dairy', 'contains-ghee'],
+    ingredients: ['Gram flour', 'Sugar', 'Ghee', 'Cardamom', 'Pistachios', 'Almonds'],
+    allergens: ['Nuts', 'Dairy'],
+    storage_instructions: 'Store in a cool, dry place in an airtight tin.',
+    shelf_life_days: 21,
+    images: [
+      { url: unsplash('1605197788044-5c7ecd5e0a9f'), alt: 'Cardamom Soan Papdi squares in a tin, flaky layers visible at the edge', width: 1400, height: 1400 },
+    ],
+    variants: [{ id: 'v_sp_500', title: '500 g tin', weight_grams: 500, price: { amount: 449, currency: 'INR' }, sku: 'RS-SP-500', stock_available: 80, hsn_code: '2106' }],
+    region_availability: ['in'],
+    featured: false, bestseller: false, new: true,
+    theme_palette: { base: '#fbeed0', accent: '#a56a0f', glow: '#e9ad4a', ink: '#2a1a04', grainOpacity: 0.05 },
+    garnish: 'pistachio',
+    builder_eligible: true, rubric_passed_on: TODAY, source_url: UNSPLASH_LICENCE,
+  },
+  {
+    id: 'p_wedding_trousseau',
+    slug: 'wedding-trousseau-box',
+    title: 'Wedding Trousseau Box',
+    description:
+      'A premium two-tier box for weddings and engagement gifting — silk-wrapped, paisley-embossed, and packed with Kaju Katli, Badam ki Jali, Saffron-Salt Pistachios, Roasted Almonds, and a sachet of Khubani mithai. Personalised name card included on request.',
+    category: 'gift-hampers',
+    dietary_tags: ['nuts', 'dairy'],
+    ingredients: ['Assorted — see component SKUs.'],
+    allergens: ['Nuts', 'Dairy'],
+    storage_instructions: 'Store in a cool, dry place. Refrigerate after opening if room temperature exceeds 28°C.',
+    shelf_life_days: 30,
+    images: [
+      { url: unsplash('1606312619070-d48b4c652a52'), alt: 'Wedding Trousseau Box wrapped in silk with a paisley tag, two-tier presentation', width: 1400, height: 1400 },
+    ],
+    variants: [{ id: 'v_wt_1', title: 'Two-tier box', weight_grams: 2200, price: { amount: 2999, currency: 'INR' }, sku: 'RS-GH-WED', stock_available: 25, hsn_code: '2106' }],
+    region_availability: ['in'],
+    featured: true, bestseller: false, new: true,
+    theme_palette: { base: '#fdf3df', accent: '#7a4e0a', glow: '#d4a96b', ink: '#2a1a04', grainOpacity: 0.06 },
+    garnish: 'paisley',
+    builder_eligible: false, rubric_passed_on: TODAY, source_url: UNSPLASH_LICENCE,
+  },
+  {
+    id: 'p_pongal_pot',
+    slug: 'pongal-pot-set',
+    title: 'Pongal Pot Set',
+    description:
+      'A hand-thrown clay pot with a sealed sachet of our Pongal mix — broken cardamom, jaggery, ghee, and de-husked moong — plus a sprig of dried banana leaf. Boil milk, tip in the sachet, and you have Pongal in fifteen minutes. The pot is yours to keep.',
+    category: 'festival-specials',
+    dietary_tags: ['eggless', 'nuts', 'dairy', 'contains-ghee'],
+    ingredients: ['Raw rice', 'Jaggery', 'Ghee', 'Moong dal', 'Cardamom', 'Cashews', 'Raisins'],
+    allergens: ['Nuts', 'Dairy'],
+    storage_instructions: 'Sachet keeps 60 days unopened. Pot is gift-only.',
+    shelf_life_days: 60,
+    images: [
+      { url: unsplash('1605197788044-5c7ecd5e0a9f'), alt: 'Pongal pot set with a clay vessel, sachet, and dried banana leaf on a brass tray', width: 1400, height: 1400 },
+    ],
+    variants: [{ id: 'v_pp_1', title: 'Pot + sachet', weight_grams: 900, price: { amount: 799, currency: 'INR' }, sku: 'RS-FS-PONGAL', stock_available: 40, hsn_code: '2106' }],
+    region_availability: ['in'],
+    featured: false, bestseller: false, new: true,
+    theme_palette: { base: '#f5ead2', accent: '#9c5a14', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.06 },
+    garnish: 'paisley',
+    builder_eligible: false, rubric_passed_on: TODAY, source_url: UNSPLASH_LICENCE,
+  },
+  {
+    id: 'p_office_chai_tray',
+    slug: 'office-chai-tray',
+    title: 'Office Chai Tray',
+    description:
+      'Built for the office tea trolley — a tray with two namkeens, a tin of Besan Sev, a small box of Motichoor Ladoo, and a bag of Roasted Almonds. Lasts an open office a week. Refill SKUs available on subscription.',
+    category: 'combos',
+    dietary_tags: ['nuts', 'dairy', 'contains-ghee'],
+    ingredients: ['Assorted — see component SKUs.'],
+    allergens: ['Nuts', 'Dairy', 'Peanuts'],
+    storage_instructions: 'Store in a cool, dry place. Reseal each pouch after use.',
+    shelf_life_days: 45,
+    images: [
+      { url: unsplash('1606312619070-d48b4c652a52'), alt: 'Office chai tray with namkeens, ladoos, and almonds arranged on a wooden serving board', width: 1400, height: 1400 },
+    ],
+    variants: [{ id: 'v_oct_1', title: 'Office tray', weight_grams: 1400, price: { amount: 999, currency: 'INR' }, sku: 'RS-CB-OCT', stock_available: 50, hsn_code: '2106' }],
+    region_availability: ['in'],
+    featured: false, bestseller: false, new: true,
+    theme_palette: { base: '#f4ead2', accent: '#6e4810', glow: '#c79e5c', ink: '#241608', grainOpacity: 0.05 },
+    garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: UNSPLASH_LICENCE,
   },
 ];

@@ -27,11 +27,11 @@ export const SIGNATURE_MOMENT = {
     },
   },
   copy: {
-    eyebrow_indic: 'హైదరాబాద్',
+    eyebrow_indic: 'ఖమ్మం',
     eyebrow_en: 'Our signature',
     headline: 'Qubani ka Meetha',
     headline_emphasis: 'slow-cooked the old way.',
-    body: 'Four hours, one copper pan, apricots reduced in their own syrup. A Nizami classic that refuses to hurry.',
+    body: 'Four hours, one copper pan, apricots reduced in their own syrup. A Hyderabadi classic, made the slower way in our Khammam kitchen.',
     cta: { label: 'See how we make it', href: '/about' },
   },
 } as const;

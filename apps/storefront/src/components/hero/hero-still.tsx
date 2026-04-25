@@ -12,13 +12,29 @@ import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
-// Darker, more editorial still — references La Maison du Chocolat / MFK tone
-// from research/benchmark.md §5.1. Replace when production photography lands.
+// Macro close-up — Qubani ka Meetha in saffron syrup, pictured against the dark
+// directional lighting from the La Maison du Chocolat / MFK references in
+// research/benchmark.md §5.1. The hero now layers three independent parallax
+// rates: image (slow), saffron-strand overlay (fast), and content (mid),
+// so scroll feels cinematic rather than flat. Replace when production
+// photography lands per the photography-gating requirement.
 const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1600&q=90&auto=format&fit=crop';
+  'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=2000&q=92&auto=format&fit=crop';
 
 const PICK_IMAGE =
   'https://images.unsplash.com/photo-1631206753348-db44968fd440?w=600&q=85&auto=format&fit=crop';
+
+// 8 saffron strands scattered with deterministic positions for SSR-stable layout
+const SAFFRON_STRANDS = [
+  { top: '8%', left: '12%', rotate: -18, scale: 0.9, opacity: 0.55 },
+  { top: '22%', left: '78%', rotate: 24, scale: 1.1, opacity: 0.4 },
+  { top: '38%', left: '6%', rotate: -34, scale: 0.7, opacity: 0.5 },
+  { top: '52%', left: '88%', rotate: 12, scale: 0.85, opacity: 0.45 },
+  { top: '68%', left: '20%', rotate: -8, scale: 1, opacity: 0.5 },
+  { top: '78%', left: '70%', rotate: 32, scale: 0.7, opacity: 0.4 },
+  { top: '14%', left: '52%', rotate: 4, scale: 0.6, opacity: 0.35 },
+  { top: '88%', left: '40%', rotate: -22, scale: 0.9, opacity: 0.45 },
+];
 
 export function HeroStill() {
   const ref = useRef<HTMLElement>(null);
@@ -28,8 +44,13 @@ export function HeroStill() {
     target: ref,
     offset: ['start start', 'end start'],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, -90]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  // Three distinct parallax rates layered in z-order:
+  //   image  — slowest (-110 px) so the foreground sits like a still frame
+  //   strands — fastest (-220 px) so saffron drifts past the viewer
+  //   content — mid (40 px down + opacity fade) so headline trails behind the image
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, -110]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const strandsY = useTransform(scrollYProgress, [0, 1], [0, -220]);
   const pickY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const ornamentTopY = useTransform(scrollYProgress, [0, 1], [0, 70]);
   const ornamentBottomY = useTransform(scrollYProgress, [0, 1], [0, -70]);
@@ -52,8 +73,37 @@ export function HeroStill() {
         className="pointer-events-none absolute left-4 top-1/2 hidden -translate-y-1/2 -rotate-90 origin-left font-body text-[10px] font-semibold uppercase tracking-[0.4em] text-theme-ink/40 md:block"
         aria-hidden="true"
       >
-        Est. Hyderabad · Since generations
+        Est. Khammam · Since generations
       </div>
+
+      {/* Saffron-strand parallax overlay — fastest layer */}
+      {!reduced && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 hidden md:block"
+          style={{ y: strandsY }}
+        >
+          {SAFFRON_STRANDS.map((s, i) => (
+            <span
+              key={i}
+              className="absolute text-theme-accent"
+              style={{
+                top: s.top,
+                left: s.left,
+                opacity: s.opacity,
+                transform: `rotate(${s.rotate}deg) scale(${s.scale})`,
+              }}
+            >
+              <svg width="18" height="28" viewBox="0 0 14 22">
+                <path
+                  d="M7 1 C 9 5, 11 9, 9 14 C 7.5 18, 7 20, 7 21 C 7 20, 6.5 18, 5 14 C 3 9, 5 5, 7 1 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+          ))}
+        </motion.div>
+      )}
 
       <motion.div
         className="container-site relative grid gap-10 py-16 md:grid-cols-[1.1fr_1fr] md:items-center md:py-24 lg:py-28"
@@ -68,16 +118,16 @@ export function HeroStill() {
                 className="text-base font-normal normal-case tracking-normal"
                 style={{ fontFamily: 'var(--font-indic)' }}
               >
-                హైదరాబాద్
+                ఖమ్మం
               </span>
               <span aria-hidden="true" className="opacity-50">·</span>
-              <span>Hyderabad heritage</span>
+              <span>Khammam · Telangana</span>
             </p>
           </Reveal>
 
           <TextKinetic
             as="h1"
-            text="The sweetness of old Hyderabad, made fresh today."
+            text="The sweetness of Telangana, slow-cooked in Khammam."
             split="word"
             gap={55}
             className="font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl"
@@ -145,12 +195,12 @@ export function HeroStill() {
               <div className="relative h-full w-full overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
                 <Image
                   src={HERO_IMAGE}
-                  alt="Signature Hyderabadi sweet plated in dramatic directional light"
+                  alt="Macro close-up of Qubani ka Meetha in saffron syrup, slivered almonds catching the directional light"
                   fill
                   priority
                   fetchPriority="high"
                   sizes="(min-width: 1024px) 520px, (min-width: 640px) 60vw, 90vw"
-                  className="object-cover"
+                  className="object-cover [transform:scale(1.04)]"
                 />
                 <div
                   className="pointer-events-none absolute inset-0"

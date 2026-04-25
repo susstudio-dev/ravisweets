@@ -18,8 +18,8 @@ const CATEGORY_META: Record<
 > = {
   'hyderabadi-specials': {
     title: 'Hyderabadi Specials',
-    eyebrow: 'Nizami classics',
-    body: 'Recipes from the royal kitchens of Hyderabad — Qubani ka Meetha, Double ka Meetha, Badam ki Jali. Slow-cooked, hand-finished, never hurried.',
+    eyebrow: 'Deccan classics',
+    body: 'Hyderabadi sweets — Qubani ka Meetha, Double ka Meetha, Badam ki Jali — slow-cooked the old way in our Khammam kitchen.',
   },
   sweets: {
     title: 'Sweets',

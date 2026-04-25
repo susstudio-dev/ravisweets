@@ -4,3 +4,4 @@ export * from './money';
 export * from './catalogue/products';
 export * from './catalogue/pricing';
 export * from './catalogue/templates';
+export * from './catalogue/reviews';

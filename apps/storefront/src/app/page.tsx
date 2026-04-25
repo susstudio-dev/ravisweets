@@ -33,7 +33,7 @@ const CATEGORIES = [
   {
     slug: 'hyderabadi-specials',
     title: 'Hyderabadi Specials',
-    blurb: 'Nizami classics',
+    blurb: 'Deccan classics',
     accent: '#c0592b',
   },
   { slug: 'sweets', title: 'Sweets', blurb: 'Fresh daily', accent: '#a56a0f' },
@@ -54,8 +54,8 @@ const TRUST = [
   },
   {
     icon: Award,
-    title: 'Hyderabad heritage',
-    body: 'Recipes from the Nizami and Deccan kitchens, kept close to the original.',
+    title: 'Telangana heritage',
+    body: 'Recipes from the Deccan sweet tradition, made in our Khammam kitchen.',
   },
 ];
 
@@ -193,7 +193,7 @@ export default function HomePage() {
         <Reveal className="mb-10">
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
             <Paisley size="sm" />
-            Loved by Hyderabad
+            Loved across Telangana
           </p>
           <h2
             id="bestsellers-heading"

@@ -7,66 +7,44 @@ import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
+/**
+ * FlavourAtlas chips swap ONLY the accent + glow CSS variables on hover —
+ * never `--theme-base` or `--theme-ink`. This is structurally enforced via
+ * the `Pick<ThemePalette, 'accent' | 'glow'>` type so a future contributor
+ * can't reintroduce the dark-base hover bug (where, on the Diwali palette,
+ * cream `--theme-ink` text landed on still-white card backgrounds and went
+ * invisible). Full-palette swaps remain valid on product detail pages where
+ * `<ThemeVars>` SSR-seeds every surface coherently.
+ */
+type HoverPalette = Pick<ThemePalette, 'accent' | 'glow'>;
+
 interface Flavour {
   id: string;
   name: string;
   telugu: string;
   note: string;
-  palette: ThemePalette;
+  palette: HoverPalette;
 }
 
 const FLAVOURS: Flavour[] = [
-  {
-    id: 'qubani',
-    name: 'Qubani ka Meetha',
-    telugu: 'ఖుబానీ',
-    note: 'Saffron · Apricot · Malai',
-    palette: { base: '#fff4e3', accent: '#c0592b', glow: '#f29f5a', ink: '#3a1e0c', grainOpacity: 0.06 },
-  },
-  {
-    id: 'kaju',
-    name: 'Kaju Katli',
-    telugu: 'కాజు',
-    note: 'Cashew · Silver leaf · Cardamom',
-    palette: { base: '#f8f4ea', accent: '#8a6a2e', glow: '#d6c796', ink: '#2a2010', grainOpacity: 0.04 },
-  },
-  {
-    id: 'double',
-    name: 'Double ka Meetha',
-    telugu: 'డబుల్',
-    note: 'Pistachio · Rabri · Saffron',
-    palette: { base: '#fbeed0', accent: '#8a5a10', glow: '#d4b36a', ink: '#2a1a04', grainOpacity: 0.06 },
-  },
-  {
-    id: 'badam',
-    name: 'Badam ki Jali',
-    telugu: 'బాదాం',
-    note: 'Almond · Ghee · Cardamom',
-    palette: { base: '#fdf3df', accent: '#a07024', glow: '#e4c17a', ink: '#3a280e', grainOpacity: 0.05 },
-  },
-  {
-    id: 'diwali',
-    name: 'Diwali Hamper',
-    telugu: 'దీపావళి',
-    note: 'Saffron · Brass · Gold-leaf',
-    palette: { base: '#2a1505', accent: '#e9ad4a', glow: '#f2c66f', ink: '#fdf6ec', grainOpacity: 0.08 },
-  },
-  {
-    id: 'mixture',
-    name: 'Hyderabadi Mixture',
-    telugu: 'మిక్చర్',
-    note: 'Peanut · Curry leaf · Chilli',
-    palette: { base: '#f4e9d4', accent: '#8b3a1f', glow: '#d68854', ink: '#2e1a0b', grainOpacity: 0.05 },
-  },
+  { id: 'qubani', name: 'Qubani ka Meetha', telugu: 'ఖుబానీ', note: 'Saffron · Apricot · Malai', palette: { accent: '#c0592b', glow: '#f29f5a' } },
+  { id: 'kaju', name: 'Kaju Katli', telugu: 'కాజు', note: 'Cashew · Silver leaf · Cardamom', palette: { accent: '#8a6a2e', glow: '#d6c796' } },
+  { id: 'double', name: 'Double ka Meetha', telugu: 'డబుల్', note: 'Pistachio · Rabri · Saffron', palette: { accent: '#8a5a10', glow: '#d4b36a' } },
+  { id: 'badam', name: 'Badam ki Jali', telugu: 'బాదాం', note: 'Almond · Ghee · Cardamom', palette: { accent: '#a07024', glow: '#e4c17a' } },
+  { id: 'diwali', name: 'Diwali Hamper', telugu: 'దీపావళి', note: 'Saffron · Brass · Gold-leaf', palette: { accent: '#c08a18', glow: '#f2c66f' } },
+  { id: 'mixture', name: 'Hyderabadi Mixture', telugu: 'మిక్చర్', note: 'Peanut · Curry leaf · Chilli', palette: { accent: '#8b3a1f', glow: '#d68854' } },
 ];
 
-function applyPalette(p: ThemePalette) {
+function applyHoverPalette(p: HoverPalette) {
   const root = document.documentElement;
-  root.style.setProperty('--theme-base', p.base);
   root.style.setProperty('--theme-accent', p.accent);
   root.style.setProperty('--theme-glow', p.glow);
-  root.style.setProperty('--theme-ink', p.ink);
-  root.style.setProperty('--theme-grain-opacity', String(p.grainOpacity));
+}
+
+function revertHoverPalette() {
+  const root = document.documentElement;
+  root.style.setProperty('--theme-accent', defaultFlavour.accent);
+  root.style.setProperty('--theme-glow', defaultFlavour.glow);
 }
 
 export function FlavourAtlas() {
@@ -78,14 +56,14 @@ export function FlavourAtlas() {
   useEffect(() => {
     return () => {
       if (revertTimer.current) window.clearTimeout(revertTimer.current);
-      applyPalette(defaultFlavour);
+      revertHoverPalette();
     };
   }, []);
 
   function onEnter(f: Flavour) {
     if (revertTimer.current) window.clearTimeout(revertTimer.current);
     setActiveId(f.id);
-    applyPalette(f.palette);
+    applyHoverPalette(f.palette);
   }
 
   function onLeaveAll() {
@@ -93,7 +71,7 @@ export function FlavourAtlas() {
     if (revertTimer.current) window.clearTimeout(revertTimer.current);
     revertTimer.current = window.setTimeout(() => {
       setActiveId(null);
-      applyPalette(defaultFlavour);
+      revertHoverPalette();
     }, 120);
   }
 

@@ -10,13 +10,13 @@ import { Grain } from '@/components/brand/grain';
 export const metadata: Metadata = {
   title: 'Our story',
   description:
-    'Ravi Sweets — Hyderabad-born, family-run. The slow-cooked way, for generations.',
+    'Ravi Sweets — a Khammam family kitchen, in the Telangana sweet tradition. Slow-cooked, for generations.',
 };
 
 const TIMELINE = [
   {
     year: 'Generations ago',
-    title: 'A small kitchen in Hyderabad',
+    title: 'A small kitchen in Khammam',
     body:
       'The first copper pan, the first recipe card, the first box with a paisley tag. A family ritual becomes a trade.',
   },
@@ -87,7 +87,7 @@ export default function AboutPage() {
             </Reveal>
             <Reveal delay={0.15}>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-theme-ink/75">
-                Ravi Sweets began in a single Hyderabad kitchen with a copper pan, a recipe
+                Ravi Sweets began in a single Khammam kitchen with a copper pan, a recipe
                 card in someone&rsquo;s handwriting, and the promise that nothing would be
                 hurried. That promise has outlived everything else we&rsquo;ve had to change.
               </p>
@@ -97,7 +97,7 @@ export default function AboutPage() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
               <Image
                 src={PORTRAIT}
-                alt="Hands preparing traditional Hyderabadi sweets"
+                alt="Hands preparing traditional Telangana sweets in our Khammam kitchen"
                 fill
                 priority
                 fetchPriority="high"

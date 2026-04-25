@@ -213,7 +213,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
                   From
                 </dt>
                 <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
-                  Hyderabad
+                  Khammam
                 </dd>
               </div>
             </motion.dl>

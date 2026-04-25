@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, Package, ShoppingBag } from 'lucide-react';
 import { formatMoney } from '@ravisweets/shared';
 import { getOrders } from '@/lib/orders/store';
+import { resetDemoData } from '@/lib/orders/demo-seed';
 import type { Order } from '@/lib/orders/types';
 import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
@@ -34,6 +35,11 @@ export function AccountView() {
     );
   }
 
+  function onResetDemo() {
+    resetDemoData();
+    setOrders(getOrders());
+  }
+
   return (
     <section className="container-site py-12 md:py-16">
       <Reveal>
@@ -43,9 +49,18 @@ export function AccountView() {
         </p>
       </Reveal>
       <Reveal delay={0.06}>
-        <h1 className="mt-3 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
-          Orders
-        </h1>
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+          <h1 className="font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+            Orders
+          </h1>
+          <button
+            type="button"
+            onClick={onResetDemo}
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/55 transition-colors hover:text-theme-accent"
+          >
+            Reset demo data
+          </button>
+        </div>
       </Reveal>
 
       {orders.length === 0 ? (

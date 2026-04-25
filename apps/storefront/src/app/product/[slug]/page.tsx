@@ -5,6 +5,7 @@ import { ArrowLeft, Leaf, Package, Snowflake } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ThemeVars } from '@/lib/theme/theme-provider';
 import { ProductGallery } from '@/components/product/product-gallery';
+import { ProductReviews } from '@/components/product/reviews';
 import { VariantSelector } from '@/components/product/variant-selector';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
@@ -225,6 +226,9 @@ export default async function ProductPage({ params }: PageProps) {
       </section>
 
       <PaisleyDivider className="container-site" />
+
+      {/* Reviews */}
+      <ProductReviews productSlug={product.slug} />
 
       {/* Related */}
       {related.length > 0 && (

@@ -2,10 +2,13 @@
 
 import Image from 'next/image';
 import { Plus, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useMemo, useRef, useState } from 'react';
 import type { CategorySlug, Product } from '@ravisweets/shared';
 import { formatMoney } from '@ravisweets/shared';
 import { cn } from '@/lib/cn';
+import { DURATION, EASE } from '@/lib/motion/constants';
+import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
 interface ItemPaletteProps {
   products: Product[];
@@ -32,6 +35,21 @@ const CATEGORY_ORDER: CategorySlug[] = [
 
 export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps) {
   const [query, setQuery] = useState('');
+  const reduced = useReducedMotion();
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const hoverTimer = useRef<number | null>(null);
+
+  function schedulePreview(id: string) {
+    if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
+    hoverTimer.current = window.setTimeout(() => setPreviewId(id), 280);
+  }
+  function cancelPreview() {
+    if (hoverTimer.current) {
+      window.clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+    setPreviewId(null);
+  }
 
   const grouped = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -101,7 +119,14 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                   const img = p.images[0];
                   if (!primary || !img) return null;
                   return (
-                    <li key={p.id}>
+                    <li
+                      key={p.id}
+                      className="relative"
+                      onMouseEnter={() => schedulePreview(p.id)}
+                      onMouseLeave={cancelPreview}
+                      onFocus={() => schedulePreview(p.id)}
+                      onBlur={cancelPreview}
+                    >
                       <button
                         type="button"
                         onClick={() => onAdd(p.id, primary.id)}
@@ -132,6 +157,48 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                           aria-hidden="true"
                         />
                       </button>
+                      <AnimatePresence>
+                        {previewId === p.id && !reduced && (
+                          <motion.div
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -8 }}
+                            transition={{ duration: DURATION.quick, ease: EASE.standard }}
+                            role="tooltip"
+                            className="pointer-events-none absolute left-full top-0 z-30 hidden w-72 origin-top-left translate-x-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-3 shadow-lifted lg:block"
+                          >
+                            <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
+                              <Image
+                                src={img.url}
+                                alt={img.alt}
+                                fill
+                                sizes="288px"
+                                className="object-cover"
+                              />
+                            </div>
+                            <p className="mt-3 font-display text-sm font-semibold text-theme-ink">
+                              {p.title}
+                            </p>
+                            <p className="mt-1 line-clamp-2 text-[11px] text-theme-ink/65">
+                              {p.description}
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {p.dietary_tags.slice(0, 4).map((t) => (
+                                <span
+                                  key={t}
+                                  className="rounded-full bg-theme-glow/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent"
+                                >
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="mt-2 text-[10px] uppercase tracking-wider text-theme-ink/50">
+                              Ingredients · {p.ingredients.slice(0, 4).join(', ')}
+                              {p.ingredients.length > 4 ? '…' : ''}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </li>
                   );
                 })}

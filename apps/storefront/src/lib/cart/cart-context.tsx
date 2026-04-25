@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Money, Product, ProductVariant } from '@ravisweets/shared';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
@@ -51,33 +51,44 @@ function resolveLine(line: CartLine): CartLineView | null {
   };
 }
 
+/**
+ * Lazy initialiser — runs once at the FIRST client render, synchronously.
+ * This eliminates the prior hydration race where a click between mount and
+ * the load effect could be overwritten when the load fired.
+ *
+ * SSR-safe: returns empty cart on the server; the client picks up on first
+ * render and corrects the state before any interaction is possible.
+ */
+function readInitialCart(): CartState {
+  if (typeof window === 'undefined') return { lines: [] };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { lines: [] };
+    const parsed = JSON.parse(raw) as CartState;
+    return parsed && Array.isArray(parsed.lines) ? parsed : { lines: [] };
+  } catch {
+    return { lines: [] };
+  }
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<CartState>({ lines: [] });
-  const [hydrated, setHydrated] = useState(false);
+  const [state, setState] = useState<CartState>(readInitialCart);
+  // Skip the very first persistence effect — initial state is already what
+  // localStorage held, so writing it back would be a needless round-trip.
+  const isFirstRender = useRef(true);
 
-  // Load from localStorage on mount
+  // Persist on subsequent state changes (after first render).
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as CartState;
-        if (parsed && Array.isArray(parsed.lines)) setState(parsed);
-      }
-    } catch {
-      /* ignore */
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
     }
-    setHydrated(true);
-  }, []);
-
-  // Persist
-  useEffect(() => {
-    if (!hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       /* ignore */
     }
-  }, [state, hydrated]);
+  }, [state]);
 
   const add = useCallback((productId: string, variantId: string, qty = 1) => {
     setState((prev) => {

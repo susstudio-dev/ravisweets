@@ -49,7 +49,7 @@ export function Footer() {
               <p className="font-display text-xl font-bold text-theme-ink">Ravi Sweets</p>
             </div>
             <p className="mt-3 text-sm text-theme-ink/70">
-              Hand-made Hyderabadi sweets, rooted in Nizami heritage. FSSAI-certified kitchen. No
+              Hand-made Telangana sweets from our Khammam kitchen. FSSAI-certified. No
               preservatives. Made fresh every day.
             </p>
           </div>
@@ -75,7 +75,7 @@ export function Footer() {
         </div>
         <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-[color:var(--color-border)] pt-6 text-xs text-theme-ink/60 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} Ravi Sweets. All rights reserved.</p>
-          <p>FSSAI Lic. No. — pending. GSTIN — pending.</p>
+          <p>FSSAI · Telangana — pending. GSTIN — Telangana series, pending.</p>
         </div>
       </div>
     </footer>

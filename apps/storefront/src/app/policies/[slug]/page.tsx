@@ -111,7 +111,7 @@ const POLICIES: Record<Slug, Policy> = {
     title: 'Shipping & delivery',
     eyebrow: 'How your box gets to you',
     intro:
-      'We ship from our Hyderabad kitchen the morning after your order is placed. Perishable items ship in temperature-controlled packaging with gel packs.',
+      'We ship from our Khammam kitchen the morning after your order is placed. Perishable items ship in temperature-controlled packaging with gel packs.',
     sections: [
       {
         heading: 'Coverage',
@@ -123,7 +123,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'Timelines',
         body: [
-          'Hyderabad: next-day.',
+          'Khammam + Hyderabad: next-day.',
           'Telangana + Andhra Pradesh: 1–2 business days.',
           'Rest of India: 3–5 business days.',
           'Perishable items may have shorter cutoff windows during Indian summer.',

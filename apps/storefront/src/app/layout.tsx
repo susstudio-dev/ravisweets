@@ -5,6 +5,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
+import { DemoSeed } from '@/components/demo-seed';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -30,11 +31,11 @@ const tiroTelugu = Tiro_Telugu({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title: {
-    default: 'Ravi Sweets — Hyderabadi Sweets, Namkeens & Gift Hampers',
+    default: 'Ravi Sweets — Khammam-made Telangana Sweets & Customisable Gift Hampers',
     template: '%s | Ravi Sweets',
   },
   description:
-    'Authentic Hyderabadi sweets, namkeens and hand-packed gift hampers — made fresh in small batches. Shipped across India, shipping worldwide coming soon.',
+    'Authentic Telangana sweets and namkeens, plus build-your-own gift hampers — made fresh in our Khammam kitchen, in small batches. Shipped across India, shipping worldwide coming soon.',
   openGraph: {
     type: 'website',
     siteName: 'Ravi Sweets',
@@ -75,6 +76,7 @@ export default function RootLayout({
         </a>
         <CartProvider>
           <LayoutGroup>
+            <DemoSeed />
             <Header />
             <main id="main" className="flex-1">
               {children}

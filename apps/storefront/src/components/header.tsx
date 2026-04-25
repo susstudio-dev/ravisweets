@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { Search, ShoppingBag, User } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { Paisley } from '@/components/brand/paisley';
 import { ScrollProgress } from '@/components/motion/scroll-progress';
+import { SearchOverlay } from '@/components/search/search-overlay';
 import { useCart } from '@/lib/cart/cart-context';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -20,6 +22,20 @@ const NAV = [
 export function Header() {
   const { lineCount } = useCart();
   const reduced = useReducedMotion();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl+K to open search overlay
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 border-b border-[color:var(--color-border)] bg-[color:var(--theme-base)]/85 backdrop-blur">
       <div className="container-site flex h-16 items-center justify-between gap-4">
@@ -48,13 +64,15 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="rounded-full p-2 text-theme-ink/70 transition-colors hover:bg-[color:var(--theme-glow)]/20 hover:text-theme-ink"
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Search (Ctrl+K)"
+            title="Search (Ctrl+K)"
+            className="rounded-full p-2 text-theme-ink/70 transition-colors hover:bg-[color:var(--theme-glow)]/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
           >
             <Search className="h-5 w-5" aria-hidden="true" />
-          </Link>
+          </button>
           <Link
             href="/account"
             aria-label="Account"
@@ -86,6 +104,7 @@ export function Header() {
         </div>
       </div>
       <ScrollProgress />
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }

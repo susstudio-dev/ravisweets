@@ -17,7 +17,7 @@ import { Grain } from '@/components/brand/grain';
 
 export const metadata: Metadata = {
   title: 'Visit us',
-  description: 'Our Hyderabad flagship store, plus how to reach us by phone, email, or WhatsApp.',
+  description: 'Our Khammam flagship store, plus how to reach us by phone, email, or WhatsApp.',
 };
 
 interface Store {
@@ -34,16 +34,16 @@ interface Store {
 const STORES: Store[] = [
   {
     name: 'Ravi Sweets · Flagship',
-    address: '4-1-123, Chappel Road, Abids',
-    city: 'Hyderabad',
+    address: 'Wyra Road, opp. Bus Station',
+    city: 'Khammam',
     state: 'Telangana',
-    pincode: '500001',
+    pincode: '507001',
     hours: [
       { days: 'Mon — Sat', time: '9:00 am — 9:30 pm' },
       { days: 'Sunday', time: '10:00 am — 9:00 pm' },
     ],
     phone: '+91 98765 43210',
-    mapsQuery: 'Ravi+Sweets+Hyderabad',
+    mapsQuery: 'Ravi+Sweets+Khammam',
   },
 ];
 
@@ -107,7 +107,7 @@ export default function StoresPage() {
             </Reveal>
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-theme-ink/75">
-                Our kitchen and flagship store sits in Abids, in the heart of old Hyderabad.
+                Our kitchen and flagship store sits in Khammam, in the heart of Telangana.
                 Walk in, or call ahead to reserve a seasonal hamper — especially around Diwali.
               </p>
             </Reveal>
@@ -116,7 +116,7 @@ export default function StoresPage() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
               <Image
                 src={STORE_IMAGE}
-                alt="Hyderabad sweet-shop counter with assorted boxes and a copper scale"
+                alt="Khammam sweet-shop counter with assorted boxes and a copper scale"
                 fill
                 priority
                 fetchPriority="high"
@@ -133,7 +133,7 @@ export default function StoresPage() {
               />
               <Grain />
               <div className="absolute bottom-4 left-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/85">
-                Abids · Hyderabad
+                Khammam · Telangana
               </div>
               <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
                 Dev only
