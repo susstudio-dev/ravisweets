@@ -10,6 +10,8 @@ import { Reveal } from '@/components/motion/reveal';
 import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { useSiteContent } from '@/lib/supabase/site-content-context';
+import { useActiveTheme } from '@/lib/theme/active-theme-context';
 
 // Macro close-up — Qubani ka Meetha in saffron syrup, pictured against the dark
 // directional lighting from the La Maison du Chocolat / MFK references in
@@ -38,6 +40,16 @@ const SAFFRON_STRANDS = [
 export function HeroStill() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+  const { hero } = useSiteContent();
+  const { active: theme } = useActiveTheme();
+  const heroEyebrowIndic = hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'ఖమ్మం';
+  const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Khammam · Telangana';
+  const heroHeadline = hero?.headline ?? theme?.hero.headline ?? 'The sweetness of Telangana, slow-cooked in Khammam.';
+  const heroBody = hero?.body ?? theme?.hero.body ?? 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
+  const primaryCtaLabel = hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? 'Shop Hyderabadi specials';
+  const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/category/hyderabadi-specials';
+  const secondaryCtaLabel = hero?.secondaryCtaLabel ?? 'Corporate gifting';
+  const secondaryCtaHref = hero?.secondaryCtaHref ?? '/corporate';
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -116,45 +128,43 @@ export function HeroStill() {
                 className="text-base font-normal normal-case tracking-normal"
                 style={{ fontFamily: 'var(--font-indic)' }}
               >
-                ఖమ్మం
+                {heroEyebrowIndic}
               </span>
               <span aria-hidden="true" className="opacity-50">·</span>
-              <span>Khammam · Telangana</span>
+              <span>{heroEyebrowEn}</span>
             </p>
           </Reveal>
 
           <TextKinetic
+            key={heroHeadline}
             as="h1"
-            text="The sweetness of Telangana, slow-cooked in Khammam."
+            text={heroHeadline}
             split="word"
             gap={55}
             className="font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl"
           />
 
           <Reveal delay={0.25}>
-            <p className="max-w-xl text-lg leading-relaxed text-theme-ink/75">
-              Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets,
-              namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.
-            </p>
+            <p className="max-w-xl text-lg leading-relaxed text-theme-ink/75">{heroBody}</p>
           </Reveal>
 
           <Reveal delay={0.35}>
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
-                href="/category/hyderabadi-specials"
+                href={primaryCtaHref}
                 className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
               >
-                Shop Hyderabadi specials
+                {primaryCtaLabel}
                 <ArrowRight
                   className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
                   aria-hidden="true"
                 />
               </Link>
               <Link
-                href="/corporate"
+                href={secondaryCtaHref}
                 className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-6 py-3 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
               >
-                Corporate gifting
+                {secondaryCtaLabel}
               </Link>
             </div>
           </Reveal>

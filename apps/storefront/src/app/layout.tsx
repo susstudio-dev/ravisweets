@@ -8,7 +8,10 @@ import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
 import { CouponsProvider } from '@/lib/coupons/context';
 import { SupabaseProvider } from '@/lib/supabase/session-context';
+import { SiteContentProvider } from '@/lib/supabase/site-content-context';
 import { DemoSeed } from '@/components/demo-seed';
+import { PageDriftGarnish } from '@/components/decor/page-drift-garnish';
+import { RealtimeThemeBridge } from '@/components/theme/realtime-theme-bridge';
 import './globals.css';
 
 const fraunces = Fraunces({
@@ -78,20 +81,24 @@ export default function RootLayout({
           Skip to content
         </a>
         <SupabaseProvider>
-          <CartProvider>
-            <CouponsProvider>
-              <LayoutGroup>
-                <DemoSeed />
-                <Header />
-                <main id="main" className="flex-1">
-                  {children}
-                </main>
-                <Footer />
-                <SweetCursor />
-                {modal}
-              </LayoutGroup>
-            </CouponsProvider>
-          </CartProvider>
+          <SiteContentProvider>
+            <CartProvider>
+              <CouponsProvider>
+                <LayoutGroup>
+                  <DemoSeed />
+                  <RealtimeThemeBridge />
+                  <PageDriftGarnish />
+                  <Header />
+                  <main id="main" className="flex-1">
+                    {children}
+                  </main>
+                  <Footer />
+                  <SweetCursor />
+                  {modal}
+                </LayoutGroup>
+              </CouponsProvider>
+            </CartProvider>
+          </SiteContentProvider>
         </SupabaseProvider>
       </body>
     </html>

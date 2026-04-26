@@ -51,7 +51,11 @@ export const CATALOGUE: Product[] = [
       { url: ravi('2025/08/booster.webp'), alt: 'Qubani ka Meetha-style apricot dessert with cream and almonds', width: 1400, height: 1400 },
       { url: ravi('2025/08/dry-fruit.webp'), alt: 'Close-up showing slivered almonds across the top of the Qubani', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_qubani_500', title: '500 g', weight_grams: 500, price: { amount: 499, currency: 'INR' }, sku: 'RS-QKM-500', stock_available: 24, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_qubani_250', title: '250 g', weight_grams: 250, price: { amount: 279, currency: 'INR' }, sku: 'RS-QKM-250', stock_available: 32, hsn_code: '2106' },
+      { id: 'v_qubani_500', title: '500 g', weight_grams: 500, price: { amount: 499, currency: 'INR' }, sku: 'RS-QKM-500', stock_available: 24, hsn_code: '2106' },
+      { id: 'v_qubani_1000', title: '1 kg', weight_grams: 1000, price: { amount: 949, currency: 'INR' }, sku: 'RS-QKM-1000', stock_available: 12, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: true, bestseller: true, new: false,
     theme_palette: { base: '#fff4e3', accent: '#c0592b', glow: '#f29f5a', ink: '#3a1e0c', grainOpacity: 0.06 },
@@ -75,7 +79,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/09/badam_pista_kalakand-removebg-preview.png'), alt: 'Double ka Meetha-style amber pieces with saffron-rabri and pistachios', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_dkm_500', title: '500 g', weight_grams: 500, price: { amount: 399, currency: 'INR' }, sku: 'RS-DKM-500', stock_available: 16, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_dkm_250', title: '250 g', weight_grams: 250, price: { amount: 229, currency: 'INR' }, sku: 'RS-DKM-250', stock_available: 24, hsn_code: '2106' },
+      { id: 'v_dkm_500', title: '500 g', weight_grams: 500, price: { amount: 399, currency: 'INR' }, sku: 'RS-DKM-500', stock_available: 16, hsn_code: '2106' },
+      { id: 'v_dkm_1000', title: '1 kg', weight_grams: 1000, price: { amount: 759, currency: 'INR' }, sku: 'RS-DKM-1000', stock_available: 8, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
     theme_palette: { base: '#fbeed0', accent: '#8a5a10', glow: '#d4b36a', ink: '#2a1a04', grainOpacity: 0.06 },
@@ -97,7 +105,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/09/badam_butter_burfi-removebg-preview.png'), alt: 'Badam ki Jali almond discs arranged in a fan, lace-thin', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_bkj_250', title: '250 g', weight_grams: 250, price: { amount: 549, currency: 'INR' }, sku: 'RS-BKJ-250', stock_available: 40, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_bkj_250', title: '250 g', weight_grams: 250, price: { amount: 549, currency: 'INR' }, sku: 'RS-BKJ-250', stock_available: 40, hsn_code: '2106' },
+      { id: 'v_bkj_500', title: '500 g', weight_grams: 500, price: { amount: 999, currency: 'INR' }, sku: 'RS-BKJ-500', stock_available: 20, hsn_code: '2106' },
+      { id: 'v_bkj_1000', title: '1 kg', weight_grams: 1000, price: { amount: 1899, currency: 'INR' }, sku: 'RS-BKJ-1000', stock_available: 10, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
     theme_palette: { base: '#fdf3df', accent: '#a07024', glow: '#e4c17a', ink: '#3a280e', grainOpacity: 0.05 },
@@ -119,7 +131,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/08/dry-fruit.webp'), alt: 'Sheer Khurma — golden vermicelli with almonds, pistachios and a rose petal', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_skh_500', title: '500 g', weight_grams: 500, price: { amount: 449, currency: 'INR' }, sku: 'RS-SKH-500', stock_available: 18, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_skh_250', title: '250 g', weight_grams: 250, price: { amount: 259, currency: 'INR' }, sku: 'RS-SKH-250', stock_available: 28, hsn_code: '2106' },
+      { id: 'v_skh_500', title: '500 g', weight_grams: 500, price: { amount: 449, currency: 'INR' }, sku: 'RS-SKH-500', stock_available: 18, hsn_code: '2106' },
+      { id: 'v_skh_1000', title: '1 kg', weight_grams: 1000, price: { amount: 849, currency: 'INR' }, sku: 'RS-SKH-1000', stock_available: 9, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#fbf0dc', accent: '#9a4a2a', glow: '#e9b07a', ink: '#2e1a08', grainOpacity: 0.06 },
@@ -141,7 +157,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/09/anjjeer_katli-removebg-preview.png'), alt: 'Khubani Dry-Fruit Mithai diamonds layered with nuts and silver leaf', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_khm_300', title: '300 g', weight_grams: 300, price: { amount: 649, currency: 'INR' }, sku: 'RS-KHM-300', stock_available: 28, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_khm_300', title: '300 g', weight_grams: 300, price: { amount: 649, currency: 'INR' }, sku: 'RS-KHM-300', stock_available: 28, hsn_code: '2106' },
+      { id: 'v_khm_500', title: '500 g', weight_grams: 500, price: { amount: 999, currency: 'INR' }, sku: 'RS-KHM-500', stock_available: 18, hsn_code: '2106' },
+      { id: 'v_khm_1000', title: '1 kg', weight_grams: 1000, price: { amount: 1899, currency: 'INR' }, sku: 'RS-KHM-1000', stock_available: 9, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#fff0dc', accent: '#a85a1e', glow: '#efa962', ink: '#321606', grainOpacity: 0.06 },
@@ -245,7 +265,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/08/mixture.webp'), alt: 'Hyderabadi Mixture — crunchy savoury medley with curry leaves', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_mix_400', title: '400 g', weight_grams: 400, price: { amount: 249, currency: 'INR' }, sku: 'RS-MIX-400', stock_available: 120, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_mix_200', title: '200 g', weight_grams: 200, price: { amount: 139, currency: 'INR' }, sku: 'RS-MIX-200', stock_available: 200, hsn_code: '2106' },
+      { id: 'v_mix_400', title: '400 g', weight_grams: 400, price: { amount: 249, currency: 'INR' }, sku: 'RS-MIX-400', stock_available: 120, hsn_code: '2106' },
+      { id: 'v_mix_1000', title: '1 kg', weight_grams: 1000, price: { amount: 569, currency: 'INR' }, sku: 'RS-MIX-1000', stock_available: 60, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: true, new: false,
     theme_palette: { base: '#f4e9d4', accent: '#8b3a1f', glow: '#d68854', ink: '#2e1a0b', grainOpacity: 0.05 },
@@ -267,7 +291,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/08/atukula-mixture-400x400.jpg'), alt: 'Peanut Chivda — flattened rice with peanuts, cashews, curry leaves', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_pc_300', title: '300 g', weight_grams: 300, price: { amount: 199, currency: 'INR' }, sku: 'RS-PC-300', stock_available: 100, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_pc_150', title: '150 g', weight_grams: 150, price: { amount: 109, currency: 'INR' }, sku: 'RS-PC-150', stock_available: 200, hsn_code: '2106' },
+      { id: 'v_pc_300', title: '300 g', weight_grams: 300, price: { amount: 199, currency: 'INR' }, sku: 'RS-PC-300', stock_available: 100, hsn_code: '2106' },
+      { id: 'v_pc_1000', title: '1 kg', weight_grams: 1000, price: { amount: 599, currency: 'INR' }, sku: 'RS-PC-1000', stock_available: 50, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#f5ead2', accent: '#7b4610', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.05 },
@@ -289,7 +317,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/08/karapusa.webp'), alt: 'Fine Besan Sev threads piled high', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_bs_250', title: '250 g', weight_grams: 250, price: { amount: 169, currency: 'INR' }, sku: 'RS-BS-250', stock_available: 80, hsn_code: '2106' }],
+    variants: [
+      { id: 'v_bs_250', title: '250 g', weight_grams: 250, price: { amount: 169, currency: 'INR' }, sku: 'RS-BS-250', stock_available: 80, hsn_code: '2106' },
+      { id: 'v_bs_500', title: '500 g', weight_grams: 500, price: { amount: 309, currency: 'INR' }, sku: 'RS-BS-500', stock_available: 40, hsn_code: '2106' },
+      { id: 'v_bs_1000', title: '1 kg', weight_grams: 1000, price: { amount: 579, currency: 'INR' }, sku: 'RS-BS-1000', stock_available: 20, hsn_code: '2106' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#f8eed0', accent: '#8a5410', glow: '#e2b558', ink: '#2a1a04', grainOpacity: 0.05 },
@@ -313,7 +345,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/08/BADAM.webp'), alt: 'Roasted whole California almonds — whole, hand-sorted, lightly salted', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_alm_200', title: '200 g tin', weight_grams: 200, price: { amount: 399, currency: 'INR' }, sku: 'RS-ALM-200', stock_available: 60, hsn_code: '0802' }],
+    variants: [
+      { id: 'v_alm_200', title: '200 g tin', weight_grams: 200, price: { amount: 399, currency: 'INR' }, sku: 'RS-ALM-200', stock_available: 60, hsn_code: '0802' },
+      { id: 'v_alm_500', title: '500 g pack', weight_grams: 500, price: { amount: 949, currency: 'INR' }, sku: 'RS-ALM-500', stock_available: 30, hsn_code: '0802' },
+      { id: 'v_alm_1000', title: '1 kg pack', weight_grams: 1000, price: { amount: 1799, currency: 'INR' }, sku: 'RS-ALM-1000', stock_available: 15, hsn_code: '0802' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: false,
     theme_palette: { base: '#f4ead2', accent: '#6e4a20', glow: '#c19a62', ink: '#2a1a08', grainOpacity: 0.05 },
@@ -335,7 +371,11 @@ export const CATALOGUE: Product[] = [
     images: [
       { url: ravi('2025/09/anjjeer_katli-removebg-preview.png'), alt: 'Saffron-salt pistachios with shells dusted orange-gold', width: 1400, height: 1400 },
     ],
-    variants: [{ id: 'v_pist_200', title: '200 g tin', weight_grams: 200, price: { amount: 549, currency: 'INR' }, sku: 'RS-PIST-200', stock_available: 48, hsn_code: '0802' }],
+    variants: [
+      { id: 'v_pist_200', title: '200 g tin', weight_grams: 200, price: { amount: 549, currency: 'INR' }, sku: 'RS-PIST-200', stock_available: 48, hsn_code: '0802' },
+      { id: 'v_pist_500', title: '500 g pack', weight_grams: 500, price: { amount: 1299, currency: 'INR' }, sku: 'RS-PIST-500', stock_available: 24, hsn_code: '0802' },
+      { id: 'v_pist_1000', title: '1 kg pack', weight_grams: 1000, price: { amount: 2499, currency: 'INR' }, sku: 'RS-PIST-1000', stock_available: 12, hsn_code: '0802' },
+    ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
     theme_palette: { base: '#f2e9d0', accent: '#5c6a1e', glow: '#a8b860', ink: '#1e2408', grainOpacity: 0.05 },
@@ -766,7 +806,7 @@ function dryFruitsGroup(): Product[] {
     { slug: 'kaju-cashew', title: 'Kaju — Whole Cashews', image: ravi('2025/08/WhatsApp-Image-2023-08-11-at-4.46.50-PM-400x400.jpeg'), variantPaiseSmall: 25500, variantPaiseLarge: 180000, description: 'Premium W240 cashews — whole, plump, no splits. Sealed in nitrogen pouches for a six-month shelf life.', bestseller: true },
     { slug: 'pista-whole', title: 'Pista — Whole Pistachios', image: ravi('2025/08/PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'Iranian pistachios with a generous shell-split. Snack-grade, crunch-grade, gift-grade.' },
     { slug: 'salted-pista', title: 'Salted Pista', image: ravi('2025/08/SALTED-PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'The same Iranian pistachios, dry-roasted and lightly salted. Travel-tin packaging.' },
-    { slug: 'walnuts', title: 'Walnuts — Akhrot', image: ravi('2025/08/WALNUT.webp'), variantPaiseSmall: 41300, variantPaiseLarge: 82500, description: 'Light-amber walnut halves from the Kashmir trade — lower bitterness, higher omega-3.' },
+    { slug: 'walnuts', title: 'Walnuts — Akhrot', image: ravi('2025/08/WALNUT.webp'), variantPaiseSmall: 41300, variantPaiseLarge: 330000, description: 'Light-amber walnut halves from the Kashmir trade — lower bitterness, higher omega-3.' },
   ];
   return items.map((s) =>
     makeProduct('dry-fruits', 'df', s, {
@@ -784,14 +824,14 @@ function dryFruitsGroup(): Product[] {
 
 function picklesGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'allam-pickle', title: 'Allam Pickle — Homemade Ginger Pickle', image: ravi('2025/08/allam.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Sharp-fresh ginger pickle in cold-pressed sesame oil and tamarind. Andhra grandmother\'s recipe.' },
-    { slug: 'amla-pickle', title: 'Amla Pickle — Usirikaya Pickle', image: ravi('2025/08/amla-1.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Whole gooseberries cured with mustard, fenugreek and red chilli. Vitamin-C in a jar.' },
+    { slug: 'allam-pickle', title: 'Allam Pickle — Homemade Ginger Pickle', image: ravi('2025/08/allam.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Sharp-fresh ginger pickle in cold-pressed sesame oil and tamarind. Andhra grandmother\'s recipe.' },
+    { slug: 'amla-pickle', title: 'Amla Pickle — Usirikaya Pickle', image: ravi('2025/08/amla-1.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Whole gooseberries cured with mustard, fenugreek and red chilli. Vitamin-C in a jar.' },
     { slug: 'chicken-pickle', title: 'Chicken Pickle', image: ravi('2025/08/chicken-pickel.webp'), variantPaiseSmall: 25000, variantPaiseLarge: 100000, description: 'Boneless country-chicken simmered down with whole spices and sealed under oil. Travels three weeks unrefrigerated.' },
-    { slug: 'chintakaya-pickle', title: 'Chintakaya Pickle — Tamarind Pickle', image: ravi('2025/08/chintakaya.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Green-tamarind pickle with the Andhra trifecta — chilli, garlic, sesame oil. Pairs with curd-rice.' },
-    { slug: 'gongura-pickle', title: 'Gongura Pickle — Sorrel Leaf Pickle', image: ravi('2025/08/gongura.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'The signature Andhra pickle — sorrel leaves slow-cooked into a fiery, tangy mash. Eat with hot rice and ghee.', bestseller: true },
-    { slug: 'kakarakaya-pickle', title: 'Kakarakaya Pickle — Bitter Gourd Pickle', image: ravi('2025/08/kakarakaya.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Bitter gourd cured with jaggery to take the edge off, then finished with mustard tempering.' },
-    { slug: 'lemon-pickle', title: 'Lemon Pickle — Nimmakaya Pachadi', image: ravi('2025/08/lemon.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Whole lemon segments salted, sun-cured, and finished with chilli. The all-rounder pickle.' },
-    { slug: 'masala-mango-pickle', title: 'Masala Mango Pickle', image: ravi('2025/08/small-pieces-mango.webp'), variantPaiseSmall: 10000, variantPaiseLarge: 40000, description: 'Raw mango cubes in a thick mustard-fenugreek masala. The Andhra summer pickle, made all year.' },
+    { slug: 'chintakaya-pickle', title: 'Chintakaya Pickle — Tamarind Pickle', image: ravi('2025/08/chintakaya.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Green-tamarind pickle with the Andhra trifecta — chilli, garlic, sesame oil. Pairs with curd-rice.' },
+    { slug: 'gongura-pickle', title: 'Gongura Pickle — Sorrel Leaf Pickle', image: ravi('2025/08/gongura.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'The signature Andhra pickle — sorrel leaves slow-cooked into a fiery, tangy mash. Eat with hot rice and ghee.', bestseller: true },
+    { slug: 'kakarakaya-pickle', title: 'Kakarakaya Pickle — Bitter Gourd Pickle', image: ravi('2025/08/kakarakaya.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Bitter gourd cured with jaggery to take the edge off, then finished with mustard tempering.' },
+    { slug: 'lemon-pickle', title: 'Lemon Pickle — Nimmakaya Pachadi', image: ravi('2025/08/lemon.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Whole lemon segments salted, sun-cured, and finished with chilli. The all-rounder pickle.' },
+    { slug: 'masala-mango-pickle', title: 'Masala Mango Pickle', image: ravi('2025/08/small-pieces-mango.webp'), variantPaiseSmall: 14900, variantPaiseLarge: 49900, description: 'Raw mango cubes in a thick mustard-fenugreek masala. The Andhra summer pickle, made all year.' },
   ];
   return items.map((s) =>
     makeProduct('pickles', 'pkl', s, {
