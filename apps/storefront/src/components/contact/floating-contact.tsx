@@ -30,7 +30,7 @@ export function FloatingContact() {
   return (
     <div
       aria-label="Quick contact"
-      className={`pointer-events-none fixed bottom-24 right-4 z-30 flex flex-col items-end gap-2.5 transition-all duration-500 ${
+      className={`pointer-events-none fixed bottom-5 right-4 z-30 flex flex-col items-end gap-2.5 transition-all duration-500 ${
         shown ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'
       } md:bottom-28`}
     >
@@ -56,11 +56,11 @@ export function FloatingContact() {
 
       {/* Instagram */}
       <a
-        href="https://instagram.com/ravi_sweets"
+        href="https://instagram.com/ravi__sweets"
         target="_blank"
         rel="noreferrer"
         aria-label="Follow us on Instagram"
-        title="@ravi_sweets"
+        title="@ravi__sweets"
         className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lifted ring-2 ring-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-white/70"
         style={{
           background:
@@ -69,7 +69,7 @@ export function FloatingContact() {
       >
         <Instagram className="h-[22px] w-[22px]" strokeWidth={2.4} aria-hidden="true" />
         <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-theme-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] opacity-0 shadow-soft transition-opacity duration-200 group-hover:opacity-100 md:block">
-          @ravi_sweets
+          @ravi__sweets
         </span>
       </a>
 

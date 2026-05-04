@@ -125,7 +125,7 @@ const LOCAL_BUSINESS_JSONLD = {
       sameAs: [
         'https://ravisweets.com',
         'https://ravisweets.in',
-        'https://instagram.com/ravi_sweets',
+        'https://instagram.com/ravi__sweets',
       ],
       areaServed: { '@type': 'Country', name: 'India' },
     },
@@ -197,8 +197,8 @@ const CONTACT = [
   {
     icon: Instagram,
     label: 'Instagram',
-    value: '@ravi_sweets',
-    href: 'https://instagram.com/ravi_sweets',
+    value: '@ravi__sweets',
+    href: 'https://instagram.com/ravi__sweets',
     note: 'Kitchen stories and seasonal runs',
   },
 ];
