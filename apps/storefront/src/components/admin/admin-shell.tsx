@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   AlertTriangle,
   BarChart3,
@@ -12,6 +12,7 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  Menu,
   MessageCircle,
   Package,
   Palette,
@@ -20,6 +21,7 @@ import {
   Star,
   Tag,
   Users,
+  X,
 } from 'lucide-react';
 import { Paisley } from '@/components/brand/paisley';
 import { useSession } from '@/lib/supabase/session-context';
@@ -48,6 +50,27 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { configured, user, role, loading, signOut } = useSession();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close drawer on route change so users land on the new page cleanly.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Body scroll-lock + Escape close while drawer is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setMobileOpen(false);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [mobileOpen]);
 
   // Login page is public — render it without the gate.
   const isLoginPage = pathname === '/admin/login';
@@ -123,37 +146,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
     );
   }
 
+  function handleSignOut() {
+    void signOut();
+    router.replace('/admin/login');
+  }
+
   return (
     <div className="flex min-h-screen bg-theme-base">
+      {/* Desktop sidebar — hidden on small screens */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] bg-surface-elevated md:flex">
         <Link href="/admin" className="flex items-center gap-2 px-5 py-5">
           <Paisley size="sm" />
           <span className="font-display text-lg font-bold text-theme-ink">Ravi Admin</span>
         </Link>
         <nav className="flex-1 px-2">
-          <ul className="flex flex-col gap-0.5">
-            {NAV.map((item) => {
-              const active =
-                pathname === item.href ||
-                (item.href !== '/admin' && pathname.startsWith(item.href));
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      'group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                      active
-                        ? 'bg-theme-accent text-[color:var(--theme-base)]'
-                        : 'text-theme-ink/75 hover:bg-theme-glow/15 hover:text-theme-ink',
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" aria-hidden="true" />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <AdminNavList pathname={pathname} />
         </nav>
         <div className="border-t border-[color:var(--color-border)] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
@@ -162,10 +169,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
           <p className="mt-0.5 truncate text-sm font-medium text-theme-ink">{user.email}</p>
           <button
             type="button"
-            onClick={() => {
-              void signOut();
-              router.replace('/admin/login');
-            }}
+            onClick={handleSignOut}
             className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-theme-ink/65 hover:text-theme-accent"
           >
             <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
@@ -173,12 +177,114 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
           </button>
         </div>
       </aside>
+
+      {/* Mobile drawer — full-screen slide-in from the left, replicates the
+          desktop sidebar nav but with bigger 48px tap targets, hardcoded
+          colours so route theme overrides can't make items invisible. */}
+      {mobileOpen && (
+        <div className="md:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-40 bg-[#1a0a02]/60 backdrop-blur-sm"
+          />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Admin navigation"
+            className="fixed left-0 top-0 z-50 flex h-[100dvh] w-[88vw] max-w-[300px] flex-col bg-[#fffaf0] text-[#2a1a04] shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b border-[#e6dcc6] px-5 py-4">
+              <Link
+                href="/admin"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2"
+              >
+                <Paisley size="sm" />
+                <span className="font-display text-lg font-bold">Ravi Admin</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4ead0] text-[#2a1a04] transition-colors hover:bg-[#e6dcc6]"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            <nav className="flex-1 overflow-y-auto px-3 py-3">
+              <ul className="flex flex-col gap-1">
+                {NAV.map((item) => {
+                  const active =
+                    pathname === item.href ||
+                    (item.href !== '/admin' && pathname.startsWith(item.href));
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          'flex h-12 items-center gap-3 rounded-lg px-3 text-[15px] font-medium transition-colors',
+                          active
+                            ? 'bg-[#a85a08] text-white'
+                            : 'text-[#2a1a04] hover:bg-[#f4ead0]',
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" aria-hidden="true" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <div className="border-t border-[#e6dcc6] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8a5a10]">
+                Signed in
+              </p>
+              <p className="mt-0.5 truncate text-sm font-medium">{user.email}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Link
+                  href="/"
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex h-10 items-center justify-center rounded-full border border-[#e6dcc6] text-xs font-semibold text-[#2a1a04] transition-colors hover:bg-[#f4ead0]"
+                >
+                  Storefront →
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-[#3a1a04] text-xs font-semibold text-[#fdf6ec] transition-colors hover:bg-[#5a2a08]"
+                >
+                  <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+                  Sign out
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
+
       <div className="flex flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-[color:var(--color-border)] bg-surface-elevated/85 px-5 backdrop-blur md:h-16 md:px-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60">
-            <Building2 className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
-            Khammam · Ravi Sweets
-          </p>
+        <header className="flex h-14 items-center justify-between border-b border-[color:var(--color-border)] bg-surface-elevated/85 px-4 backdrop-blur md:h-16 md:px-8">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              aria-expanded={mobileOpen}
+              aria-label="Open admin menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 md:hidden"
+            >
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60">
+              <Building2 className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">Khammam · </span>Ravi Sweets
+            </p>
+          </div>
           <Link
             href="/"
             className="text-xs font-semibold text-theme-ink/65 transition-colors hover:text-theme-accent"
@@ -186,9 +292,37 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
             View storefront →
           </Link>
         </header>
-        <main className="flex-1 px-5 py-6 md:px-8 md:py-8">{children}</main>
+        <main className="flex-1 px-4 py-5 md:px-8 md:py-8">{children}</main>
       </div>
     </div>
+  );
+}
+
+function AdminNavList({ pathname }: { pathname: string }) {
+  return (
+    <ul className="flex flex-col gap-0.5">
+      {NAV.map((item) => {
+        const active =
+          pathname === item.href ||
+          (item.href !== '/admin' && pathname.startsWith(item.href));
+        return (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              className={cn(
+                'group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                active
+                  ? 'bg-theme-accent text-[color:var(--theme-base)]'
+                  : 'text-theme-ink/75 hover:bg-theme-glow/15 hover:text-theme-ink',
+              )}
+            >
+              <item.icon className="h-4 w-4" aria-hidden="true" />
+              {item.label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 

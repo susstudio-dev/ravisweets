@@ -13,46 +13,52 @@ import {
   Compass,
   Download,
   FileText,
+  Flame,
+  FlaskConical,
   Globe2,
   Heart,
   IndianRupee,
+  Leaf,
   LineChart,
+  ListChecks,
   Megaphone,
   PenLine,
   RefreshCw,
   Search,
   Sparkles,
+  Sunrise,
   Target,
   Trophy,
   Users,
+  Zap,
 } from 'lucide-react';
 import { Paisley } from '@/components/brand/paisley';
 import { cn } from '@/lib/cn';
 
 /**
  * Admin Strategy — the full Ravi Sweets 12-month growth playbook, rendered as
- * an interactive document inside the admin shell. Mirrors GROWTH_PLAN.md at
- * the repo root, but adds: per-section status (Not started / In progress /
- * Done / Blocked), founder notes, JSON export, and a sticky table of contents
- * for navigation. State persists to localStorage `ravi.strategy.v1` so edits
- * survive reloads while we wait for the Supabase `strategy` table.
+ * an interactive document inside the admin shell. State persists to
+ * localStorage `ravi.strategy.v1` until the Supabase `strategy` table lands.
  *
- * Sections — keep in sync with the order in GROWTH_PLAN.md:
- *   1. Overview / decisions needed
+ * Sections (in render order):
+ *   1. Overview / decisions
  *   2. Market intelligence
  *   3. Customer ICPs
- *   4. Health line (Bellam)
- *   5. Brand & positioning
- *   6. Content engine
- *   7. Paid ads
- *   8. NRI / Global
- *   9. Corporate B2B
- *  10. PR & influencers
- *  11. SEO + AEO
- *  12. KPIs
- *  13. Budget
- *  14. 90-day calendar
- *  15. Quick wins this week
+ *   4. Bellam health line
+ *   5. Spirulina · Bal protein line (deep dive)
+ *   6. Brand & positioning
+ *   7. Content engine
+ *   8. Paid ads
+ *   9. NRI / Global
+ *  10. Corporate B2B
+ *  11. PR & influencers
+ *  12. SEO + AEO
+ *  13. KPIs
+ *  14. Unit economics → ₹25–30L/mo profit
+ *  15. Budget
+ *  16. 90-day calendar
+ *  17. Quick wins this week
+ *  18. Founder playbook — minute-by-minute starting routine
  */
 
 type Status = 'idle' | 'progress' | 'done' | 'blocked';
@@ -92,6 +98,7 @@ const SECTIONS = [
   { id: 'market', label: 'Market intelligence 2026', short: 'Market', icon: BarChart3 },
   { id: 'icps', label: 'Customer ICPs', short: 'ICPs', icon: Users },
   { id: 'health', label: 'Bellam · Health line', short: 'Bellam', icon: Heart },
+  { id: 'spirulina', label: 'Spirulina · Bal protein line', short: 'Spirulina', icon: Leaf },
   { id: 'brand', label: 'Brand & positioning', short: 'Brand', icon: Sparkles },
   { id: 'content', label: 'Content engine', short: 'Content', icon: PenLine },
   { id: 'ads', label: 'Paid ads playbook', short: 'Ads', icon: Megaphone },
@@ -100,9 +107,11 @@ const SECTIONS = [
   { id: 'pr', label: 'PR & influencers', short: 'PR', icon: Trophy },
   { id: 'seo', label: 'SEO + AEO', short: 'SEO', icon: Search },
   { id: 'kpi', label: 'KPIs & dashboard', short: 'KPIs', icon: LineChart },
+  { id: 'economics', label: 'Unit economics → ₹25–30L profit', short: 'Economics', icon: FlaskConical },
   { id: 'budget', label: 'Budget · 90 days', short: 'Budget', icon: IndianRupee },
   { id: 'calendar', label: '90-day calendar', short: 'Calendar', icon: CalendarDays },
   { id: 'wins', label: 'Quick wins this week', short: 'Wins', icon: Target },
+  { id: 'playbook', label: 'Founder playbook · minute-by-minute', short: 'Playbook', icon: Sunrise },
 ] as const satisfies readonly SectionMeta[];
 
 type SectionId = (typeof SECTIONS)[number]['id'];
@@ -290,7 +299,7 @@ export function AdminStrategy() {
           </div>
           <div className="flex flex-col items-end gap-2 text-right">
             <span className="rounded-full bg-theme-accent/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-theme-accent">
-              v1 · 2026-05-04
+              v2 · 2026-05-04 · spirulina + ₹25–30L profit path
             </span>
             <div className="flex gap-2">
               <button
@@ -444,6 +453,16 @@ export function AdminStrategy() {
           </SectionShell>
 
           <SectionShell
+            section={getSection('spirulina')}
+            status={getStatus(state.statuses, 'spirulina')}
+            onStatus={(s) => setStatus('spirulina', s)}
+            note={state.notes.spirulina ?? ''}
+            onNote={(n) => setNote('spirulina', n)}
+          >
+            <SpirulinaSection />
+          </SectionShell>
+
+          <SectionShell
             section={getSection('brand')}
             status={getStatus(state.statuses, 'brand')}
             onStatus={(s) => setStatus('brand', s)}
@@ -524,6 +543,16 @@ export function AdminStrategy() {
           </SectionShell>
 
           <SectionShell
+            section={getSection('economics')}
+            status={getStatus(state.statuses, 'economics')}
+            onStatus={(s) => setStatus('economics', s)}
+            note={state.notes.economics ?? ''}
+            onNote={(n) => setNote('economics', n)}
+          >
+            <EconomicsSection />
+          </SectionShell>
+
+          <SectionShell
             section={getSection('budget')}
             status={getStatus(state.statuses, 'budget')}
             onStatus={(s) => setStatus('budget', s)}
@@ -554,6 +583,19 @@ export function AdminStrategy() {
             onNote={(n) => setNote('wins', n)}
           >
             <WinsSection
+              checked={state.weekChecklist}
+              toggle={toggleWeekItem}
+            />
+          </SectionShell>
+
+          <SectionShell
+            section={getSection('playbook')}
+            status={getStatus(state.statuses, 'playbook')}
+            onStatus={(s) => setStatus('playbook', s)}
+            note={state.notes.playbook ?? ''}
+            onNote={(n) => setNote('playbook', n)}
+          >
+            <PlaybookSection
               checked={state.weekChecklist}
               toggle={toggleWeekItem}
             />
@@ -699,16 +741,34 @@ function OverviewSection({
     <div className="flex flex-col gap-6">
       <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
-          North-star
+          North-star · the number that decides everything
         </p>
         <p className="mt-2 font-display text-xl font-semibold text-theme-ink">
-          Weekly D2C revenue (ex-walk-in) · target ₹25–35L/month by month 12
+          ₹25–30 L net profit / month by Diwali 2026 · ≈ ₹85L–₹1Cr GMV at 30% blended margin
         </p>
         <p className="mt-2 text-sm text-theme-ink/70">
-          Win the Khammam-rooted, Telangana-identity, jaggery-and-millet, NRI-and-corporate
-          slice of the Indian sweets market. The window before the category consolidates is
-          the next 24 months.
+          Five revenue stacks ladder to the target — D2C web (~40%), Corporate B2B (~25%),
+          NRI gifting (~12%), Quick-commerce (~15%), Walk-in (~8%). The new lever versus the
+          v1 plan is the <span className="font-semibold text-theme-accent">Spirulina · Bal protein line</span>{' '}
+          (60–70% protein per 100g, ~78% gross margin). Window before category consolidation:
+          24 months.
         </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            { k: 'Today', v: '₹15–30L', sub: 'GMV / month' },
+            { k: 'Month 6', v: '₹50–60L', sub: 'GMV / month' },
+            { k: 'Month 12', v: '₹85L–1Cr', sub: 'GMV → ₹25–30L profit' },
+            { k: 'Year 2', v: '₹2–3Cr', sub: 'GMV / month, scale-out' },
+          ].map((l) => (
+            <div key={l.k} className="rounded-lg border border-theme-accent/30 bg-surface-elevated px-3 py-2">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+                {l.k}
+              </p>
+              <p className="font-display text-base font-semibold text-theme-ink">{l.v}</p>
+              <p className="text-[10px] text-theme-ink/55">{l.sub}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>
@@ -1966,3 +2026,73 @@ function Pill({
 
 // keep FileText import live for future blog/strategy doc embed
 void FileText;
+
+/* ----------- Sections with content not yet authored — stub them so the
+ * strategy page renders gracefully and the build doesn't fail typecheck.
+ * Replace each return body with the real content when the strategy doc
+ * is finished. */
+
+function SpirulinaSection() {
+  return <SectionStub title="Spirulina sub-brand" lines={['Positioning', 'Pricing tiers', 'Launch SKUs', 'PR plan']} />;
+}
+
+function EconomicsSection() {
+  return <SectionStub title="Unit economics" lines={['CAC by channel', 'AOV / contribution margin', 'Reorder rate by SKU', 'Payback months']} />;
+}
+
+interface PlaybookSectionProps {
+  checked: Record<string, boolean>;
+  toggle: (id: string) => void;
+}
+
+function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
+  const items = [
+    'Post one Reel showing today\'s kitchen',
+    'Reply to all WhatsApp enquiries within 30 min',
+    'Update the active promo',
+    'Top-up low-stock SKUs',
+    'Review last week\'s revenue + top SKU',
+  ];
+  return (
+    <ul className="flex flex-col gap-2">
+      {items.map((label) => {
+        const id = label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const on = !!checked[id];
+        return (
+          <li key={id}>
+            <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[color:var(--color-border)] bg-surface p-3 text-sm">
+              <input
+                type="checkbox"
+                checked={on}
+                onChange={() => toggle(id)}
+                className="h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+              />
+              <span className={on ? 'text-theme-ink/55 line-through' : 'text-theme-ink'}>
+                {label}
+              </span>
+            </label>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function SectionStub({ title, lines }: { title: string; lines: string[] }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] bg-surface-elevated p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        {title} — outline
+      </p>
+      <ul className="mt-3 list-disc pl-5 text-sm text-theme-ink/75">
+        {lines.map((l) => (
+          <li key={l}>{l}</li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[11px] text-theme-ink/55">
+        Detailed content lands once the strategy doc is finalised. Notes above are
+        captured in the &ldquo;Working notes&rdquo; field.
+      </p>
+    </div>
+  );
+}
