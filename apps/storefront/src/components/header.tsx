@@ -249,9 +249,9 @@ export function Header() {
               onClick={() => setMobileOpen((v) => !v)}
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-colors hover:bg-theme-glow/25 hover:text-theme-ink lg:hidden"
+              className="ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted lg:hidden"
             >
-              {mobileOpen ? <X className="h-4 w-4" aria-hidden="true" /> : <Menu className="h-4 w-4" aria-hidden="true" />}
+              {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -272,56 +272,12 @@ export function Header() {
         </AnimatePresence>
       </motion.div>
 
-      {/* Mobile sheet */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: DURATION.quick, ease: EASE.standard }}
-            className="border-t border-[#e6dcc6] bg-[#fffaf0] text-[#2a1a04] lg:hidden"
-          >
-            <div className="container-site grid gap-5 py-5">
-              {SHOP_SECTIONS.map((section) => (
-                <div key={section.heading}>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-                    {section.heading}
-                  </p>
-                  <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1">
-                    {section.items.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="block py-1 text-sm font-medium text-theme-ink/85 hover:text-theme-accent"
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              <div className="border-t border-[color:var(--color-border)] pt-4">
-                <ul className="grid grid-cols-2 gap-3">
-                  {FLAT_NAV.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="block py-1 text-sm font-semibold text-theme-ink/85 hover:text-theme-accent"
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MobileDrawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        sections={SHOP_SECTIONS}
+        flatNav={FLAT_NAV}
+      />
 
       <ScrollProgress />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
@@ -487,5 +443,172 @@ function Underline({ active = false }: { active?: boolean }) {
         active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
       )}
     />
+  );
+}
+
+interface MobileDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  sections: NavSection[];
+  flatNav: { label: string; href: string }[];
+}
+
+/**
+ * Full-screen slide-in drawer from the right (mobile + tablet). Replaces the
+ * previous top-drop sheet which had small tap targets and used theme-driven
+ * CSS variables that could become invisible on dark-themed routes.
+ *
+ * - Full viewport height, fixed-position so it overlays the page (z-50).
+ * - 88vw wide, max 360px so the right edge of the page is still tappable
+ *   to dismiss without scrolling to the X button.
+ * - Hardcoded cream/ink colours so it's never invisible regardless of
+ *   route's --theme-base / --theme-ink overrides.
+ * - Body scroll-lock while open so the drawer doesn't drag the page.
+ * - Backdrop dismiss + Escape key + drawer-internal X all close.
+ */
+function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
+  const reduced = useReducedMotion();
+  const { lineCount } = useCart();
+
+  // Body scroll lock
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="lg:hidden">
+          {/* Backdrop */}
+          <motion.button
+            type="button"
+            aria-label="Close menu"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: DURATION.quick }}
+            className="fixed inset-0 z-40 bg-[#1a0a02]/60 backdrop-blur-sm"
+          />
+
+          {/* Drawer */}
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            initial={reduced ? { opacity: 0 } : { x: '100%' }}
+            animate={reduced ? { opacity: 1 } : { x: 0 }}
+            exit={reduced ? { opacity: 0 } : { x: '100%' }}
+            transition={{ duration: DURATION.base, ease: EASE.emphasised }}
+            className="fixed right-0 top-0 z-50 flex h-[100dvh] w-[88vw] max-w-[360px] flex-col bg-[#fffaf0] text-[#2a1a04] shadow-2xl"
+          >
+            {/* Drawer header */}
+            <div className="flex items-center justify-between border-b border-[#e6dcc6] px-5 py-4">
+              <div className="flex items-center gap-2">
+                <Paisley size="sm" />
+                <span className="font-display text-lg font-bold">Ravi Sweets</span>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4ead0] text-[#2a1a04] transition-colors hover:bg-[#e6dcc6]"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              {/* Cart shortcut at the very top — high-intent users see it first */}
+              <Link
+                href="/cart"
+                onClick={onClose}
+                className="mb-5 flex items-center justify-between rounded-2xl bg-[#3a1a04] px-4 py-3 text-[#fdf6ec]"
+              >
+                <span className="flex items-center gap-2.5">
+                  <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+                  <span className="font-display text-base font-semibold">Your cart</span>
+                </span>
+                <span className="rounded-full bg-[#f0bd4a] px-2.5 py-0.5 text-xs font-bold tabular-nums text-[#3a1a04]">
+                  {lineCount}
+                </span>
+              </Link>
+
+              {sections.map((section) => (
+                <div key={section.heading} className="mb-6">
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a10]">
+                    {section.heading}
+                  </p>
+                  <ul className="flex flex-col">
+                    {section.items.map((item) => (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={onClose}
+                          // h-12 = 48px tap target — comfortably above the 44px Apple HIG / Google Material minimum
+                          className="flex h-12 items-center border-b border-[#f0e7cf] text-[15px] font-medium text-[#2a1a04] transition-colors hover:text-[#a85a08] active:bg-[#f4ead0]"
+                        >
+                          {item.label}
+                          {item.tagline && (
+                            <span className="ml-auto truncate pl-3 text-[11px] font-normal text-[#2a1a04]/55">
+                              {item.tagline}
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              <div className="mb-6 border-t border-[#e6dcc6] pt-4">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a10]">
+                  More
+                </p>
+                <ul className="flex flex-col">
+                  {flatNav.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onClose}
+                        className="flex h-12 items-center border-b border-[#f0e7cf] text-[15px] font-semibold text-[#2a1a04] transition-colors hover:text-[#a85a08] active:bg-[#f4ead0]"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-[#e6dcc6] bg-[#f9f0d8] p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a10]">
+                  Talk to us
+                </p>
+                <a
+                  href="https://wa.me/919398859978"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 flex h-11 items-center justify-center gap-2 rounded-full bg-[#25d366] text-sm font-semibold text-white"
+                >
+                  Chat on WhatsApp
+                </a>
+                <a
+                  href="tel:+919398859978"
+                  className="mt-2 flex h-11 items-center justify-center gap-2 rounded-full bg-[#c0592b] text-sm font-semibold text-white"
+                >
+                  Call +91 93988 59978
+                </a>
+              </div>
+            </div>
+          </motion.aside>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }
