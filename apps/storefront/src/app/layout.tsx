@@ -39,7 +39,7 @@ const tiroTelugu = Tiro_Telugu({
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ??
-      'https://aakashraj-aidenai.github.io/V1.0-Ravisweets',
+      'https://susstudio-dev.github.io/ravisweets',
   ),
   title: {
     default: 'Ravi Sweets · Best Sweet Shop in Khammam since 1985 — Telangana Sweets, Namkeens & Gift Hampers',

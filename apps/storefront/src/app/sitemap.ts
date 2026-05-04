@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { CATALOGUE } from '@ravisweets/shared';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://susstudio-dev.github.io/ravisweets';
 
 // Required when next.config has `output: 'export'` (the GH Pages build).
 export const dynamic = 'force-static';

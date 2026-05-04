@@ -115,10 +115,10 @@ const LOCAL_BUSINESS_JSONLD = {
   '@graph': [
     {
       '@type': 'BakeryShop',
-      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/#brand',
+      '@id': 'https://susstudio-dev.github.io/ravisweets/#brand',
       name: 'Ravi Sweets',
       alternateName: ['Ravi Sweets Khammam', 'Ravi Sweets Hyderabad'],
-      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/',
+      url: 'https://susstudio-dev.github.io/ravisweets/',
       telephone: '+91-93988-59978',
       email: 'ravisweetshyd@gmail.com',
       foundingDate: '1985',
@@ -131,9 +131,9 @@ const LOCAL_BUSINESS_JSONLD = {
     },
     {
       '@type': 'BakeryShop',
-      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores#khammam-flagship',
+      '@id': 'https://susstudio-dev.github.io/ravisweets/stores#khammam-flagship',
       name: 'Ravi Sweets — Khammam Flagship',
-      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores',
+      url: 'https://susstudio-dev.github.io/ravisweets/stores',
       telephone: '+91-93988-59978',
       address: {
         '@type': 'PostalAddress',
@@ -151,9 +151,9 @@ const LOCAL_BUSINESS_JSONLD = {
     },
     {
       '@type': 'BakeryShop',
-      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores#kondapur',
+      '@id': 'https://susstudio-dev.github.io/ravisweets/stores#kondapur',
       name: 'Ravi Sweets — Kondapur (Hyderabad)',
-      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores',
+      url: 'https://susstudio-dev.github.io/ravisweets/stores',
       telephone: '+91-93988-59978',
       address: {
         '@type': 'PostalAddress',

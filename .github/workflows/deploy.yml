@@ -20,8 +20,9 @@ env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.15.9'
   # Project Pages live at https://{user}.github.io/{repo}/, so all asset paths
-  # need the /{repo} prefix. Repo is named V1.0-Ravisweets.
-  PAGES_BASE_PATH: '/V1.0-Ravisweets'
+  # need the /{repo} prefix. Repo is `susstudio-dev/ravisweets`, so the
+  # asset prefix is `/ravisweets`.
+  PAGES_BASE_PATH: '/ravisweets'
 
 jobs:
   build:
