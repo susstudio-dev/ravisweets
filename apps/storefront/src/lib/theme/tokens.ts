@@ -5,21 +5,26 @@
  */
 
 export const rawPalette = {
+  // Brand scale — re-tuned 2026-05-04 to a "brass & ghee" identity. The
+  // previous scale leaned bright/orange-rust which read more fast-food than
+  // 1985 heritage mithai. New scale is anchored on warm ghee cream + deep
+  // antique brass + saffron-gold leaf, with cocoa as the deepest stop.
   brand: {
-    50: '#fdf6ec',
-    100: '#f8e4c2',
-    200: '#f1c883',
-    300: '#e9ad4a',
-    400: '#d48e21',
-    500: '#a56a0f',
-    600: '#7a4e0a',
-    700: '#583808',
-    800: '#3c2606',
-    900: '#2a1a04',
+    50: '#fbf3df',  // ghee cream (slightly warmer than the prior cold #fdf6ec)
+    100: '#f4e4ba', // pale brass
+    200: '#e9c97e', // pale gold
+    300: '#dba63d', // gold-leaf — the "saffron lift" surface
+    400: '#bc841a', // antique brass
+    500: '#8a5a0e', // deep brass — primary accent
+    600: '#634008', // old gold
+    700: '#472d06', // burnt amber
+    800: '#2e1c04', // cocoa
+    900: '#1f1002', // deep cocoa — primary ink
   },
-  saffron: { DEFAULT: '#F2A365', dark: '#C8732B' },
-  cream: '#FFFAF0',
-  ink: '#1a1410',
+  // Saffron now reads as antique-gold + deep-brass instead of peach + rust.
+  saffron: { DEFAULT: '#e9b249', dark: '#a8501f' },
+  cream: '#fbf3df',
+  ink: '#1f0c02',
   neutral: {
     50: '#fafaf9',
     100: '#f5f5f4',

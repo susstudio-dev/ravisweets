@@ -5,19 +5,23 @@
 @layer base {
   :root {
     /* --- layer 2: semantic role tokens --- */
-    --color-surface: #fffaf0;
-    --color-surface-elevated: #ffffff;
-    --color-text-primary: #1a1410;
-    --color-text-muted: rgba(26, 20, 16, 0.68);
-    --color-border: rgba(26, 20, 16, 0.08);
-    --color-accent: #c8732b;
-    --color-ring: #c8732b;
+    /* Re-tuned to the "brass & ghee" palette 2026-05-04. Cream warmed from
+       the cold #fffaf0 to #fbf3df (matches kitchen-fresh ghee cream). Accent
+       deepened from rust orange #c8732b to brass-amber #a8501f for heritage
+       weight. Border slightly warmer to match. */
+    --color-surface: #fbf3df;
+    --color-surface-elevated: #fff8e6;
+    --color-text-primary: #1f0c02;
+    --color-text-muted: rgba(31, 12, 2, 0.68);
+    --color-border: rgba(31, 12, 2, 0.08);
+    --color-accent: #a8501f;
+    --color-ring: #a8501f;
 
     /* --- layer 3: flavour theme tokens (overridden per product via ThemeProvider) --- */
-    --theme-base: #fffaf0;
-    --theme-accent: #c8732b;
-    --theme-glow: #f2a365;
-    --theme-ink: #1a1410;
+    --theme-base: #fbf3df;
+    --theme-accent: #a8501f;
+    --theme-glow: #e9b249;
+    --theme-ink: #1f0c02;
     --theme-grain-opacity: 0.05;
 
     /* font-face variables (set by next/font/google) */
