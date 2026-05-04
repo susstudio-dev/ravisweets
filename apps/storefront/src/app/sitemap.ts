@@ -4,6 +4,9 @@ import { CATALOGUE } from '@ravisweets/shared';
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets';
 
+// Required when next.config has `output: 'export'` (the GH Pages build).
+export const dynamic = 'force-static';
+
 const STATIC_PATHS = [
   '',
   '/shop',

@@ -64,7 +64,18 @@ function cursorValueFor(svg: string): string {
 export function SweetCursor() {
   const [active, setActive] = useState<SweetId>('off');
   const [open, setOpen] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const initialised = useRef(false);
+
+  // Detect touch / coarse-pointer devices — custom CSS cursors don't apply
+  // there, so the picker is just noise on mobile.
+  useEffect(() => {
+    const mql = window.matchMedia('(hover: none), (pointer: coarse)');
+    const update = () => setIsTouch(mql.matches);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
 
   // Hydrate from localStorage on mount.
   useEffect(() => {
@@ -112,6 +123,8 @@ export function SweetCursor() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
+
+  if (isTouch) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2 print:hidden">
