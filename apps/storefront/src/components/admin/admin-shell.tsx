@@ -8,6 +8,7 @@ import {
   BarChart3,
   Boxes,
   Building2,
+  Compass,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -15,6 +16,7 @@ import {
   Package,
   Palette,
   Settings,
+  Sparkles,
   Star,
   Tag,
   Users,
@@ -28,10 +30,12 @@ const ADMIN_ENABLED = process.env.NEXT_PUBLIC_ADMIN_ENABLED !== 'false';
 
 const NAV: { label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Strategy', href: '/admin/strategy', icon: Compass },
   { label: 'Orders', href: '/admin/orders', icon: Package },
   { label: 'Products', href: '/admin/products', icon: Boxes },
   { label: 'Inventory', href: '/admin/inventory', icon: BarChart3 },
   { label: 'Coupons', href: '/admin/coupons', icon: Tag },
+  { label: 'Promotions', href: '/admin/promotions', icon: Sparkles },
   { label: 'Themes', href: '/admin/themes', icon: Palette },
   { label: 'Content', href: '/admin/content', icon: FileText },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },

@@ -50,12 +50,16 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     date: '2026-11-08T00:00:00+05:30',
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+    // Diwali used to set base to #2a1505 (deep brown) which made the WHOLE
+    // route render dark — header, megamenu, everything. Now we keep the cream
+    // base shared with the rest of the site and let the brass accent +
+    // saffron glow carry the festival mood.
     theme: {
-      base: '#2a1505',
-      accent: '#e9ad4a',
-      glow: '#f2c66f',
-      ink: '#fdf6ec',
-      grainOpacity: 0.08,
+      base: '#fff5dc',
+      accent: '#a85a08',
+      glow: '#f0bd4a',
+      ink: '#2a1505',
+      grainOpacity: 0.07,
     },
     gifteeFor: [
       {

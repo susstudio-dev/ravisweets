@@ -33,7 +33,7 @@ const FESTIVALS: FestivalRow[] = [
   { slug: 'raksha-bandhan',  title: 'Raksha Bandhan',  telugu: 'రక్షా బంధన్', date: '2026-08-28', monthLabel: 'Aug',  blurb: 'A hamper tied with a thread — done properly.',                   palette: { base: '#fdf3df', accent: '#c0592b', ink: '#3a1e0c' } },
   { slug: 'ganesh-chaturthi',title: 'Ganesh Chaturthi',telugu: 'వినాయక చవితి', date: '2027-09-15', monthLabel: 'Sep',  blurb: 'Modaks the slow way — and everything for the prasad table.',     palette: { base: '#fff5d4', accent: '#a85a08', ink: '#2a1404' } },
   { slug: 'onam',            title: 'Onam',            telugu: 'ഓണം',       date: '2027-09-04', monthLabel: 'Sep',  blurb: 'A sadya-sized box for the floor banana leaf.',                   palette: { base: '#f0fae0', accent: '#3a7a1c', ink: '#0a2a04' } },
-  { slug: 'diwali',          title: 'Diwali',          telugu: 'దీపావళి',   date: '2026-11-08', monthLabel: 'Nov',  blurb: 'Wrapped in brass and silk.',                                      palette: { base: '#2a1505', accent: '#e9ad4a', ink: '#fdf6ec' } },
+  { slug: 'diwali',          title: 'Diwali',          telugu: 'దీపావళి',   date: '2026-11-08', monthLabel: 'Nov',  blurb: 'Wrapped in brass and silk.',                                      palette: { base: '#fff5dc', accent: '#a85a08', ink: '#2a1505' } },
   { slug: 'christmas',       title: 'Christmas',       telugu: 'క్రిస్మస్',  date: '2026-12-25', monthLabel: 'Dec',  blurb: 'A South Indian table laid for a Christmas Eve.',                  palette: { base: '#fbf0e8', accent: '#a8222a', ink: '#2a0a0c' } },
 ];
 

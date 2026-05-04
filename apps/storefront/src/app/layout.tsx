@@ -4,6 +4,8 @@ import { Fraunces, Inter, Tiro_Telugu } from 'next/font/google';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { SweetCursor } from '@/components/cursor/sweet-cursor';
+import { FloatingContact } from '@/components/contact/floating-contact';
+import { PromoStrip } from '@/components/promo/promo-strip';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
 import { CouponsProvider } from '@/lib/coupons/context';
@@ -35,20 +37,51 @@ const tiroTelugu = Tiro_Telugu({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      'https://aakashraj-aidenai.github.io/V1.0-Ravisweets',
+  ),
   title: {
-    default: 'Ravi Sweets — Khammam-made Telangana Sweets & Customisable Gift Hampers',
+    default: 'Ravi Sweets · Best Sweet Shop in Khammam since 1985 — Telangana Sweets, Namkeens & Gift Hampers',
     template: '%s | Ravi Sweets',
   },
   description:
-    'Authentic Telangana sweets and namkeens, plus build-your-own gift hampers — made fresh in our Khammam kitchen, in small batches. Shipped across India, shipping worldwide coming soon.',
+    'Ravi Sweets — Khammam\'s most-loved sweet shop since 1985, now in Hyderabad (Kondapur). Authentic Telangana sweets, Hyderabadi specials, Andhra savouries, and build-your-own gift hampers. Hand-made, FSSAI certified, no preservatives, fresh daily across India.',
+  keywords: [
+    'best sweet shop Khammam',
+    'sweet shop in Khammam',
+    'sweet shop Hyderabad',
+    'sweet shop Kondapur',
+    'Ravi Sweets',
+    'Telangana sweets online',
+    'Hyderabadi sweets online',
+    'Andhra sweets online',
+    'Qubani ka Meetha',
+    'Kaju Katli online',
+    'gift hampers Hyderabad',
+    'corporate gifting Hyderabad',
+    'Diwali sweets Khammam',
+    'mithai near me Khammam',
+  ],
   openGraph: {
     type: 'website',
     siteName: 'Ravi Sweets',
     locale: 'en_IN',
+    title: 'Ravi Sweets · Khammam-made Telangana sweets, since 1985',
+    description:
+      'Hand-made Hyderabadi sweets, Andhra savouries, and corporate gift hampers. Two stores in Khammam + Kondapur (Hyderabad). FSSAI certified, no preservatives, ships across India.',
   },
-  robots: { index: false, follow: false }, // staging-gated — flip when photography lands
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ravi Sweets · Khammam-made Telangana sweets',
+    description: 'Hand-made sweets and gift hampers, fresh from our Khammam kitchen since 1985.',
+  },
+  // Allow indexing now that the site has real content + LocalBusiness schema.
+  // Once production photography lands, leave this; until then the brand is real
+  // and findable by name + locality, which matters more than holding for polish.
+  robots: { index: true, follow: true },
   icons: { icon: '/favicon.ico' },
+  category: 'Food & Beverages',
 };
 
 export const viewport: Viewport = {
@@ -88,12 +121,14 @@ export default function RootLayout({
                   <DemoSeed />
                   <RealtimeThemeBridge />
                   <PageDriftGarnish />
+                  <PromoStrip />
                   <Header />
                   <main id="main" className="flex-1">
                     {children}
                   </main>
                   <Footer />
                   <SweetCursor />
+                  <FloatingContact />
                   {modal}
                 </LayoutGroup>
               </CouponsProvider>

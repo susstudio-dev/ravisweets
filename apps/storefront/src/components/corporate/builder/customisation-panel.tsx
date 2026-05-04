@@ -1,6 +1,7 @@
 'use client';
 
-import { Clock3, Type } from 'lucide-react';
+import { Clock3, Type, Upload, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import {
   RIBBON_SWATCHES,
   BOX_FINISHES,
@@ -10,6 +11,8 @@ import {
 import { cn } from '@/lib/cn';
 
 const MESSAGE_MAX = 240;
+const LOGO_MAX_BYTES = 1024 * 512; // 512 KB — plenty for a vector / clean PNG
+const LOGO_STORAGE_KEY = 'ravi.builder.logo.v1';
 
 interface CustomisationPanelProps {
   ribbon: RibbonColor;
@@ -32,6 +35,65 @@ export function CustomisationPanel({
   onLogoToggle,
   onMessageChange,
 }: CustomisationPanelProps) {
+  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [logoName, setLogoName] = useState<string | null>(null);
+  const [logoError, setLogoError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LOGO_STORAGE_KEY);
+      if (raw) {
+        const { dataUrl, name } = JSON.parse(raw) as { dataUrl: string; name: string };
+        setLogoDataUrl(dataUrl);
+        setLogoName(name);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function handleLogoSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoError(null);
+    if (!/^image\/(png|jpeg|svg\+xml|webp)$/.test(file.type)) {
+      setLogoError('Use a PNG, JPG, SVG, or WebP file.');
+      return;
+    }
+    if (file.size > LOGO_MAX_BYTES) {
+      setLogoError('File is larger than 512 KB. Compress it or send a vector.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result ?? '');
+      setLogoDataUrl(dataUrl);
+      setLogoName(file.name);
+      try {
+        localStorage.setItem(LOGO_STORAGE_KEY, JSON.stringify({ dataUrl, name: file.name }));
+      } catch {
+        /* localStorage quota exceeded — silently drop the persistence */
+      }
+      // Treat upload as turning the toggle on automatically.
+      onLogoToggle(true);
+    };
+    reader.onerror = () => setLogoError('Could not read the file. Try another.');
+    reader.readAsDataURL(file);
+  }
+
+  function clearLogo() {
+    setLogoDataUrl(null);
+    setLogoName(null);
+    setLogoError(null);
+    try {
+      localStorage.removeItem(LOGO_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
   const overLimit = message.length > MESSAGE_MAX;
 
   return (
@@ -112,25 +174,86 @@ export function CustomisationPanel({
         </div>
       </fieldset>
 
-      {/* Logo print */}
+      {/* Logo print + upload */}
       <div>
         <label className="flex items-start gap-2 text-sm text-theme-ink">
           <input
             type="checkbox"
             checked={logoPrint}
-            onChange={(e) => onLogoToggle(e.target.checked)}
+            onChange={(e) => {
+              onLogoToggle(e.target.checked);
+              if (!e.target.checked) clearLogo();
+            }}
             className="mt-1 h-4 w-4 rounded border-[color:var(--color-border)] text-theme-accent focus:ring-theme-accent"
           />
           <span>
             <span className="font-semibold">Logo printing</span>
-            <span className="ml-1 text-xs text-theme-ink/60">— our design team prints your logo on the packaging</span>
+            <span className="ml-1 text-xs text-theme-ink/60">
+              — our design team prints your logo on the packaging
+            </span>
           </span>
         </label>
+
         {logoPrint && (
-          <p className="ml-6 mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-semibold text-amber-900">
-            <Clock3 className="h-3 w-3" aria-hidden="true" />
-            Adds 10 business days to lead time
-          </p>
+          <div className="ml-6 mt-3 flex flex-col gap-3">
+            <p className="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-semibold text-amber-900">
+              <Clock3 className="h-3 w-3" aria-hidden="true" />
+              Adds 10 business days to lead time
+            </p>
+
+            {logoDataUrl ? (
+              <div className="flex items-center gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface p-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logoDataUrl}
+                  alt={logoName ? `Uploaded logo: ${logoName}` : 'Uploaded logo'}
+                  className="h-16 w-16 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1.5"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                    Uploaded
+                  </p>
+                  <p className="truncate text-sm font-medium text-theme-ink">
+                    {logoName ?? 'logo'}
+                  </p>
+                  <p className="text-[11px] text-theme-ink/55">
+                    PNG/SVG preferred · 1:1 ratio prints sharpest on the box lid
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={clearLogo}
+                  aria-label="Remove uploaded logo"
+                  className="rounded-full p-1.5 text-theme-ink/55 transition-colors hover:bg-red-500/10 hover:text-red-700"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <label className="flex cursor-pointer flex-col items-start gap-1 rounded-xl border border-dashed border-[color:var(--color-border)] bg-surface px-4 py-3 transition-colors hover:border-theme-accent hover:bg-theme-glow/10">
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-theme-ink">
+                  <Upload className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+                  Upload your logo
+                </span>
+                <span className="text-[11px] text-theme-ink/60">
+                  PNG, SVG, JPG or WebP · max 512 KB · vectors print sharpest
+                </span>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  className="sr-only"
+                  onChange={handleLogoSelected}
+                />
+              </label>
+            )}
+
+            {logoError && (
+              <p className="text-[11px] font-medium text-red-700" role="alert">
+                {logoError}
+              </p>
+            )}
+          </div>
         )}
       </div>
 

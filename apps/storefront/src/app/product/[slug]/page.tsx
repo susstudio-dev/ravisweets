@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Leaf, Package, Snowflake } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ThemeVars } from '@/lib/theme/theme-provider';
+import { CompositionPanel } from '@/components/product/composition-panel';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductReviews } from '@/components/product/product-reviews';
 import { VariantSelector } from '@/components/product/variant-selector';
@@ -192,38 +193,11 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Ingredients & Allergens */}
-      <section className="container-site grid gap-8 py-10 md:grid-cols-2 md:gap-14">
-        <Reveal>
-          <h2 className="font-display text-heading font-semibold text-theme-ink">
-            Ingredients
-          </h2>
-          <p className="mt-3 text-theme-ink/75">{product.ingredients.join(' · ')}</p>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
-            Allergens
-          </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {product.allergens.map((a) => (
-              <span
-                key={a}
-                className="rounded-full border border-theme-accent/40 px-3 py-1 text-xs font-medium text-theme-accent"
-              >
-                {a}
-              </span>
-            ))}
-          </div>
-        </Reveal>
-        <Reveal delay={0.12}>
-          <h2 className="font-display text-heading font-semibold text-theme-ink">
-            Storage &amp; freshness
-          </h2>
-          <p className="mt-3 text-theme-ink/75">{product.storage_instructions}</p>
-          <p className="mt-4 text-sm text-theme-ink/60">
-            Every box leaves our kitchen the day it&rsquo;s packed. We ship in chilled-safe
-            packaging with gel packs for perishable items, temperature-controlled for long hauls.
-          </p>
-        </Reveal>
-      </section>
+      {/* Composition / Made-from / Trust panel — replaces the prior 2-column
+          ingredients+storage layout with a single richer panel that names every
+          ingredient, declares allergens loudly, and shows FSSAI / no-preservatives
+          / traceable-supply badges. */}
+      <CompositionPanel product={product} />
 
       <PaisleyDivider className="container-site" />
 

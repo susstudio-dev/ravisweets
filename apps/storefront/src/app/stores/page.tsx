@@ -16,8 +16,30 @@ import { Parallax } from '@/components/motion/parallax';
 import { Grain } from '@/components/brand/grain';
 
 export const metadata: Metadata = {
-  title: 'Visit us',
-  description: 'Our Khammam flagship and Hyderabad (Kondapur) branch — addresses, hours, and ways to reach us.',
+  title: 'Visit us · Sweet shop in Khammam & Hyderabad',
+  description:
+    'Best sweet shop in Khammam since 1985. Visit our two Khammam stores or our Hyderabad (Kondapur) branch. Authentic Telangana sweets, Hyderabadi specials, namkeens, and gift hampers. Same-day fresh, FSSAI certified.',
+  keywords: [
+    'sweet shop Khammam',
+    'best sweets Khammam',
+    'sweet shop near me Khammam',
+    'mithai Khammam',
+    'Ravi Sweets Khammam',
+    'sweet shop Kondapur',
+    'sweet shop Hyderabad',
+    'Telangana sweets',
+    'Hyderabadi sweets online',
+    'Andhra sweets online',
+  ],
+  alternates: {
+    canonical: '/stores',
+  },
+  openGraph: {
+    title: 'Ravi Sweets · Khammam since 1985 + Hyderabad branch',
+    description:
+      'Two Khammam stores plus a Kondapur (Hyderabad) branch. Authentic Telangana sweets, fresh daily, FSSAI certified.',
+    locale: 'en_IN',
+  },
 };
 
 interface Store {
@@ -82,6 +104,74 @@ const STORES: Store[] = [
   },
 ];
 
+/**
+ * Schema.org LocalBusiness JSON-LD with three branches. This is the single
+ * biggest lever for ranking on "sweet shop in Khammam" / "best sweets near
+ * me" — Google reads this and surfaces the result in the local-pack /
+ * Maps panel for branded + category queries within Khammam and Hyderabad.
+ */
+const LOCAL_BUSINESS_JSONLD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BakeryShop',
+      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/#brand',
+      name: 'Ravi Sweets',
+      alternateName: ['Ravi Sweets Khammam', 'Ravi Sweets Hyderabad'],
+      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/',
+      telephone: '+91-93988-59978',
+      email: 'ravisweetshyd@gmail.com',
+      foundingDate: '1985',
+      sameAs: [
+        'https://ravisweets.com',
+        'https://ravisweets.in',
+        'https://instagram.com/ravi_sweets',
+      ],
+      areaServed: { '@type': 'Country', name: 'India' },
+    },
+    {
+      '@type': 'BakeryShop',
+      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores#khammam-flagship',
+      name: 'Ravi Sweets — Khammam Flagship',
+      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores',
+      telephone: '+91-93988-59978',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Door No 10-1-25, Near Mamillagudem, Beside Over Bridge',
+        addressLocality: 'Khammam',
+        addressRegion: 'Telangana',
+        postalCode: '507001',
+        addressCountry: 'IN',
+      },
+      openingHoursSpecification: [
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '09:30', closes: '21:30' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '10:00', closes: '21:00' },
+      ],
+      priceRange: '₹₹',
+    },
+    {
+      '@type': 'BakeryShop',
+      '@id': 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores#kondapur',
+      name: 'Ravi Sweets — Kondapur (Hyderabad)',
+      url: 'https://aakashraj-aidenai.github.io/V1.0-Ravisweets/stores',
+      telephone: '+91-93988-59978',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Kondapur',
+        addressLocality: 'Hyderabad',
+        addressRegion: 'Telangana',
+        postalCode: '500084',
+        addressCountry: 'IN',
+      },
+      openingHoursSpecification: [
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '07:00', closes: '20:00' },
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '08:00', closes: '18:00' },
+      ],
+      priceRange: '₹₹',
+    },
+  ],
+};
+
 const CONTACT = [
   {
     icon: Phone,
@@ -121,6 +211,11 @@ const STORE_BACKDROP =
 export default function StoresPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCAL_BUSINESS_JSONLD) }}
+      />
       {/* Hero */}
       <section
         className="relative overflow-hidden border-b border-[color:var(--color-border)]"
