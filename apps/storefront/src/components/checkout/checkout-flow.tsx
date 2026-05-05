@@ -9,7 +9,7 @@ import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
 import { useSession } from '@/lib/supabase/session-context';
-import { commitOrderToSupabase } from '@/lib/supabase/orders';
+import { commitOrderToSupabase, sendOrderEmail } from '@/lib/supabase/orders';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { generateOrderId, generateOrderNumber, saveOrder } from '@/lib/orders/store';
 import type { Order, OrderAddress, PaymentMethod } from '@/lib/orders/types';
@@ -151,6 +151,10 @@ export function CheckoutFlow() {
           // Non-fatal: localStorage write succeeded; warn for debugging.
 
           console.warn('Supabase order commit failed:', result.reason);
+        } else {
+          // Fire the order-confirmation email. No-ops silently if Resend
+          // isn't yet wired up in Supabase secrets.
+          void sendOrderEmail(order.id, 'placed');
         }
       }
       clear();

@@ -64,6 +64,42 @@ export function CompositionPanel({ product }: { product: Product }) {
             </p>
           </div>
         )}
+
+        {/* Nutrition Facts — only shown when admin has filled at least one field. */}
+        {product.nutrition && Object.values(product.nutrition).some((v) => typeof v === 'number') && (
+          <div className="mt-6 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+              Nutrition · per 100 g
+            </p>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm md:grid-cols-3">
+              {[
+                { k: 'calories', label: 'Calories', unit: 'kcal' },
+                { k: 'protein_g', label: 'Protein', unit: 'g' },
+                { k: 'fat_g', label: 'Fat', unit: 'g' },
+                { k: 'carbs_g', label: 'Carbs', unit: 'g' },
+                { k: 'sugar_g', label: 'Sugar', unit: 'g' },
+                { k: 'fibre_g', label: 'Fibre', unit: 'g' },
+                { k: 'sodium_mg', label: 'Sodium', unit: 'mg' },
+              ].map(({ k, label, unit }) => {
+                const v = (product.nutrition as Record<string, number | undefined> | undefined)?.[k];
+                if (typeof v !== 'number') return null;
+                return (
+                  <div key={k} className="flex items-baseline justify-between gap-2 border-b border-[color:var(--color-border)] py-1">
+                    <dt className="text-theme-ink/65">{label}</dt>
+                    <dd className="font-mono font-semibold text-theme-ink">
+                      {v}
+                      <span className="ml-0.5 text-[10px] font-normal text-theme-ink/55">{unit}</span>
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+            <p className="mt-2 text-[10px] text-theme-ink/55">
+              Values are typical per the most recent batch. Actual contents may vary
+              ±5% within FSSAI tolerance.
+            </p>
+          </div>
+        )}
       </div>
 
       <ul className="flex flex-col gap-3">

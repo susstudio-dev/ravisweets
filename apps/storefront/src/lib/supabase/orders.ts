@@ -146,6 +146,30 @@ export async function transitionOrderStatus(id: string, next: OrderStatus): Prom
   return !error;
 }
 
+/**
+ * Fire-and-forget transactional email via the `send-order-email` Edge
+ * Function. The function is gated behind RESEND_API_KEY in Supabase
+ * secrets — when not configured, this silently no-ops so the order
+ * commit isn't blocked by missing email infra.
+ */
+export async function sendOrderEmail(
+  orderId: string,
+  kind: 'placed' | 'packed' | 'shipped' | 'delivered' | 'cancelled',
+  trackingUrl?: string,
+): Promise<void> {
+  const supa = await getSupabase();
+  if (!supa) return;
+  try {
+    await supa.functions.invoke('send-order-email', {
+      body: { orderId, kind, trackingUrl },
+    });
+  } catch {
+    // Non-fatal: the function may not be deployed yet, or RESEND_API_KEY
+    // may not be set. The order commit itself succeeded — the email is a
+    // best-effort side-effect.
+  }
+}
+
 export async function logAdminAction(
   action: string,
   entityType: string,

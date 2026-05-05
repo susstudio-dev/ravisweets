@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Download, LayoutGrid, List, Search } from 'lucide-react';
 import { useAdminOrders } from '@/lib/admin/use-admin-orders';
-import { transitionOrderStatus, logAdminAction } from '@/lib/supabase/orders';
+import { transitionOrderStatus, logAdminAction, sendOrderEmail } from '@/lib/supabase/orders';
 import { saveOrder } from '@/lib/orders/store';
 import { useSession } from '@/lib/supabase/session-context';
 import type { Order, OrderStatus } from '@/lib/orders/types';
@@ -17,6 +17,67 @@ const STATUS_OPTIONS: ('all' | OrderStatus)[] = [
   'cancelled',
 ];
 
+const KANBAN_COLUMNS: OrderStatus[] = ['placed', 'packed', 'shipped', 'delivered', 'cancelled'];
+
+const COLUMN_META: Record<OrderStatus, { label: string; tint: string; ink: string }> = {
+  placed: { label: 'New', tint: '#fff5d4', ink: '#a85a08' },
+  packed: { label: 'Packed', tint: '#f4e4ba', ink: '#634008' },
+  shipped: { label: 'In transit', tint: '#dcefe4', ink: '#1e6b3c' },
+  delivered: { label: 'Delivered', tint: '#e0e8ec', ink: '#3a4a52' },
+  cancelled: { label: 'Cancelled', tint: '#fbe2dc', ink: '#7c2010' },
+};
+
+/** Allowed status transitions — kanban drop zones validate against this. */
+const ALLOWED_NEXT: Record<OrderStatus, OrderStatus[]> = {
+  placed: ['packed', 'cancelled'],
+  packed: ['shipped', 'cancelled'],
+  shipped: ['delivered'],
+  delivered: [],
+  cancelled: [],
+};
+
+function downloadCsv(orders: Order[]) {
+  const header = [
+    'Order number',
+    'Status',
+    'Placed at',
+    'Customer',
+    'Email',
+    'Phone',
+    'Pincode',
+    'City',
+    'Subtotal (₹)',
+    'Shipping (₹)',
+    'Total (₹)',
+    'Items',
+  ];
+  const rows = orders.map((o) => [
+    o.number,
+    o.status,
+    new Date(o.placedAt).toISOString(),
+    o.address.name,
+    o.address.email,
+    o.address.phone,
+    o.address.pincode,
+    o.address.city,
+    Math.round(o.subtotal.amount / 100),
+    Math.round(o.shipping.amount / 100),
+    Math.round(o.total.amount / 100),
+    o.lines.map((l) => `${l.productTitle} × ${l.quantity}`).join(' | '),
+  ]);
+  const escape = (v: unknown) => `"${String(v).replace(/"/g, '""')}"`;
+  const csv = [header.map(escape).join(','), ...rows.map((r) => r.map(escape).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ravi-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export function AdminOrders() {
   const orders = useAdminOrders() ?? [];
   const { configured } = useSession();
@@ -24,6 +85,9 @@ export function AdminOrders() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<Order | null>(null);
   const [busy, setBusy] = useState(false);
+  const [view, setView] = useState<'table' | 'kanban'>('kanban');
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [dragOver, setDragOver] = useState<OrderStatus | null>(null);
 
   const filtered = useMemo(() => {
     return orders
@@ -50,12 +114,62 @@ export function AdminOrders() {
     saveOrder({ ...active, status: next });
     if (configured) {
       const ok = await transitionOrderStatus(active.id, next);
-      if (ok) await logAdminAction('transition', 'order', active.id, before, after);
+      if (ok) {
+        await logAdminAction('transition', 'order', active.id, before, after);
+        void sendOrderEmail(active.id, next);
+      }
     }
     setActive({ ...active, status: next });
     setBusy(false);
     // Force a refetch by mounting cycle — simplest: nudge the query state.
     setQuery((q) => q);
+  }
+
+  /** Drag-and-drop transition from kanban — same path as the drawer button. */
+  async function transitionOrderById(id: string, next: OrderStatus) {
+    const order = orders.find((o) => o.id === id);
+    if (!order) return;
+    if (!ALLOWED_NEXT[order.status].includes(next)) return;
+    const before = { status: order.status };
+    saveOrder({ ...order, status: next });
+    if (configured) {
+      const ok = await transitionOrderStatus(order.id, next);
+      if (ok) {
+        await logAdminAction('transition', 'order', order.id, before, { status: next });
+        void sendOrderEmail(order.id, next);
+      }
+    }
+    setQuery((q) => q);
+  }
+
+  /** Bulk-advance every selected order one step (placed → packed, etc). */
+  async function bulkAdvance() {
+    if (selected.size === 0) return;
+    if (!window.confirm(`Advance ${selected.size} orders by one step (placed→packed→shipped→delivered)?`)) return;
+    setBusy(true);
+    for (const id of selected) {
+      const o = orders.find((x) => x.id === id);
+      if (!o) continue;
+      const next = ALLOWED_NEXT[o.status][0];
+      if (!next) continue;
+      saveOrder({ ...o, status: next });
+      if (configured) {
+        const ok = await transitionOrderStatus(o.id, next);
+        if (ok) await logAdminAction('bulk-advance', 'order', o.id, { status: o.status }, { status: next });
+      }
+    }
+    setSelected(new Set());
+    setBusy(false);
+    setQuery((q) => q);
+  }
+
+  function toggleSelected(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
 
   return (
@@ -87,20 +201,173 @@ export function AdminOrders() {
         </div>
       </header>
 
-      <label className="relative block max-w-md">
-        <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-theme-ink/40"
-          aria-hidden="true"
-        />
-        <input
-          type="search"
-          placeholder="Search by order number or customer name…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full rounded-full border border-[color:var(--color-border)] bg-surface-elevated px-9 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
-        />
-      </label>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="relative block min-w-0 flex-1 max-w-md">
+          <Search
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-theme-ink/40"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            placeholder="Search by order number, customer, email, phone…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-full border border-[color:var(--color-border)] bg-surface-elevated px-9 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          />
+        </label>
 
+        {/* View toggle + actions */}
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-full border border-[color:var(--color-border)] bg-surface-elevated p-0.5">
+            <button
+              type="button"
+              onClick={() => setView('kanban')}
+              aria-pressed={view === 'kanban'}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                view === 'kanban'
+                  ? 'bg-theme-accent text-[color:var(--theme-base)]'
+                  : 'text-theme-ink/60 hover:text-theme-ink'
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" />
+              Kanban
+            </button>
+            <button
+              type="button"
+              onClick={() => setView('table')}
+              aria-pressed={view === 'table'}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                view === 'table'
+                  ? 'bg-theme-accent text-[color:var(--theme-base)]'
+                  : 'text-theme-ink/60 hover:text-theme-ink'
+              }`}
+            >
+              <List className="h-3.5 w-3.5" aria-hidden="true" />
+              Table
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => downloadCsv(filtered)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-3 py-1.5 text-xs font-semibold text-theme-ink/75 transition-colors hover:border-theme-accent hover:text-theme-accent"
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Bulk action bar — visible when one or more orders are selected */}
+      {selected.size > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-theme-accent/40 bg-theme-glow/15 px-4 py-2 text-sm">
+          <span className="font-semibold text-theme-ink">
+            {selected.size} selected
+          </span>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={bulkAdvance}
+              disabled={busy}
+              className="rounded-full bg-theme-ink px-3 py-1 text-xs font-semibold text-[color:var(--theme-base)] transition-colors hover:bg-theme-accent disabled:opacity-50"
+            >
+              Advance one step
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelected(new Set())}
+              className="rounded-full border border-[color:var(--color-border)] px-3 py-1 text-xs font-semibold text-theme-ink/65 hover:text-theme-ink"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Kanban view */}
+      {view === 'kanban' && (
+        <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+          {KANBAN_COLUMNS.map((col) => {
+            const meta = COLUMN_META[col];
+            const columnOrders = filtered.filter((o) => o.status === col);
+            const isDropTarget = dragOver === col;
+            return (
+              <div
+                key={col}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(col);
+                }}
+                onDragLeave={() => setDragOver(null)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(null);
+                  const id = e.dataTransfer.getData('text/plain');
+                  if (id) void transitionOrderById(id, col);
+                }}
+                className={`flex flex-col gap-2 rounded-2xl border-2 p-3 transition-all ${
+                  isDropTarget
+                    ? 'border-theme-accent bg-theme-glow/15'
+                    : 'border-[color:var(--color-border)] bg-surface-elevated'
+                }`}
+              >
+                <header className="flex items-center justify-between">
+                  <span
+                    className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider"
+                    style={{ backgroundColor: meta.tint, color: meta.ink }}
+                  >
+                    {meta.label}
+                  </span>
+                  <span className="text-xs font-semibold tabular-nums text-theme-ink/55">
+                    {columnOrders.length}
+                  </span>
+                </header>
+                <ul className="flex flex-col gap-2">
+                  {columnOrders.map((o) => (
+                    <li
+                      key={o.id}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('text/plain', o.id);
+                        e.dataTransfer.effectAllowed = 'move';
+                      }}
+                      onClick={() => setActive(o)}
+                      className="cursor-grab rounded-xl border border-[color:var(--color-border)] bg-surface p-3 text-sm shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted active:cursor-grabbing"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="truncate font-mono text-xs font-semibold text-theme-ink">
+                            {o.number}
+                          </p>
+                          <p className="truncate text-[13px] text-theme-ink/85">
+                            {o.address.name}
+                          </p>
+                          <p className="truncate text-[11px] text-theme-ink/55">
+                            {o.address.city} · {o.address.pincode}
+                          </p>
+                        </div>
+                        <span className="font-mono text-xs font-semibold text-theme-accent">
+                          ₹{Math.round(o.total.amount / 100).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-[10px] uppercase tracking-wider text-theme-ink/50">
+                        {new Date(o.placedAt).toLocaleDateString('en-IN')} ·{' '}
+                        {o.lines.length} {o.lines.length === 1 ? 'item' : 'items'}
+                      </p>
+                    </li>
+                  ))}
+                  {columnOrders.length === 0 && (
+                    <li className="rounded-xl border border-dashed border-[color:var(--color-border)] p-3 text-center text-[11px] text-theme-ink/40">
+                      Drop orders here
+                    </li>
+                  )}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {view === 'table' && (
       <div className="overflow-x-auto rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated">
         <table className="w-full text-sm">
           <thead className="bg-theme-glow/10 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
@@ -149,6 +416,7 @@ export function AdminOrders() {
           </tbody>
         </table>
       </div>
+      )}
 
       {active && (
         <aside

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowRight, Plus, Save, Search, X } from 'lucide-react';
 import { CATALOGUE, type CategorySlug, type DietaryTag, type Product } from '@ravisweets/shared';
@@ -9,10 +10,12 @@ import {
   upsertProductDescription,
   upsertProductDietaryTags,
   upsertProductFlags,
+  upsertProductNutrition,
   upsertProductPrimaryImage,
   upsertProductSale,
   upsertProductShelfLifeDays,
   upsertProductUnitMode,
+  uploadProductImage,
   upsertVariantPrice,
   upsertVariantStock,
   upsertVariantTitle,
@@ -74,19 +77,17 @@ export function AdminProducts() {
           </h1>
           <p className="mt-1 text-sm text-theme-ink/65">
             {configured
-              ? 'Edit per-variant price + stock + product flags inline. Image upload + new SKU creation land in Phase 3 (image storage).'
+              ? 'Inline edit on price, stock, sale, image upload + flags. Click "Add product" to launch a new SKU.'
               : 'Read-only — connect Supabase to edit.'}
           </p>
         </div>
-        <button
-          type="button"
-          disabled
-          title="New SKUs require image upload — coming Phase 3"
-          className="inline-flex items-center gap-2 rounded-full bg-theme-ink px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] disabled:cursor-not-allowed disabled:opacity-50"
+        <Link
+          href="/admin/products/new"
+          className="inline-flex items-center gap-2 rounded-full bg-theme-ink px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
           Add product
-        </button>
+        </Link>
       </header>
 
       <label className="relative block max-w-md">
@@ -176,6 +177,26 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   const [dietaryTags, setDietaryTags] = useState<DietaryTag[]>(product.dietary_tags);
   const [shelfLifeDays, setShelfLifeDays] = useState(product.shelf_life_days);
   const [builderEligible, setBuilderEligible] = useState(product.builder_eligible);
+
+  // Per-100g nutrition — admin enters whatever they have from the FSSAI sheet.
+  const initialNutrition = product.nutrition ?? {};
+  const [nutrition, setNutrition] = useState<{
+    calories: string;
+    protein_g: string;
+    fat_g: string;
+    sugar_g: string;
+    fibre_g: string;
+    carbs_g: string;
+    sodium_mg: string;
+  }>({
+    calories: initialNutrition.calories?.toString() ?? '',
+    protein_g: initialNutrition.protein_g?.toString() ?? '',
+    fat_g: initialNutrition.fat_g?.toString() ?? '',
+    sugar_g: initialNutrition.sugar_g?.toString() ?? '',
+    fibre_g: initialNutrition.fibre_g?.toString() ?? '',
+    carbs_g: initialNutrition.carbs_g?.toString() ?? '',
+    sodium_mg: initialNutrition.sodium_mg?.toString() ?? '',
+  });
 
   // Sale state — admin can toggle a product on sale and choose between a
   // flat sale price (in rupees) or a percent-off discount.
@@ -323,6 +344,24 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         }
         await logAdminAction('update-primary-image', 'product', product.id, { url: primaryImage?.url, alt: primaryImage?.alt }, { url: imageUrl, alt: imageAlt });
       }
+    }
+
+    // Nutrition — single jsonb write. Empty strings → omitted.
+    const next: Record<string, number> = {};
+    for (const [k, v] of Object.entries(nutrition)) {
+      const n = Number(v);
+      if (v && Number.isFinite(n) && n >= 0) next[k] = n;
+    }
+    const prev = product.nutrition ?? {};
+    const nutritionChanged = JSON.stringify(prev) !== JSON.stringify(next);
+    if (nutritionChanged) {
+      const r = await upsertProductNutrition(product.id, next);
+      if (!r.ok) {
+        window.alert(`Nutrition save failed: ${r.reason}. Run migration 0004.`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction('update-nutrition', 'product', product.id, prev, next);
     }
 
     // Sale state — single multi-field write so partial saves don't show
@@ -508,14 +547,19 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         })}
       </div>
 
-      {/* Primary image */}
+      {/* Primary image — upload file OR paste URL */}
       <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
         Primary image
       </h3>
       <div className="mt-2 grid gap-2">
+        <ImageUpload
+          productId={product.id}
+          currentUrl={imageUrl}
+          onUploaded={(url) => setImageUrl(url)}
+        />
         <label className="flex flex-col gap-1">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
-            URL
+            …or paste a URL
           </span>
           <input
             type="url"
@@ -545,6 +589,45 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             className="mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] bg-theme-glow/15 object-contain p-2"
           />
         )}
+      </div>
+
+      {/* Nutrition — per 100g, all optional. Surfaces below ingredients on
+          the product detail page when ANY field is set. */}
+      <div className="mt-6 rounded-2xl border border-[color:var(--color-border)] bg-surface p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          Nutrition (per 100g)
+        </p>
+        <p className="mt-0.5 text-[11px] text-theme-ink/55">
+          Fill from the FSSAI nutrition sheet for this batch. Leave blank to hide
+          the panel on the storefront.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+          {(
+            [
+              { k: 'calories', label: 'Calories (kcal)' },
+              { k: 'protein_g', label: 'Protein (g)' },
+              { k: 'fat_g', label: 'Fat (g)' },
+              { k: 'sugar_g', label: 'Sugar (g)' },
+              { k: 'fibre_g', label: 'Fibre (g)' },
+              { k: 'carbs_g', label: 'Carbs (g)' },
+              { k: 'sodium_mg', label: 'Sodium (mg)' },
+            ] as const
+          ).map((f) => (
+            <label key={f.k} className="flex flex-col gap-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                {f.label}
+              </span>
+              <input
+                type="number"
+                min={0}
+                step="any"
+                value={nutrition[f.k]}
+                onChange={(e) => setNutrition((p) => ({ ...p, [f.k]: e.target.value }))}
+                className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+              />
+            </label>
+          ))}
+        </div>
       </div>
 
       {/* Sale pricing — admin-toggleable per product. Drives the strikethrough
@@ -833,5 +916,79 @@ function Tag({ children }: { children: React.ReactNode }) {
     <span className="rounded-full bg-theme-glow/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
       {children}
     </span>
+  );
+}
+
+interface ImageUploadProps {
+  productId: string;
+  currentUrl: string;
+  onUploaded: (url: string) => void;
+}
+
+/**
+ * File picker that uploads to Supabase Storage `product-images` and
+ * surfaces the resulting public URL via `onUploaded`. The drawer's URL
+ * input is the source of truth — this component just writes to it.
+ */
+function ImageUpload({ productId, currentUrl, onUploaded }: ImageUploadProps) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File is larger than 5 MB. Compress and retry.');
+      return;
+    }
+    setBusy(true);
+    const r = await uploadProductImage(productId, file);
+    setBusy(false);
+    e.target.value = '';
+    if (!r.ok) {
+      setError(r.reason);
+      return;
+    }
+    onUploaded(r.url);
+  }
+
+  return (
+    <div className="rounded-xl border border-dashed border-[color:var(--color-border)] bg-theme-glow/10 p-3">
+      <div className="flex items-center gap-3">
+        {currentUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={currentUrl}
+            alt=""
+            className="h-16 w-16 shrink-0 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1"
+          />
+        ) : (
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider text-theme-ink/40">
+            no image
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            Upload product photo
+          </p>
+          <label className="mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-theme-accent px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)] transition-colors hover:bg-theme-accent/85">
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml"
+              onChange={onFile}
+              disabled={busy}
+              className="sr-only"
+            />
+            {busy ? 'Uploading…' : 'Choose file'}
+          </label>
+          <p className="mt-1 text-[10px] text-theme-ink/55">
+            PNG / JPG / WebP / AVIF / SVG · max 5 MB. Stored in Supabase Storage,
+            served from the public `product-images` bucket.
+          </p>
+        </div>
+      </div>
+      {error && <p className="mt-2 text-[11px] font-medium text-red-700">{error}</p>}
+    </div>
   );
 }

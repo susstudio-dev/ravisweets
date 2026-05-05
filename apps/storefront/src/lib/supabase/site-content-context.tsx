@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { getSupabase } from '@/lib/supabase/client';
 import { loadAllSiteContent } from './site-content';
 import type {
+  ActiveFestival,
   EditorialBandHeading,
   FooterContent,
   HeroContent,
@@ -17,6 +18,7 @@ interface SiteContentValue {
   editorialBandHeading: EditorialBandHeading | null;
   footer: FooterContent | null;
   homeTrust: HomeTrust | null;
+  activeFestival: ActiveFestival | null;
   loading: boolean;
 }
 
@@ -26,6 +28,7 @@ const Ctx = createContext<SiteContentValue>({
   editorialBandHeading: null,
   footer: null,
   homeTrust: null,
+  activeFestival: null,
   loading: true,
 });
 
@@ -41,6 +44,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     editorialBandHeading: null,
     footer: null,
     homeTrust: null,
+    activeFestival: null,
     loading: true,
   });
 
@@ -55,6 +59,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         editorialBandHeading: all.editorial_band_heading ?? null,
         footer: all.footer ?? null,
         homeTrust: all.home_trust ?? null,
+        activeFestival: all.active_festival ?? null,
         loading: false,
       });
     }

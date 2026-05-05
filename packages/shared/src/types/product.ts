@@ -102,6 +102,20 @@ export interface Product {
   sale_ends_at?: string;
   /** Optional human-readable sale label e.g. "Diwali pre-order" or "Clearance". */
   sale_label?: string;
+  /**
+   * Per-100g nutrition. All fields optional — admin fills what they have on
+   * the FSSAI nutrition fact sheet for that batch. Used to render the
+   * Nutrition Facts table on the product detail page.
+   */
+  nutrition?: {
+    calories?: number;
+    protein_g?: number;
+    fat_g?: number;
+    sugar_g?: number;
+    fibre_g?: number;
+    carbs_g?: number;
+    sodium_mg?: number;
+  };
   /** ISO date when a human confirmed the primary image passes the imagery rubric. */
   rubric_passed_on: string;
   /** Where the image came from. Free-to-use licence (Unsplash / Pexels / public domain) or internal. */

@@ -91,6 +91,32 @@ export async function upsertProductDietaryTags(
   return { ok: true };
 }
 
+/**
+ * Upload an image file to the `product-images` Supabase Storage bucket
+ * and return its public URL. Filename is namespaced under the product id
+ * so re-uploads for the same product land in the same folder.
+ */
+export async function uploadProductImage(
+  productId: string,
+  file: File,
+): Promise<{ ok: true; url: string } | { ok: false; reason: string }> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, reason: 'supabase-not-configured' };
+  const ext = (file.name.split('.').pop() ?? 'jpg').toLowerCase();
+  const safeExt = /^(jpg|jpeg|png|webp|avif|svg)$/.test(ext) ? ext : 'jpg';
+  const path = `${productId}/${Date.now()}.${safeExt}`;
+  const { error: upErr } = await supa.storage
+    .from('product-images')
+    .upload(path, file, {
+      cacheControl: '31536000',
+      upsert: false,
+      contentType: file.type || `image/${safeExt}`,
+    });
+  if (upErr) return { ok: false, reason: upErr.message };
+  const { data } = supa.storage.from('product-images').getPublicUrl(path);
+  return { ok: true, url: data.publicUrl };
+}
+
 export async function upsertProductPrimaryImage(
   productId: string,
   url: string,
@@ -127,12 +153,125 @@ export async function upsertProductBuilderEligible(
   return { ok: true };
 }
 
+export interface CreateProductInput {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: CategorySlug;
+  dietary_tags: DietaryTag[];
+  shelf_life_days: number;
+  storage_instructions: string;
+  builder_eligible: boolean;
+  unit_mode: 'weight' | 'quantity';
+  primary_image_url: string;
+  primary_image_alt: string;
+  /** First variant — admin can add more from the existing edit drawer afterwards. */
+  variant: {
+    id: string;
+    title: string;
+    weight_grams: number;
+    price_amount: number; // paise
+    sku: string;
+    stock_available: number;
+  };
+}
+
+export async function createProduct(
+  input: CreateProductInput,
+): Promise<{ ok: boolean; reason?: string }> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, reason: 'supabase-not-configured' };
+
+  // Insert product row
+  const { error: prodErr } = await supa.from('products').insert({
+    id: input.id,
+    slug: input.slug,
+    title: input.title,
+    description: input.description,
+    category: input.category,
+    dietary_tags: input.dietary_tags,
+    storage_instructions: input.storage_instructions,
+    shelf_life_days: input.shelf_life_days,
+    images: [
+      {
+        url: input.primary_image_url,
+        alt: input.primary_image_alt,
+        width: 1400,
+        height: 1400,
+      },
+    ],
+    region_availability: ['in'],
+    featured: false,
+    bestseller: false,
+    is_new: true,
+    builder_eligible: input.builder_eligible,
+    unit_mode: input.unit_mode,
+    theme_palette: {
+      base: '#fbf3df',
+      accent: '#a8501f',
+      glow: '#e9b249',
+      ink: '#1f0c02',
+      grainOpacity: 0.05,
+    },
+    garnish: 'paisley',
+  });
+  if (prodErr) return { ok: false, reason: prodErr.message };
+
+  // Insert variant
+  const { error: varErr } = await supa.from('variants').insert({
+    id: input.variant.id,
+    product_id: input.id,
+    title: input.variant.title,
+    weight_grams: input.variant.weight_grams,
+    price_amount: input.variant.price_amount,
+    price_currency: 'INR',
+    sku: input.variant.sku,
+    stock_available: input.variant.stock_available,
+  });
+  if (varErr) {
+    // Best-effort cleanup so we don't leave a half-created product.
+    await supa.from('products').delete().eq('id', input.id);
+    return { ok: false, reason: varErr.message };
+  }
+  return { ok: true };
+}
+
 export interface ProductSaleInput {
   on_sale: boolean;
   sale_price?: number | null;
   sale_percent_off?: number | null;
   sale_ends_at?: string | null;
   sale_label?: string | null;
+}
+
+export interface ProductNutrition {
+  calories?: number;
+  protein_g?: number;
+  fat_g?: number;
+  sugar_g?: number;
+  fibre_g?: number;
+  carbs_g?: number;
+  sodium_mg?: number;
+}
+
+export async function upsertProductNutrition(
+  productId: string,
+  nutrition: ProductNutrition,
+): Promise<{ ok: boolean; reason?: string }> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, reason: 'supabase-not-configured' };
+  const cleaned: Record<string, number> = {};
+  for (const [k, v] of Object.entries(nutrition)) {
+    if (typeof v === 'number' && Number.isFinite(v)) cleaned[k] = v;
+  }
+  const payload = Object.keys(cleaned).length > 0 ? cleaned : null;
+  const { error } = await supa
+    .from('products')
+    .update({ nutrition: payload })
+    .eq('id', productId);
+  if (error) return { ok: false, reason: error.message };
+  return { ok: true };
 }
 
 export async function upsertProductSale(

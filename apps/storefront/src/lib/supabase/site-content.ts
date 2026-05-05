@@ -11,7 +11,23 @@ export type SiteContentKey =
   | 'signature_moment'
   | 'editorial_band_heading'
   | 'footer'
-  | 'home_trust';
+  | 'home_trust'
+  | 'active_festival';
+
+/**
+ * "Active festival" — admin-set in /admin/festivals. When `slug` is set
+ * the storefront overlays the festival's theme + banner + curates a
+ * featured-products list under the festival hero. `auto_apply_theme`
+ * toggles whether the route applies the festival's palette globally vs
+ * keeping the default base.
+ */
+export interface ActiveFestival {
+  slug: string | null;
+  banner_text: string | null;
+  ends_at: string | null;
+  curated_product_ids: string[];
+  auto_apply_theme: boolean;
+}
 
 export interface HeroContent {
   eyebrowIndic?: string;
@@ -58,6 +74,7 @@ type ContentByKey = {
   editorial_band_heading: EditorialBandHeading;
   footer: FooterContent;
   home_trust: HomeTrust;
+  active_festival: ActiveFestival;
 };
 
 export async function loadSiteContent<K extends SiteContentKey>(
