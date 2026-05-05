@@ -23,8 +23,12 @@ export const rawPalette = {
   },
   // Saffron now reads as antique-gold + deep-brass instead of peach + rust.
   saffron: { DEFAULT: '#e9b249', dark: '#a8501f' },
-  cream: '#fbf3df',
-  ink: '#1f0c02',
+  // 2026-05-06: pista-rose tokens added so themed components can reach for
+  // the new accent + glow without going through the per-route palette.
+  rose: { DEFAULT: '#a8345d', soft: '#d8a48c' },
+  pista: { DEFAULT: '#c9d99c', deep: '#88a25c' },
+  cream: '#f4efde',
+  ink: '#1f1820',
   neutral: {
     50: '#fafaf9',
     100: '#f5f5f4',
@@ -89,8 +93,8 @@ export const grain = {
  */
 export const defaultFlavour = {
   base: rawPalette.cream,
-  accent: rawPalette.saffron.dark,
-  glow: rawPalette.saffron.DEFAULT,
+  accent: rawPalette.rose.DEFAULT,
+  glow: rawPalette.pista.DEFAULT,
   ink: rawPalette.ink,
   grainOpacity: grain.opacityDefault,
 } as const;

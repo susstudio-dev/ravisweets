@@ -5,24 +5,26 @@
 @layer base {
   :root {
     /* --- layer 2: semantic role tokens --- */
-    /* "Saffron & Cardamom" palette — landed 2026-05-06. Pivot from brass-amber
-       (#a8501f) to a crimson-saffron (#b8312c) that reads more festival-
-       confident; cream warmed slightly toward rose (#fbf2e6) for a softer
-       Hyderabadi sweet-counter feel. Ink stays deep but shifts from cold
-       brown to warm plum (#221008) so the rose-cream sits well against it. */
-    --color-surface: #fbf2e6;
-    --color-surface-elevated: #fffaf0;
-    --color-text-primary: #221008;
-    --color-text-muted: rgba(34, 16, 8, 0.68);
-    --color-border: rgba(34, 16, 8, 0.09);
-    --color-accent: #b8312c;
-    --color-ring: #b8312c;
+    /* "Pista & Rose" palette — landed 2026-05-06. Pivots away from saffron-
+       and brass-led palettes for a fundamentally different mood: pistachio
+       cream surface, rose-wine accent (#a8345d), and a soft pista-green
+       glow that nods to kalakand + rose-petal sweets. Ink shifts to deep
+       plum (#1f1820) so the rose-pista pairing sits cleanly. Three
+       additional presets ship via migration 0008 so the brand can swap
+       palettes from /admin/themes without redeploying. */
+    --color-surface: #f4efde;
+    --color-surface-elevated: #fdf8e8;
+    --color-text-primary: #1f1820;
+    --color-text-muted: rgba(31, 24, 32, 0.68);
+    --color-border: rgba(31, 24, 32, 0.09);
+    --color-accent: #a8345d;
+    --color-ring: #a8345d;
 
     /* --- layer 3: flavour theme tokens (overridden per product via ThemeProvider) --- */
-    --theme-base: #fbf2e6;
-    --theme-accent: #b8312c;
-    --theme-glow: #f2b96a;
-    --theme-ink: #221008;
+    --theme-base: #f4efde;
+    --theme-accent: #a8345d;
+    --theme-glow: #c9d99c;
+    --theme-ink: #1f1820;
     --theme-grain-opacity: 0.05;
 
     /* font-face variables (set by next/font/google) */
