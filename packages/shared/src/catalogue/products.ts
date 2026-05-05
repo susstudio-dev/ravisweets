@@ -720,8 +720,13 @@ function makeProduct(
     shelf_life_days: defaults.shelf_life_days,
     images: [{ url: s.image, alt: `${s.title} — photographed at the Khammam kitchen`, width: 1400, height: 1400 }],
     variants: [
-      { id: `${id}_s`, title: smallTitle, weight_grams: smallGrams, price: { amount: s.variantPaiseSmall, currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase().slice(0, 6)}-S`, stock_available: 60, hsn_code: '2106' },
-      { id: `${id}_l`, title: largeTitle, weight_grams: largeGrams, price: { amount: s.variantPaiseLarge, currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase().slice(0, 6)}-L`, stock_available: 40, hsn_code: '2106' },
+      // Bug fix 2026-05-06: data is stored in paise (matching the field name)
+      // but Money.amount is rupees and formatMoney prints it as such. Without
+      // the /100 every generated savoury/bite/pickle/etc. was 100× over-priced
+      // (e.g. Atukula Mixture showed ₹12,500 instead of ₹125). Round so the
+      // displayed amount stays integer-rupee-clean.
+      { id: `${id}_s`, title: smallTitle, weight_grams: smallGrams, price: { amount: Math.round(s.variantPaiseSmall / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase().slice(0, 6)}-S`, stock_available: 60, hsn_code: '2106' },
+      { id: `${id}_l`, title: largeTitle, weight_grams: largeGrams, price: { amount: Math.round(s.variantPaiseLarge / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase().slice(0, 6)}-L`, stock_available: 40, hsn_code: '2106' },
     ],
     region_availability: ['in'],
     featured: false,
