@@ -5,23 +5,24 @@
 @layer base {
   :root {
     /* --- layer 2: semantic role tokens --- */
-    /* Re-tuned to the "brass & ghee" palette 2026-05-04. Cream warmed from
-       the cold #fffaf0 to #fbf3df (matches kitchen-fresh ghee cream). Accent
-       deepened from rust orange #c8732b to brass-amber #a8501f for heritage
-       weight. Border slightly warmer to match. */
-    --color-surface: #fbf3df;
-    --color-surface-elevated: #fff8e6;
-    --color-text-primary: #1f0c02;
-    --color-text-muted: rgba(31, 12, 2, 0.68);
-    --color-border: rgba(31, 12, 2, 0.08);
-    --color-accent: #a8501f;
-    --color-ring: #a8501f;
+    /* "Saffron & Cardamom" palette — landed 2026-05-06. Pivot from brass-amber
+       (#a8501f) to a crimson-saffron (#b8312c) that reads more festival-
+       confident; cream warmed slightly toward rose (#fbf2e6) for a softer
+       Hyderabadi sweet-counter feel. Ink stays deep but shifts from cold
+       brown to warm plum (#221008) so the rose-cream sits well against it. */
+    --color-surface: #fbf2e6;
+    --color-surface-elevated: #fffaf0;
+    --color-text-primary: #221008;
+    --color-text-muted: rgba(34, 16, 8, 0.68);
+    --color-border: rgba(34, 16, 8, 0.09);
+    --color-accent: #b8312c;
+    --color-ring: #b8312c;
 
     /* --- layer 3: flavour theme tokens (overridden per product via ThemeProvider) --- */
-    --theme-base: #fbf3df;
-    --theme-accent: #a8501f;
-    --theme-glow: #e9b249;
-    --theme-ink: #1f0c02;
+    --theme-base: #fbf2e6;
+    --theme-accent: #b8312c;
+    --theme-glow: #f2b96a;
+    --theme-ink: #221008;
     --theme-grain-opacity: 0.05;
 
     /* font-face variables (set by next/font/google) */
