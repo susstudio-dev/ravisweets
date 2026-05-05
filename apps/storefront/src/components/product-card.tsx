@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { Check, Plus } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { formatMoney, type Product } from '@ravisweets/shared';
+import { computeEffectivePrice, formatMoney, type Product } from '@ravisweets/shared';
 import { HoverLift } from '@/components/motion/hover-lift';
 import { CursorGlow } from '@/components/motion/cursor-glow';
 import { Paisley } from '@/components/brand/paisley';
@@ -31,6 +31,8 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
   if (!primaryImage || !primaryVariant) return null;
 
   const { theme_palette } = product;
+  const effective = computeEffectivePrice(product, primaryVariant);
+  const onSale = effective.salePrice !== null;
   // When the quick-view modal for THIS product is open, hide the card image
   // so Framer's shared-element layoutId reads the modal's hero as the continuation.
   const modalOpen = pathname === `/product/${product.slug}`;
@@ -65,8 +67,19 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
               sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
               className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
             />
-            {/* Tag ribbons */}
+            {/* Tag ribbons. Sale takes priority on the LEFT column when active —
+                a "20% OFF" pill is the most-attention-grabbing badge a user
+                can see, so it belongs above bestseller / new. */}
             <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+              {onSale && (
+                <span className="rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-soft">
+                  {effective.label
+                    ? effective.label
+                    : effective.percentOff
+                      ? `${effective.percentOff}% off`
+                      : 'Sale'}
+                </span>
+              )}
               {product.bestseller && (
                 <span
                   className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"
@@ -96,12 +109,26 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
             <p className="line-clamp-2 text-sm text-theme-ink/70">{product.description}</p>
             <div className="mt-auto flex items-end justify-between gap-2 pt-3">
               <div className="flex flex-col">
-                <span
-                  className="font-display text-lg font-semibold"
-                  style={{ color: theme_palette.accent }}
-                >
-                  {formatMoney(primaryVariant.price)}
-                </span>
+                {onSale && effective.salePrice !== null ? (
+                  <span className="flex items-baseline gap-1.5">
+                    <span
+                      className="font-display text-lg font-semibold"
+                      style={{ color: theme_palette.accent }}
+                    >
+                      {formatMoney({ amount: effective.salePrice, currency: 'INR' })}
+                    </span>
+                    <span className="text-xs text-theme-ink/45 line-through">
+                      {formatMoney(primaryVariant.price)}
+                    </span>
+                  </span>
+                ) : (
+                  <span
+                    className="font-display text-lg font-semibold"
+                    style={{ color: theme_palette.accent }}
+                  >
+                    {formatMoney(primaryVariant.price)}
+                  </span>
+                )}
                 <span className="text-xs text-theme-ink/60">{primaryVariant.title}</span>
               </div>
               {quickAdd && (

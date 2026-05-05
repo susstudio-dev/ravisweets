@@ -2,7 +2,12 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
-import { formatMoney, type Product, type ProductVariant } from '@ravisweets/shared';
+import {
+  computeEffectivePrice,
+  formatMoney,
+  type Product,
+  type ProductVariant,
+} from '@ravisweets/shared';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -28,23 +33,45 @@ export function VariantSelector({ product }: VariantSelectorProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Price with crossfade */}
+      {/* Price with crossfade — strikethrough + sale badge when on sale */}
       <div
-        className="relative h-12 overflow-hidden"
+        className="relative min-h-12"
         aria-live="polite"
         aria-atomic="true"
       >
         <AnimatePresence initial={false} mode="popLayout">
-          <motion.span
+          <motion.div
             key={active.id}
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -14 }}
             transition={{ duration: reduced ? DURATION.fast : DURATION.quick, ease: EASE.standard }}
-            className="inline-block font-display text-4xl font-semibold text-theme-accent"
+            className="flex flex-wrap items-baseline gap-3"
           >
-            {formatMoney(active.price)}
-          </motion.span>
+            {(() => {
+              const eff = computeEffectivePrice(product, active);
+              if (eff.salePrice !== null) {
+                return (
+                  <>
+                    <span className="font-display text-4xl font-semibold text-theme-accent">
+                      {formatMoney({ amount: eff.salePrice, currency: 'INR' })}
+                    </span>
+                    <span className="font-display text-xl text-theme-ink/40 line-through">
+                      {formatMoney(active.price)}
+                    </span>
+                    <span className="rounded-full bg-red-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                      {eff.label ?? (eff.percentOff ? `${eff.percentOff}% off` : 'Sale')}
+                    </span>
+                  </>
+                );
+              }
+              return (
+                <span className="font-display text-4xl font-semibold text-theme-accent">
+                  {formatMoney(active.price)}
+                </span>
+              );
+            })()}
+          </motion.div>
         </AnimatePresence>
       </div>
 

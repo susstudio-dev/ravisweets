@@ -131,7 +131,11 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
                 {CATEGORY_LABEL[cat] ?? cat}
               </p>
-              <ul className="flex flex-col gap-2">
+              {/* Image-led tile grid — 2 columns of square cards. The product
+                  cutout dominates each tile (the user feedback was "more
+                  visualization, less text"). Title + price stay below the
+                  image; the floating + button is the only chrome on the card. */}
+              <ul className="grid grid-cols-2 gap-3">
                 {items.map((p) => {
                   const primary = p.variants[0];
                   const img = p.images[0];
@@ -148,32 +152,45 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                       <button
                         type="button"
                         onClick={() => handleAdd(p)}
-                        className={cn(
-                          'group flex w-full items-center gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface px-3 py-2 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
-                        )}
-                        style={{ backgroundColor: p.theme_palette.base }}
+                        aria-label={`Add ${p.title} to hamper`}
+                        className="group flex w-full flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
                       >
-                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg ring-1 ring-[color:var(--color-border)]">
+                        <div
+                          className="relative aspect-square w-full overflow-hidden"
+                          style={{
+                            background: `radial-gradient(ellipse at 30% 30%, color-mix(in oklab, ${p.theme_palette.glow} 40%, ${p.theme_palette.base}) 0%, ${p.theme_palette.base} 80%)`,
+                          }}
+                        >
                           <Image
                             src={img.url}
                             alt=""
                             fill
-                            sizes="48px"
-                            className="object-cover"
+                            sizes="(min-width: 1024px) 200px, 45vw"
+                            className="object-contain p-3 drop-shadow-[0_18px_28px_rgba(60,30,5,0.18)] transition-transform duration-500 group-hover:scale-105"
                           />
+                          {/* Floating + button */}
+                          <span
+                            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--theme-base)] shadow-soft transition-transform duration-300 group-hover:scale-110"
+                            style={{ backgroundColor: p.theme_palette.accent }}
+                            aria-hidden="true"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </span>
+                          {/* Variant count chip when product has multiple sizes */}
+                          {p.variants.length > 1 && (
+                            <span className="absolute bottom-2 left-2 rounded-full bg-theme-ink/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] backdrop-blur">
+                              {p.variants.length} sizes
+                            </span>
+                          )}
                         </div>
-                        <div className="min-w-0 flex-1">
+                        <div className="bg-surface px-3 py-2">
                           <p className="truncate font-display text-sm font-semibold text-theme-ink">
                             {p.title}
                           </p>
                           <p className="text-[11px] text-theme-ink/60">
-                            {primary.title} · {formatMoney(primary.price)}
+                            from {formatMoney(primary.price)}
                           </p>
                         </div>
-                        <Plus
-                          className="h-4 w-4 text-theme-ink/40 transition-colors group-hover:text-theme-accent"
-                          aria-hidden="true"
-                        />
                       </button>
                       <AnimatePresence>
                         {previewId === p.id && !reduced && (

@@ -10,6 +10,7 @@ import {
   upsertProductDietaryTags,
   upsertProductFlags,
   upsertProductPrimaryImage,
+  upsertProductSale,
   upsertProductShelfLifeDays,
   upsertProductUnitMode,
   upsertVariantPrice,
@@ -175,6 +176,25 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   const [dietaryTags, setDietaryTags] = useState<DietaryTag[]>(product.dietary_tags);
   const [shelfLifeDays, setShelfLifeDays] = useState(product.shelf_life_days);
   const [builderEligible, setBuilderEligible] = useState(product.builder_eligible);
+
+  // Sale state — admin can toggle a product on sale and choose between a
+  // flat sale price (in rupees) or a percent-off discount.
+  const [onSale, setOnSale] = useState(product.on_sale ?? false);
+  const [saleMode, setSaleMode] = useState<'percent' | 'flat'>(
+    typeof product.sale_price === 'number' ? 'flat' : 'percent',
+  );
+  const [salePercent, setSalePercent] = useState<number>(product.sale_percent_off ?? 10);
+  // sale_price is stored in paise; admin enters rupees for ergonomics.
+  const [salePriceRupees, setSalePriceRupees] = useState<number>(
+    typeof product.sale_price === 'number'
+      ? Math.round(product.sale_price / 100)
+      : Math.round(((product.variants[0]?.price.amount ?? 0) * 0.85) / 100),
+  );
+  const [saleEndsAt, setSaleEndsAt] = useState<string>(
+    product.sale_ends_at ? product.sale_ends_at.slice(0, 16) : '',
+  );
+  const [saleLabel, setSaleLabel] = useState<string>(product.sale_label ?? '');
+
   const primaryImage = product.images[0];
   const [imageUrl, setImageUrl] = useState(primaryImage?.url ?? '');
   const [imageAlt, setImageAlt] = useState(primaryImage?.alt ?? product.title);
@@ -303,6 +323,46 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         }
         await logAdminAction('update-primary-image', 'product', product.id, { url: primaryImage?.url, alt: primaryImage?.alt }, { url: imageUrl, alt: imageAlt });
       }
+    }
+
+    // Sale state — single multi-field write so partial saves don't show
+    // a strikethrough without a price (or vice-versa).
+    const saleChanged =
+      onSale !== (product.on_sale ?? false) ||
+      saleEndsAt !== (product.sale_ends_at?.slice(0, 16) ?? '') ||
+      saleLabel !== (product.sale_label ?? '') ||
+      (onSale &&
+        ((saleMode === 'percent' && salePercent !== (product.sale_percent_off ?? -1)) ||
+          (saleMode === 'flat' && salePriceRupees * 100 !== (product.sale_price ?? -1))));
+    if (saleChanged) {
+      const r = await upsertProductSale(product.id, {
+        on_sale: onSale,
+        sale_price: onSale && saleMode === 'flat' ? salePriceRupees * 100 : null,
+        sale_percent_off: onSale && saleMode === 'percent' ? salePercent : null,
+        sale_ends_at: onSale && saleEndsAt ? new Date(saleEndsAt).toISOString() : null,
+        sale_label: onSale && saleLabel.trim() ? saleLabel.trim() : null,
+      });
+      if (!r.ok) {
+        window.alert(`Sale save failed: ${r.reason}. Run migration 0003.`);
+        setBusy(false);
+        return;
+      }
+      await logAdminAction(
+        'update-sale',
+        'product',
+        product.id,
+        {
+          on_sale: product.on_sale ?? false,
+          sale_price: product.sale_price ?? null,
+          sale_percent_off: product.sale_percent_off ?? null,
+        },
+        {
+          on_sale: onSale,
+          mode: saleMode,
+          sale_price: saleMode === 'flat' ? salePriceRupees * 100 : null,
+          sale_percent_off: saleMode === 'percent' ? salePercent : null,
+        },
+      );
     }
 
     // Update each variant if changed
@@ -484,6 +544,126 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             alt={imageAlt}
             className="mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] bg-theme-glow/15 object-contain p-2"
           />
+        )}
+      </div>
+
+      {/* Sale pricing — admin-toggleable per product. Drives the strikethrough
+          + sale badge on every storefront card and detail page. */}
+      <div className="mt-6 rounded-2xl border border-[color:var(--color-border)] bg-surface p-4">
+        <label className="flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={onSale}
+            onChange={(e) => setOnSale(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+          />
+          <span>
+            <span className="font-display text-base font-semibold text-theme-ink">
+              Put this product on sale
+            </span>
+            <span className="block text-[11px] text-theme-ink/55">
+              Storefront shows a strikethrough on the regular price + a "Sale" badge.
+              Optional auto-end timestamp hides the sale without a manual write.
+            </span>
+          </span>
+        </label>
+
+        {onSale && (
+          <div className="mt-4 grid gap-3 pl-6">
+            {/* Mode toggle */}
+            <div className="inline-flex w-fit rounded-full border border-[color:var(--color-border)] bg-surface-elevated p-1">
+              {(['percent', 'flat'] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setSaleMode(m)}
+                  aria-pressed={saleMode === m}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition-colors ${
+                    saleMode === m
+                      ? 'bg-theme-accent text-[color:var(--theme-base)]'
+                      : 'text-theme-ink/60 hover:text-theme-ink'
+                  }`}
+                >
+                  {m === 'percent' ? '% off' : 'Flat ₹ price'}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {saleMode === 'percent' ? (
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                    Discount %
+                  </span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    value={salePercent}
+                    onChange={(e) =>
+                      setSalePercent(Math.min(99, Math.max(1, Number(e.target.value) || 1)))
+                    }
+                    className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  />
+                </label>
+              ) : (
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                    Sale price (₹)
+                  </span>
+                  <input
+                    type="number"
+                    min={1}
+                    value={salePriceRupees}
+                    onChange={(e) =>
+                      setSalePriceRupees(Math.max(1, Number(e.target.value) || 1))
+                    }
+                    className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  />
+                </label>
+              )}
+              <label className="flex flex-col gap-1">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                  Sale ends (optional)
+                </span>
+                <input
+                  type="datetime-local"
+                  value={saleEndsAt}
+                  onChange={(e) => setSaleEndsAt(e.target.value)}
+                  className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                />
+              </label>
+            </div>
+
+            <label className="flex flex-col gap-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                Sale badge label (optional)
+              </span>
+              <input
+                type="text"
+                value={saleLabel}
+                onChange={(e) => setSaleLabel(e.target.value.slice(0, 32))}
+                placeholder='e.g. "Diwali pre-order" or "Clearance"'
+                className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+              />
+            </label>
+
+            {/* Live preview of the strikethrough */}
+            <div className="rounded-lg bg-theme-glow/15 px-3 py-2 text-xs">
+              <span className="text-theme-ink/55">Preview · </span>
+              <span className="text-theme-ink/55 line-through">
+                {`₹${Math.round((product.variants[0]?.price.amount ?? 0) / 100)}`}
+              </span>
+              <span className="ml-2 font-display text-base font-semibold text-theme-accent">
+                {saleMode === 'percent'
+                  ? `₹${Math.round(((product.variants[0]?.price.amount ?? 0) * (100 - salePercent)) / 100 / 100)}`
+                  : `₹${salePriceRupees}`}
+              </span>
+              <span className="ml-2 rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                {saleLabel || (saleMode === 'percent' ? `${salePercent}% off` : 'Sale')}
+              </span>
+            </div>
+          </div>
         )}
       </div>
 

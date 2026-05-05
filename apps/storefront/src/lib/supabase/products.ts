@@ -127,6 +127,34 @@ export async function upsertProductBuilderEligible(
   return { ok: true };
 }
 
+export interface ProductSaleInput {
+  on_sale: boolean;
+  sale_price?: number | null;
+  sale_percent_off?: number | null;
+  sale_ends_at?: string | null;
+  sale_label?: string | null;
+}
+
+export async function upsertProductSale(
+  productId: string,
+  sale: ProductSaleInput,
+): Promise<{ ok: boolean; reason?: string }> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, reason: 'supabase-not-configured' };
+  const { error } = await supa
+    .from('products')
+    .update({
+      on_sale: sale.on_sale,
+      sale_price: sale.sale_price ?? null,
+      sale_percent_off: sale.sale_percent_off ?? null,
+      sale_ends_at: sale.sale_ends_at ?? null,
+      sale_label: sale.sale_label ?? null,
+    })
+    .eq('id', productId);
+  if (error) return { ok: false, reason: error.message };
+  return { ok: true };
+}
+
 export async function upsertProductShelfLifeDays(
   productId: string,
   days: number,
