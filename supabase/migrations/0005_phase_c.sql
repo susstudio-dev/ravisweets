@@ -1,22 +1,20 @@
 -- ─── 0005 — Phase C bundle ─────────────────────────────────────────────
 -- Multi-location stock, batch/expiry tracking, scheduled site changes,
 -- staff roles, and review photos. All additive — no breaking changes.
+--
+-- This file is fully idempotent: every CREATE is guarded so partial
+-- replays after an SQL editor error don't fail. Postgres has no
+-- "create type if not exists" so enums are wrapped in DO blocks that
+-- swallow duplicate_object errors.
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 1. Multi-location stock
---
--- Today, variants.stock_available is a single number. Real ops have stock
--- across 3 locations: Khammam Flagship, Khammam Second branch, Kondapur.
--- We add a per-location ledger table; the existing column stays as a
--- "total across locations" denormalisation so the storefront can keep
--- using it without a join.
 -- ────────────────────────────────────────────────────────────────────────
 
-create type if not exists store_location as enum (
-  'khammam-flagship',
-  'khammam-second',
-  'kondapur'
-);
+do $$ begin
+  create type store_location as enum ('khammam-flagship', 'khammam-second', 'kondapur');
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.variant_location_stock (
   variant_id  text not null references public.variants(id) on delete cascade,
@@ -29,17 +27,20 @@ create table if not exists public.variant_location_stock (
 
 alter table public.variant_location_stock enable row level security;
 
+drop policy if exists "anyone reads location stock" on public.variant_location_stock;
+drop policy if exists "admin writes location stock" on public.variant_location_stock;
 create policy "anyone reads location stock" on public.variant_location_stock
   for select using (true);
 create policy "admin writes location stock" on public.variant_location_stock
   for all using (public.is_admin()) with check (public.is_admin());
 
--- Adjustment ledger — every change in stock is a row, with a reason. Lets
--- ops reconstruct what happened in any audit window.
-create type if not exists stock_adjustment_reason as enum (
-  'sale', 'return', 'transfer-in', 'transfer-out',
-  'damaged', 'expired', 'restock', 'audit-correction'
-);
+do $$ begin
+  create type stock_adjustment_reason as enum (
+    'sale', 'return', 'transfer-in', 'transfer-out',
+    'damaged', 'expired', 'restock', 'audit-correction'
+  );
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.stock_adjustments (
   id          uuid primary key default gen_random_uuid(),
@@ -54,6 +55,8 @@ create table if not exists public.stock_adjustments (
 
 alter table public.stock_adjustments enable row level security;
 
+drop policy if exists "admin reads adjustments" on public.stock_adjustments;
+drop policy if exists "admin writes adjustments" on public.stock_adjustments;
 create policy "admin reads adjustments" on public.stock_adjustments
   for select using (public.is_admin());
 create policy "admin writes adjustments" on public.stock_adjustments
@@ -61,10 +64,6 @@ create policy "admin writes adjustments" on public.stock_adjustments
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 2. Batch / expiry tracking — FSSAI-grade FIFO
---
--- Every kitchen production run is a batch. Orders consume from the oldest
--- batch first (FIFO) — implemented client-side for now, server-side RPC
--- moves to Phase D.
 -- ────────────────────────────────────────────────────────────────────────
 
 create table if not exists public.product_batches (
@@ -87,25 +86,25 @@ create index if not exists idx_batches_expiry
 
 alter table public.product_batches enable row level security;
 
+drop policy if exists "admin reads batches" on public.product_batches;
+drop policy if exists "admin writes batches" on public.product_batches;
 create policy "admin reads batches" on public.product_batches
   for select using (public.is_admin());
 create policy "admin writes batches" on public.product_batches
   for all using (public.is_admin()) with check (public.is_admin());
 
+drop trigger if exists product_batches_touch on public.product_batches;
 create trigger product_batches_touch before update on public.product_batches
   for each row execute function public.touch_updated_at();
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 3. Scheduled site changes
---
--- Promo, banner, theme, and the active festival can all be scheduled. A
--- nightly cron (or admin-triggered "publish due") flips the live row when
--- effective_at <= now().
 -- ────────────────────────────────────────────────────────────────────────
 
-create type if not exists scheduled_kind as enum (
-  'theme', 'banner', 'active_festival', 'promo'
-);
+do $$ begin
+  create type scheduled_kind as enum ('theme', 'banner', 'active_festival', 'promo');
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.scheduled_changes (
   id            uuid primary key default gen_random_uuid(),
@@ -123,6 +122,8 @@ create index if not exists idx_scheduled_changes_pending
 
 alter table public.scheduled_changes enable row level security;
 
+drop policy if exists "admin reads scheduled" on public.scheduled_changes;
+drop policy if exists "admin writes scheduled" on public.scheduled_changes;
 create policy "admin reads scheduled" on public.scheduled_changes
   for select using (public.is_admin());
 create policy "admin writes scheduled" on public.scheduled_changes
@@ -130,11 +131,6 @@ create policy "admin writes scheduled" on public.scheduled_changes
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 4. Staff roles
---
--- Today's `is_admin()` reads app_metadata.role = 'admin'. Phase C splits
--- that into staff_role with finer grain. is_admin() stays as a boolean
--- shortcut ("is this user any kind of staff?"). New is_role() helper
--- lets pages gate on specific roles.
 -- ────────────────────────────────────────────────────────────────────────
 
 create or replace function public.is_role(target text)
@@ -148,8 +144,6 @@ as $$
   );
 $$;
 
--- Future-proof: keep is_admin() returning true for any of the four roles
--- so existing policies keep working unchanged.
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -164,11 +158,6 @@ $$;
 
 -- ────────────────────────────────────────────────────────────────────────
 -- 5. Review photos
---
--- The reviews table already exists. Add a photos jsonb column so customers
--- can upload up to 4 images of the box / sweet they received. Storage
--- lives in a dedicated `review-photos` bucket with public read + auth
--- write.
 -- ────────────────────────────────────────────────────────────────────────
 
 alter table public.reviews
@@ -178,6 +167,8 @@ insert into storage.buckets (id, name, public)
 values ('review-photos', 'review-photos', true)
 on conflict (id) do nothing;
 
+drop policy if exists "any signed-in user uploads review photo" on storage.objects;
+drop policy if exists "anyone reads review photos" on storage.objects;
 create policy "any signed-in user uploads review photo"
   on storage.objects for insert
   to authenticated
