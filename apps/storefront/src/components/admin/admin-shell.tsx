@@ -25,6 +25,7 @@ import {
   Sparkles,
   Star,
   Tag,
+  UserCog,
   Users,
   X,
 } from 'lucide-react';
@@ -53,6 +54,7 @@ const NAV: { label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { label: 'Enquiries', href: '/admin/enquiries', icon: MessageCircle },
   { label: 'Inbox', href: '/admin/inbox', icon: Inbox },
   { label: 'Customers', href: '/admin/customers', icon: Users },
+  { label: 'Team', href: '/admin/team', icon: UserCog },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 

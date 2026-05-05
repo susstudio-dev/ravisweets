@@ -8,6 +8,11 @@ import { CompositionPanel } from '@/components/product/composition-panel';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductReviews } from '@/components/product/product-reviews';
 import { VariantSelector } from '@/components/product/variant-selector';
+import {
+  HamperARPreview,
+  SAMPLE_HAMPER_GLB,
+  SAMPLE_HAMPER_USDZ,
+} from '@/components/ar/hamper-ar-preview';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { TextKinetic } from '@/components/motion/text-kinetic';
@@ -118,6 +123,21 @@ export default async function ProductPage({ params }: PageProps) {
           {primaryVariant && (
             <Reveal delay={0.18}>
               <VariantSelector product={product} />
+            </Reveal>
+          )}
+
+          {/* AR pack-preview — only on hamper / festival SKUs where it makes
+              sense to "see the box on your desk". Sweets / pickles / podis
+              don't need 3D. */}
+          {(product.category === 'gift-hampers' ||
+            product.category === 'festival-specials') && (
+            <Reveal delay={0.22}>
+              <HamperARPreview
+                glb={SAMPLE_HAMPER_GLB}
+                usdz={SAMPLE_HAMPER_USDZ}
+                caption={product.title}
+                bg={product.theme_palette.base}
+              />
             </Reveal>
           )}
 

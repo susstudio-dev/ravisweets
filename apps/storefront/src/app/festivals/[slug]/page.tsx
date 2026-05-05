@@ -13,6 +13,11 @@ import { Parallax } from '@/components/motion/parallax';
 import { TextKinetic } from '@/components/motion/text-kinetic';
 import { Grain } from '@/components/brand/grain';
 import { FestivalCountdown } from '@/components/festivals/festival-countdown';
+import {
+  HamperARPreview,
+  SAMPLE_HAMPER_GLB,
+  SAMPLE_HAMPER_USDZ,
+} from '@/components/ar/hamper-ar-preview';
 
 export type FestivalSlug =
   | 'diwali'
@@ -438,6 +443,12 @@ export default async function FestivalPage({
               >
                 Corporate enquiry
               </Link>
+              <HamperARPreview
+                glb={SAMPLE_HAMPER_GLB}
+                usdz={SAMPLE_HAMPER_USDZ}
+                caption={`${f.title} hamper`}
+                bg={f.theme.base}
+              />
             </div>
           </Reveal>
 
