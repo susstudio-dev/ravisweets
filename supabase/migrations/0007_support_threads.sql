@@ -40,6 +40,8 @@ create index if not exists idx_support_threads_channel on public.support_threads
 
 alter table public.support_threads enable row level security;
 
+drop policy if exists "staff reads threads" on public.support_threads;
+drop policy if exists "staff writes threads" on public.support_threads;
 create policy "staff reads threads" on public.support_threads
   for select using (public.is_role('admin') or public.is_role('founder') or public.is_role('ops') or public.is_role('marketing'));
 create policy "staff writes threads" on public.support_threads
@@ -61,6 +63,8 @@ create index if not exists idx_support_messages_thread on public.support_message
 
 alter table public.support_messages enable row level security;
 
+drop policy if exists "staff reads messages" on public.support_messages;
+drop policy if exists "staff writes messages" on public.support_messages;
 create policy "staff reads messages" on public.support_messages
   for select using (public.is_role('admin') or public.is_role('founder') or public.is_role('ops') or public.is_role('marketing'));
 create policy "staff writes messages" on public.support_messages

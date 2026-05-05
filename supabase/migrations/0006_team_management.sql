@@ -32,6 +32,8 @@ create table if not exists public.team_invitations (
 
 alter table public.team_invitations enable row level security;
 
+drop policy if exists "founder reads invitations" on public.team_invitations;
+drop policy if exists "founder writes invitations" on public.team_invitations;
 create policy "founder reads invitations" on public.team_invitations
   for select using (public.is_role('founder') or public.is_role('admin'));
 create policy "founder writes invitations" on public.team_invitations
@@ -52,6 +54,8 @@ create table if not exists public.staff_permissions (
 
 alter table public.staff_permissions enable row level security;
 
+drop policy if exists "staff reads own permissions" on public.staff_permissions;
+drop policy if exists "founder writes permissions" on public.staff_permissions;
 create policy "staff reads own permissions" on public.staff_permissions
   for select using (auth.uid() = user_id or public.is_role('founder') or public.is_role('admin'));
 create policy "founder writes permissions" on public.staff_permissions
