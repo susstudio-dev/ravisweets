@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Gift, Handshake, Users } from 'lucide-react';
@@ -9,10 +8,10 @@ import { ThemeVars } from '@/lib/theme/theme-provider';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { Parallax } from '@/components/motion/parallax';
 import { TextKinetic } from '@/components/motion/text-kinetic';
 import { Grain } from '@/components/brand/grain';
 import { FestivalCountdown } from '@/components/festivals/festival-countdown';
+import { FestivalDecor } from '@/components/festivals/festival-decor';
 import {
   HamperARPreview,
   SAMPLE_HAMPER_GLB,
@@ -376,37 +375,24 @@ export default async function FestivalPage({
       {/* SSR-seed the festival palette */}
       <ThemeVars palette={f.theme} />
 
-      {/* Hero — full-bleed */}
+      {/* Hero — full-bleed, with per-festival animated SVG vector decoration
+          replacing the previous hero photograph. Diwali gets crackers + diyas
+          + marigolds, Holi gets pichkari + gulal, Eid gets crescent + lanterns,
+          etc. — each decoration tinted in the festival's accent + glow. */}
       <section
         className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
         style={{
-          backgroundImage: `radial-gradient(1100px 600px at 85% 10%, ${f.theme.glow}55 0%, transparent 65%), linear-gradient(165deg, ${f.theme.base} 0%, ${f.theme.base} 60%, ${f.theme.glow}33 100%)`,
+          backgroundImage: `radial-gradient(900px 500px at 85% 15%, ${f.theme.glow}55 0%, transparent 65%), radial-gradient(700px 400px at 12% 80%, ${f.theme.accent}22 0%, transparent 60%), linear-gradient(165deg, ${f.theme.base} 0%, ${f.theme.base} 60%, ${f.theme.glow}33 100%)`,
           color: f.theme.ink,
         }}
       >
-        <div className="absolute inset-0" aria-hidden="true">
-          <Parallax offset={50} className="h-full w-full">
-            <Image
-              src={f.heroImage}
-              alt=""
-              fill
-              priority
-              fetchPriority="high"
-              sizes="100vw"
-              className="object-cover opacity-40 mix-blend-multiply"
-            />
-          </Parallax>
-          <div
-            className="absolute inset-0"
-            style={{
-              // Lighter top fade so the headline sits over a soft tint of the
-              // theme rather than a solid block; bottom fade carries gently
-              // back into the next section's surface.
-              background: `linear-gradient(180deg, ${f.theme.base}cc 0%, transparent 30%, transparent 70%, ${f.theme.base}ee 100%)`,
-            }}
-          />
-          <Grain />
-        </div>
+        <FestivalDecor
+          slug={slug as FestivalSlug}
+          accent={f.theme.accent}
+          glow={f.theme.glow}
+          ink={f.theme.ink}
+        />
+        <Grain />
 
         <div className="container-site relative flex flex-col items-start gap-6 py-24 md:py-36">
           <Reveal>
