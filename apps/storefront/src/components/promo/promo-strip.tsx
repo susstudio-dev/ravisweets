@@ -3,18 +3,16 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Sparkles, X } from 'lucide-react';
+import { getActivePromotion } from '@/lib/supabase/promotions';
 
 /**
  * Top-of-page promo / flash-sale strip.
  *
- * Reads the active promo from localStorage `ravi.active.promo.v1` (admin-set,
- * see /admin/promotions). When no promo is set or the user has dismissed it
- * within the same session, the strip stays collapsed and adds zero height
- * to the page (no layout shift on load — uses a hidden div as fallback so
- * SSR + first-client render match).
- *
- * Falls back to a subtle "Free shipping above ₹999" evergreen pill if no
- * admin promo is active.
+ * Reads the active promo from Supabase (`promotions` table), with a
+ * localStorage mirror at `ravi.active.promo.v1` for instant first paint
+ * before the network resolves. Admin sets these from /admin/promotions.
+ * Falls back to the evergreen "Free shipping above ₹999" pill when nothing
+ * is active.
  */
 
 const STORAGE_KEY = 'ravi.active.promo.v1';
@@ -78,10 +76,38 @@ export function PromoStrip() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    // First paint: read whatever's mirrored locally so the strip is ready
+    // before the Supabase round-trip resolves.
     const p = readActivePromo();
     setPromo(p);
     setDismissed(isDismissed(p.id));
     setMounted(true);
+
+    // Then fetch the canonical row from Supabase. Replaces local mirror if
+    // the live promo has changed since this device last saw one.
+    void (async () => {
+      const row = await getActivePromotion();
+      if (!row) return;
+      const live: ActivePromo = {
+        id: row.id,
+        message: row.message,
+        code: row.code ?? undefined,
+        href: row.href,
+        ctaLabel: row.cta_label,
+        bgFrom: row.bg_from,
+        bgTo: row.bg_to,
+        fg: row.fg,
+        expiresAt: row.expires_at ?? undefined,
+      };
+      if (live.expiresAt && new Date(live.expiresAt).getTime() < Date.now()) return;
+      setPromo(live);
+      setDismissed(isDismissed(live.id));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(live));
+      } catch {
+        /* ignore */
+      }
+    })();
 
     function onStorage(e: StorageEvent) {
       if (e.key === STORAGE_KEY) {

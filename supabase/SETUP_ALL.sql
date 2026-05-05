@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════════════════════
--- Ravi Sweets — consolidated setup script (migrations 0005 → 0008)
+-- Ravi Sweets — consolidated setup script (migrations 0005 → 0009)
 -- ════════════════════════════════════════════════════════════════════════
 --
 -- Paste-and-run in the Supabase SQL editor. Fully idempotent — safe to
@@ -16,6 +16,8 @@
 --   5. Unified support inbox (threads + messages + auto-bump trigger)
 --   6. Four palette presets seeded into theme_presets so /admin/themes
 --      can swap between them
+--   7. Promotions table — admin-published flash-sale strip with one-row
+--      "active" constraint
 --
 -- ════════════════════════════════════════════════════════════════════════
 
@@ -387,6 +389,42 @@ on conflict (id) do update
       palette = excluded.palette,
       hero = excluded.hero,
       banner_text = excluded.banner_text;
+
+-- ───────────────────────────────────────────────────────────────────────
+-- 8. Promotions (from 0009)
+-- ───────────────────────────────────────────────────────────────────────
+
+create table if not exists public.promotions (
+  id           text primary key,
+  message      text not null,
+  code         text,
+  href         text not null default '/shop',
+  cta_label    text not null default 'Shop now',
+  bg_from      text not null default '#2a1505',
+  bg_to        text not null default '#5a3010',
+  fg           text not null default '#fdf6ec',
+  expires_at   timestamptz,
+  active       boolean not null default false,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
+);
+
+create unique index if not exists promotions_one_active
+  on public.promotions (active) where active;
+
+drop trigger if exists promotions_touch on public.promotions;
+create trigger promotions_touch before update on public.promotions
+  for each row execute function public.touch_updated_at();
+
+alter table public.promotions enable row level security;
+
+drop policy if exists "anyone reads active promotion" on public.promotions;
+drop policy if exists "anyone reads promotions" on public.promotions;
+drop policy if exists "admin writes promotions" on public.promotions;
+create policy "anyone reads promotions" on public.promotions
+  for select using (true);
+create policy "admin writes promotions" on public.promotions
+  for all using (public.is_admin()) with check (public.is_admin());
 
 -- ════════════════════════════════════════════════════════════════════════
 -- DONE. Everything above is idempotent — re-run any time.

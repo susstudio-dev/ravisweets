@@ -3,21 +3,20 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, Trash2 } from 'lucide-react';
 import { Paisley } from '@/components/brand/paisley';
+import {
+  clearActivePromotion,
+  getActivePromotion,
+  publishPromotion,
+  type PromotionRow,
+} from '@/lib/supabase/promotions';
+import { useSession } from '@/lib/supabase/session-context';
 
 /**
  * Admin Promotions — flash sales / festival offers / site-wide announcement
- * banners. Reads + writes to localStorage `ravi.active.promo.v1` so the
- * <PromoStrip> can mirror the active promo without a Supabase round-trip
- * for now. (Phase 2 moves this to a `promotions` table behind RLS.)
- *
- * What admin can configure:
- *   - Banner message (the one that scrolls across the top of every page)
- *   - Optional coupon code displayed in the banner
- *   - CTA label + destination
- *   - Background gradient + foreground colour (lets festival promos match
- *     their palette — Diwali deep-amber, Holi pink, Eid green, etc.)
- *   - Expiry date / time
- *   - Active toggle (one-click pause without losing the config)
+ * banners. Persists to the Supabase `promotions` table (only one row may be
+ * active at a time, enforced by a partial unique index). Mirrors the active
+ * promo into localStorage so <PromoStrip> can render instantly on first
+ * paint before the Supabase round-trip resolves.
  */
 
 const STORAGE_KEY = 'ravi.active.promo.v1';
@@ -100,31 +99,95 @@ function readActive(): Promo | null {
   }
 }
 
+function rowToPromo(r: PromotionRow): Promo {
+  return {
+    id: r.id,
+    message: r.message,
+    code: r.code ?? undefined,
+    href: r.href,
+    ctaLabel: r.cta_label,
+    bgFrom: r.bg_from,
+    bgTo: r.bg_to,
+    fg: r.fg,
+    expiresAt: r.expires_at ?? undefined,
+  };
+}
+
 export function AdminPromotions() {
+  const { configured } = useSession();
   const [active, setActive] = useState<Promo | null>(null);
   const [draft, setDraft] = useState<Promo>(emptyPromo);
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   useEffect(() => {
-    const a = readActive();
-    if (a) {
-      setActive(a);
-      setDraft(a);
-    }
-  }, []);
+    void (async () => {
+      if (configured) {
+        const row = await getActivePromotion();
+        if (row) {
+          const p = rowToPromo(row);
+          setActive(p);
+          setDraft(p);
+          // Mirror to localStorage so PromoStrip's first paint is instant.
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+          } catch {
+            /* ignore */
+          }
+          return;
+        }
+      }
+      const a = readActive();
+      if (a) {
+        setActive(a);
+        setDraft(a);
+      }
+    })();
+  }, [configured]);
 
-  function publish(promo: Promo) {
+  async function publish(promo: Promo) {
+    setBusy(true);
+    setFeedback(null);
+    if (configured) {
+      const r = await publishPromotion({
+        id: promo.id,
+        message: promo.message,
+        code: promo.code ?? null,
+        href: promo.href,
+        ctaLabel: promo.ctaLabel,
+        bgFrom: promo.bgFrom,
+        bgTo: promo.bgTo,
+        fg: promo.fg,
+        expiresAt: promo.expiresAt ?? null,
+      });
+      if (!r.ok) {
+        setBusy(false);
+        setFeedback(`Save failed: ${r.reason}. Run migration 0009.`);
+        return;
+      }
+    }
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(promo));
-      // Storage event lets every open tab pick this up live.
       window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
     } catch {
-      window.alert('Could not save promo to localStorage');
-      return;
+      /* ignore */
     }
     setActive(promo);
+    setBusy(false);
+    setFeedback('Published.');
   }
 
-  function clearActive() {
+  async function clearActive() {
+    setBusy(true);
+    setFeedback(null);
+    if (configured) {
+      const r = await clearActivePromotion();
+      if (!r.ok) {
+        setBusy(false);
+        setFeedback(`Clear failed: ${r.reason}`);
+        return;
+      }
+    }
     try {
       localStorage.removeItem(STORAGE_KEY);
       window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
@@ -132,6 +195,8 @@ export function AdminPromotions() {
       /* ignore */
     }
     setActive(null);
+    setBusy(false);
+    setFeedback('Cleared.');
   }
 
   return (
@@ -165,8 +230,9 @@ export function AdminPromotions() {
           {active && (
             <button
               type="button"
-              onClick={clearActive}
-              className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-red-700 hover:bg-red-500/10"
+              onClick={() => void clearActive()}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-red-700 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Trash2 className="h-3 w-3" aria-hidden="true" />
               End promo
@@ -200,11 +266,12 @@ export function AdminPromotions() {
               <PromoPreview promo={p} />
               <button
                 type="button"
+                disabled={busy}
                 onClick={() => {
-                  publish(p);
+                  void publish(p);
                   setDraft(p);
                 }}
-                className="self-start rounded-full bg-theme-accent px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] hover:-translate-y-0.5 hover:shadow-soft"
+                className="self-start rounded-full bg-theme-accent px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] hover:-translate-y-0.5 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Sparkles className="mr-1 inline-block h-3 w-3" aria-hidden="true" />
                 Go live
@@ -310,12 +377,12 @@ export function AdminPromotions() {
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            disabled={!draft.message.trim()}
-            onClick={() => publish(draft)}
+            disabled={!draft.message.trim() || busy}
+            onClick={() => void publish(draft)}
             className="inline-flex items-center gap-1.5 rounded-full bg-theme-ink px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-            Publish
+            {busy ? 'Saving…' : 'Publish'}
           </button>
           <button
             type="button"
@@ -324,6 +391,7 @@ export function AdminPromotions() {
           >
             Reset form
           </button>
+          {feedback && <p className="text-[11px] text-theme-ink/65">{feedback}</p>}
         </div>
       </section>
     </div>
