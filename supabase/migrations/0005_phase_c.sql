@@ -1,0 +1,189 @@
+-- ─── 0005 — Phase C bundle ─────────────────────────────────────────────
+-- Multi-location stock, batch/expiry tracking, scheduled site changes,
+-- staff roles, and review photos. All additive — no breaking changes.
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 1. Multi-location stock
+--
+-- Today, variants.stock_available is a single number. Real ops have stock
+-- across 3 locations: Khammam Flagship, Khammam Second branch, Kondapur.
+-- We add a per-location ledger table; the existing column stays as a
+-- "total across locations" denormalisation so the storefront can keep
+-- using it without a join.
+-- ────────────────────────────────────────────────────────────────────────
+
+create type if not exists store_location as enum (
+  'khammam-flagship',
+  'khammam-second',
+  'kondapur'
+);
+
+create table if not exists public.variant_location_stock (
+  variant_id  text not null references public.variants(id) on delete cascade,
+  location    store_location not null,
+  on_hand     int not null default 0 check (on_hand >= 0),
+  reorder_at  int not null default 0,
+  updated_at  timestamptz default now(),
+  primary key (variant_id, location)
+);
+
+alter table public.variant_location_stock enable row level security;
+
+create policy "anyone reads location stock" on public.variant_location_stock
+  for select using (true);
+create policy "admin writes location stock" on public.variant_location_stock
+  for all using (public.is_admin()) with check (public.is_admin());
+
+-- Adjustment ledger — every change in stock is a row, with a reason. Lets
+-- ops reconstruct what happened in any audit window.
+create type if not exists stock_adjustment_reason as enum (
+  'sale', 'return', 'transfer-in', 'transfer-out',
+  'damaged', 'expired', 'restock', 'audit-correction'
+);
+
+create table if not exists public.stock_adjustments (
+  id          uuid primary key default gen_random_uuid(),
+  variant_id  text not null references public.variants(id) on delete cascade,
+  location    store_location not null,
+  delta       int not null,
+  reason      stock_adjustment_reason not null,
+  notes       text,
+  actor_id    uuid references auth.users(id) on delete set null,
+  created_at  timestamptz default now()
+);
+
+alter table public.stock_adjustments enable row level security;
+
+create policy "admin reads adjustments" on public.stock_adjustments
+  for select using (public.is_admin());
+create policy "admin writes adjustments" on public.stock_adjustments
+  for insert with check (public.is_admin());
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 2. Batch / expiry tracking — FSSAI-grade FIFO
+--
+-- Every kitchen production run is a batch. Orders consume from the oldest
+-- batch first (FIFO) — implemented client-side for now, server-side RPC
+-- moves to Phase D.
+-- ────────────────────────────────────────────────────────────────────────
+
+create table if not exists public.product_batches (
+  id           uuid primary key default gen_random_uuid(),
+  variant_id   text not null references public.variants(id) on delete cascade,
+  lot_number   text not null,
+  made_on      date not null,
+  expires_on   date not null,
+  quantity     int not null check (quantity >= 0),
+  consumed     int not null default 0 check (consumed >= 0),
+  location     store_location not null,
+  notes        text,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now(),
+  unique (variant_id, lot_number)
+);
+
+create index if not exists idx_batches_expiry
+  on public.product_batches (variant_id, expires_on);
+
+alter table public.product_batches enable row level security;
+
+create policy "admin reads batches" on public.product_batches
+  for select using (public.is_admin());
+create policy "admin writes batches" on public.product_batches
+  for all using (public.is_admin()) with check (public.is_admin());
+
+create trigger product_batches_touch before update on public.product_batches
+  for each row execute function public.touch_updated_at();
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 3. Scheduled site changes
+--
+-- Promo, banner, theme, and the active festival can all be scheduled. A
+-- nightly cron (or admin-triggered "publish due") flips the live row when
+-- effective_at <= now().
+-- ────────────────────────────────────────────────────────────────────────
+
+create type if not exists scheduled_kind as enum (
+  'theme', 'banner', 'active_festival', 'promo'
+);
+
+create table if not exists public.scheduled_changes (
+  id            uuid primary key default gen_random_uuid(),
+  kind          scheduled_kind not null,
+  payload       jsonb not null,
+  effective_at  timestamptz not null,
+  applied_at    timestamptz,
+  created_by    uuid references auth.users(id) on delete set null,
+  created_at    timestamptz default now()
+);
+
+create index if not exists idx_scheduled_changes_pending
+  on public.scheduled_changes (effective_at)
+  where applied_at is null;
+
+alter table public.scheduled_changes enable row level security;
+
+create policy "admin reads scheduled" on public.scheduled_changes
+  for select using (public.is_admin());
+create policy "admin writes scheduled" on public.scheduled_changes
+  for all using (public.is_admin()) with check (public.is_admin());
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 4. Staff roles
+--
+-- Today's `is_admin()` reads app_metadata.role = 'admin'. Phase C splits
+-- that into staff_role with finer grain. is_admin() stays as a boolean
+-- shortcut ("is this user any kind of staff?"). New is_role() helper
+-- lets pages gate on specific roles.
+-- ────────────────────────────────────────────────────────────────────────
+
+create or replace function public.is_role(target text)
+returns boolean
+language sql
+stable
+as $$
+  select coalesce(
+    (auth.jwt() -> 'app_metadata' ->> 'role') = target,
+    false
+  );
+$$;
+
+-- Future-proof: keep is_admin() returning true for any of the four roles
+-- so existing policies keep working unchanged.
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+as $$
+  select coalesce(
+    (auth.jwt() -> 'app_metadata' ->> 'role') in
+      ('admin', 'founder', 'ops', 'marketing', 'accountant'),
+    false
+  );
+$$;
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 5. Review photos
+--
+-- The reviews table already exists. Add a photos jsonb column so customers
+-- can upload up to 4 images of the box / sweet they received. Storage
+-- lives in a dedicated `review-photos` bucket with public read + auth
+-- write.
+-- ────────────────────────────────────────────────────────────────────────
+
+alter table public.reviews
+  add column if not exists photos jsonb default '[]'::jsonb;
+
+insert into storage.buckets (id, name, public)
+values ('review-photos', 'review-photos', true)
+on conflict (id) do nothing;
+
+create policy "any signed-in user uploads review photo"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'review-photos');
+
+create policy "anyone reads review photos"
+  on storage.objects for select
+  to public
+  using (bucket_id = 'review-photos');

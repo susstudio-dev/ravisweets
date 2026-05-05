@@ -59,6 +59,7 @@ function ReviewCard({ review }: { review: Review }) {
     month: 'short',
     year: 'numeric',
   });
+  const photos = review.photos ?? [];
   return (
     <article className="flex h-full flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted">
       <div className="flex items-center justify-between">
@@ -71,6 +72,16 @@ function ReviewCard({ review }: { review: Review }) {
       </div>
       <h3 className="font-display text-lg font-semibold text-theme-ink">{review.title}</h3>
       <p className="text-sm leading-relaxed text-theme-ink/80">{review.body}</p>
+      {photos.length > 0 && (
+        <ul className="mt-1 grid grid-cols-4 gap-1.5">
+          {photos.slice(0, 4).map((p, i) => (
+            <li key={i} className="aspect-square overflow-hidden rounded-lg border border-[color:var(--color-border)] bg-theme-glow/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p} alt={`${review.title} — customer photo ${i + 1}`} className="h-full w-full object-cover" />
+            </li>
+          ))}
+        </ul>
+      )}
       <p className="mt-auto text-xs text-theme-ink/55">
         {review.author}
         {review.city && ` · ${review.city}`}

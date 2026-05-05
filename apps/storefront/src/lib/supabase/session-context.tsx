@@ -15,17 +15,30 @@ import { ensureCustomerProfile } from './customers';
 
 type Role = 'admin' | 'customer';
 
+/**
+ * Granular staff roles introduced in migration 0005. Every staff role
+ * is also `role === 'admin'` for backwards-compat with existing checks.
+ * Use `staffRole` for finer-grained gating (ops can see orders but not
+ * promotions, accountant is read-only, etc).
+ */
+export type StaffRole = 'founder' | 'admin' | 'ops' | 'marketing' | 'accountant';
+
 interface SessionContextValue {
   configured: boolean;
   session: Session | null;
   user: User | null;
   isAnonymous: boolean;
   role: Role;
+  staffRole: StaffRole | null;
+  /** Returns true if the signed-in user has any of the listed staff roles. */
+  hasRole: (...roles: StaffRole[]) => boolean;
   loading: boolean;
   signOut: () => Promise<void>;
   /** Lazy creates an anonymous session if none exists. Call only after mount. */
   ensureAnonymous: () => Promise<void>;
 }
+
+const STAFF_ROLES: readonly string[] = ['founder', 'admin', 'ops', 'marketing', 'accountant'];
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
@@ -95,8 +108,21 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
 
   const user = session?.user ?? null;
   const isAnonymous = !!user && (user.is_anonymous ?? false);
-  const role: Role =
-    (user?.app_metadata?.role as Role | undefined) === 'admin' ? 'admin' : 'customer';
+  const rawRole = user?.app_metadata?.role as string | undefined;
+  // Any staff role counts as admin for backwards compatibility.
+  const role: Role = rawRole && STAFF_ROLES.includes(rawRole) ? 'admin' : 'customer';
+  const staffRole: StaffRole | null =
+    rawRole && STAFF_ROLES.includes(rawRole) ? (rawRole as StaffRole) : null;
+
+  const hasRole = useCallback(
+    (...roles: StaffRole[]) => {
+      if (!staffRole) return false;
+      // Founder + plain "admin" implicitly have every role.
+      if (staffRole === 'founder' || staffRole === 'admin') return true;
+      return roles.includes(staffRole);
+    },
+    [staffRole],
+  );
 
   const value = useMemo<SessionContextValue>(
     () => ({
@@ -105,11 +131,13 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       user,
       isAnonymous,
       role,
+      staffRole,
+      hasRole,
       loading,
       signOut,
       ensureAnonymous,
     }),
-    [session, user, isAnonymous, role, loading, signOut, ensureAnonymous],
+    [session, user, isAnonymous, role, staffRole, hasRole, loading, signOut, ensureAnonymous],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

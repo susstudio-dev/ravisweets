@@ -21,6 +21,8 @@ export interface Review {
   city?: string;
   date: string; // ISO 8601
   verified: boolean;
+  /** Up to 4 customer-uploaded photos. Storage paths in `review-photos` bucket. */
+  photos?: string[];
 }
 
 const REVIEWS: Review[] = [
