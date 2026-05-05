@@ -55,16 +55,16 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     date: '2026-11-08T00:00:00+05:30',
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
-    // Diwali used to set base to #2a1505 (deep brown) which made the WHOLE
-    // route render dark — header, megamenu, everything. Now we keep the cream
-    // base shared with the rest of the site and let the brass accent +
-    // saffron glow carry the festival mood.
+    // 2026-05-06: festival palettes retuned to harmonise with the site-wide
+    // Pista & Rose direction. Bases stay in a continuous cream family so the
+    // header / megamenu don't feel like a different website per festival.
+    // Accents vary per festival to keep each page visually distinct.
     theme: {
-      base: '#fff5dc',
-      accent: '#a85a08',
-      glow: '#f0bd4a',
-      ink: '#2a1505',
-      grainOpacity: 0.07,
+      base: '#fbf2e0',
+      accent: '#b8312c',
+      glow: '#f0b865',
+      ink: '#26121a',
+      grainOpacity: 0.06,
     },
     gifteeFor: [
       {
@@ -104,10 +104,10 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
     theme: {
-      base: '#fdf3df',
-      accent: '#c0592b',
-      glow: '#f29f5a',
-      ink: '#3a1e0c',
+      base: '#f9eee2',
+      accent: '#b54766',
+      glow: '#e8b08a',
+      ink: '#2a141e',
       grainOpacity: 0.05,
     },
     gifteeFor: [
@@ -143,11 +143,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
     theme: {
-      base: '#fff4e3',
-      accent: '#a56a0f',
-      glow: '#e9ad4a',
-      ink: '#2a1a04',
-      grainOpacity: 0.06,
+      base: '#f1f4e3',
+      accent: '#5b7a3c',
+      glow: '#dbc56a',
+      ink: '#1a2615',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       {
@@ -182,10 +182,10 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
     theme: {
-      base: '#fff0e8',
+      base: '#fbeaef',
       accent: '#c83a6a',
-      glow: '#f29ab2',
-      ink: '#3a0a1c',
+      glow: '#e8b1c7',
+      ink: '#2a0e1c',
       grainOpacity: 0.05,
     },
     gifteeFor: [
@@ -206,11 +206,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
     theme: {
-      base: '#fbf3df',
-      accent: '#9c5a14',
-      glow: '#d6a74c',
-      ink: '#2a1a08',
-      grainOpacity: 0.06,
+      base: '#f6efd8',
+      accent: '#a06a18',
+      glow: '#dab36c',
+      ink: '#241a08',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       { icon: Gift, title: 'For your family', body: 'The Pongal Pot Set — clay pot kept as a keepsake.', href: '/product/pongal-pot-set' },
@@ -230,11 +230,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/08/11-2-400x400.jpg',
     theme: {
-      base: '#fbf2dd',
-      accent: '#a04a14',
-      glow: '#e8a93c',
-      ink: '#2a1604',
-      grainOpacity: 0.06,
+      base: '#fbf0d8',
+      accent: '#a85a14',
+      glow: '#e8b94c',
+      ink: '#26160a',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       { icon: Gift, title: 'For family', body: 'Nuvvula laddu — the Sankranti laddu, til and jaggery.', href: '/product/nuvvula-laddu' },
@@ -254,11 +254,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
     theme: {
-      base: '#fbf2dd',
-      accent: '#7a5612',
-      glow: '#dbb964',
-      ink: '#2a1c08',
-      grainOpacity: 0.06,
+      base: '#f3efde',
+      accent: '#76682c',
+      glow: '#c4c47e',
+      ink: '#1e1c0a',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       { icon: Gift, title: 'For family', body: 'The Ugadi box — sweet, sour, salt, all in one tin.', href: '/category/festival-specials' },
@@ -278,10 +278,10 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
     theme: {
-      base: '#f0fae0',
-      accent: '#3a7a1c',
-      glow: '#9cd058',
-      ink: '#0a2a04',
+      base: '#eef4dd',
+      accent: '#3a7a3c',
+      glow: '#a8c878',
+      ink: '#0e2410',
       grainOpacity: 0.05,
     },
     gifteeFor: [
@@ -302,11 +302,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
     theme: {
-      base: '#fff5d4',
+      base: '#fbf0d6',
       accent: '#a85a08',
       glow: '#f0bd4a',
-      ink: '#2a1404',
-      grainOpacity: 0.06,
+      ink: '#28150a',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       { icon: Gift, title: 'For prasad', body: 'Modak boxes in counts of 11, 21, 51 — the auspicious numbers.', href: '/category/sweets' },
@@ -326,11 +326,11 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/08/STRAWBERRY-BITES.webp',
     theme: {
-      base: '#fbf0e8',
-      accent: '#a8222a',
-      glow: '#e58c8a',
-      ink: '#2a0a0c',
-      grainOpacity: 0.06,
+      base: '#fbeae6',
+      accent: '#9c2a3a',
+      glow: '#e0a0a8',
+      ink: '#280c10',
+      grainOpacity: 0.05,
     },
     gifteeFor: [
       { icon: Gift, title: 'For family', body: 'Sweet Bites tin — twelve flavours under one lid.', href: '/category/sweet-bites' },
@@ -379,7 +379,10 @@ export default async function FestivalPage({
       {/* Hero — full-bleed */}
       <section
         className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
-        style={{ backgroundColor: f.theme.base, color: f.theme.ink }}
+        style={{
+          backgroundImage: `radial-gradient(1100px 600px at 85% 10%, ${f.theme.glow}55 0%, transparent 65%), linear-gradient(165deg, ${f.theme.base} 0%, ${f.theme.base} 60%, ${f.theme.glow}33 100%)`,
+          color: f.theme.ink,
+        }}
       >
         <div className="absolute inset-0" aria-hidden="true">
           <Parallax offset={50} className="h-full w-full">
@@ -390,13 +393,16 @@ export default async function FestivalPage({
               priority
               fetchPriority="high"
               sizes="100vw"
-              className="object-cover opacity-60"
+              className="object-cover opacity-40 mix-blend-multiply"
             />
           </Parallax>
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(180deg, ${f.theme.base} 0%, transparent 35%, ${f.theme.base}cc 90%)`,
+              // Lighter top fade so the headline sits over a soft tint of the
+              // theme rather than a solid block; bottom fade carries gently
+              // back into the next section's surface.
+              background: `linear-gradient(180deg, ${f.theme.base}cc 0%, transparent 30%, transparent 70%, ${f.theme.base}ee 100%)`,
             }}
           />
           <Grain />
