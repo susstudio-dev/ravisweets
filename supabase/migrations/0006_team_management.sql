@@ -4,6 +4,20 @@
 -- per-staff permissions JSON so the same role can be scoped further
 -- (e.g. "ops, but no refunds").
 
+-- Make the migration self-sufficient: if 0005 hasn't been run on this
+-- project, define is_role here so the policies below resolve. Same shape
+-- as 0005 so applying 0005 later is a no-op.
+create or replace function public.is_role(target text)
+returns boolean
+language sql
+stable
+as $$
+  select coalesce(
+    (auth.jwt() -> 'app_metadata' ->> 'role') = target,
+    false
+  );
+$$;
+
 create table if not exists public.team_invitations (
   id            uuid primary key default gen_random_uuid(),
   email         text not null unique,

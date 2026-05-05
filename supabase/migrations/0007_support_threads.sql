@@ -5,6 +5,20 @@
 -- Instagram Graph) land later — until they do, anything inserted by
 -- staff or the website contact-form populates this table directly.
 
+-- Make the migration self-sufficient: if 0005 (which introduces is_role)
+-- hasn't been run on this project, define is_role here as create-or-replace.
+-- Same shape as 0005 so re-running 0005 later is a no-op.
+create or replace function public.is_role(target text)
+returns boolean
+language sql
+stable
+as $$
+  select coalesce(
+    (auth.jwt() -> 'app_metadata' ->> 'role') = target,
+    false
+  );
+$$;
+
 create table if not exists public.support_threads (
   id              uuid primary key default gen_random_uuid(),
   channel         text not null check (channel in ('whatsapp', 'email', 'instagram', 'website')),
