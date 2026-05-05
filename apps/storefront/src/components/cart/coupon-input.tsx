@@ -11,7 +11,7 @@ import { useCoupons } from '@/lib/coupons/context';
 const COUPONS_ENABLED = process.env.NEXT_PUBLIC_COUPONS_ENABLED !== 'false';
 
 export function CouponInput() {
-  const { subtotal, lineCount } = useCart();
+  const { subtotal, lineCount, lineViews } = useCart();
   const { user } = useSession();
   const { applied, apply, remove } = useCoupons();
   const [code, setCode] = useState('');
@@ -36,7 +36,14 @@ export function CouponInput() {
         firstOrder: true, // demo: always treat as first order client-side
         segments: [],
         region: 'IN',
-        items: [],
+        items: lineViews.map((l) => ({
+          productId: l.product.id,
+          collectionId: l.product.category,
+          // gift-hampers + festival-specials are both "hamper"-target eligible
+          isHamper:
+            l.product.category === 'gift-hampers' ||
+            l.product.category === 'festival-specials',
+        })),
         appliedCodes: applied.map((a) => a.coupon.code),
         perUserRedeemed: 0,
         globalRedeemed: 0,

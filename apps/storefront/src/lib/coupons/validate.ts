@@ -171,13 +171,18 @@ export function validateCoupon(
  * Reference set of demo coupons baked into the bundle so the cart UI works
  * before Supabase is configured. The admin coupons table will replace this
  * once it's wired (Phase 2.5).
+ *
+ * IMPORTANT: every monetary field below is in RUPEES, matching Money.amount
+ * across the rest of the app. An earlier draft stored these in paise which
+ * silently broke the entire coupon flow — min-subtotals demanded ₹2,99,900
+ * carts and flat-discount applies dropped ₹50,000 off the order.
  */
 export const DEMO_COUPONS: Coupon[] = [
   {
     code: 'FIRSTDIWALI',
     type: 'percent',
     value: 10,
-    maxDiscountCap: 50000, // ₹500 cap (paise)
+    maxDiscountCap: 500, // ₹500 cap
     targetScope: 'cart',
     constraints: { firstOrderOnly: true, regions: ['IN'] },
     validFrom: '2026-01-01T00:00:00+05:30',
@@ -190,9 +195,9 @@ export const DEMO_COUPONS: Coupon[] = [
   {
     code: 'DIWALI500',
     type: 'flat',
-    value: 50000, // ₹500 in paise
+    value: 500, // ₹500 off
     targetScope: 'cart',
-    constraints: { minSubtotal: 299900, regions: ['IN'] }, // ₹2999 min
+    constraints: { minSubtotal: 2999, regions: ['IN'] }, // ₹2,999 min cart
     validFrom: '2026-09-01T00:00:00+05:30',
     validTo: '2026-11-15T23:59:59+05:30',
     perUserLimit: 1,
@@ -205,7 +210,7 @@ export const DEMO_COUPONS: Coupon[] = [
     type: 'free_shipping',
     value: 0,
     targetScope: 'cart',
-    constraints: { minSubtotal: 99900 }, // ₹999 min
+    constraints: { minSubtotal: 999 }, // ₹999 min cart
     validFrom: '2026-01-01T00:00:00+05:30',
     perUserLimit: 5,
     stackable: true,

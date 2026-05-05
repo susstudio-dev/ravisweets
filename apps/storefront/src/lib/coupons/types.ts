@@ -20,8 +20,8 @@ export interface CouponConstraints {
 export interface Coupon {
   code: string;                // case-insensitive, stored uppercase
   type: CouponType;
-  value: number;               // percent (1-100) or paise (flat)
-  maxDiscountCap?: number;     // ₹ cap on percent
+  value: number;               // percent (1-100) or rupees (flat)
+  maxDiscountCap?: number;     // rupees cap on percent
   targetScope: CouponTarget;
   targetIds?: string[];        // collection slugs / product ids / 'hamper'
   constraints: CouponConstraints;
@@ -35,7 +35,7 @@ export interface Coupon {
 }
 
 export interface CouponValidationContext {
-  /** Cart subtotal in paise (post line-discounts, pre-shipping). */
+  /** Cart subtotal in rupees (post line-discounts, pre-shipping). */
   subtotal: number;
   /** Customer id (Supabase auth.users.id), or null for anonymous. */
   customerId: string | null;
@@ -75,6 +75,6 @@ export interface CouponValidationResult {
   ok: boolean;
   reason?: CouponValidationFailureReason;
   message?: string;
-  /** Discount in paise that would apply if accepted. */
+  /** Discount in rupees that would apply if accepted. */
   discount?: number;
 }
