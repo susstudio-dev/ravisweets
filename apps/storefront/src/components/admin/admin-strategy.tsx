@@ -15,6 +15,7 @@ import {
   FileText,
   Flame,
   FlaskConical,
+  Gem,
   Globe2,
   Heart,
   IndianRupee,
@@ -99,6 +100,7 @@ const SECTIONS = [
   { id: 'icps', label: 'Customer ICPs', short: 'ICPs', icon: Users },
   { id: 'health', label: 'Bellam · Health line', short: 'Bellam', icon: Heart },
   { id: 'spirulina', label: 'Spirulina · Bal protein line', short: 'Spirulina', icon: Leaf },
+  { id: 'limited', label: 'The Vault 10 · limited-edition drop', short: 'Vault 10', icon: Gem },
   { id: 'brand', label: 'Brand & positioning', short: 'Brand', icon: Sparkles },
   { id: 'content', label: 'Content engine', short: 'Content', icon: PenLine },
   { id: 'ads', label: 'Paid ads playbook', short: 'Ads', icon: Megaphone },
@@ -460,6 +462,16 @@ export function AdminStrategy() {
             onNote={(n) => setNote('spirulina', n)}
           >
             <SpirulinaSection />
+          </SectionShell>
+
+          <SectionShell
+            section={getSection('limited')}
+            status={getStatus(state.statuses, 'limited')}
+            onStatus={(s) => setStatus('limited', s)}
+            note={state.notes.limited ?? ''}
+            onNote={(n) => setNote('limited', n)}
+          >
+            <LimitedEditionSection />
           </SectionShell>
 
           <SectionShell
@@ -2332,6 +2344,444 @@ function SpirulinaSection() {
         title="Six risks · pre-mitigated"
         tone="amber"
         items={risks.map((r) => ({ heading: r.r, body: r.m }))}
+      />
+    </div>
+  );
+}
+
+function LimitedEditionSection() {
+  // The Vault 10 — a numbered, serialised limited-edition collection. Ten
+  // sweets that do not exist anywhere in the Indian mithai market today,
+  // each grounded in a real technique or Hyderabadi/Andhra heritage cue so
+  // it reads as craft, not gimmick. Sold as a scarcity "drop", sneaker-style.
+  const concept = [
+    {
+      k: 'Format',
+      v: 'A sealed, numbered collector box of 10 single-bite sweets — pieces 01→10, each its own world.',
+    },
+    {
+      k: 'Scarcity',
+      v: 'Drops of 500 numbered boxes per release. Each box laser-etched with its run number (e.g. 287 / 500). When a drop sells out, it is gone — the next drop swaps 2–3 pieces so no box is ever identical.',
+    },
+    {
+      k: 'Why it works',
+      v: 'Turns mithai into a collectible. Creates a waitlist + resale-curiosity + content engine. Anchors Ravi Sweets as the most inventive mithai house in India, which halos the entire core range.',
+    },
+    {
+      k: 'Price architecture',
+      v: '₹2,400 per box of 10 (₹240 / piece) — priced as a luxury gift / self-reward, not a sweet. Margin funds the R&D and the theatre.',
+    },
+  ];
+
+  const sweets = [
+    {
+      no: '01',
+      name: 'Qubani Caviar',
+      idea: 'Reverse-spherified Qubani ka Meetha syrup — glossy apricot "pearls" that burst on the tongue. Served in a tiny tin with a mother-of-pearl spoon.',
+      tech: 'Molecular reverse-spherification (sodium alginate bath)',
+      heritage: 'Nizami royal-kitchen apricot dessert',
+      why: 'No one applies molecular gastronomy to Hyderabadi mithai. Fine-dining amuse-bouche format.',
+    },
+    {
+      no: '02',
+      name: 'Dhungar Smoke Barfi',
+      idea: 'Cardamom-pista barfi finished with charcoal-ghee dhungar smoke, sealed under a glass cloche that releases a curl of aromatic smoke when the lid lifts.',
+      tech: 'Dhungar (live-coal ghee smoking) + smoke-trap cloche',
+      heritage: 'Borrowed from Hyderabadi biryani / haleem finishing',
+      why: 'Smoke + sweet has never been done in Indian mithai. A theatrical reveal.',
+    },
+    {
+      no: '03',
+      name: 'Shahi Tukda Bonbon',
+      idea: 'A single-bite shell of caramelised milk solids holding a liquid saffron-rabri centre that floods the mouth. Crowned with genuine 24K gold leaf.',
+      tech: 'Liquid-centre enrobing + edible 24K gold',
+      heritage: 'Shahi Tukda — the royal bread-and-rabri dessert',
+      why: 'Liquid-centre mithai bonbons do not exist. The gold makes it a flex-gift.',
+    },
+    {
+      no: '04',
+      name: 'Til Noir',
+      idea: 'A jet-black sesame-and-dark-jaggery barfi with a single edible-silver "crack" down the middle in the kintsugi style. The goth piece in the box.',
+      tech: 'Black sesame + food-grade activated charcoal + kintsugi silver line',
+      heritage: 'Til (Sankranti sesame) reimagined',
+      why: 'Visually unlike anything in an Indian sweet box. Instagram bait done with taste.',
+    },
+    {
+      no: '05',
+      name: 'Paan Cloud',
+      idea: 'A meetha-paan aerated mousse, flash-frozen at the counter so the first bite makes you exhale a plume of "smoke" (dragon\'s breath). The paan ritual as a sensory show.',
+      tech: 'Liquid-nitrogen nitro-freezing + aeration',
+      heritage: 'The after-meal meetha paan ritual',
+      why: 'Combines India\'s most theatrical street ritual with nitro spectacle.',
+    },
+    {
+      no: '06',
+      name: 'Filter-Coffee Mysore Pak Truffle',
+      idea: 'South-Indian filter-coffee decoction folded into a melt-in-mouth ghee Mysore Pak, hand-rolled as a truffle, dusted with chicory-coffee powder.',
+      tech: 'Decoction infusion + truffle hand-rolling',
+      heritage: 'Tamil-Telugu filter kaapi × Mysore Pak',
+      why: 'A coffee × mithai crossover that respects both — uncharted at premium tier.',
+    },
+    {
+      no: '07',
+      name: 'Aam Glass',
+      idea: 'Ultra-clear mango "stained-glass" sheets you can see light through, snapped like brittle over a kesar cream. Transparent fruit-glass.',
+      tech: 'Clarified aam pulp + agar setting (transparent sheet)',
+      heritage: 'Aam papad / mango leather, reinvented',
+      why: 'Transparent mithai is a genuine first. A see-through sweet stops the scroll.',
+    },
+    {
+      no: '08',
+      name: 'Gongura Chilli Bonbon',
+      idea: 'Andhra gongura (sorrel) + Guntur chilli inside a 70% dark-chocolate ganache. Sweet, sour, spicy and bitter in one bite.',
+      tech: 'Savoury-leaf reduction + tempered dark chocolate',
+      heritage: 'Andhra gongura + Guntur chilli identity',
+      why: 'Maps a region\'s entire flavour identity onto a chocolate. Polarising = talked-about.',
+    },
+    {
+      no: '09',
+      name: 'Bidri Bar',
+      idea: 'A blackened cocoa-and-milk bar surface-printed with the silver-inlay Bidriware pattern in edible silver — the bar looks like a piece of Hyderabad metal art.',
+      tech: 'Edible-silver transfer printing on dark base',
+      heritage: 'Bidriware — Hyderabad\'s signature metal craft',
+      why: 'An edible replica of a craft tradition. The ultimate "made in Hyderabad" gift hook.',
+    },
+    {
+      no: '10',
+      name: 'Living Rabri',
+      idea: 'A probiotic cultured-milk sweet — the gut-friendly close to the box — with prebiotic date fibre and a whisper of rose. "The dessert your gut thanks you for."',
+      tech: 'Probiotic culturing (live cultures) + prebiotic fibre',
+      heritage: 'Rabri / shrikhand, made functional',
+      why: 'Probiotic mithai is clean white space. Ends the tasting on a wellness note.',
+    },
+  ];
+
+  const constraints = [
+    { r: 'Some pieces need fresh / cold-chain (01 Caviar, 05 Paan Cloud, 10 Living Rabri)', m: 'Split the box into "shelf-stable 7" for courier nationwide + an in-store / Hyderabad-only "fresh 3" experience. Or gel-pack + 48h dispatch window for metros.' },
+    { r: 'Liquid nitrogen (05) is a counter-only experience', m: 'Sell 05 only as an in-store / pop-up / event piece; substitute a frozen-set paan truffle in the couriered box.' },
+    { r: 'Molecular + nitro need new skills + kit', m: 'Two-week R&D residency: hire one ex-fine-dining commis for the drop, or train one kitchen lead. Kit cost ~₹1.2–1.8L one-time (siphon, nitro dewar, alginate bath, cloche set).' },
+    { r: 'Edible gold + silver food-grade sourcing', m: 'Source 24K gold leaf (E175) + silver vark from certified vendors with COA. Budget ₹18–28 per gilded piece.' },
+    { r: 'Shelf-life claims with no preservatives', m: 'NABL shelf-life test each shelf-stable piece. Stamp a "best within" date on the numbered box. The fresh pieces are sold as "eat within 48h" by design.' },
+    { r: 'Risk of reading as gimmick not craft', m: 'Every piece must trace to a real technique + a heritage cue (done above). Lead all content with the story + the maker, never just the look.' },
+  ];
+
+  const dropPlan = [
+    { wk: 'W 0–3', task: 'R&D residency — lock 10 recipes · blind tasting panel scores each piece /10 · cut anything below 7' },
+    { wk: 'W 2–4', task: 'Source edible gold/silver, nitro dewar, alginate, cloche, agar · food-grade COAs filed' },
+    { wk: 'W 3–5', task: 'NABL shelf-life + nutrition on the 7 shelf-stable pieces · FSSAI label copy approved' },
+    { wk: 'W 4–6', task: 'Numbered collector-box design + laser-etch run-number system · unboxing film storyboard' },
+    { wk: 'W 5–7', task: 'Cinematic shoot — one 60s film per piece (the technique, slow-mo) + a master drop trailer' },
+    { wk: 'W 6–8', task: 'Waitlist landing page · /vault-10 · email + WhatsApp capture · "500 boxes only" counter' },
+    { wk: 'W 7–9', task: 'Seed 6 creators (food, design, Hyderabad-culture, NRI) with a numbered box each, embargoed' },
+    { wk: 'W 9', task: 'Drop 01 goes live to waitlist 24h early · then public · live sold-out counter' },
+    { wk: 'W 10–12', task: 'Document the sell-out · open waitlist for Drop 02 (swap 2–3 pieces) · plan quarterly cadence' },
+  ];
+
+  const economics = [
+    { k: 'Avg ingredient + gild cost / piece (blended across 10)', v: '₹34' },
+    { k: '10 pieces / box', v: '₹340' },
+    { k: 'Numbered collector box + tray + foil + insert card', v: '₹185' },
+    { k: 'Skilled labour + R&D amortisation / box', v: '₹120' },
+    { k: 'Cold-pack + expedited courier (fresh pieces)', v: '₹95' },
+    { k: 'Fully-loaded cost / box', v: '₹740', strong: true },
+    { k: 'Retail price / box', v: '₹2,400', strong: true },
+    { k: 'Gross margin', v: '69%', strong: true, accent: true },
+    { k: 'Per drop (500 boxes) gross profit', v: '≈ ₹8.3L', strong: true, accent: true },
+  ];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="rounded-xl border border-theme-accent/40 bg-gradient-to-br from-theme-accent/10 via-theme-glow/10 to-transparent p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          The Vault 10 — a numbered, serialised limited-edition drop
+        </p>
+        <p className="mt-2 font-display text-2xl font-semibold text-theme-ink">
+          Ten sweets that exist nowhere else in the Indian market.
+        </p>
+        <p className="mt-2 text-sm text-theme-ink/75">
+          A collector box of ten single-bite sweets, each built on a real technique —
+          molecular spherification, dhungar smoke, liquid-nitrogen aeration, edible 24K gold,
+          transparent fruit-glass, probiotic culturing — and each anchored to a Hyderabadi or
+          Andhra heritage cue so it reads as craft, not gimmick. Sold sneaker-style: 500
+          numbered boxes per drop, then gone. It makes Ravi Sweets the most inventive mithai
+          house in India, and that reputation halos the entire core range.
+        </p>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2">
+        {concept.map((c) => (
+          <div key={c.k} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+              {c.k}
+            </p>
+            <p className="mt-1 text-xs text-theme-ink/75">{c.v}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          The collection · pieces 01 → 10
+        </p>
+        <table className="mt-3 w-full min-w-[860px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+              <Th>#</Th>
+              <Th>Piece</Th>
+              <Th>The idea</Th>
+              <Th>Technique</Th>
+              <Th>Why it&apos;s never been done</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {sweets.map((s) => (
+              <tr key={s.no} className="border-b border-[color:var(--color-border)]/60 align-top hover:bg-theme-glow/5">
+                <Td className="font-display font-semibold text-theme-accent">{s.no}</Td>
+                <Td className="font-display font-semibold text-theme-ink whitespace-nowrap">
+                  {s.name}
+                  <span className="mt-0.5 block text-[10px] font-normal uppercase tracking-wider text-theme-ink/45">
+                    {s.heritage}
+                  </span>
+                </Td>
+                <Td className="text-theme-ink/75 text-xs">{s.idea}</Td>
+                <Td className="text-theme-ink/60 text-[11px]">{s.tech}</Td>
+                <Td className="text-emerald-700 text-xs">{s.why}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+        <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            Unit economics — one Vault 10 box
+          </p>
+          <table className="mt-3 w-full text-left text-sm">
+            <tbody>
+              {economics.map((r) => (
+                <tr
+                  key={r.k}
+                  className={cn(
+                    'border-b border-[color:var(--color-border)]/60',
+                    r.strong && 'bg-theme-accent/5',
+                  )}
+                >
+                  <Td className={cn('text-theme-ink/80', r.strong && 'font-semibold text-theme-ink')}>
+                    {r.k}
+                  </Td>
+                  <Td
+                    align="right"
+                    className={cn(
+                      'tabular-nums',
+                      r.strong && 'font-display font-semibold',
+                      r.accent && 'text-emerald-700',
+                    )}
+                  >
+                    {r.v}
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-3 text-[11px] text-theme-ink/55">
+            One drop (500 boxes) clears ≈ ₹8.3L gross. Run quarterly = ₹33L+/yr gross from a
+            line that is pure brand fuel. The real return is the waitlist, the press, and the
+            halo on the ₹500-AOV core range.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            The drop mechanic
+          </p>
+          <ul className="mt-3 space-y-2 text-xs text-theme-ink/80">
+            {[
+              '500 numbered boxes per drop — laser-etched run number (287 / 500).',
+              'Waitlist gets 24h early access; public sale after.',
+              'A live "boxes left" counter on /vault-10 creates urgency.',
+              'Sells out → the piece line-up shifts 2–3 sweets for the next drop.',
+              'Quarterly cadence: Drop 01 (Diwali), 02 (Sankranti), 03 (Ugadi), 04 (monsoon).',
+              'Each drop has one "grail" piece teased first to drive the waitlist.',
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-2 leading-relaxed">
+                <Gem className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          12-week first-drop plan
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+          {dropPlan.map((p) => (
+            <div key={p.wk} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+                {p.wk}
+              </p>
+              <p className="mt-1 text-xs text-theme-ink/80">{p.task}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Competitive frame (web-researched, May 2026) ── */}
+      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          Why the lane is open · competitive scan (May 2026)
+        </p>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {[
+            {
+              n: 'Bombay Sweet Shop',
+              w: 'Does limited-edition Diwali flavour collections + Parle-G choc-mithai collabs. New-age, pan-India. But: flavour LEs, not serialised collector drops; no molecular / smoke / nitro craft.',
+            },
+            {
+              n: 'Khoya Mithai',
+              w: 'Le Cordon Bleu chefs + food historians, premium gifting. But: still classic-format mithai (pedas, laddoos); no single-bite technique theatre, no numbered scarcity.',
+            },
+            {
+              n: 'The open lane',
+              w: 'No premium mithai house runs a numbered, sneaker-style drop of technique-driven single-bite sweets. That is the Vault 10 wedge — craft + scarcity + Hyderabad identity.',
+            },
+          ].map((c) => (
+            <div key={c.n} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+              <p className="font-display text-sm font-semibold text-theme-ink">{c.n}</p>
+              <p className="mt-1 text-[11px] text-theme-ink/70">{c.w}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] text-theme-ink/55">
+          Industry benchmark: limited drops generate 3–10× revenue per product vs standard
+          launches, and capped quantity + waitlist FOMO justifies a premium price (Shopify /
+          Queue-it, 2025–26). Micro + mid-tier influencer seeding with dramatic unboxing Reels
+          has driven 25M+ combined views and ~300% traffic spikes for small Indian D2C brands.
+        </p>
+      </div>
+
+      {/* ── Marketing engine ── */}
+      <div className="rounded-xl border border-theme-accent/30 bg-gradient-to-br from-theme-accent/8 to-transparent p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          Go-to-market · the drop marketing engine
+        </p>
+        <p className="mt-1 text-sm text-theme-ink/75">
+          Three acts — build the hunger, run the drop, bank the proof. Short-form video is the
+          core engine; scarcity is the hook; the founder + the craft are the story.
+        </p>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {[
+            {
+              act: 'Act 1 · Whisper (W-4 → W-1)',
+              tone: 'accent' as const,
+              points: [
+                'Blurred macro teasers — "10 sweets that don\'t exist yet" — drip one cryptic frame/day.',
+                'Open the /vault-10 waitlist with a live "500 boxes only" counter.',
+                'Tease ONE grail piece (e.g. Qubani Caviar) in a 15s slow-mo reel.',
+                'WhatsApp broadcast + email capture; Hyderabad WhatsApp groups + foodie communities.',
+              ],
+            },
+            {
+              act: 'Act 2 · Drop (W0)',
+              tone: 'accent' as const,
+              points: [
+                'Master 60s drop trailer goes live across Reels / Shorts / YouTube.',
+                'Waitlist gets a 24h early-access link; public sale after.',
+                'Live sold-out counter + "you got box 287/500" share card on every order.',
+                '6 seeded creators post embargoed unboxings at drop hour (food, design, Hyderabad-culture, NRI).',
+              ],
+            },
+            {
+              act: 'Act 3 · Proof (W1 → W3)',
+              tone: 'accent' as const,
+              points: [
+                'Publish the sell-out: "Drop 01 gone in __ hours" — proof fuels Drop 02 waitlist.',
+                'Repost buyer UGC; run a "which piece broke the internet" poll.',
+                'Pitch press (food + design + startup desks) with the craft + numbers angle.',
+                'Open Drop 02 waitlist (swap 2–3 pieces) → compounding list.',
+              ],
+            },
+          ].map((a) => (
+            <div key={a.act} className="rounded-lg border border-theme-accent/25 bg-surface p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+                {a.act}
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {a.points.map((p) => (
+                  <li key={p} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-theme-ink/75">
+                    <ArrowRight className="mt-0.5 h-3 w-3 shrink-0 text-theme-accent" aria-hidden="true" />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Channel mix + budget ── */}
+      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          Channel mix per drop · ~₹3.2L marketing budget
+        </p>
+        <table className="mt-3 w-full min-w-[680px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+              <Th>Channel</Th>
+              <Th>Play</Th>
+              <Th>Spend</Th>
+              <Th>Job to do</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { c: 'Cinematic content', p: '1 film per piece (10) + 1 master trailer · in-house + 1 editor', s: '₹60K', j: 'The asset library that powers everything else' },
+              { c: 'Influencer seeding', p: '6 numbered boxes, embargoed · micro + mid-tier · Hyderabad + NRI', s: '₹90K', j: 'Drop-hour credibility + reach' },
+              { c: 'Meta + Instagram ads', p: 'Retarget waitlist + lookalikes · video-first', s: '₹1.0L', j: 'Fill the waitlist, convert fence-sitters' },
+              { c: 'Founder-led organic', p: 'Srinivasa Rao on camera — the craft, the kitchen, the why', s: '₹0', j: 'Trust + the "made by a real halwai house" story' },
+              { c: 'PR + design press', p: 'Pitch the craft + sell-out numbers to food/design/startup desks', s: '₹40K', j: 'Authority + backlinks + halo' },
+              { c: 'Packaging as media', p: 'Numbered box + share card = every buyer is a billboard', s: '₹30K', j: 'Organic UGC loop' },
+            ].map((r) => (
+              <tr key={r.c} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
+                <Td className="font-display font-semibold text-theme-ink whitespace-nowrap">{r.c}</Td>
+                <Td className="text-theme-ink/70 text-xs">{r.p}</Td>
+                <Td className="font-semibold tabular-nums">{r.s}</Td>
+                <Td className="text-theme-ink/60 text-xs">{r.j}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-3 text-[11px] text-theme-ink/55">
+          ₹3.2L spend against ≈ ₹8.3L gross per 500-box drop = the drop pays for itself with
+          margin to spare, and the content + waitlist + press are reusable assets that compound
+          across quarterly drops.
+        </p>
+      </div>
+
+      {/* ── Marketing KPIs ── */}
+      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+        {[
+          { k: 'Waitlist before drop', v: '2,000+', s: 'emails + WhatsApp opt-ins' },
+          { k: 'Sell-through', v: '100%', s: '500 boxes — target sell-out' },
+          { k: 'Time to sell out', v: '< 72h', s: 'the headline that fuels Drop 02' },
+          { k: 'Content views / drop', v: '1M+', s: 'Reels + Shorts combined' },
+        ].map((m) => (
+          <div key={m.k} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">{m.k}</p>
+            <p className="mt-1 font-display text-2xl font-semibold text-theme-ink">{m.v}</p>
+            <p className="mt-0.5 text-[11px] text-theme-ink/55">{m.s}</p>
+          </div>
+        ))}
+      </div>
+
+      <CardList
+        title="Six production realities · pre-mitigated"
+        tone="amber"
+        items={constraints.map((c) => ({ heading: c.r, body: c.m }))}
       />
     </div>
   );
