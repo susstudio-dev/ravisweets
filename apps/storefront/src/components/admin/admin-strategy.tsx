@@ -2663,6 +2663,69 @@ function LimitedEditionSection() {
         </p>
       </div>
 
+      {/* ── Packaging — the most innovative in Indian mithai ── */}
+      <div className="rounded-xl border border-theme-accent/30 bg-surface p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          Packaging — the box is the product (none done before in Indian mithai)
+        </p>
+        <p className="mt-1 text-sm text-theme-ink/75">
+          For a ₹2,400 collector drop the unboxing IS the content, the keepsake and the proof of
+          authenticity. Shipped in tiers so Drop 01 is achievable and the hero ideas have runway.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {[
+            {
+              tier: 'Tier A · Drop 01',
+              tone: 'text-emerald-700',
+              items: [
+                '"The Vault" — rigid magnetic box, brushed-brass safe-dial emboss + laser-etched run-number plate (287/500).',
+                'Pochampally ikat sleeve (Telangana GI weave) — a textile keepsake people keep.',
+                'Watch-tray: 10 numbered wells, eat 01→10 like a tasting menu.',
+                'Smoke-trap chamber for piece 02 — aroma releases on open (legal smoke theatre).',
+                'Edible rice-paper/pullulan inner wrappers, numbered in edible ink — zero plastic on the sweet.',
+                'Plantable marigold seed-paper guide card.',
+              ],
+            },
+            {
+              tier: 'Tier B · Drop 01–02',
+              tone: 'text-theme-accent',
+              items: [
+                'NFC chip in the lid — tap to see box number, drop, certificate of authenticity + maker film (luxury-watch provenance, never done in mithai).',
+                'AR-activated box — point your phone, each piece comes alive (uses our model-viewer/AR infra).',
+                'Cold-chain proof: irreversible time-temperature indicator on fresh-three boxes.',
+              ],
+            },
+            {
+              tier: 'Tier C · hero / anniversary',
+              tone: 'text-theme-ink/70',
+              items: [
+                'Real Bidriware-inlay metal lid — the box becomes a museum-grade heirloom (ties to piece 09).',
+                'Thermochromic reveal — hidden paisley appears when warmed by your hand.',
+                'Reserved for higher-priced flagship drops (₹3,500–4,500).',
+              ],
+            },
+          ].map((t) => (
+            <div key={t.tier} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-4">
+              <p className={cn('text-[10px] font-semibold uppercase tracking-[0.2em]', t.tone)}>{t.tier}</p>
+              <ul className="mt-2 space-y-1.5">
+                {t.items.map((i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-theme-ink/75">
+                    <Gem className="mt-0.5 h-3 w-3 shrink-0 text-theme-accent" aria-hidden="true" />
+                    <span>{i}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-[11px] text-amber-900">
+          <span className="font-semibold uppercase tracking-wider">Margin:</span> Tier-A signature
+          packaging runs ~₹360–400/box (vs ₹185 base) — adds ~₹195, trims gross margin 69% → ~61%
+          (~₹1,465/box, ≈₹7.3L gross/drop). Worth it: the box is our cheapest, highest-trust media.
+          Full detail in <span className="font-mono">VAULT_10_PLAN.md §6</span>.
+        </p>
+      </div>
+
       {/* ── Marketing engine ── */}
       <div className="rounded-xl border border-theme-accent/30 bg-gradient-to-br from-theme-accent/8 to-transparent p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">

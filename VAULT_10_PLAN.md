@@ -119,7 +119,7 @@ FSSAI (2016) **banned animal-origin material** in silver-leaf manufacturing. Use
 |---|---|
 | Avg ingredient + gild cost / piece (blended ×10) | ₹34 |
 | 10 pieces / box | ₹340 |
-| Numbered collector box + tray + foil + insert | ₹185 |
+| Numbered collector box + tray + foil + insert (base) | ₹185 |
 | Skilled labour + R&D amortisation / box | ₹120 |
 | Cold-pack + expedited courier (fresh pieces) | ₹95 |
 | **Fully-loaded cost / box** | **₹740** |
@@ -127,6 +127,8 @@ FSSAI (2016) **banned animal-origin material** in silver-leaf manufacturing. Use
 | **Gross margin** | **~69%** |
 | **Gross profit / box** | **~₹1,660** |
 | **Gross profit / 500-box drop** | **≈ ₹8.3 L** |
+
+> **Packaging note:** the table above uses **base** packaging (₹185). Shipping the **Tier-A signature packaging** in §6 (rigid magnetic Vault box + brass numbered plate + Pochampally ikat sleeve + laser tray + edible wrappers + seed-paper card) raises packaging to ~**₹360–400/box** — adding ~₹195, trimming gross margin to **~61%** (~₹1,465 gross/box, ≈ ₹7.3 L gross/drop). Recommended: the signature spec is the brand bet — the unboxing pays for itself in earned media.
 
 ### 4.3 Per-drop P&L (500 boxes)
 
@@ -168,7 +170,44 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 
 ---
 
-## 6. Channels & fulfilment (India reality)
+## 6. Packaging — the most innovative in Indian mithai
+
+The box is not packaging — it's the product. For a ₹2,400 collector drop, the unboxing **is** the content, the keepsake, and the proof of authenticity. None of the below has been done for Indian sweets. We ship it in tiers so Drop 01 is achievable and the hero ideas have a runway.
+
+### 6.1 "The Vault" — the box itself (Tier A · Drop 01)
+- **A safe, not a sweet box.** Rigid, matte-black, soft-touch magnetic box whose lid carries a **decorative brushed-brass safe-dial emboss** and a **brushed-brass run-number plate** laser-etched `287 / 500`. It opens with a satisfying magnetic *thunk*, like a watch case. The "Vault" name is literal.
+- **Pochampally ikat sleeve.** The box slides out of a woven **Pochampally ikat** sleeve — Telangana's GI-tagged signature weave. The sleeve is a **textile keepsake** people keep; it ties the brand to Telangana craft, not generic luxe. (Sourced from Telangana weaver co-ops — also a sourcing-with-purpose story.)
+- **Watch-tray seating.** Inside, a laser-cut tray with **10 individually-numbered wells** (01→10). Each well micro-prints the piece name + its technique beside it, so the box reads like a tasting menu / a watch collection. You eat in order — a guided 10-bite journey, not a grab-bag.
+
+### 6.2 Theatre & trust built into the pack (Tier A · Drop 01)
+- **Smoke-trap chamber for piece 02.** The Dhungar Smoke Barfi sits in a sealed inner micro-chamber that **traps the charcoal-ghee aroma** and releases a curl of scent when you lift its lid. This delivers the smoke theatre **legally and safely** — the aroma is in the pack, not live LN₂ at the table.
+- **Edible inner wrappers, zero plastic on the sweet.** Each piece is wrapped in an **edible rice-paper / pullulan film printed with its number in edible ink**. Nothing plastic ever touches the sweet, and the wrapper is part of the eat. A genuine first for premium mithai.
+- **Plantable seed-paper guide card.** The tasting-order insert is **plantable marigold-seed paper** — read it, then plant it and grow the festival flower. Sustainability you can *act on*, and a living brand memory on the customer's windowsill.
+
+### 6.3 Provenance & the digital layer (Tier B · Drop 01 if budget allows → Drop 02)
+- **NFC certificate of authenticity.** A tiny **NFC tag in the lid** — tap your phone and it opens this box's unique page: its run number, the drop, a signed certificate of authenticity, and the founder's maker-film. Luxury watches and sneakers use this for provenance + anti-counterfeit; **no Indian sweet brand does.** It also makes resale/gifting traceable and turns every box into a logged collectible.
+- **AR-activated box.** A marker on the lid triggers an **AR experience** (we already run `<model-viewer>`/AR infra) — point your phone and each piece "comes alive": the founder explains the technique, the Bidri pattern animates, the Qubani pearls shimmer. The box becomes a portal and a content unit.
+- **Cold-chain proof window (fresh-three / metro boxes).** An **irreversible time-temperature indicator (TTI)** label that visibly confirms the cold chain held in transit. Functional trust for perishable pieces — and a theatrical "verified fresh" moment.
+
+### 6.4 Hero / collector editions (Tier C · flagship + anniversary drops)
+- **Real Bidriware-inlay metal lid.** For a hero drop, the lid is an actual **Bidriware** piece — black-oxidised metal with hand-set silver inlay (Hyderabad's signature craft, tying to piece 09). The box becomes a **museum-grade art object** that is never thrown away. Numbered, collectible, heirloom.
+- **Thermochromic reveal.** A panel printed in **thermochromic ink** that reveals a hidden paisley / the drop name when warmed by your hand — a quiet "magic" moment for the camera.
+
+### 6.5 Packaging cost & margin trade-off (honest)
+- Base spec costs ~₹185/box (used in §4). **Signature (Tier A)** spec lands ~**₹360–400/box** (rigid magnetic box + brass plate + ikat sleeve + laser tray + edible wrappers + seed-paper card).
+- That adds **~₹195/box**, trimming gross margin from ~69% to **~61%** — still a healthy ~₹1,465 gross/box (≈ ₹7.3 L gross / 500-box drop).
+- **NFC** adds ~₹25–45/box; **AR** is near-zero marginal (software); **TTI** ~₹15–25 only on cold-chain boxes; **Bidri lid** is a hero-edition cost (₹400–900/box) reserved for flagship drops priced higher (₹3,500–4,500).
+- **Decision:** ship **Tier A + the smoke-trap + edible wrappers + seed-paper card on Drop 01**; add **NFC + AR** on Drop 01 if budget allows, else Drop 02; reserve **Bidri lid + thermochromic** for the anniversary / flagship drop.
+
+### 6.6 Why this packaging actually works in India
+- **It's keepable.** Ikat sleeve + watch-tray + (later) Bidri lid mean the box is *kept*, not binned — the brand lives on a shelf for years.
+- **It's shareable.** Magnetic reveal + numbered plate + AR = a 30-second unboxing reel that buyers *want* to film. Packaging is our cheapest media.
+- **It's provable.** NFC + numbered etch + TTI answer India's two trust gaps for premium food online — *is it authentic?* and *did it travel well?*
+- **It's rooted.** Pochampally + Bidri + marigold seed paper make the luxury unmistakably **Telangana**, not borrowed Euro-luxe — defensible and on-brand.
+
+---
+
+## 7. Channels & fulfilment (India reality)
 
 | Channel | Fit | Notes |
 |---|---|---|
@@ -178,11 +217,11 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 | **Corporate gifting** | Medium | A numbered box is a *stunning* premium client gift; sell in 25+ lots |
 | **Quick-commerce (Zepto/Blinkit)** | **No** | Wrong context for a ₹2,400 collector box; keep core range there, not this |
 
-### 6.1 Payments
+### 7.1 Payments
 - **Razorpay** — UPI is dominant in India (GPay/PhonePe/Paytm), then cards, then netbanking. (Razorpay integration is a separate workstream — see the brand's payment-integration thread.)
 - **Disable COD for the Vault 10.** A ₹2,400 premium collector box has high RTO (return-to-origin) risk and refused-delivery losses on COD. Prepaid only — which is fine, because drop buyers are intent-driven.
 
-### 6.2 Logistics & cold chain
+### 7.2 Logistics & cold chain
 - **SS boxes:** Delhivery / Bluedart / Shiprocket-aggregated; nationwide; 2–5 day.
 - **Cold-chain metro boxes:** gel-pack + insulated liner; dispatch **only Tue–Thu** to avoid weekend warehouse hold; metro pin-codes only (Hyderabad, Bengaluru, Chennai, Mumbai, Pune, Delhi-NCR, Bangalore); 48h SLA; clear "eat within 5–7 days" messaging.
 - **Hyderabad local:** Porter / Dunzo / own rider for same-day fresh-three.
@@ -190,15 +229,15 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 
 ---
 
-## 7. Marketing plan (India-specific)
+## 8. Marketing plan (India-specific)
 
-### 7.1 The wedge (web-validated, May 2026)
+### 8.1 The wedge (web-validated, May 2026)
 - **Bombay Sweet Shop** does limited-edition *flavour* collections + Parle-G collabs — but not serialised molecular collector drops.
 - **Khoya Mithai** has Le Cordon Bleu chefs + premium gifting — but classic-format mithai, no technique theatre, no numbered scarcity.
 - **No premium mithai house runs a numbered, sneaker-style drop of technique-driven single-bite sweets.** That's the lane.
 - Benchmarks: limited drops earn **3–10× revenue/product**; capped quantity + waitlist FOMO justifies premium pricing (Shopify / Queue-it); micro/mid influencer **unboxing Reels** have driven **25M+ views / ~300% traffic spikes** for small Indian D2C brands.
 
-### 7.2 The 3-act drop engine
+### 8.2 The 3-act drop engine
 
 **Act 1 · Whisper (W-4 → W-1)**
 - Blurred macro teasers — "10 sweets that don't exist yet" — one cryptic frame/day on Reels + Shorts.
@@ -218,7 +257,7 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 - Pitch press (food + design + startup desks) with the craft + numbers angle.
 - Open Drop 02 waitlist (swap 2–3 pieces) → compounding list.
 
-### 7.3 India channel mix & budget (~₹3.2 L / drop)
+### 8.3 India channel mix & budget (~₹3.2 L / drop)
 
 | Channel | Play | Spend | Job |
 |---|---|---|---|
@@ -229,13 +268,13 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 | PR + design press | Pitch craft + sell-out numbers to food/design/startup desks | ₹40K | Authority + backlinks + halo |
 | Packaging-as-media | Numbered box + share card = every buyer is a billboard | ₹30K | Organic UGC loop |
 
-### 7.4 India-specific levers
+### 8.4 India-specific levers
 - **WhatsApp commerce** — the single highest-intent channel in India. Run the waitlist + drop alerts + order confirmations on WhatsApp Business API (already on the roadmap via the unified inbox).
 - **Language** — Telugu-first for Hyderabad/Telangana pride, English for metros + NRI, Hindi for North reach. The founder speaking Telugu about the craft is the most authentic asset we have.
 - **Festival timing** — anchor each drop to a festival when premium gifting peaks (Diwali is the big one). Corporate gifting demand spikes Sept–Nov.
 - **NRI corridor** — diaspora pays a premium for "authentic Hyderabad, beautifully made." Position the SS-seven box as **NRI-shippable** (it's shelf-stable by design).
 
-### 7.5 Marketing KPIs
+### 8.5 Marketing KPIs
 
 | Metric | Target |
 |---|---|
@@ -248,7 +287,7 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 
 ---
 
-## 8. 12-week first-drop timeline
+## 9. 12-week first-drop timeline
 
 | Week | Workstream |
 |---|---|
@@ -264,7 +303,7 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 
 ---
 
-## 9. Risks & mitigations (India)
+## 10. Risks & mitigations (India)
 
 | Risk | Mitigation |
 |---|---|
@@ -277,15 +316,18 @@ Four drops a year ≈ **₹33 L gross / ~₹18–20 L net**, from a line whose r
 | Premium COD return losses | Prepaid only (UPI/cards) for the Vault 10; no COD. |
 | Over-production of a "limited" item | Make-to-drop; produce exactly the drop size + 5% QC buffer; no standing inventory. |
 | Founder bandwidth | The line is quarterly, not always-on; one R&D lead owns the residency; SS pieces use existing halwai skills. |
+| Premium packaging blows the budget | Ship Tier A on Drop 01 (~₹360–400/box, margin ~61%); gate NFC/AR/Bidri to later or higher-priced hero drops. |
 
 ---
 
-## 10. Decision checklist (before Drop 01 go)
+## 11. Decision checklist (before Drop 01 go)
 
 - [ ] CA confirms GST treatment of the mixed box (5% vs 18% vs itemised)
 - [ ] FSSAI licence categories cover confectionery + dairy + chocolate
 - [ ] Vegetarian-vark + E175 gold vendors shortlisted with COAs
 - [ ] Two-tier box (SS-seven + fresh-three) approved
+- [ ] Packaging spec locked — Tier A confirmed; NFC/AR decided in-or-out for Drop 01
+- [ ] Pochampally ikat sleeve sourced (Telangana weaver co-op) + rigid-box vendor
 - [ ] Cold-chain courier + metro pin-code list locked
 - [ ] R&D lead assigned (train internal or hire commis)
 - [ ] One-time capex (₹1.3–2.0 L) approved
