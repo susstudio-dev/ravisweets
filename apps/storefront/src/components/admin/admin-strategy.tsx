@@ -2409,10 +2409,10 @@ function LimitedEditionSection() {
     {
       no: '05',
       name: 'Paan Cloud',
-      idea: 'A meetha-paan aerated mousse, flash-frozen at the counter so the first bite makes you exhale a plume of "smoke" (dragon\'s breath). The paan ritual as a sensory show.',
-      tech: 'Liquid-nitrogen nitro-freezing + aeration',
+      idea: 'An ultra-light frozen meetha-paan mousse — aerated and blast-frozen in the kitchen so it melts to the classic paan finish on the tongue. The after-meal ritual as a one-bite cloud (no betel mess, no smoke gimmick).',
+      tech: 'Back-of-house aeration + blast/nitro freeze · all N₂ sublimated before serving',
       heritage: 'The after-meal meetha paan ritual',
-      why: 'Combines India\'s most theatrical street ritual with nitro spectacle.',
+      why: 'Paan reimagined as a frozen petit-four — FSSAI-safe, no point-of-sale liquid nitrogen.',
     },
     {
       no: '06',
@@ -2458,9 +2458,9 @@ function LimitedEditionSection() {
 
   const constraints = [
     { r: 'Some pieces need fresh / cold-chain (01 Caviar, 05 Paan Cloud, 10 Living Rabri)', m: 'Split the box into "shelf-stable 7" for courier nationwide + an in-store / Hyderabad-only "fresh 3" experience. Or gel-pack + 48h dispatch window for metros.' },
-    { r: 'Liquid nitrogen (05) is a counter-only experience', m: 'Sell 05 only as an in-store / pop-up / event piece; substitute a frozen-set paan truffle in the couriered box.' },
+    { r: 'FSSAI bars point-of-sale liquid nitrogen (advisory, Jun 2024)', m: 'Use nitro/blast freezing only back-of-house as a processing aid — all N₂ must fully sublimate before a piece is served or boxed. No "smoke at the table" theatre. Courier 05 as a cold-chain frozen-set truffle, or swap to a shelf-stable paan-gulkand bonbon.' },
     { r: 'Molecular + nitro need new skills + kit', m: 'Two-week R&D residency: hire one ex-fine-dining commis for the drop, or train one kitchen lead. Kit cost ~₹1.2–1.8L one-time (siphon, nitro dewar, alginate bath, cloche set).' },
-    { r: 'Edible gold + silver food-grade sourcing', m: 'Source 24K gold leaf (E175) + silver vark from certified vendors with COA. Budget ₹18–28 per gilded piece.' },
+    { r: 'Edible gold + silver must be FSSAI-compliant', m: 'Use only certified VEGETARIAN silver vark (FSSAI 2016 banned animal-origin leaf — machine-beaten on polyester) + food-grade 24K gold (E175), both COA-backed. Market "100% vegetarian vark" as a trust badge. Budget ₹18–28 per gilded piece.' },
     { r: 'Shelf-life claims with no preservatives', m: 'NABL shelf-life test each shelf-stable piece. Stamp a "best within" date on the numbered box. The fresh pieces are sold as "eat within 48h" by design.' },
     { r: 'Risk of reading as gimmick not craft', m: 'Every piece must trace to a real technique + a heritage cue (done above). Lead all content with the story + the maker, never just the look.' },
   ];
