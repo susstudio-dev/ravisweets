@@ -3,9 +3,11 @@
 **Ravi Sweets · limited-edition collector drop**
 _Version 1.0 · May 2026 · built for the Indian market, with real FSSAI / GST / cold-chain constraints baked in._
 
-> **What this is:** a numbered, serialised limited-edition collection — 10 single-bite sweets that don't exist anywhere in the Indian mithai market today, each built on a real technique and anchored to a Hyderabadi / Andhra heritage cue. Sold sneaker-style: a fixed number of numbered boxes per drop, then gone.
+> **What this is:** India's first **functional fine-mithai** — a numbered, serialised collection of 10 single-bite sweets that don't exist anywhere in the market today. Each is **protein-dense, free of refined sugar, gut-friendly / low-GI**, built on **desi superfoods** (sattu, makhana, millet, black sesame, probiotic cultured milk) — and each pairs a real technique (spherification, dhungar smoke, probiotic culturing, transparent fruit-glass) with a Hyderabadi / Andhra heritage cue. Sold sneaker-style: a fixed number of numbered boxes per drop, then gone.
 >
-> **Why it matters:** it makes Ravi Sweets the most inventive mithai house in India. That reputation halos the entire ₹500-AOV core range, builds a waitlist, earns press, and creates a quarterly content engine — for a line that pays for itself.
+> **Why it matters:** it makes Ravi Sweets the most inventive *and* the most credibly healthy mithai house in India. The box delivers **~90–100 g protein with zero refined sugar** across 10 pieces — a nutritionist's tasting flight that's also a flex-gift. That reputation halos the entire ₹500-AOV core range, builds a waitlist, earns press, and creates a quarterly content engine — for a line that pays for itself.
+>
+> **The market:** India's sugar-free / diabetic-friendly foods market is **$1.12B → $2.58B (8.93% CAGR)**; healthy snacks **$3.13B → $4.77B**; packaged sweets growing **15.36% CAGR**; 55% of urban households want reduced-sugar sweets; 77M diabetics. Incumbents (Artinci, Eat Better Co) do *sugar-free* — **none fuse functional nutrition + never-seen technique + premium fine-mithai craft.** That is the open lane.
 
 ---
 
@@ -29,25 +31,27 @@ The financial return is real but secondary. The **strategic** return is the bran
 
 ## 1. The collection — all 10 pieces
 
-Each piece is grounded in a real technique + a heritage cue, and tagged by **shelf class** so we know how it ships.
+Every piece is **protein-led, refined-sugar-free, and functional** (gut-friendly / low-GI / iron / antioxidant), built on **desi superfoods**, and pairs a real technique with a heritage cue. Tagged by **shelf class** so we know how it ships.
 
 Shelf classes:
 - **SS** = shelf-stable (couriers nationwide, ~30–90 day life)
 - **CC** = cold-chain (gel-pack, 48h metro dispatch, eat within 5–7 days)
 - **IS** = in-store / event only (made-to-order, eaten on site)
 
-| # | Piece | Technique | Heritage | Shelf | Notes |
-|---|-------|-----------|----------|-------|-------|
-| 01 | **Qubani Caviar** | Reverse spherification (sodium alginate) | Nizami apricot dessert | CC | Apricot "pearls" that burst; tin + mother-of-pearl spoon |
-| 02 | **Dhungar Smoke Barfi** | Live-coal ghee smoking under a cloche | Hyderabadi biryani/haleem finish | SS | Smoke is captured in pack, released on opening |
-| 03 | **Shahi Tukda Bonbon** | Liquid-centre enrobing + 24K gold leaf | Royal bread-and-rabri dessert | CC | Liquid saffron-rabri centre |
-| 04 | **Til Noir** | Black sesame + activated charcoal + kintsugi silver line | Sankranti til, reimagined | SS | Jet-black, vegetarian-silver crack |
-| 05 | **Paan Cloud** | Aeration + **back-of-house** blast/nitro freeze (no residual N₂) | After-meal meetha paan | CC | **No point-of-sale liquid nitrogen** — see §2 |
-| 06 | **Filter-Coffee Mysore Pak Truffle** | Decoction infusion + truffle rolling | Filter kaapi × Mysore Pak | SS | Chicory-coffee dust |
-| 07 | **Aam Glass** | Clarified mango pulp + agar transparent sheet | Aam papad, reinvented | SS | See-through "stained glass" over kesar cream |
-| 08 | **Gongura Chilli Bonbon** | Savoury-leaf reduction + tempered 70% dark | Andhra gongura + Guntur chilli | SS | Sweet-sour-spicy-bitter; chocolate → 18% GST (§4) |
-| 09 | **Bidri Bar** | Edible-silver transfer print on dark base | Bidriware metal craft | SS | Looks like a Bidri art object; chocolate base → 18% GST |
-| 10 | **Living Rabri** | Probiotic culturing + prebiotic date fibre | Rabri/shrikhand, made functional | CC | Sold as "cultured-milk sweet" — no health claim (§2) |
+| # | Piece | Function / nutrition | Technique | Heritage | Shelf |
+|---|-------|----------------------|-----------|----------|-------|
+| 01 | **Apricot-Almond Protein Caviar** | ~8g protein · no refined sugar · gut-friendly curd | Veg reverse-spherification (agar/alginate, gelatin-free) over hung-curd protein cream | Nizami Qubani | CC |
+| 02 | **Smoked Sattu-Pista Barfi** | ~11g protein · high fibre · jaggery only | Sattu-protein barfi + dhungar smoke trapped in pack | Hyderabadi dhungar | SS |
+| 03 | **Saffron Protein-Rabri Bonbon** | ~9g protein · low added sugar · calcium | Liquid protein-rabri centre + veg 24K gold | Shahi Tukda | CC |
+| 04 | **Til Noir — Iron & Calcium Bar** | ~9g protein · iron + calcium · no refined sugar | Black sesame + black-chana protein + kintsugi veg-silver | Sankranti til | SS |
+| 05 | **Gut-Health Paan Cloud** | probiotic + digestive herbs · low sugar | Probiotic base + aeration + **back-of-house** freeze (no LN₂ at table) | After-meal paan | CC |
+| 06 | **Coffee Pre-Workout Mysore Pak Truffle** | ~8g protein · caffeine · jaggery only | Protein-besan Mysore Pak + filter-coffee decoction | Filter kaapi × Mysore Pak | SS |
+| 07 | **Mango-Probiotic Glass** | probiotic · vitamin C · no added sugar | Clarified-mango agar glass over probiotic shrikhand | Aam papad | SS |
+| 08 | **Gongura Dark-Protein Bonbon** | ~7g protein · antioxidants + iron · low sugar | 70%+ dark + gongura + Guntur chilli + protein ganache | Andhra gongura | SS · chocolate → 18% GST |
+| 09 | **Makhana-Millet Bidri Bar** | ~10g protein · high fibre · low-GI | Popped makhana + ragi/millet + dates + edible-silver Bidri print | Bidriware craft | SS · cocoa → 18% GST |
+| 10 | **Living Rabri — Probiotic Protein** | ~12g protein · probiotic + prebiotic | Probiotic culturing + milk protein + prebiotic date fibre | Rabri/shrikhand | CC · "cultured-milk sweet", no health claim (§2) |
+
+**Box totals: ~90–100 g protein · 0 g refined sugar · 100% vegetarian.**
 
 **The two-tier box (this is the operational key):**
 - **Shelf-Stable Seven** (02, 04, 06, 07, 08, 09 + one rotating SS piece) → couriered **nationwide**.
@@ -284,6 +288,21 @@ The box is not packaging — it's the product. For a ₹2,400 collector drop, th
 | Content views / drop | 1M+ (Reels + Shorts) |
 | Earned press hits | 3+ per drop |
 | Drop-2 waitlist growth | +50% over Drop 1 |
+
+### 8.6 Reasons to choose us (the message that converts)
+
+Customers should feel they are choosing the **smarter, better-made, more-trustworthy** sweet — not just a prettier one. Lead every page, reel and pack with these:
+
+| Reason to believe | Why it lands in India |
+|---|---|
+| **Real, lab-verified nutrition** — NABL-tested protein + sugar numbers on every piece | Indians are sceptical of vague "healthy" claims; printed numbers = trust |
+| **Zero refined sugar** — dates, jaggery, monk fruit only; low-GI options marked | 77M diabetics + 55% of urban HHs want less sugar |
+| **Desi superfoods, not imported whey** — sattu, makhana, ragi/millet, black sesame, probiotic milk | Cultural pride + clean-label + plant-protein trend |
+| **100% vegetarian + clean-label** — veg vark, gelatin-free spherification, no maida, no preservatives | Veg is non-negotiable for a huge buyer segment; gelatin-free spherification is a real differentiator |
+| **Craft + science, not a powder ball** — real techniques + Hyderabadi/Andhra heritage | Separates us from "protein laddoo" startups; it's delicious *and* functional |
+| **A 1985 halwai house, not a faceless D2C** — real founder, real Khammam + Hyderabad kitchens, FSSAI-safe | Founder trust + heritage is the moat startups can't buy |
+
+**One-line positioning:** _"India's first functional fine-mithai — ~90 g of protein, zero refined sugar, ten sweets you've never seen, made by a 1985 Hyderabad halwai house."_
 
 ---
 

@@ -2376,83 +2376,93 @@ function LimitedEditionSection() {
   const sweets = [
     {
       no: '01',
-      name: 'Qubani Caviar',
-      idea: 'Reverse-spherified Qubani ka Meetha syrup — glossy apricot "pearls" that burst on the tongue. Served in a tiny tin with a mother-of-pearl spoon.',
-      tech: 'Molecular reverse-spherification (sodium alginate bath)',
-      heritage: 'Nizami royal-kitchen apricot dessert',
-      why: 'No one applies molecular gastronomy to Hyderabadi mithai. Fine-dining amuse-bouche format.',
+      name: 'Apricot-Almond Protein Caviar',
+      idea: 'Reverse-spherified apricot pearls (sweetened only by soaked dates + the fruit\'s own sugars) that burst over a hung-curd protein cream. No refined sugar, gelatin-free.',
+      tech: 'Agar/alginate reverse-spherification (veg, gelatin-free)',
+      heritage: 'Nizami Qubani ka Meetha',
+      nutrition: '~8 g protein · no refined sugar · gut-friendly curd',
+      why: 'Molecular gastronomy + a protein cream base — nobody has done functional spherified mithai.',
     },
     {
       no: '02',
-      name: 'Dhungar Smoke Barfi',
-      idea: 'Cardamom-pista barfi finished with charcoal-ghee dhungar smoke, sealed under a glass cloche that releases a curl of aromatic smoke when the lid lifts.',
-      tech: 'Dhungar (live-coal ghee smoking) + smoke-trap cloche',
-      heritage: 'Borrowed from Hyderabadi biryani / haleem finishing',
-      why: 'Smoke + sweet has never been done in Indian mithai. A theatrical reveal.',
+      name: 'Smoked Sattu-Pista Barfi',
+      idea: 'A barfi built on sattu (roasted chana, ~20 g protein/100 g) + pista + jaggery, finished with charcoal-ghee dhungar smoke trapped in the pack. No maida, no refined sugar.',
+      tech: 'Dhungar smoking + sattu-protein barfi',
+      heritage: 'Hyderabadi dhungar (biryani/haleem finish)',
+      nutrition: '~11 g protein · high fibre · jaggery-sweetened',
+      why: 'Highest-protein barfi in India + a smoke-aroma reveal — a first on both counts.',
     },
     {
       no: '03',
-      name: 'Shahi Tukda Bonbon',
-      idea: 'A single-bite shell of caramelised milk solids holding a liquid saffron-rabri centre that floods the mouth. Crowned with genuine 24K gold leaf.',
-      tech: 'Liquid-centre enrobing + edible 24K gold',
-      heritage: 'Shahi Tukda — the royal bread-and-rabri dessert',
-      why: 'Liquid-centre mithai bonbons do not exist. The gold makes it a flex-gift.',
+      name: 'Saffron Protein-Rabri Bonbon',
+      idea: 'A single-bite shell holding a liquid saffron-rabri centre fortified with milk protein, sweetened with dates + a whisper of monk fruit. Crowned with vegetarian 24K gold.',
+      tech: 'Liquid-centre enrobing + protein-fortified rabri',
+      heritage: 'Shahi Tukda royal rabri',
+      nutrition: '~9 g protein · low added sugar · calcium',
+      why: 'A liquid-centre protein bonbon with edible gold — indulgence that is genuinely high-protein.',
     },
     {
       no: '04',
-      name: 'Til Noir',
-      idea: 'A jet-black sesame-and-dark-jaggery barfi with a single edible-silver "crack" down the middle in the kintsugi style. The goth piece in the box.',
-      tech: 'Black sesame + food-grade activated charcoal + kintsugi silver line',
-      heritage: 'Til (Sankranti sesame) reimagined',
-      why: 'Visually unlike anything in an Indian sweet box. Instagram bait done with taste.',
+      name: 'Til Noir — Iron & Calcium Bar',
+      idea: 'Jet-black roasted-black-sesame + black-chana protein + dark jaggery, with a kintsugi vegetarian-silver crack. Sesame brings iron + calcium — a women\'s-health hero.',
+      tech: 'Black sesame + activated-charcoal aesthetic + kintsugi silver',
+      heritage: 'Sankranti til (bone-strength tradition)',
+      nutrition: '~9 g protein · iron + calcium · no refined sugar',
+      why: 'A striking black sweet that is also an iron-and-calcium supplement. Unseen, and functional.',
     },
     {
       no: '05',
-      name: 'Paan Cloud',
-      idea: 'An ultra-light frozen meetha-paan mousse — aerated and blast-frozen in the kitchen so it melts to the classic paan finish on the tongue. The after-meal ritual as a one-bite cloud (no betel mess, no smoke gimmick).',
-      tech: 'Back-of-house aeration + blast/nitro freeze · all N₂ sublimated before serving',
-      heritage: 'The after-meal meetha paan ritual',
-      why: 'Paan reimagined as a frozen petit-four — FSSAI-safe, no point-of-sale liquid nitrogen.',
+      name: 'Gut-Health Paan Cloud',
+      idea: 'A frozen aerated mousse on a probiotic cultured-milk base with gulkand, fennel + paan digestives — the paan ritual is a digestive ritual, made literal. Blast-frozen in-kitchen (no LN₂ at table).',
+      tech: 'Probiotic culture + aeration + back-of-house freeze',
+      heritage: 'After-meal meetha paan (a digestive)',
+      nutrition: 'Probiotic + digestive herbs · low sugar',
+      why: 'Paan reframed as a gut-health petit-four — FSSAI-safe, never done.',
     },
     {
       no: '06',
-      name: 'Filter-Coffee Mysore Pak Truffle',
-      idea: 'South-Indian filter-coffee decoction folded into a melt-in-mouth ghee Mysore Pak, hand-rolled as a truffle, dusted with chicory-coffee powder.',
-      tech: 'Decoction infusion + truffle hand-rolling',
-      heritage: 'Tamil-Telugu filter kaapi × Mysore Pak',
-      why: 'A coffee × mithai crossover that respects both — uncharted at premium tier.',
+      name: 'Coffee Pre-Workout Mysore Pak Truffle',
+      idea: 'Mysore Pak rebuilt on besan + roasted-chana protein + A2 ghee + South-Indian filter-coffee decoction, jaggery-sweetened. The caffeine + protein "pre-workout mithai".',
+      tech: 'Decoction infusion + protein-besan + truffle roll',
+      heritage: 'Filter kaapi × Mysore Pak',
+      nutrition: '~8 g protein · caffeine · jaggery-sweetened',
+      why: 'A pre-workout dessert — protein + a coffee kick — that tastes like classic Mysore Pak.',
     },
     {
       no: '07',
-      name: 'Aam Glass',
-      idea: 'Ultra-clear mango "stained-glass" sheets you can see light through, snapped like brittle over a kesar cream. Transparent fruit-glass.',
-      tech: 'Clarified aam pulp + agar setting (transparent sheet)',
-      heritage: 'Aam papad / mango leather, reinvented',
-      why: 'Transparent mithai is a genuine first. A see-through sweet stops the scroll.',
+      name: 'Mango-Probiotic Glass',
+      idea: 'A transparent clarified-mango "stained-glass" sheet (only the fruit\'s own sugars) over a probiotic shrikhand cream. See-through, vitamin-C rich, gut-friendly.',
+      tech: 'Clarified-pulp agar glass + probiotic shrikhand',
+      heritage: 'Aam papad, reinvented',
+      nutrition: 'Probiotic · vitamin C · no added sugar',
+      why: 'A transparent sweet that is also gut-friendly and low-sugar — a genuine first.',
     },
     {
       no: '08',
-      name: 'Gongura Chilli Bonbon',
-      idea: 'Andhra gongura (sorrel) + Guntur chilli inside a 70% dark-chocolate ganache. Sweet, sour, spicy and bitter in one bite.',
-      tech: 'Savoury-leaf reduction + tempered dark chocolate',
-      heritage: 'Andhra gongura + Guntur chilli identity',
-      why: 'Maps a region\'s entire flavour identity onto a chocolate. Polarising = talked-about.',
+      name: 'Gongura Dark-Protein Bonbon',
+      idea: 'Antioxidant 70%+ dark chocolate + iron-rich gongura + metabolism-boosting Guntur chilli around a protein ganache. Savoury-leaning, so naturally low-sugar.',
+      tech: 'Savoury-leaf reduction + protein ganache + temper',
+      heritage: 'Andhra gongura + Guntur chilli',
+      nutrition: '~7 g protein · antioxidants + iron · low sugar',
+      why: 'A region\'s flavour as a functional antioxidant bonbon — polarising and talked-about.',
     },
     {
       no: '09',
-      name: 'Bidri Bar',
-      idea: 'A blackened cocoa-and-milk bar surface-printed with the silver-inlay Bidriware pattern in edible silver — the bar looks like a piece of Hyderabad metal art.',
-      tech: 'Edible-silver transfer printing on dark base',
-      heritage: 'Bidriware — Hyderabad\'s signature metal craft',
-      why: 'An edible replica of a craft tradition. The ultimate "made in Hyderabad" gift hook.',
+      name: 'Makhana-Millet Bidri Bar',
+      idea: 'Popped makhana + ragi/millet crisp + nuts bound with dates on a dark-cocoa base, surface-printed with the silver Bidriware pattern. Low-GI, high-fibre, the "guilt-free showpiece".',
+      tech: 'Makhana/millet bind + edible-silver Bidri print',
+      heritage: 'Bidriware metal craft',
+      nutrition: '~10 g protein · high fibre · low-GI',
+      why: 'A showpiece that looks like Hyderabad metal art and eats like a clean protein bar.',
     },
     {
       no: '10',
-      name: 'Living Rabri',
-      idea: 'A probiotic cultured-milk sweet — the gut-friendly close to the box — with prebiotic date fibre and a whisper of rose. "The dessert your gut thanks you for."',
-      tech: 'Probiotic culturing (live cultures) + prebiotic fibre',
+      name: 'Living Rabri — Probiotic Protein',
+      idea: 'Probiotic cultured-milk + milk protein + prebiotic date fibre + a whisper of rose. The gut-and-protein close. Sold as a "cultured-milk sweet" (no health claim until Nutraceutical approval).',
+      tech: 'Probiotic culturing + protein + prebiotic fibre',
       heritage: 'Rabri / shrikhand, made functional',
-      why: 'Probiotic mithai is clean white space. Ends the tasting on a wellness note.',
+      nutrition: '~12 g protein · probiotic + prebiotic',
+      why: 'A probiotic, high-protein rabri — clean white space — closes the flight on wellness.',
     },
   ];
 
@@ -2496,15 +2506,20 @@ function LimitedEditionSection() {
           The Vault 10 — a numbered, serialised limited-edition drop
         </p>
         <p className="mt-2 font-display text-2xl font-semibold text-theme-ink">
-          Ten sweets that exist nowhere else in the Indian market.
+          India&apos;s first functional fine-mithai — protein-dense, no refined sugar, never seen before.
         </p>
         <p className="mt-2 text-sm text-theme-ink/75">
-          A collector box of ten single-bite sweets, each built on a real technique —
-          molecular spherification, dhungar smoke, liquid-nitrogen aeration, edible 24K gold,
-          transparent fruit-glass, probiotic culturing — and each anchored to a Hyderabadi or
-          Andhra heritage cue so it reads as craft, not gimmick. Sold sneaker-style: 500
-          numbered boxes per drop, then gone. It makes Ravi Sweets the most inventive mithai
-          house in India, and that reputation halos the entire core range.
+          A collector box of ten single-bite sweets engineered like a nutritionist&apos;s tasting
+          flight: ~<span className="font-semibold text-theme-ink">90–100 g protein across the box</span>,
+          <span className="font-semibold text-theme-ink"> zero refined sugar</span> (dates · jaggery ·
+          monk fruit), gut-friendly and low-GI, built on desi superfoods — sattu, makhana, millet,
+          black sesame, probiotic cultured milk. Each piece pairs a real technique (spherification,
+          dhungar smoke, probiotic culturing, transparent fruit-glass) with a Hyderabadi/Andhra
+          heritage cue, so it reads as craft + nutrition science, not a powder rolled into a ball.
+          Sold sneaker-style: 500 numbered boxes per drop. Sugar-free/diabetic-friendly foods in
+          India are a $1.12B → $2.58B market (8.93% CAGR) and incumbents (Artinci, Eat Better Co)
+          do sugar-free — <span className="font-semibold text-theme-accent">none fuse functional
+          nutrition + never-seen technique + premium craft.</span> That is the lane.
         </p>
       </div>
 
@@ -2523,12 +2538,13 @@ function LimitedEditionSection() {
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
           The collection · pieces 01 → 10
         </p>
-        <table className="mt-3 w-full min-w-[860px] text-left text-sm">
+        <table className="mt-3 w-full min-w-[920px] text-left text-sm">
           <thead>
             <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
               <Th>#</Th>
               <Th>Piece</Th>
               <Th>The idea</Th>
+              <Th>Nutrition / piece</Th>
               <Th>Technique</Th>
               <Th>Why it&apos;s never been done</Th>
             </tr>
@@ -2544,12 +2560,62 @@ function LimitedEditionSection() {
                   </span>
                 </Td>
                 <Td className="text-theme-ink/75 text-xs">{s.idea}</Td>
+                <Td className="text-emerald-700 font-semibold text-[11px]">{s.nutrition}</Td>
                 <Td className="text-theme-ink/60 text-[11px]">{s.tech}</Td>
-                <Td className="text-emerald-700 text-xs">{s.why}</Td>
+                <Td className="text-theme-ink/55 text-xs">{s.why}</Td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* ── Functional market the line is built for ── */}
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          The functional-sweets market (web-researched, May 2026)
+        </p>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {[
+            { label: 'Sugar-free / diabetic-friendly foods', value: '$1.12B → $2.58B', hint: '2024→2033 · 8.93% CAGR' },
+            { label: 'India healthy-snacks market', value: '$3.13B → $4.77B', hint: '2025→2034 · plant-protein led' },
+            { label: 'Packaged sweets CAGR', value: '15.36%', hint: 'fastest in years' },
+            { label: 'Urban HHs wanting less sugar', value: '55%', hint: 'open to 25–75% reduced-sugar sweets' },
+            { label: 'Sattu protein density', value: '~20 g / 100g', hint: 'desi protein, beats most flours' },
+            { label: 'Indian diabetics', value: '77M', hint: '1 in 11 adults · low-GI buyer' },
+          ].map((s) => (
+            <div key={s.label} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">{s.label}</p>
+              <p className="mt-1 font-display text-xl font-semibold text-theme-ink">{s.value}</p>
+              <p className="mt-0.5 text-[11px] text-theme-ink/55">{s.hint}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Reasons to choose us (RTB) ── */}
+      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+          Why buy from us · reasons to believe
+        </p>
+        <p className="mt-1 text-sm text-theme-ink/75">
+          The whole point: customers should feel they are choosing the smarter, better-made,
+          more-trustworthy sweet — not just a prettier one.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {[
+            { h: 'Real, lab-verified nutrition', b: 'NABL-tested protein + sugar numbers printed on every piece — not vague "healthy". You know exactly what you eat.' },
+            { h: 'Zero refined sugar', b: 'Sweetened only with dates, jaggery and monk fruit. Diabetic-considerate low-GI options, clearly marked.' },
+            { h: 'Desi superfoods, not imported whey', b: 'Sattu, makhana, ragi/millet, black sesame, probiotic cultured milk — protein that belongs to our food culture.' },
+            { h: '100% vegetarian + clean-label', b: 'Vegetarian vark, gelatin-free spherification, no maida, no preservatives. Ingredients named in full.' },
+            { h: 'Craft + science, not a powder ball', b: 'Every piece uses a real technique and a Hyderabadi/Andhra heritage cue. Functional food that is genuinely delicious.' },
+            { h: 'A 1985 halwai house, not a faceless startup', b: 'Forty years of trust, a real founder on camera, real Khammam + Hyderabad kitchens. FSSAI-safe by design.' },
+          ].map((r) => (
+            <div key={r.h} className="rounded-lg border border-emerald-500/25 bg-surface p-4">
+              <p className="font-display text-sm font-semibold text-theme-ink">{r.h}</p>
+              <p className="mt-1 text-xs text-theme-ink/70">{r.b}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
