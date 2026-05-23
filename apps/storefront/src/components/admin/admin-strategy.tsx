@@ -2555,7 +2555,7 @@ function LimitedEditionSection() {
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
         <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-            Unit economics — one Vault 10 box
+            Unit economics — one Vault 10 box (base packaging)
           </p>
           <table className="mt-3 w-full text-left text-sm">
             <tbody>
@@ -2585,9 +2585,11 @@ function LimitedEditionSection() {
             </tbody>
           </table>
           <p className="mt-3 text-[11px] text-theme-ink/55">
-            One drop (500 boxes) clears ≈ ₹8.3L gross. Run quarterly = ₹33L+/yr gross from a
-            line that is pure brand fuel. The real return is the waitlist, the press, and the
-            halo on the ₹500-AOV core range.
+            One drop (500 boxes) clears ≈ ₹8.3L gross on base packaging. Shipping the
+            Tier-A signature packaging (see below) lifts cost to ~₹935/box → ~61% margin,
+            ~₹1,465/box, ≈ ₹7.3L gross/drop — the recommended brand bet. Run quarterly =
+            ₹29–33L/yr gross from a line that is pure brand fuel. The real return is the
+            waitlist, the press, and the halo on the ₹500-AOV core range.
           </p>
         </div>
 
