@@ -77,17 +77,47 @@ Orders are written under a demo identity with `sim_` payment references. The
 3-step flow (address → payment → review) and the UI are complete; the transaction
 is not.
 
-### 2.2 Blocker: add-to-cart is also simulated
+### 2.2 Finding: the storefront never reads products back from the database
 
-[`add-to-cart.tsx:23-24`](../../../apps/storefront/src/components/product/add-to-cart.tsx#L23-L24)
+*(Corrected 2026-07-26 after deeper reading. An earlier draft of this section
+claimed add-to-cart was simulated, based on the stale doc comment at
+`add-to-cart.tsx:22-24`. It is not: line 42 calls the real `add()` from the cart
+context, and only the 320 ms pending animation is faked. The comment describes a
+state that no longer exists and should be deleted.)*
 
-```ts
- * No real cart wiring yet — simulates the network call so the animation can be reviewed.
- * Replace simulateAdd() with a real API call once the Medusa backend is wired.
-```
+The actual finding is more consequential. `public.products` and `public.variants`
+exist in `0001_init.sql` with real price and stock columns, and
+[`supabase/products.ts`](../../../apps/storefront/src/lib/supabase/products.ts)
+has 18 exported functions — **all of them writes** (`upsert*`, `createProduct`).
+There is no list or get.
 
-**Two simulated paths, not one.** This was not in the May proposal's blocker list
-and is an addition to scope.
+Every customer-facing surface renders from the static `CATALOGUE` array in
+`@ravisweets/shared`: home, shop, category, product, festivals, search, sitemap,
+the cart, and the hamper builder.
+
+**Consequence: admin product edits are written to Supabase and never read back.**
+Prices shown to customers come from a TypeScript array compiled into the bundle.
+There is currently no server-readable price source to re-price a cart against,
+which §5.2 depends on.
+
+### 2.2a Blocker: `Money.amount` means two different things
+
+The unit contradiction behind §2.6, still live:
+
+| Source | Unit | Evidence |
+|---|---|---|
+| Static catalogue | **rupees** | `price: { amount: 279 }` for a 250 g box — ₹279, not ₹2.79 |
+| `computeEffectivePrice` | **paise** | `product.ts:136` — *"The variant's regular price in paise"* |
+| Database | **paise** | `variants.price_amount int`; `0003`: `sale_price int -- paise` |
+| `formatMoney` | **rupees** | formats `amount` directly at `maximumFractionDigits: 0` → "₹279" |
+
+`computeEffectivePrice` reads `regular` from the rupee-denominated catalogue and
+compares it against `sale_price` from the paise-denominated DB. **Any product put
+on sale through the admin renders 100× wrong.**
+
+This is the same defect as the two `git log` fixes in §2.6, surviving in a third
+path. It is cosmetic today and chargeback-grade the day cards go live, which is
+why the unit unification (§5.2) is sequenced before Razorpay rather than after.
 
 ### 2.3 Blocker: the deploy target makes payments architecturally impossible
 
@@ -286,14 +316,28 @@ Terminal branches: `payment_failed`, `cancelled`, `refunded`.
 
 Resolve the duplicate `0002` numbering (§2.8) before this lands.
 
-### 5.5 Cart wiring
+### 5.5 The product read path
 
-§2.2 found add-to-cart simulated. Real wiring is part of this pipeline, not a
-separate concern: the cart becomes a server-readable structure of product IDs and
-quantities only — never prices — so that `create-order` can re-price it from the
-DB per §5.2. Guest carts persist client-side; authenticated carts persist to
-Supabase under the existing RLS model so a customer's cart survives switching from
-phone to desktop mid-purchase.
+Per §2.2, this is the largest addition to scope and a hard prerequisite for §5.2 —
+the server cannot re-price a cart against a database the storefront has never read
+from.
+
+The cart itself is already correctly shaped: `CartLine` is
+`{ productId, variantId, quantity, addedAt }` with no prices, so `create-order`
+can re-price it as-is. No cart rework is needed.
+
+What is needed is a read path — `listProducts()` / `getProductBySlug()` in
+`supabase/products.ts`, returning rows mapped to the existing `Product` type — and
+a decision on the static catalogue's role:
+
+**The catalogue becomes seed data and build-time fallback, not runtime truth.**
+Pages render from the DB via ISR (available once §4 lands); the static array seeds
+the database and remains the fallback when Supabase is unconfigured, preserving
+the existing `SUPABASE_CONFIGURED` graceful-degradation behaviour.
+
+The alternative — keeping the catalogue authoritative and syncing the DB from it —
+was rejected: it leaves the admin's 18 write functions writing to a store nobody
+reads, which is the current bug rather than a fix for it.
 
 ### 5.6 Reconciliation
 
@@ -391,8 +435,8 @@ authorised to refund an order can't do it from his phone.
 | Weeks | Work |
 |---|---|
 | 1 | Vercel + private repo + **key rotation** + submit WhatsApp templates *(external latency — starts immediately)* |
-| 2–3 | Pricing engine in paise, server re-pricing, real cart wiring, fix dup `0002` |
-| 4 | Migration `0010` (orders, payments, stock reservation) |
+| 2–3 | Unify money units to paise, product read path (§5.5), fix dup `0002` |
+| 4 | Migration `0010` (orders, payments, stock reservation) + server re-pricing |
 | 5–6 | Razorpay create / verify / webhook, test-mode E2E |
 | **7** | **Soft launch — first real rupee** |
 | 8–10 | Outbox + WhatsApp loop, admin rewire, kitchen ticket |
