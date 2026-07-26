@@ -53,6 +53,17 @@ export const THEME_VAR_NAMES = [
 ] as const;
 
 /**
+ * The exact set of custom properties `applyPalette` sets.
+ *
+ * Naming the keys (rather than returning Record<string, string>) matters under
+ * `noUncheckedIndexedAccess`: callers get `string` from a known key instead of
+ * `string | undefined`, so neither tests nor consumers need a non-null assertion.
+ */
+export type ThemeVarName = (typeof THEME_VAR_NAMES)[number];
+
+export type ThemeVars = Record<ThemeVarName, string>;
+
+/**
  * Muted text, pulled toward the ground for hierarchy but never past AA.
  *
  * A fixed mix ratio is not safe for arbitrary admin-authored palettes: on a
@@ -105,7 +116,7 @@ function deriveElevated(base: string, ink: string, light: boolean): string {
   return base;
 }
 
-export function applyPalette(p: FlavourPalette): Record<string, string> {
+export function applyPalette(p: FlavourPalette): ThemeVars {
   const light = isLightSurface(p.base);
 
   // The direction "up" is toward white on a light ground and toward the ink
