@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowRight, Gift, Handshake, Users } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
-import { ThemeVars } from '@/lib/theme/theme-provider';
+import { FlavourScope } from '@/lib/theme/theme-provider';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
@@ -452,9 +452,8 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
     .filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
-    <>
+    <FlavourScope palette={f.theme}>
       {/* SSR-seed the festival palette */}
-      <ThemeVars palette={f.theme} />
 
       {/* Hero — full-bleed, with per-festival animated SVG vector decoration
           replacing the previous hero photograph. Diwali gets crackers + diyas
@@ -639,6 +638,6 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
           </div>
         </Reveal>
       </section>
-    </>
+    </FlavourScope>
   );
 }

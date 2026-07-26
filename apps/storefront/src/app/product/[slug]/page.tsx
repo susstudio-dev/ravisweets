@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Leaf, Package, Snowflake } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
-import { ThemeVars } from '@/lib/theme/theme-provider';
+import { FlavourScope } from '@/lib/theme/theme-provider';
 import { CompositionPanel } from '@/components/product/composition-panel';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductReviews } from '@/components/product/product-reviews';
@@ -70,10 +70,7 @@ export default async function ProductPage({ params }: PageProps) {
   };
 
   return (
-    <>
-      {/* SSR-seeded flavour palette — zero flash */}
-      <ThemeVars palette={product.theme_palette} />
-
+    <FlavourScope palette={product.theme_palette}>
       {/* Breadcrumb / back */}
       <div className="container-site pt-6">
         <Link
@@ -246,6 +243,6 @@ export default async function ProductPage({ params }: PageProps) {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    </>
+    </FlavourScope>
   );
 }

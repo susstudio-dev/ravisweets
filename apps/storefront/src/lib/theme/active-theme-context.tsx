@@ -1,8 +1,17 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { getSupabase } from '@/lib/supabase/client';
 import { listThemes, type ThemePreset } from '@/lib/supabase/themes';
+import { writePalette } from './apply-palette';
 
 interface ActiveThemeValue {
   active: ThemePreset | null;
@@ -39,17 +48,23 @@ export function ActiveThemeProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
-  // Apply palette to :root whenever active theme changes.
+  // Apply the site palette to :root whenever the active theme changes.
+  //
+  // Goes through writePalette so the semantic --color-* layer follows the
+  // preset too. Previously only the four --theme-* vars were written while
+  // --color-surface / -elevated / text stayed pinned to the globals.css
+  // values, which left 177 + 137 surfaces and 474 borders light on any dark
+  // preset.
   useEffect(() => {
     if (!active) return;
-    const root = document.documentElement;
-    root.style.setProperty('--theme-base', active.palette.base);
-    root.style.setProperty('--theme-accent', active.palette.accent);
-    root.style.setProperty('--theme-glow', active.palette.glow);
-    root.style.setProperty('--theme-ink', active.palette.ink);
-    if (typeof active.palette.grainOpacity === 'number') {
-      root.style.setProperty('--theme-grain-opacity', String(active.palette.grainOpacity));
-    }
+    writePalette(document.documentElement, {
+      base: active.palette.base,
+      accent: active.palette.accent,
+      glow: active.palette.glow,
+      ink: active.palette.ink,
+      grainOpacity:
+        typeof active.palette.grainOpacity === 'number' ? active.palette.grainOpacity : 0.05,
+    });
   }, [active]);
 
   const value = useMemo(() => ({ active, loading, refresh }), [active, loading, refresh]);
@@ -74,13 +89,9 @@ export function useThemeRealtime(refresh: () => Promise<void>) {
       if (!supa) return;
       const channel = supa
         .channel('theme-presets-watch')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'theme_presets' },
-          () => {
-            void refresh();
-          },
-        )
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'theme_presets' }, () => {
+          void refresh();
+        })
         .subscribe();
       channelUnsub = () => {
         void supa.removeChannel(channel);

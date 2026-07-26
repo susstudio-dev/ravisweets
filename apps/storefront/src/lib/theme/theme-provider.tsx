@@ -1,49 +1,53 @@
 'use client';
 
 import { useEffect } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { ThemePalette } from '@ravisweets/shared';
 import { defaultFlavour } from './tokens';
-
-interface ThemeProviderProps {
-  palette?: ThemePalette;
-}
+import { applyPalette, writePalette } from './apply-palette';
 
 /**
- * Swaps the :root flavour-theme CSS variables when a palette is active.
- * On unmount, reverts to the default palette.
+ * Scopes a palette to a subtree.
  *
- * SSR note: for product pages that want zero-flash theming, emit the palette's
- * vars in the server-rendered HTML's <style> using <ThemeVars palette={...} />.
+ * WHY A WRAPPER AND NOT :root
+ * ---------------------------
+ * ActiveThemeProvider writes the site palette as INLINE styles on <html>. The
+ * old ThemeVars wrote a `:root{...}` stylesheet rule, and an inline style
+ * attribute always beats a rule — so the site preset silently overwrote every
+ * per-product palette a few hundred ms after first paint. Per-product theming
+ * was effectively dead whenever Supabase was configured.
+ *
+ * Custom properties resolve to the NEAREST declaring ancestor, so declaring
+ * them on a wrapper element wins inside that subtree without competing with the
+ * root inline write at all. No specificity fight, and it works in SSR — which
+ * also removes the need for a separate dangerouslySetInnerHTML <style> tag.
+ *
+ * This is the same mechanism behind data-register="bidri".
  */
-export function ThemeProvider({ palette }: ThemeProviderProps) {
-  useEffect(() => {
-    const p = palette ?? defaultFlavour;
-    const root = document.documentElement;
-    root.style.setProperty('--theme-base', p.base);
-    root.style.setProperty('--theme-accent', p.accent);
-    root.style.setProperty('--theme-glow', p.glow);
-    root.style.setProperty('--theme-ink', p.ink);
-    root.style.setProperty('--theme-grain-opacity', String(p.grainOpacity));
-    return () => {
-      const d = defaultFlavour;
-      root.style.setProperty('--theme-base', d.base);
-      root.style.setProperty('--theme-accent', d.accent);
-      root.style.setProperty('--theme-glow', d.glow);
-      root.style.setProperty('--theme-ink', d.ink);
-      root.style.setProperty('--theme-grain-opacity', String(d.grainOpacity));
-    };
-  }, [palette]);
-
-  return null;
+export function FlavourScope({
+  palette,
+  children,
+  className,
+}: {
+  palette: ThemePalette;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div data-flavour style={applyPalette(palette) as CSSProperties} className={className}>
+      {children}
+    </div>
+  );
 }
 
 /**
- * Server-renderable <style> that seeds the flavour theme vars on :root.
- * Use in page-level server components (product detail, category) to prevent
- * first-paint theme flash. The client ThemeProvider above keeps the vars
- * in sync across client transitions.
+ * Client-side palette writer for a subtree that cannot use FlavourScope
+ * (a portal, for example). Reverts to the default flavour on unmount.
  */
-export function ThemeVars({ palette }: { palette: ThemePalette }) {
-  const css = `:root{--theme-base:${palette.base};--theme-accent:${palette.accent};--theme-glow:${palette.glow};--theme-ink:${palette.ink};--theme-grain-opacity:${palette.grainOpacity}}`;
-  return <style dangerouslySetInnerHTML={{ __html: css }} />;
+export function useFlavour(el: HTMLElement | null, palette?: ThemePalette) {
+  useEffect(() => {
+    if (!el) return;
+    writePalette(el, palette ?? defaultFlavour);
+    return () => writePalette(el, defaultFlavour);
+  }, [el, palette]);
 }

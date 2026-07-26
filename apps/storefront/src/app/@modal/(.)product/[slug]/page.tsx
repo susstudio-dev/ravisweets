@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
-import { ThemeVars } from '@/lib/theme/theme-provider';
+import { FlavourScope } from '@/lib/theme/theme-provider';
 import { QuickViewModal } from '@/components/product/quick-view-modal';
 
 interface PageProps {
@@ -23,9 +23,8 @@ export default async function ProductQuickView({ params }: PageProps) {
   if (!product) notFound();
 
   return (
-    <>
-      <ThemeVars palette={product.theme_palette} />
+    <FlavourScope palette={product.theme_palette}>
       <QuickViewModal product={product} />
-    </>
+    </FlavourScope>
   );
 }

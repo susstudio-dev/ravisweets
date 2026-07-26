@@ -14,6 +14,7 @@ import { SiteContentProvider } from '@/lib/supabase/site-content-context';
 import { DemoSeed } from '@/components/demo-seed';
 import { PageDriftGarnish } from '@/components/decor/page-drift-garnish';
 import { RealtimeThemeBridge } from '@/components/theme/realtime-theme-bridge';
+import { getVisualVersion } from '@/lib/flags/visual-v2';
 import './globals.css';
 
 /*
@@ -123,6 +124,7 @@ export default function RootLayout({ children, modal }: { children: ReactNode; m
   return (
     <html
       lang="en"
+      data-theme={getVisualVersion()}
       className={`${youngSerif.variable} ${anekLatin.variable} ${anekTelugu.variable}`}
       suppressHydrationWarning
     >

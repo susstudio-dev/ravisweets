@@ -23,7 +23,10 @@ export function getHeroVariant(): HeroVariant {
   if (raw && (allowed as string[]).includes(raw)) return raw as HeroVariant;
   if (raw) {
     // One-time console warning per spec requirement (unknown values fall back to `still`).
-    if (typeof window !== 'undefined' && !(window as unknown as { __heroWarned?: boolean }).__heroWarned) {
+    if (
+      typeof window !== 'undefined' &&
+      !(window as unknown as { __heroWarned?: boolean }).__heroWarned
+    ) {
       console.warn(`[hero] Unknown NEXT_PUBLIC_HERO_VARIANT=${raw}; falling back to "still".`);
       (window as unknown as { __heroWarned?: boolean }).__heroWarned = true;
     }
@@ -58,4 +61,18 @@ export const HOME_FLAGS = {
 /** Hamper builder flag — if off, /corporate/builder shows a "coming soon" fallback. */
 export function isHamperBuilderEnabled(): boolean {
   return envFlag('NEXT_PUBLIC_HAMPER_BUILDER');
+}
+
+/**
+ * Which visual generation the app renders. Stamped onto <html> as data-theme
+ * so component-level variants can branch on it.
+ *
+ * NOTE: unlike the spec's proposal, the TOKEN layer is deliberately NOT gated.
+ * Keeping a duplicate v2 palette block would re-create the
+ * multiple-sources-of-truth problem the redesign exists to remove, and the v2
+ * palette is objectively broken (dead per-product theming; 788 surfaces stay
+ * light on dark palettes). This flag gates COMPONENTS only.
+ */
+export function getVisualVersion(): 'v2' | 'v3' {
+  return process.env.NEXT_PUBLIC_VISUAL_VERSION === 'v2' ? 'v2' : 'v3';
 }
