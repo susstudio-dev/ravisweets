@@ -373,12 +373,12 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                className="shadow-lifted absolute left-1/2 top-full z-50 mt-4 w-[44rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-[#e8d8a8] bg-[#fbf3df] text-[#1f0c02]"
+                className="shadow-lifted bg-surface-elevated text-theme-ink absolute left-1/2 top-full z-50 mt-4 w-[44rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-[color:var(--color-border)]"
               >
                 <div className="grid grid-cols-3 gap-5 p-6">
                   {sections.map((section) => (
                     <div key={section.heading}>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a0e]">
+                      <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
                         {section.heading}
                       </p>
                       <ul className="mt-3 flex flex-col gap-0.5">
@@ -387,13 +387,13 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
                             <Link
                               href={item.href}
                               onClick={() => setOpen(false)}
-                              className="group/item block rounded-lg px-2 py-1.5 transition-colors hover:bg-[#f2e2b6]"
+                              className="group/item hover:bg-field/40 block rounded-lg px-2 py-1.5 transition-colors"
                             >
-                              <span className="group-hover/item:text-theme-accent block text-sm font-semibold text-[#1f0c02]">
+                              <span className="group-hover/item:text-theme-accent text-theme-ink block text-sm font-semibold">
                                 {item.label}
                               </span>
                               {item.tagline && (
-                                <span className="mt-0.5 block text-[11px] leading-snug text-[#1f0c02]/60">
+                                <span className="text-theme-ink/60 mt-0.5 block text-[11px] leading-snug">
                                   {item.tagline}
                                 </span>
                               )}
@@ -404,7 +404,7 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-[#e8d8a8] bg-[#f6e8c2] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1f0c02]/70">
+                <div className="bg-surface text-theme-ink/70 border-t border-[color:var(--color-border)] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.22em]">
                   <Link
                     href="/shop"
                     onClick={() => setOpen(false)}
@@ -502,7 +502,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.quick }}
-            className="fixed inset-0 z-40 bg-[#1a0a02]/60 backdrop-blur-sm"
+            className="bg-theme-ink/60 fixed inset-0 z-40 backdrop-blur-sm"
           />
 
           {/* Drawer */}
@@ -514,10 +514,10 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
             animate={reduced ? { opacity: 1 } : { x: 0 }}
             exit={reduced ? { opacity: 0 } : { x: '100%' }}
             transition={{ duration: DURATION.base, ease: EASE.emphasised }}
-            className="fixed right-0 top-0 z-50 flex h-[100dvh] w-[88vw] max-w-[360px] flex-col bg-[#fbf3df] text-[#1f0c02] shadow-2xl"
+            className="bg-surface-elevated text-theme-ink fixed right-0 top-0 z-50 flex h-[100dvh] w-[88vw] max-w-[360px] flex-col shadow-2xl"
           >
             {/* Drawer header */}
-            <div className="flex items-center justify-between border-b border-[#e8d8a8] px-5 py-4">
+            <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
               <div className="flex items-center gap-2">
                 <Paisley size="sm" />
                 <span className="font-display text-lg">Ravi Sweets</span>
@@ -526,7 +526,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f2e2b6] text-[#1f0c02] transition-colors hover:bg-[#e8d8a8]"
+                className="bg-field/40 text-theme-ink hover:bg-field/60 inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors"
               >
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -538,20 +538,20 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
               <Link
                 href="/cart"
                 onClick={onClose}
-                className="mb-5 flex items-center justify-between rounded-2xl bg-[#2e1c04] px-4 py-3 text-[#fdf6ec]"
+                className="bg-theme-ink mb-5 flex items-center justify-between rounded-2xl px-4 py-3 text-[color:var(--theme-base)]"
               >
                 <span className="flex items-center gap-2.5">
                   <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                   <span className="font-display text-base">Your cart</span>
                 </span>
-                <span className="rounded-full bg-[#f0bd4a] px-2.5 py-0.5 text-xs font-bold tabular-nums text-[#2e1c04]">
+                <span className="bg-theme-accent text-theme-ink rounded-full px-2.5 py-0.5 text-xs font-bold tabular-nums">
                   {lineCount}
                 </span>
               </Link>
 
               {sections.map((section) => (
                 <div key={section.heading} className="mb-6">
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a0e]">
+                  <p className="text-theme-accent mb-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
                     {section.heading}
                   </p>
                   <ul className="flex flex-col">
@@ -561,11 +561,11 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                           href={item.href}
                           onClick={onClose}
                           // h-12 = 48px tap target — comfortably above the 44px Apple HIG / Google Material minimum
-                          className="flex h-12 items-center border-b border-[#ecd9a8] text-[15px] font-medium text-[#1f0c02] transition-colors hover:text-[#a85a08] active:bg-[#f2e2b6]"
+                          className="text-theme-ink hover:text-theme-accent active:bg-field/40 flex h-12 items-center border-b border-[color:var(--color-border)] text-[15px] font-medium transition-colors"
                         >
                           {item.label}
                           {item.tagline && (
-                            <span className="ml-auto truncate pl-3 text-[11px] font-normal text-[#1f0c02]/55">
+                            <span className="text-theme-ink/55 ml-auto truncate pl-3 text-[11px] font-normal">
                               {item.tagline}
                             </span>
                           )}
@@ -576,8 +576,8 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                 </div>
               ))}
 
-              <div className="mb-6 border-t border-[#e8d8a8] pt-4">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a0e]">
+              <div className="mb-6 border-t border-[color:var(--color-border)] pt-4">
+                <p className="text-theme-accent mb-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
                   More
                 </p>
                 <ul className="flex flex-col">
@@ -586,7 +586,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                       <Link
                         href={item.href}
                         onClick={onClose}
-                        className="flex h-12 items-center border-b border-[#ecd9a8] text-[15px] font-semibold text-[#1f0c02] transition-colors hover:text-[#a85a08] active:bg-[#f2e2b6]"
+                        className="text-theme-ink hover:text-theme-accent active:bg-field/40 flex h-12 items-center border-b border-[color:var(--color-border)] text-[15px] font-semibold transition-colors"
                       >
                         {item.label}
                       </Link>
@@ -595,8 +595,8 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-[#e8d8a8] bg-[#f6e8c2] p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a5a0e]">
+              <div className="bg-surface rounded-2xl border border-[color:var(--color-border)] p-4">
+                <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
                   Talk to us
                 </p>
                 <a
@@ -609,7 +609,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
                 </a>
                 <a
                   href="tel:+919398859978"
-                  className="mt-2 flex h-11 items-center justify-center gap-2 rounded-full bg-[#c0592b] text-sm font-semibold text-white"
+                  className="bg-theme-accent mt-2 flex h-11 items-center justify-center gap-2 rounded-full text-sm font-semibold text-white"
                 >
                   Call +91 93988 59978
                 </a>
