@@ -23,6 +23,12 @@ const config: Config = {
         'theme-accent': 'var(--theme-accent)',
         'theme-glow': 'var(--theme-glow)',
         'theme-ink': 'var(--theme-ink)',
+        // Brand tokens. `field` is the pista panel on light and the anjeer
+        // panel on dark — it follows --theme-glow, which swaps per register.
+        field: 'var(--theme-glow)',
+        'field-deep': 'var(--color-field-deep)',
+        varak: 'var(--color-varak)',
+        'varak-rule': 'var(--color-varak-rule)',
       },
       borderRadius: {
         sm: radii.sm,
@@ -41,19 +47,28 @@ const config: Config = {
       fontFamily: {
         display: ['var(--font-display)', 'Georgia', 'serif'],
         body: ['var(--font-body)', 'system-ui', 'sans-serif'],
-        indic: ['var(--font-indic)', 'var(--font-display)', 'serif'],
+        indic: ['var(--font-indic)', 'var(--font-body)', 'sans-serif'],
       },
       fontSize: {
         // Fluid scale via clamp(): min, fluid, max
-        'display-xl': ['clamp(2.75rem, 2rem + 3.2vw, 4.75rem)', { lineHeight: '1.04', letterSpacing: '-0.02em' }],
-        'display-lg': ['clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem)', { lineHeight: '1.08', letterSpacing: '-0.018em' }],
-        'display-md': ['clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem)', { lineHeight: '1.15', letterSpacing: '-0.012em' }],
+        'display-xl': [
+          'clamp(2.75rem, 2rem + 3.2vw, 4.75rem)',
+          { lineHeight: '1.04', letterSpacing: '-0.02em' },
+        ],
+        'display-lg': [
+          'clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem)',
+          { lineHeight: '1.08', letterSpacing: '-0.018em' },
+        ],
+        'display-md': [
+          'clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem)',
+          { lineHeight: '1.15', letterSpacing: '-0.012em' },
+        ],
         heading: ['clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem)', { lineHeight: '1.3' }],
         body: ['1rem', { lineHeight: '1.6' }],
         caption: ['0.8125rem', { lineHeight: '1.45', letterSpacing: '0.01em' }],
       },
       backgroundImage: {
-        'grain': "url('/textures/grain.svg')",
+        grain: "url('/textures/grain.svg')",
       },
       transitionTimingFunction: {
         emphasised: 'cubic-bezier(0.16, 1, 0.3, 1)',

@@ -1,51 +1,40 @@
 /**
- * Ravi Sweets design tokens — single source of truth.
- * Projected to (a) Tailwind config, (b) CSS custom properties on :root, (c) TS exports.
- * No component may hard-code colours, spacing, radii, or shadows outside this file.
+ * Ravi Sweets design tokens.
+ *
+ * Colour now lives in ./palette.ts — the single source of truth. This file
+ * keeps the non-colour scales (radii, elevation, motion, grain) and re-exports
+ * colour so existing importers do not all have to change at once.
+ *
+ * The old `rawPalette.brand.*` / `.saffron` / `.rose` scales are GONE. They had
+ * zero Tailwind-class usages across the entire tree, so nothing consumed them
+ * except by hand-copying hex. Gold is deleted deliberately — see palette.ts.
  */
+import { ANJEER_PISTA, BIDRI_TOKENS, LIGHT } from './palette';
 
+export type { FlavourPalette } from './palette';
+export { ANJEER_PISTA, BIDRI_TOKENS, LIGHT, BIDRI, PRODUCT_PALETTES } from './palette';
+
+/** Projected into Tailwind. Semantic names only — no numeric brand ramp. */
 export const rawPalette = {
-  // Brand scale — re-tuned 2026-05-04 to a "brass & ghee" identity. The
-  // previous scale leaned bright/orange-rust which read more fast-food than
-  // 1985 heritage mithai. New scale is anchored on warm ghee cream + deep
-  // antique brass + saffron-gold leaf, with cocoa as the deepest stop.
-  brand: {
-    50: '#fbf3df',  // ghee cream (slightly warmer than the prior cold #fdf6ec)
-    100: '#f4e4ba', // pale brass
-    200: '#e9c97e', // pale gold
-    300: '#dba63d', // gold-leaf — the "saffron lift" surface
-    400: '#bc841a', // antique brass
-    500: '#8a5a0e', // deep brass — primary accent
-    600: '#634008', // old gold
-    700: '#472d06', // burnt amber
-    800: '#2e1c04', // cocoa
-    900: '#1f1002', // deep cocoa — primary ink
-  },
-  // Saffron now reads as antique-gold + deep-brass instead of peach + rust.
-  saffron: { DEFAULT: '#e9b249', dark: '#a8501f' },
-  // 2026-05-06: pista-rose tokens added so themed components can reach for
-  // the new accent + glow without going through the per-route palette.
-  rose: { DEFAULT: '#a8345d', soft: '#d8a48c' },
-  pista: { DEFAULT: '#c9d99c', deep: '#88a25c' },
-  cream: '#f4efde',
-  ink: '#1f1820',
+  cream: ANJEER_PISTA.base,
+  ink: ANJEER_PISTA.ink,
+  anjeer: { DEFAULT: ANJEER_PISTA.accent, deep: ANJEER_PISTA.accentDeep },
+  pista: { DEFAULT: ANJEER_PISTA.field, deep: '#4F6024' },
+  varak: { DEFAULT: ANJEER_PISTA.varak, rule: ANJEER_PISTA.varakRule },
+  gunmetal: { DEFAULT: BIDRI_TOKENS.base, elevated: BIDRI_TOKENS.surfaceElevated },
   neutral: {
-    50: '#fafaf9',
-    100: '#f5f5f4',
-    200: '#e7e5e4',
-    300: '#d6d3d1',
-    400: '#a8a29e',
-    500: '#78716c',
-    600: '#57534e',
-    700: '#44403c',
+    50: '#FAFAF9',
+    100: '#F5F5F4',
+    200: '#E7E5E4',
+    300: '#D6D3D1',
+    400: '#A8A29E',
+    500: '#78716C',
+    600: '#57534E',
+    700: '#44403C',
     800: '#292524',
-    900: '#1c1917',
+    900: '#1C1917',
   },
-  semantic: {
-    success: '#2f7a3c',
-    warn: '#c08a2a',
-    danger: '#b3361f',
-  },
+  semantic: { success: '#2F7A3C', warn: '#8A6A1E', danger: '#9B2F1C' },
 } as const;
 
 export const radii = {
@@ -59,22 +48,19 @@ export const radii = {
   circle: '50%',
 } as const;
 
+/**
+ * The `lifted` shadow drops the white inner bevel the old scale carried —
+ * it read as plastic on the pista field and inverted wrongly on the dark
+ * Bidri register.
+ */
 export const elevation = {
   flat: 'none',
-  soft: '0 1px 2px rgba(28, 20, 16, 0.04), 0 2px 8px rgba(28, 20, 16, 0.06)',
-  lifted:
-    '0 2px 4px rgba(28, 20, 16, 0.06), 0 8px 24px rgba(28, 20, 16, 0.10), 0 1px 0 rgba(255, 255, 255, 0.6) inset',
+  soft: '0 1px 2px rgb(34 30 26 / 0.04), 0 2px 8px rgb(34 30 26 / 0.06)',
+  lifted: '0 2px 4px rgb(34 30 26 / 0.06), 0 8px 24px rgb(34 30 26 / 0.10)',
 } as const;
 
 export const motion = {
-  duration: {
-    instant: 100,
-    fast: 150,
-    quick: 200,
-    base: 300,
-    slow: 450,
-    cinematic: 650,
-  },
+  duration: { instant: 100, fast: 150, quick: 200, base: 300, slow: 450, cinematic: 650 },
   easing: {
     standard: 'cubic-bezier(0.2, 0, 0, 1)',
     emphasised: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -82,27 +68,7 @@ export const motion = {
   },
 } as const;
 
-export const grain = {
-  opacityDefault: 0.05,
-  opacityMax: 0.08,
-} as const;
+export const grain = { opacityDefault: 0.05, opacityMax: 0.08 } as const;
 
-/**
- * Flavour-theme default — consumed when no per-product palette is active.
- * Products override these four vars on :root via ThemeProvider.
- */
-export const defaultFlavour = {
-  base: rawPalette.cream,
-  accent: rawPalette.rose.DEFAULT,
-  glow: rawPalette.pista.DEFAULT,
-  ink: rawPalette.ink,
-  grainOpacity: grain.opacityDefault,
-} as const;
-
-export type FlavourPalette = {
-  base: string;
-  accent: string;
-  glow: string;
-  ink: string;
-  grainOpacity: number;
-};
+/** Consumed when no per-route palette is active. */
+export const defaultFlavour = LIGHT;

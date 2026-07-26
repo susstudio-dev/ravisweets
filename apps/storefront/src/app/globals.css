@@ -3,34 +3,68 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * ANJEER & PISTA. These :root values are first-paint defaults only — every
+   * one of them is overwritten at runtime by applyPalette() (see
+   * src/lib/theme/apply-palette.ts). Keep them byte-identical to
+   * ANJEER_PISTA in src/lib/theme/palette.ts.
+   */
   :root {
-    /* --- layer 2: semantic role tokens --- */
-    /* "Pista & Rose" palette — landed 2026-05-06. Pivots away from saffron-
-       and brass-led palettes for a fundamentally different mood: pistachio
-       cream surface, rose-wine accent (#a8345d), and a soft pista-green
-       glow that nods to kalakand + rose-petal sweets. Ink shifts to deep
-       plum (#1f1820) so the rose-pista pairing sits cleanly. Three
-       additional presets ship via migration 0008 so the brand can swap
-       palettes from /admin/themes without redeploying. */
-    --color-surface: #f4efde;
-    --color-surface-elevated: #fdf8e8;
-    --color-text-primary: #1f1820;
-    --color-text-muted: rgba(31, 24, 32, 0.68);
-    --color-border: rgba(31, 24, 32, 0.09);
-    --color-accent: #a8345d;
-    --color-ring: #a8345d;
-
-    /* --- layer 3: flavour theme tokens (overridden per product via ThemeProvider) --- */
-    --theme-base: #f4efde;
-    --theme-accent: #a8345d;
+    --theme-base: #f1f0e2;
+    --theme-accent: #5e2757;
     --theme-glow: #c9d99c;
-    --theme-ink: #1f1820;
+    --theme-ink: #221e1a;
     --theme-grain-opacity: 0.05;
 
-    /* font-face variables (set by next/font/google) */
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-indic: 'Tiro Telugu', var(--font-display);
+    --color-surface: #f1f0e2;
+    --color-surface-elevated: #faf9f0;
+    --color-text-primary: #221e1a;
+    --color-text-muted: #5c5347;
+    --color-accent: #5e2757;
+    --color-ring: #5e2757;
+
+    /* Non-authored brand constants. */
+    --color-field-deep: #3e1938;
+    --color-varak: #9a9ea3;
+    --color-varak-rule: #7e8286;
+
+    /*
+     * Alpha border, so it is polarity-agnostic: 12% of whatever the current ink
+     * is, over whatever the current surface is. This is the one semantic token
+     * NOT derived in applyPalette, because it needs no polarity branch.
+     */
+    --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
+
+    --font-display: 'Young Serif', Georgia, serif;
+    --font-body: 'Anek Latin', system-ui, sans-serif;
+    --font-indic: 'Anek Telugu', var(--font-body);
+  }
+
+  /*
+   * BIDRI REGISTER. Any subtree opts in with data-register="bidri" and
+   * re-themes with zero component changes, because custom properties resolve
+   * to the nearest declaring ancestor. Values match BIDRI_TOKENS in palette.ts.
+   */
+  [data-register='bidri'] {
+    --theme-base: #17181a;
+    --theme-accent: #c9d99c;
+    --theme-glow: #3e1938;
+    --theme-ink: #f2ede0;
+    --theme-grain-opacity: 0.07;
+
+    --color-surface: #17181a;
+    --color-surface-elevated: #202225;
+    --color-text-primary: #f2ede0;
+    --color-text-muted: #a7a49b;
+    --color-accent: #c9d99c;
+    --color-ring: #c9d99c;
+
+    --color-field-deep: #3e1938;
+    --color-varak: #c8cbd0;
+    --color-varak-rule: #c8cbd0;
+
+    background-color: var(--theme-base);
+    color: var(--theme-ink);
   }
 
   html {
@@ -51,8 +85,17 @@
 
   h1,
   h2,
-  h3 {
+  h3,
+  .font-display {
     font-family: var(--font-display);
+    /*
+     * Young Serif ships ONE weight (400). Without this the browser synthesises
+     * bold wherever font-semibold/font-bold is present — 197 call sites — and
+     * faux-bold on a display serif looks broken. Display hierarchy comes from
+     * size, never weight.
+     */
+    font-synthesis: none;
+    font-synthesis-weight: none;
   }
 
   :focus-visible {
@@ -89,6 +132,11 @@
     opacity: var(--theme-grain-opacity);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.85 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     mix-blend-mode: multiply;
+  }
+
+  /* multiply makes grain invisible on a dark ground. */
+  [data-register='bidri'] .grain-overlay {
+    mix-blend-mode: screen;
   }
 
   @media (prefers-reduced-motion: reduce) {
