@@ -16,10 +16,25 @@
 - **No new hardcoded hex outside `src/lib/theme/palette.ts`.** Third-party brand colours (WhatsApp `#25d366`, Instagram gradient) are the only permitted exceptions.
 - **`ThemePreset` jsonb shape must not change:** `palette{base,accent,glow,ink,grainOpacity?}` + `hero{eyebrow,headline,body,ctaLabel,ctaHref,imageUrl}` + `bannerText`. Renaming a key breaks 13 seeded DB rows and 3 SQL files. The design name `field` maps to the stored key `glow`.
 - **The four palette keys stay the only authored inputs.** Richer tokens are _derived_, so `/admin/themes` keeps working unchanged.
-- **CI gates that will fail the build:** `pnpm -r typecheck`, `pnpm --filter @ravisweets/storefront lint`, `pnpm --filter @ravisweets/storefront link-check`, `pnpm format:check`, `next build`, `size-limit`, Lighthouse.
+- **CI gates you must keep green:** `pnpm -r typecheck`, `pnpm --filter @ravisweets/storefront lint`, `pnpm --filter @ravisweets/storefront link-check`, `next build`, `size-limit`, Lighthouse. (`pnpm format:check` is also a CI step but is **already red on master** — see below.)
 - **Lighthouse `categories:accessibility` minScore `0.95` is an `error`.** LCP `error` at 2500 ms, CLS `error` at 0.1.
 - **size-limit: home First Load JS ≤ 185 KB gzip. Currently measured 181 KB — about 4 KB of headroom.** Motion subsystem ≤ 9 KB gzip. Do not add client-side dependencies in this plan; `applyPalette` must stay dependency-free (do **not** import `culori` into client code).
-- **Run `pnpm format` before every commit.** `prettier` + `prettier-plugin-tailwindcss` are a CI gate.
+- **NEVER run `pnpm format` (repo-wide).** The repo has never been prettier-clean: a repo-wide format rewrites **~250 files**, burying your change in unrelated churn. Format only what you touched:
+
+  ```bash
+  # FMT — format only the files changed in this task
+  git status --porcelain -- '*.ts' '*.tsx' '*.css' '*.json' '*.md' \
+    | awk '{print $NF}' | xargs -r npx prettier --write
+  ```
+
+  Every task below refers to this as **`FMT`**.
+
+- **`pnpm format:check` currently FAILS on master and is not a usable gate yet.** Two independent reasons, both pre-existing:
+  1. `supabase/functions/send-order-email/index.ts:180` has a **real syntax error** — `order.lines as Array<{...}>.map(...)` is invalid TypeScript; the `as` expression needs parentheses: `(order.lines as Array<{...}>).map(...)`. Confirmed as `TS1005: ',' expected`. Prettier exits 2 on it, which fails the whole gate.
+  2. ~250 files are simply unformatted.
+
+  **This file is invisible to CI's typecheck** because `pnpm-workspace.yaml` covers only `apps/*` and `packages/*`, so `supabase/functions/` is never compiled. The transactional order email therefore cannot run. Fixing it is **not** in this plan's scope — it belongs to the revenue-path workstream, which owns that function. Do not treat `format:check` as a signal until it is fixed.
+
 - **All contrast assertions use WCAG 2.1 relative luminance.** Body text ≥ 4.5:1, large display ≥ 3:1, non-text UI ≥ 3:1.
 
 ---
@@ -357,7 +372,7 @@ If `hue('#5E2757')` returns 307 or 309 rather than 308, adjust the test to `toBe
 
 ```bash
 cd ../..
-pnpm format
+FMT
 pnpm -r typecheck
 cd apps/storefront && pnpm test && pnpm lint
 cd ../..
@@ -666,7 +681,7 @@ If a `PRODUCT_PALETTES` entry fails a contrast assertion, **fix the palette valu
 - [ ] **Step 5: Format, typecheck and commit**
 
 ```bash
-cd ../.. && pnpm format && pnpm -r typecheck
+cd ../.. && FMT && pnpm -r typecheck
 cd apps/storefront && pnpm test && cd ../..
 git add apps/storefront/src/lib/theme/palette.ts apps/storefront/src/lib/theme/palette.test.ts
 git commit -m "feat(theme): add the Anjeer & Pista palette as a self-verifying module
@@ -957,7 +972,7 @@ If `muted text at AA` fails for `MIDTONE` or `LEGACY_DARK`, lower `MUTED_TOWARD_
 - [ ] **Step 5: Format, typecheck and commit**
 
 ```bash
-cd ../.. && pnpm format && pnpm -r typecheck
+cd ../.. && FMT && pnpm -r typecheck
 cd apps/storefront && pnpm test && cd ../..
 git add apps/storefront/src/lib/theme/apply-palette.ts apps/storefront/src/lib/theme/apply-palette.test.ts
 git commit -m "feat(theme): derive the semantic colour layer from the active palette
@@ -1279,7 +1294,7 @@ Expected: home First Load JS still under 185 KB. No client JS was added in this 
 - [ ] **Step 6: Format and commit**
 
 ```bash
-cd ../.. && pnpm format && pnpm format:check
+cd ../.. && FMT
 git add apps/storefront/src/lib/theme/tokens.ts apps/storefront/src/app/globals.css apps/storefront/tailwind.config.ts
 git commit -m "feat(theme): wire the Anjeer & Pista token layer
 
@@ -1467,7 +1482,7 @@ Spot-check three diffs by eye. The codemod only removes weight classes from stri
 - [ ] **Step 5: Verify nothing broke**
 
 ```bash
-pnpm format && pnpm -r typecheck
+FMT && pnpm -r typecheck
 cd apps/storefront && pnpm lint && pnpm test && pnpm build && npx --yes size-limit
 ```
 
@@ -1675,7 +1690,7 @@ Stop the server.
 - [ ] **Step 6: Format, verify, commit**
 
 ```bash
-cd ../.. && pnpm format && pnpm -r typecheck
+cd ../.. && FMT && pnpm -r typecheck
 cd apps/storefront && pnpm lint && pnpm test && cd ../..
 git add -u
 git commit -m "fix(theme): scope per-route palettes so per-product theming works
@@ -1758,7 +1773,7 @@ import { PRODUCT_PALETTES } from '@/lib/theme/palette';
 - [ ] **Step 4: Verify**
 
 ```bash
-cd ../.. && pnpm format && pnpm -r typecheck
+cd ../.. && FMT && pnpm -r typecheck
 cd apps/storefront && pnpm lint && pnpm test && pnpm build && pnpm start
 ```
 
@@ -1820,7 +1835,7 @@ Expected: only `#25d366`.
 - [ ] **Step 3: Verify the header re-themes**
 
 ```bash
-cd ../.. && pnpm format && pnpm -r typecheck
+cd ../.. && FMT && pnpm -r typecheck
 cd apps/storefront && pnpm lint && pnpm build && pnpm start
 ```
 
@@ -1961,7 +1976,7 @@ In `.github/workflows/ci.yml`, add two steps to the `lint` job after `Typecheck 
 - [ ] **Step 4: Verify the whole gate suite**
 
 ```bash
-pnpm format && pnpm format:check && pnpm -r typecheck
+FMT && pnpm -r typecheck
 cd apps/storefront && pnpm lint && pnpm test && pnpm link-check && pnpm build && npx --yes size-limit
 cd ../.. && node apps/storefront/scripts/colour-audit.mjs
 ```
@@ -1994,7 +2009,6 @@ No new code. This task exists because the spec's §10 says verification is by re
 
 ```bash
 cd /d/2027/susstudio/Projects/ravisweets
-pnpm format:check
 pnpm -r typecheck
 pnpm --filter @ravisweets/storefront lint
 pnpm --filter @ravisweets/storefront test
