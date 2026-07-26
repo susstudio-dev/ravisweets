@@ -2119,3 +2119,45 @@ Branch: `feat/storefront-anjeer-pista-foundation`.
 ### Carried into Plan 2 / Plan 3
 
 Paisley (164 refs), the hero rebuild, the katli device, the ~9 hardcoded dark sections, the 26 product-palette assignments, festivals (70 hex), the cursor data-URIs, the order email, and `0009_promotions.sql` defaults.
+
+### Addendum — verified against the running app (2026-07-27)
+
+The "Not verified" items above were subsequently checked against a live
+`next dev` server on :3000, by fetching the served HTML and CSS.
+
+**Token system, confirmed in the served stylesheet.** Both registers ship, and
+the semantic layer follows each one:
+
+- light — `--theme-base:#f1f0e2`, `--theme-accent:#5e2757`, `--theme-ink:#221e1a`, `--color-surface-elevated:#faf9f0`
+- bidri — `--theme-base:#17181a`, `--theme-accent:#c9d99c`, `--theme-ink:#f2ede0`, `--color-surface-elevated:#202225`
+- `[data-register='bidri']` present; `font-synthesis: none` and `font-synthesis-weight: none` both present
+- old brand colours `#a8345d`, `#f4efde`, `#1f1820` are **gone** from the served CSS
+
+**The 788-element dark-palette bug is fixed, demonstrated in a real page.**
+`/product/diwali-premium-hamper` serves:
+
+```
+data-flavour="true" style="--theme-base:#2a1505;--color-surface:#2a1505;
+--color-surface-elevated:#331F0F;--color-text-primary:#fdf6ec;
+--color-text-muted:#BEB3A7;..."
+```
+
+Previously `--color-surface`/`-elevated` would have stayed cream on that dark
+ground. The `data-flavour` wrapper also confirms the cascade fix. (Its palette
+values are still the old brass ones — product palette migration is Plan 3.)
+
+**Fonts confirmed served:** Young Serif, Anek Latin, Anek Telugu, each with a
+next/font metric-adjusted fallback (`'Young Serif Fallback'` etc.), which is
+what limits CLS on swap.
+
+**Lighthouse accessibility: 96/100 — PASSES the ≥95 CI gate.** One failing
+audit, `aria-prohibited-attr`: two `<span aria-label=...>` nodes from
+`text-kinetic.tsx:65`, where a span with no role cannot carry `aria-label`.
+**Pre-existing — that file is untouched by this branch.** Plan 2 rebuilds the
+hero and should fix it there.
+
+**Still not measured: LCP and CLS.** Lighthouse perf numbers from a dev server
+are not representative, and a production build currently fails while a
+`next dev` server is running, because both write to the same `.next` directory
+(`write ECONNABORTED`, then phantom `PageNotFoundError`s). Stop the dev server,
+then `rm -rf .next && next build && npx @lhci/cli autorun` for real perf numbers.
