@@ -400,3 +400,45 @@ Verification is by re-running the audit greps, not by inspection.
 - Runtime/per-user feature flagging (build-time only).
 - Fixing the non-transactional `activateTheme` two-UPDATE window.
 - Copywriting beyond hero structure. The verbal identity is a real recall driver and deserves its own pass.
+
+---
+
+## 13 · Cross-reference — revenue path
+
+A parallel spec, [`2026-07-26-ravisweets-revenue-path-design.md`](./2026-07-26-ravisweets-revenue-path-design.md),
+was authored the same day and drives the storefront to a working checkout over
+~15 weeks to Diwali 2026.
+
+**Read its §2 before starting.** It establishes that the storefront **cannot
+currently accept a single rupee** — checkout is simulated, add-to-cart is
+simulated, and `output: 'export'` makes payments architecturally impossible. This
+redesign does not change that. A memorable storefront that cannot collect money
+is still a storefront that cannot collect money.
+
+**Known conflict.** That spec's §4 states *"The storefront should look identical
+the day the migration lands,"* and its D1 pauses other work in favour of revenue.
+**The engagement owner was shown this and chose to proceed with the full redesign
+now**, in parallel. Recorded here so the decision is traceable rather than
+accidental.
+
+### Coordination surface
+
+| Item | Owner | Note |
+|---|---|---|
+| Cart + checkout **palette** | this spec | Inherited via tokens — **no edits to those files** |
+| Cart + checkout **logic/wiring** | revenue Plan 1 | Untouched here |
+| ~8 non-token colour utilities in `checkout-flow.tsx`, `cart-view.tsx`, `coupon-input.tsx` | this spec | Colour classes only, no logic. Plan 1 should expect them changed. |
+| `0009_promotions.sql` defaults + `promo-strip.tsx` | this spec | Independent of `0010_orders_payments.sql` |
+| `0010_orders_payments.sql` | revenue Plan 1 | Untouched here |
+| Duplicate `0002` migration (their §2.8) | revenue Plan 1 | Not touched here; sequence before either lands |
+
+### Dependencies worth exploiting
+
+- Their **D4 (Vercel + SSR, private repo)** removes the static-export constraint
+  and makes §8.2's zero-flash SSR theming path cleaner. If the migration lands
+  first, implement the SSR palette seed against Route Handlers rather than
+  build-time `<style>` emission.
+- Their **D3 (delete Medusa)** reduces the surface this redesign has to re-theme.
+- The architecture fixes in §8 repair defects that would otherwise bite during
+  payments work — dead per-product theming, and 788 surfaces/borders that stay
+  light on any dark palette.

@@ -442,3 +442,45 @@ Explicitly deferred — YAGNI until the store transacts:
    photography asset delivery — before the weeks that depend on them.
 5. **Confirm the review-request link target** for the delivered template — Google
    Business Profile review URL is the highest-value destination given the local-SEO plan.
+
+---
+
+## 11 · Cross-reference — art-direction redesign
+
+> Added 2026-07-26 by the parallel design workstream. This section records an
+> overlap; it does not change any decision in §3.
+
+A second spec, [`2026-07-26-storefront-art-direction-design.md`](./2026-07-26-storefront-art-direction-design.md),
+redesigns the storefront's palette, typography and hero. It was authored the same
+day as this spec, independently.
+
+**Direct tension with §4.** That section states *"The storefront should look
+identical the day the migration lands."* The redesign changes it substantially.
+**The engagement owner was shown this conflict and chose to proceed with the full
+redesign now**, in parallel with the revenue work, rather than deferring it past
+Plan 1.
+
+**Shared-file surface is small.** The redesign is token-driven: cart and checkout
+inherit the new palette through CSS custom properties with **no edits to those
+files**. The only genuine overlap is ~8 lines of non-token Tailwind colour
+utilities that the redesign migrates to semantic tokens:
+
+- `components/checkout/checkout-flow.tsx:541, 623, 628`
+- `components/cart/cart-view.tsx:171, 195, 196`
+- `components/cart/coupon-input.tsx:120, 123`
+
+Plan 1 should expect these lines to have changed colour classes (not logic).
+
+**Two things in the redesign help this plan:**
+
+- **D4 (Vercel + SSR)** removes the `output: 'export'` constraint and makes the
+  redesign's zero-flash SSR theming path cleaner than static export allows.
+- The redesign fixes theming defects that would otherwise surface during payments
+  work: per-product theming is currently dead (inline `:root` writes beat the
+  `<style>` rule), and **788 surfaces and borders stay light on any dark palette**,
+  which already breaks a live product page.
+
+**One item for §10.** The redesign also touches `0009_promotions.sql` column
+defaults (`bg_from`/`bg_to`/`fg`) in lockstep with `promo-strip.tsx`. This is
+independent of `0010_orders_payments.sql`, but both land in the same window —
+worth sequencing so the duplicate-`0002` fix (§2.8) is not further complicated.
