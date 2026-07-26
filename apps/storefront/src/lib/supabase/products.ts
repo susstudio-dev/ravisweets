@@ -2,6 +2,7 @@
 
 import { getSupabase } from './client';
 import type { CategorySlug, DietaryTag } from '@ravisweets/shared';
+import { PRODUCT_PALETTES } from '@/lib/theme/palette';
 
 export async function upsertVariantPrice(
   variantId: string,
@@ -105,13 +106,11 @@ export async function uploadProductImage(
   const ext = (file.name.split('.').pop() ?? 'jpg').toLowerCase();
   const safeExt = /^(jpg|jpeg|png|webp|avif|svg)$/.test(ext) ? ext : 'jpg';
   const path = `${productId}/${Date.now()}.${safeExt}`;
-  const { error: upErr } = await supa.storage
-    .from('product-images')
-    .upload(path, file, {
-      cacheControl: '31536000',
-      upsert: false,
-      contentType: file.type || `image/${safeExt}`,
-    });
+  const { error: upErr } = await supa.storage.from('product-images').upload(path, file, {
+    cacheControl: '31536000',
+    upsert: false,
+    contentType: file.type || `image/${safeExt}`,
+  });
   if (upErr) return { ok: false, reason: upErr.message };
   const { data } = supa.storage.from('product-images').getPublicUrl(path);
   return { ok: true, url: data.publicUrl };
@@ -132,7 +131,8 @@ export async function upsertProductPrimaryImage(
     .eq('id', productId)
     .single();
   if (readErr) return { ok: false, reason: readErr.message };
-  const existing = (prev?.images as Array<{ url: string; alt: string; width: number; height: number }>) ?? [];
+  const existing =
+    (prev?.images as Array<{ url: string; alt: string; width: number; height: number }>) ?? [];
   const next = [{ url, alt, width: 1400, height: 1400 }, ...existing.slice(1)];
   const { error } = await supa.from('products').update({ images: next }).eq('id', productId);
   if (error) return { ok: false, reason: error.message };
@@ -207,13 +207,9 @@ export async function createProduct(
     is_new: true,
     builder_eligible: input.builder_eligible,
     unit_mode: input.unit_mode,
-    theme_palette: {
-      base: '#fbf3df',
-      accent: '#a8501f',
-      glow: '#e9b249',
-      ink: '#1f0c02',
-      grainOpacity: 0.05,
-    },
+    // Was a 27th orphan palette (the old brass-ghee literal), so every
+    // admin-created product silently shipped the pre-redesign identity.
+    theme_palette: PRODUCT_PALETTES.house,
     garnish: 'paisley',
   });
   if (prodErr) return { ok: false, reason: prodErr.message };
@@ -266,10 +262,7 @@ export async function upsertProductNutrition(
     if (typeof v === 'number' && Number.isFinite(v)) cleaned[k] = v;
   }
   const payload = Object.keys(cleaned).length > 0 ? cleaned : null;
-  const { error } = await supa
-    .from('products')
-    .update({ nutrition: payload })
-    .eq('id', productId);
+  const { error } = await supa.from('products').update({ nutrition: payload }).eq('id', productId);
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
 }
