@@ -29,21 +29,21 @@ export function CartView() {
       <section className="container-site flex min-h-[60vh] flex-col items-start gap-5 py-24">
         <Paisley size="lg" />
         <h1 className="font-display text-display-md text-theme-ink">Your cart is empty.</h1>
-        <p className="max-w-lg text-theme-ink/70">
+        <p className="text-theme-ink/70 max-w-lg">
           Nothing in the box yet. Browse our Hyderabadi specials or a curated gift hamper — every
           sweet is fresh today.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
             href="/category/hyderabadi-specials"
-            className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+            className="bg-theme-accent hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
           >
             Shop Hyderabadi specials
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-5 py-2.5 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
+            className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors duration-300"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back to home
@@ -57,13 +57,13 @@ export function CartView() {
     <section className="container-site grid gap-10 py-12 md:grid-cols-[1.5fr_1fr] md:gap-14 md:py-16">
       <div>
         <Reveal>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Your cart
           </p>
         </Reveal>
         <Reveal delay={0.05}>
-          <h1 className="mt-3 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.02]">
             {lineCount} {lineCount === 1 ? 'item' : 'items'}, ready to wrap.
           </h1>
         </Reveal>
@@ -103,11 +103,11 @@ export function CartView() {
                       <div>
                         <Link
                           href={`/product/${l.product.slug}`}
-                          className="font-display text-lg font-semibold text-theme-ink hover:text-theme-accent"
+                          className="font-display text-theme-ink hover:text-theme-accent text-lg"
                         >
                           {l.product.title}
                         </Link>
-                        <p className="text-xs text-theme-ink/60">
+                        <p className="text-theme-ink/60 text-xs">
                           {l.variant.title} · SKU {l.variant.sku}
                         </p>
                       </div>
@@ -115,24 +115,24 @@ export function CartView() {
                         type="button"
                         onClick={() => remove(l.productId, l.variantId)}
                         aria-label={`Remove ${l.product.title}`}
-                        className="rounded-full p-1 text-theme-ink/50 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                        className="text-theme-ink/50 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2"
                       >
                         <X className="h-4 w-4" aria-hidden="true" />
                       </button>
                     </div>
 
                     <div className="mt-auto flex items-center justify-between gap-4">
-                      <div className="inline-flex items-center rounded-full border border-[color:var(--color-border)] bg-surface-elevated">
+                      <div className="bg-surface-elevated inline-flex items-center rounded-full border border-[color:var(--color-border)]">
                         <button
                           type="button"
                           onClick={() => updateQty(l.productId, l.variantId, l.quantity - 1)}
                           aria-label="Decrease quantity"
-                          className="rounded-full p-1.5 text-theme-ink/70 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                          className="text-theme-ink/70 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
                         >
                           <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                         <span
-                          className="min-w-8 text-center text-sm font-semibold tabular-nums text-theme-ink"
+                          className="text-theme-ink min-w-8 text-center text-sm font-semibold tabular-nums"
                           aria-live="polite"
                         >
                           {l.quantity}
@@ -141,12 +141,12 @@ export function CartView() {
                           type="button"
                           onClick={() => updateQty(l.productId, l.variantId, l.quantity + 1)}
                           aria-label="Increase quantity"
-                          className="rounded-full p-1.5 text-theme-ink/70 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                          className="text-theme-ink/70 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
                         >
                           <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
-                      <span className="font-display text-lg font-semibold text-theme-accent tabular-nums">
+                      <span className="font-display text-theme-accent text-lg tabular-nums">
                         {formatMoney(l.lineTotal)}
                       </span>
                     </div>
@@ -160,7 +160,7 @@ export function CartView() {
         <div className="mt-8 flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-theme-ink/70 transition-colors hover:text-theme-accent"
+            className="text-theme-ink/70 hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Continue shopping
@@ -168,7 +168,7 @@ export function CartView() {
           <button
             type="button"
             onClick={clear}
-            className="text-xs font-semibold uppercase tracking-wider text-theme-ink/55 transition-colors hover:text-red-700"
+            className="text-theme-ink/55 text-xs font-semibold uppercase tracking-wider transition-colors hover:text-red-700"
           >
             Clear cart
           </button>
@@ -176,19 +176,14 @@ export function CartView() {
       </div>
 
       {/* Summary */}
-      <aside
-        aria-label="Order summary"
-        className="md:sticky md:top-20 md:self-start"
-      >
+      <aside aria-label="Order summary" className="md:sticky md:top-20 md:self-start">
         <CouponInput />
-        <div className="mt-4 rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft">
-          <h2 className="font-display text-xl font-semibold text-theme-ink">Summary</h2>
+        <div className="bg-surface-elevated shadow-soft mt-4 rounded-3xl border border-[color:var(--color-border)] p-6">
+          <h2 className="font-display text-theme-ink text-xl">Summary</h2>
           <dl className="mt-5 space-y-3 text-sm">
             <div className="flex items-center justify-between">
               <dt className="text-theme-ink/70">Subtotal</dt>
-              <dd className="font-semibold tabular-nums text-theme-ink">
-                {formatMoney(subtotal)}
-              </dd>
+              <dd className="text-theme-ink font-semibold tabular-nums">{formatMoney(subtotal)}</dd>
             </div>
             {totalDiscount > 0 && (
               <div className="flex items-center justify-between">
@@ -202,7 +197,7 @@ export function CartView() {
               <dt className="text-theme-ink/70">
                 Shipping (estimate){freeShipping && ' · waived'}
               </dt>
-              <dd className="tabular-nums text-theme-ink">
+              <dd className="text-theme-ink tabular-nums">
                 {freeShipping
                   ? 'Free'
                   : formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
@@ -210,11 +205,11 @@ export function CartView() {
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-theme-ink/70">GST</dt>
-              <dd className="tabular-nums text-theme-ink/60">Calculated at checkout</dd>
+              <dd className="text-theme-ink/60 tabular-nums">Calculated at checkout</dd>
             </div>
             <div className="flex items-center justify-between border-t border-[color:var(--color-border)] pt-3 text-base">
-              <dt className="font-semibold text-theme-ink">Total</dt>
-              <dd className="font-display text-2xl font-semibold text-theme-accent tabular-nums">
+              <dt className="text-theme-ink font-semibold">Total</dt>
+              <dd className="font-display text-theme-accent text-2xl tabular-nums">
                 {formatMoney(grandTotal)}
               </dd>
             </div>
@@ -222,7 +217,7 @@ export function CartView() {
 
           <Link
             href="/checkout"
-            className="group mt-6 flex items-center justify-center gap-2 rounded-full bg-theme-ink px-5 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+            className="bg-theme-ink hover:shadow-lifted group mt-6 flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
           >
             <ShoppingBag className="h-4 w-4" aria-hidden="true" />
             Proceed to checkout
@@ -232,13 +227,13 @@ export function CartView() {
             />
           </Link>
 
-          <p className="mt-4 text-center text-[11px] text-theme-ink/55">
+          <p className="text-theme-ink/55 mt-4 text-center text-[11px]">
             Checkout is coming — this flow is a placeholder until payments are wired.
           </p>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-dashed border-[color:var(--color-border)] p-5 text-sm text-theme-ink/70">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-theme-accent">
+        <div className="text-theme-ink/70 mt-6 rounded-2xl border border-dashed border-[color:var(--color-border)] p-5 text-sm">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
             <Paisley size="sm" />
             Fresh guarantee
           </p>

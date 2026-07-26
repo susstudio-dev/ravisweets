@@ -88,18 +88,18 @@ export function ShopView({ products }: { products: Product[] }) {
       {/* Header */}
       <section className="container-site py-12 md:py-16">
         <Reveal>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Shop all
           </p>
         </Reveal>
         <Reveal delay={0.05}>
-          <h1 className="mt-3 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.02]">
             Everything in the catalogue.
           </h1>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="mt-4 max-w-2xl text-theme-ink/70 md:text-lg">
+          <p className="text-theme-ink/70 mt-4 max-w-2xl md:text-lg">
             {products.length} products across {CATEGORY_ORDER.length} categories — filter by
             category below, or use search for something specific.
           </p>
@@ -109,11 +109,11 @@ export function ShopView({ products }: { products: Product[] }) {
         <Reveal delay={0.15}>
           <Link
             href="/search"
-            className="mt-8 inline-flex max-w-xl items-center gap-3 rounded-full border border-[color:var(--color-border)] bg-surface-elevated px-5 py-3 text-sm text-theme-ink/60 transition-all hover:-translate-y-0.5 hover:border-theme-accent hover:text-theme-ink hover:shadow-soft"
+            className="bg-surface-elevated text-theme-ink/60 hover:border-theme-accent hover:text-theme-ink hover:shadow-soft mt-8 inline-flex max-w-xl items-center gap-3 rounded-full border border-[color:var(--color-border)] px-5 py-3 text-sm transition-all hover:-translate-y-0.5"
           >
             <SearchIcon className="h-4 w-4" aria-hidden="true" />
             Search by name, ingredient, or occasion …
-            <ArrowRight className="ml-auto h-4 w-4 text-theme-ink/40" aria-hidden="true" />
+            <ArrowRight className="text-theme-ink/40 ml-auto h-4 w-4" aria-hidden="true" />
           </Link>
         </Reveal>
       </section>
@@ -129,10 +129,10 @@ export function ShopView({ products }: { products: Product[] }) {
             onClick={() => updateParam('cat', undefined)}
             aria-pressed={activeCategory === null}
             className={cn(
-              'rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+              'focus-visible:ring-theme-accent rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
               activeCategory === null
-                ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)] shadow-soft'
-                : 'border-[color:var(--color-border)] bg-surface text-theme-ink/80 hover:-translate-y-0.5 hover:border-theme-accent',
+                ? 'border-theme-accent bg-theme-accent shadow-soft text-[color:var(--theme-base)]'
+                : 'bg-surface text-theme-ink/80 hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
             )}
           >
             All · {products.length}
@@ -148,10 +148,10 @@ export function ShopView({ products }: { products: Product[] }) {
                 onClick={() => updateParam('cat', active ? undefined : c)}
                 aria-pressed={active}
                 className={cn(
-                  'rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                  'focus-visible:ring-theme-accent rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
                   active
-                    ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)] shadow-soft'
-                    : 'border-[color:var(--color-border)] bg-surface text-theme-ink/80 hover:-translate-y-0.5 hover:border-theme-accent',
+                    ? 'border-theme-accent bg-theme-accent shadow-soft text-[color:var(--theme-base)]'
+                    : 'bg-surface text-theme-ink/80 hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
                 )}
               >
                 {CATEGORY_LABEL[c]} · {count}
@@ -162,15 +162,13 @@ export function ShopView({ products }: { products: Product[] }) {
 
         {/* Result count + sort */}
         <div className="mt-6 flex items-center justify-between gap-3">
-          <p className="text-sm text-theme-ink/60" aria-live="polite">
-            Showing <span className="font-semibold text-theme-ink">{filtered.length}</span>{' '}
+          <p className="text-theme-ink/60 text-sm" aria-live="polite">
+            Showing <span className="text-theme-ink font-semibold">{filtered.length}</span>{' '}
             {filtered.length === 1 ? 'product' : 'products'}
-            {activeCategory && (
-              <span> in {CATEGORY_LABEL[activeCategory]}</span>
-            )}
+            {activeCategory && <span> in {CATEGORY_LABEL[activeCategory]}</span>}
           </p>
           <label className="flex items-center gap-2 text-sm">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+            <span className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
               Sort
             </span>
             <select
@@ -178,7 +176,7 @@ export function ShopView({ products }: { products: Product[] }) {
               onChange={(e) =>
                 updateParam('sort', e.target.value === 'featured' ? undefined : e.target.value)
               }
-              className="rounded-full border border-[color:var(--color-border)] bg-surface px-3 py-1 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+              className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-full border border-[color:var(--color-border)] px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2"
             >
               <option value="featured">Featured</option>
               <option value="price-asc">Price · low → high</option>
@@ -194,15 +192,16 @@ export function ShopView({ products }: { products: Product[] }) {
         {filtered.length === 0 ? (
           <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-10">
             <Paisley size="md" />
-            <p className="font-display text-lg font-semibold text-theme-ink">
-              No products match that filter.
-            </p>
-            <Link href="/shop" className="text-sm font-semibold text-theme-accent hover:underline">
+            <p className="font-display text-theme-ink text-lg">No products match that filter.</p>
+            <Link href="/shop" className="text-theme-accent text-sm font-semibold hover:underline">
               Clear filters →
             </Link>
           </div>
         ) : (
-          <Stagger gap={60} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <Stagger
+            gap={60}
+            className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
             {filtered.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -215,11 +214,14 @@ export function ShopView({ products }: { products: Product[] }) {
       {/* Browse by category cards */}
       <section aria-labelledby="browse-cats" className="container-site py-16">
         <Reveal>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Or browse by collection
           </p>
-          <h2 id="browse-cats" className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg">
+          <h2
+            id="browse-cats"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
+          >
             Jump straight in.
           </h2>
         </Reveal>
@@ -231,17 +233,15 @@ export function ShopView({ products }: { products: Product[] }) {
               <Link
                 key={c}
                 href={`/category/${c}`}
-                className="group flex flex-col justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+                className="bg-surface-elevated hover:shadow-lifted group flex flex-col justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] p-5 transition-all duration-300 hover:-translate-y-0.5"
               >
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-theme-ink">
-                    {CATEGORY_LABEL[c]}
-                  </h3>
-                  <p className="mt-1 text-xs text-theme-ink/60">
+                  <h3 className="font-display text-theme-ink text-lg">{CATEGORY_LABEL[c]}</h3>
+                  <p className="text-theme-ink/60 mt-1 text-xs">
                     {count} {count === 1 ? 'product' : 'products'}
                   </p>
                 </div>
-                <div className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-theme-accent transition-transform duration-300 group-hover:translate-x-1">
+                <div className="text-theme-accent inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">
                   Open <ArrowRight className="h-3 w-3" aria-hidden="true" />
                 </div>
               </Link>

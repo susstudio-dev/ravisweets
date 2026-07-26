@@ -3,11 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CATALOGUE, type Product } from '@ravisweets/shared';
 import { Calendar, Check, Sparkles, X as XIcon } from 'lucide-react';
-import {
-  loadSiteContent,
-  saveSiteContent,
-  type ActiveFestival,
-} from '@/lib/supabase/site-content';
+import { loadSiteContent, saveSiteContent, type ActiveFestival } from '@/lib/supabase/site-content';
 import { useSession } from '@/lib/supabase/session-context';
 import { logAdminAction } from '@/lib/supabase/orders';
 
@@ -33,16 +29,70 @@ interface FestivalOption {
 }
 
 const FESTIVALS: FestivalOption[] = [
-  { slug: 'pongal', title: 'Pongal', telugu: 'పొంగల్', defaultBanner: 'Pongal pots ship from Khammam — order by Jan 12 for arrival before the harvest morning.' },
-  { slug: 'sankranti', title: 'Sankranti', telugu: 'సంక్రాంతి', defaultBanner: 'Til, gud, and a new year on the kitchen door — order Sankranti boxes by Jan 11.' },
-  { slug: 'holi', title: 'Holi', telugu: 'హోలీ', defaultBanner: 'Holi gujiya boxes + sweet bites — order by Mar 10 for delivery before the colours.' },
-  { slug: 'ugadi', title: 'Ugadi', telugu: 'ఉగాది', defaultBanner: 'Ugadi six-taste boxes ship from Khammam — order by Mar 16.' },
-  { slug: 'eid', title: 'Eid', telugu: 'ఈద్', defaultBanner: 'Sheer Khurma + Double ka Meetha — Eid signature boxes, ship before the long day.' },
-  { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', defaultBanner: 'Rakhi-ready hampers with thread + thali — book by Aug 24.' },
-  { slug: 'ganesh-chaturthi', title: 'Ganesh Chaturthi', telugu: 'వినాయక చవితి', defaultBanner: 'Modak boxes in counts of 11, 21, 51 — the auspicious numbers.' },
-  { slug: 'onam', title: 'Onam', telugu: 'ഓണം', defaultBanner: 'Onam sadya-side payasam kits + Soan Papdi tins — Kerala-table ready.' },
-  { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', defaultBanner: 'Diwali pre-orders open — silver-leaf hampers + brass diya. Reserve early.' },
-  { slug: 'christmas', title: 'Christmas', telugu: 'క్రిస్మస్', defaultBanner: 'Sweet Bites tins + soft kalakand for Christmas Eve — order by Dec 22.' },
+  {
+    slug: 'pongal',
+    title: 'Pongal',
+    telugu: 'పొంగల్',
+    defaultBanner:
+      'Pongal pots ship from Khammam — order by Jan 12 for arrival before the harvest morning.',
+  },
+  {
+    slug: 'sankranti',
+    title: 'Sankranti',
+    telugu: 'సంక్రాంతి',
+    defaultBanner:
+      'Til, gud, and a new year on the kitchen door — order Sankranti boxes by Jan 11.',
+  },
+  {
+    slug: 'holi',
+    title: 'Holi',
+    telugu: 'హోలీ',
+    defaultBanner:
+      'Holi gujiya boxes + sweet bites — order by Mar 10 for delivery before the colours.',
+  },
+  {
+    slug: 'ugadi',
+    title: 'Ugadi',
+    telugu: 'ఉగాది',
+    defaultBanner: 'Ugadi six-taste boxes ship from Khammam — order by Mar 16.',
+  },
+  {
+    slug: 'eid',
+    title: 'Eid',
+    telugu: 'ఈద్',
+    defaultBanner:
+      'Sheer Khurma + Double ka Meetha — Eid signature boxes, ship before the long day.',
+  },
+  {
+    slug: 'raksha-bandhan',
+    title: 'Raksha Bandhan',
+    telugu: 'రక్షా బంధన్',
+    defaultBanner: 'Rakhi-ready hampers with thread + thali — book by Aug 24.',
+  },
+  {
+    slug: 'ganesh-chaturthi',
+    title: 'Ganesh Chaturthi',
+    telugu: 'వినాయక చవితి',
+    defaultBanner: 'Modak boxes in counts of 11, 21, 51 — the auspicious numbers.',
+  },
+  {
+    slug: 'onam',
+    title: 'Onam',
+    telugu: 'ഓണം',
+    defaultBanner: 'Onam sadya-side payasam kits + Soan Papdi tins — Kerala-table ready.',
+  },
+  {
+    slug: 'diwali',
+    title: 'Diwali',
+    telugu: 'దీపావళి',
+    defaultBanner: 'Diwali pre-orders open — silver-leaf hampers + brass diya. Reserve early.',
+  },
+  {
+    slug: 'christmas',
+    title: 'Christmas',
+    telugu: 'క్రిస్మస్',
+    defaultBanner: 'Sweet Bites tins + soft kalakand for Christmas Eve — order by Dec 22.',
+  },
 ];
 
 const DEFAULT_STATE: ActiveFestival = {
@@ -93,7 +143,13 @@ export function AdminFestivals() {
 
   function setSlug(slug: string | null) {
     if (slug === null) {
-      setActive((prev) => ({ ...prev, slug: null, banner_text: null, ends_at: null, curated_product_ids: [] }));
+      setActive((prev) => ({
+        ...prev,
+        slug: null,
+        banner_text: null,
+        ends_at: null,
+        curated_product_ids: [],
+      }));
       return;
     }
     const fest = FESTIVALS.find((f) => f.slug === slug);
@@ -138,7 +194,12 @@ export function AdminFestivals() {
   }
 
   async function goOffSeason() {
-    if (!window.confirm('Clear the active festival? The site will return to its default theme + banner.')) return;
+    if (
+      !window.confirm(
+        'Clear the active festival? The site will return to its default theme + banner.',
+      )
+    )
+      return;
     setActive(DEFAULT_STATE);
     setBusy(true);
     const r = await saveSiteContent('active_festival', DEFAULT_STATE);
@@ -153,7 +214,7 @@ export function AdminFestivals() {
   }
 
   if (!loaded) {
-    return <div className="h-12 w-32 animate-pulse rounded bg-theme-ink/10" />;
+    return <div className="bg-theme-ink/10 h-12 w-32 animate-pulse rounded" />;
   }
 
   const isAdmin = role === 'admin';
@@ -162,29 +223,28 @@ export function AdminFestivals() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           <Sparkles className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
           Festival manager
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Set the season.
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-theme-ink/65">
-          Pick a festival to surface across the site — banner, theme, curated
-          products under the festival hero. The site updates within seconds (no
-          deploy). Pick "Go off-season" to clear and return to the default look.
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Set the season.</h1>
+        <p className="text-theme-ink/65 mt-2 max-w-2xl text-sm">
+          Pick a festival to surface across the site — banner, theme, curated products under the
+          festival hero. The site updates within seconds (no deploy). Pick "Go off-season" to clear
+          and return to the default look.
         </p>
       </header>
 
       {!configured && (
-        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-theme-ink/85">
-          Supabase not configured — connect <code className="font-mono">.env.local</code> to publish.
+        <div className="text-theme-ink/85 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+          Supabase not configured — connect <code className="font-mono">.env.local</code> to
+          publish.
         </div>
       )}
 
       {/* Slug picker */}
-      <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Active festival
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -195,7 +255,7 @@ export function AdminFestivals() {
             className={`rounded-full border-2 px-4 py-1.5 text-xs font-semibold transition-all ${
               active.slug === null
                 ? 'border-theme-ink bg-theme-ink text-[color:var(--theme-base)]'
-                : 'border-[color:var(--color-border)] text-theme-ink/70 hover:border-theme-accent'
+                : 'text-theme-ink/70 hover:border-theme-accent border-[color:var(--color-border)]'
             }`}
           >
             Off-season
@@ -210,8 +270,8 @@ export function AdminFestivals() {
                 aria-pressed={on}
                 className={`rounded-full border-2 px-4 py-1.5 text-xs font-semibold transition-all ${
                   on
-                    ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)] shadow-soft'
-                    : 'border-[color:var(--color-border)] text-theme-ink/80 hover:-translate-y-0.5 hover:border-theme-accent'
+                    ? 'border-theme-accent bg-theme-accent shadow-soft text-[color:var(--theme-base)]'
+                    : 'text-theme-ink/80 hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5'
                 }`}
               >
                 {f.title}{' '}
@@ -229,13 +289,13 @@ export function AdminFestivals() {
 
       {/* Banner + end date — only when a festival is selected */}
       {active.slug && (
-        <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+          <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             {activeFest?.title} setup
           </h2>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 md:col-span-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+              <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
                 Banner copy
               </span>
               <textarea
@@ -243,14 +303,14 @@ export function AdminFestivals() {
                 value={active.banner_text ?? ''}
                 onChange={(e) => setActive((prev) => ({ ...prev, banner_text: e.target.value }))}
                 placeholder={activeFest?.defaultBanner ?? ''}
-                className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
-              <span className="text-[10px] text-theme-ink/50">
+              <span className="text-theme-ink/50 text-[10px]">
                 Renders in the announcement strip above the header. Keep it under 90 chars.
               </span>
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+              <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
                 <Calendar className="mr-1 inline h-3 w-3" aria-hidden="true" />
                 Ends at
               </span>
@@ -263,9 +323,9 @@ export function AdminFestivals() {
                     ends_at: e.target.value ? new Date(e.target.value).toISOString() : null,
                   }))
                 }
-                className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
-              <span className="text-[10px] text-theme-ink/50">
+              <span className="text-theme-ink/50 text-[10px]">
                 Storefront auto-clears past this without a write.
               </span>
             </label>
@@ -276,12 +336,15 @@ export function AdminFestivals() {
                 onChange={(e) =>
                   setActive((prev) => ({ ...prev, auto_apply_theme: e.target.checked }))
                 }
-                className="mt-1 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+                className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4 rounded"
               />
               <span>
-                <span className="font-medium text-theme-ink">Auto-apply festival theme palette</span>
-                <span className="block text-[11px] text-theme-ink/55">
-                  Off = banner only (default cream stays). On = brass-and-festival look across all routes.
+                <span className="text-theme-ink font-medium">
+                  Auto-apply festival theme palette
+                </span>
+                <span className="text-theme-ink/55 block text-[11px]">
+                  Off = banner only (default cream stays). On = brass-and-festival look across all
+                  routes.
                 </span>
               </span>
             </label>
@@ -291,12 +354,12 @@ export function AdminFestivals() {
 
       {/* Curated products picker */}
       {active.slug && (
-        <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+        <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
               Featured products under the festival hero
             </h2>
-            <span className="text-xs font-semibold text-theme-ink/65">
+            <span className="text-theme-ink/65 text-xs font-semibold">
               {active.curated_product_ids.length}/12 picked
             </span>
           </div>
@@ -305,7 +368,7 @@ export function AdminFestivals() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title, category, ingredient…"
-            className="mt-3 w-full rounded-full border border-[color:var(--color-border)] bg-surface px-4 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 mt-3 w-full rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           />
           <div className="mt-4 grid max-h-[28rem] grid-cols-2 gap-2 overflow-y-auto pr-1 md:grid-cols-3 lg:grid-cols-4">
             {filteredProducts.map((p) => (
@@ -321,7 +384,7 @@ export function AdminFestivals() {
       )}
 
       {/* Action bar */}
-      <div className="sticky bottom-0 -mx-5 -mb-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] bg-surface-elevated/95 px-5 py-3 backdrop-blur md:-mx-8 md:-mb-8 md:px-8">
+      <div className="bg-surface-elevated/95 sticky bottom-0 -mx-5 -mb-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] px-5 py-3 backdrop-blur md:-mx-8 md:-mb-8 md:px-8">
         <div>
           {saved && (
             <p className="text-xs font-semibold text-emerald-700">
@@ -336,7 +399,7 @@ export function AdminFestivals() {
               type="button"
               onClick={goOffSeason}
               disabled={busy || !isAdmin}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold text-theme-ink/70 transition-colors hover:border-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="text-theme-ink/70 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold transition-colors hover:border-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <XIcon className="h-3.5 w-3.5" aria-hidden="true" />
               Go off-season
@@ -346,7 +409,7 @@ export function AdminFestivals() {
             type="button"
             onClick={publish}
             disabled={busy || !isAdmin}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-accent px-5 py-2 text-xs font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             {busy ? 'Publishing…' : active.slug ? 'Publish festival' : 'Save state'}
@@ -374,17 +437,15 @@ function ProductChip({
       className={`group relative flex flex-col items-start gap-1 overflow-hidden rounded-xl border p-2 text-left transition-all ${
         selected
           ? 'border-theme-accent bg-theme-glow/15 shadow-soft'
-          : 'border-[color:var(--color-border)] bg-surface hover:-translate-y-0.5 hover:border-theme-accent'
+          : 'bg-surface hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5'
       }`}
     >
-      <span className="block text-xs font-semibold text-theme-ink line-clamp-1">
+      <span className="text-theme-ink line-clamp-1 block text-xs font-semibold">
         {product.title}
       </span>
-      <span className="block text-[10px] text-theme-ink/55 line-clamp-1">
-        {product.category}
-      </span>
+      <span className="text-theme-ink/55 line-clamp-1 block text-[10px]">{product.category}</span>
       {selected && (
-        <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)]">
+        <span className="bg-theme-accent absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[color:var(--theme-base)]">
           <Check className="h-3 w-3" aria-hidden="true" />
         </span>
       )}

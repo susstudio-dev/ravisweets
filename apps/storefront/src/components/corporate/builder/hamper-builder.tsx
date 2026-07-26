@@ -167,9 +167,9 @@ export function HamperBuilder() {
   }, []);
 
   const updateCustomisation = useCallback(
-    (patch: Partial<
-      Pick<HamperConfig, 'ribbon' | 'box' | 'logoPrint' | 'message' | 'totalUnits'>
-    >) => {
+    (
+      patch: Partial<Pick<HamperConfig, 'ribbon' | 'box' | 'logoPrint' | 'message' | 'totalUnits'>>,
+    ) => {
       setConfig((prev) => ({ ...prev, ...patch }));
     },
     [],
@@ -196,13 +196,14 @@ export function HamperBuilder() {
 
   const belowMoq = config.totalUnits < BUILDER_MOQ;
   const addedCount = config.items.reduce((s, i) => s + i.qtyPerHamper, 0);
-  const canAdvance = step === 'template'
-    ? true
-    : step === 'compose'
-    ? config.items.length > 0
-    : step === 'customise'
-    ? config.totalUnits >= BUILDER_MOQ
-    : !belowMoq && config.items.length > 0;
+  const canAdvance =
+    step === 'template'
+      ? true
+      : step === 'compose'
+        ? config.items.length > 0
+        : step === 'customise'
+          ? config.totalUnits >= BUILDER_MOQ
+          : !belowMoq && config.items.length > 0;
 
   return (
     <section className="container-site py-8 md:py-12">
@@ -210,7 +211,7 @@ export function HamperBuilder() {
       <Reveal>
         <Link
           href="/corporate"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60 transition-colors hover:text-theme-accent"
+          className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
         >
           ← Back to corporate
         </Link>
@@ -218,24 +219,21 @@ export function HamperBuilder() {
       <Reveal delay={0.05}>
         <div className="mt-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-6">
           <div>
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               Hamper builder
             </p>
-            <h1 className="mt-2 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+            <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
               {STEP_LABEL[step].title === 'Start'
                 ? 'Start with a template.'
                 : STEP_LABEL[step].title === 'Compose'
-                ? 'Compose the box.'
-                : STEP_LABEL[step].title === 'Customise'
-                ? 'Make it yours.'
-                : 'Review and submit.'}
+                  ? 'Compose the box.'
+                  : STEP_LABEL[step].title === 'Customise'
+                    ? 'Make it yours.'
+                    : 'Review and submit.'}
             </h1>
           </div>
-          <ShareButton
-            config={config}
-            disabled={config.items.length === 0 || belowMoq}
-          />
+          <ShareButton config={config} disabled={config.items.length === 0 || belowMoq} />
         </div>
       </Reveal>
 
@@ -248,7 +246,7 @@ export function HamperBuilder() {
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.quick, ease: EASE.standard }}
             role="status"
-            className="mt-6 flex items-start justify-between gap-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-theme-ink"
+            className="text-theme-ink mt-6 flex items-start justify-between gap-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
           >
             <p>
               This link uses an unsupported format. We&rsquo;ve loaded a fresh Premium template
@@ -256,7 +254,7 @@ export function HamperBuilder() {
             </p>
             <button
               type="button"
-              className="text-xs font-semibold uppercase tracking-wider text-theme-accent hover:underline"
+              className="text-theme-accent text-xs font-semibold uppercase tracking-wider hover:underline"
               onClick={() => setSchemaRejected(false)}
             >
               Dismiss
@@ -400,15 +398,19 @@ export function HamperBuilder() {
                   type="button"
                   onClick={submitEnquiry}
                   disabled={belowMoq || config.items.length === 0}
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-theme-ink px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-soft"
+                  className="bg-theme-ink shadow-soft hover:shadow-lifted disabled:hover:shadow-soft group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
                   Submit as enquiry
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+                  <ArrowRight
+                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
                 </button>
                 {belowMoq && (
-                  <p className="text-xs text-theme-ink/70">
-                    Minimum {BUILDER_MOQ} units — add {BUILDER_MOQ - config.totalUnits} more to submit.
+                  <p className="text-theme-ink/70 text-xs">
+                    Minimum {BUILDER_MOQ} units — add {BUILDER_MOQ - config.totalUnits} more to
+                    submit.
                   </p>
                 )}
                 <HelpRow
@@ -429,23 +431,27 @@ export function HamperBuilder() {
           type="button"
           onClick={prevStep}
           disabled={STEP_ORDER.indexOf(step) === 0}
-          className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold text-theme-ink/80 transition-colors hover:border-theme-accent hover:text-theme-accent disabled:cursor-not-allowed disabled:opacity-40"
+          className="text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
         </button>
-        <p className="text-xs text-theme-ink/55">
-          {price.total > 0 && `Live total: ${formatMoney({ amount: price.total, currency: 'INR' })}`}
+        <p className="text-theme-ink/55 text-xs">
+          {price.total > 0 &&
+            `Live total: ${formatMoney({ amount: price.total, currency: 'INR' })}`}
         </p>
         {step !== 'review' && (
           <button
             type="button"
             onClick={nextStep}
             disabled={!canAdvance}
-            className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-soft"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted disabled:hover:shadow-soft group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
           >
             Continue
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
           </button>
         )}
       </div>
@@ -466,10 +472,13 @@ export function HamperBuilder() {
 
 function HelpRow({ helps }: { helps: string[] }) {
   return (
-    <ul className="mt-6 flex flex-col gap-2 rounded-2xl border border-dashed border-[color:var(--color-border)] bg-surface-elevated p-4">
+    <ul className="bg-surface-elevated mt-6 flex flex-col gap-2 rounded-2xl border border-dashed border-[color:var(--color-border)] p-4">
       {helps.map((h, i) => (
-        <li key={i} className="flex items-start gap-2 text-xs text-theme-ink/70">
-          <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+        <li key={i} className="text-theme-ink/70 flex items-start gap-2 text-xs">
+          <HelpCircle
+            className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0"
+            aria-hidden="true"
+          />
           <span>{h}</span>
         </li>
       ))}
@@ -484,57 +493,55 @@ function ReviewSummary({ config }: { config: HamperConfig }) {
     return { p, v, qty: it.qtyPerHamper };
   });
   return (
-    <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+    <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-6">
+      <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
         Your hamper
       </p>
-      <h2 className="mt-2 font-display text-2xl font-semibold text-theme-ink">
+      <h2 className="font-display text-theme-ink mt-2 text-2xl">
         {lines.length} item types · {config.totalUnits} hampers
       </h2>
       <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Box finish
           </dt>
-          <dd className="mt-1 font-display text-base font-semibold text-theme-ink capitalize">
+          <dd className="font-display text-theme-ink mt-1 text-base capitalize">
             {config.box.replace('-', ' ')}
           </dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Ribbon
           </dt>
-          <dd className="mt-1 font-display text-base font-semibold text-theme-ink capitalize">
-            {config.ribbon}
-          </dd>
+          <dd className="font-display text-theme-ink mt-1 text-base capitalize">{config.ribbon}</dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Logo print
           </dt>
-          <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
+          <dd className="font-display text-theme-ink mt-1 text-base">
             {config.logoPrint ? 'Yes' : 'No'}
           </dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Personalised note
           </dt>
-          <dd className="mt-1 text-sm text-theme-ink/85">
+          <dd className="text-theme-ink/85 mt-1 text-sm">
             {config.message ? `"${config.message}"` : 'None'}
           </dd>
         </div>
       </dl>
 
       <div className="mt-6 border-t border-[color:var(--color-border)] pt-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Items per hamper
         </p>
         <ul className="mt-3 flex flex-col gap-2">
           {lines.map(({ p, v, qty }, i) =>
             p && v ? (
               <li key={i} className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium text-theme-ink">{p.title}</span>
+                <span className="text-theme-ink font-medium">{p.title}</span>
                 <span className="text-theme-ink/55">
                   {v.title} × {qty}
                 </span>

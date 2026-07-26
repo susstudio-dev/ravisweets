@@ -38,20 +38,20 @@ export function CraftStrip() {
     <section aria-labelledby="craft-heading" className="container-site py-20 md:py-24">
       <Reveal className="mb-12 flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             The making
           </p>
           <h2
             id="craft-heading"
-            className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.05]"
           >
             Three small acts, repeated every day.
           </h2>
         </div>
-        <p className="max-w-sm text-theme-ink/70">
-          No automation. No short-cuts. Just a kitchen that has been doing the same things, a
-          little better each year, for a very long time.
+        <p className="text-theme-ink/70 max-w-sm">
+          No automation. No short-cuts. Just a kitchen that has been doing the same things, a little
+          better each year, for a very long time.
         </p>
       </Reveal>
 
@@ -60,7 +60,7 @@ export function CraftStrip() {
           <li key={c.key} className="group relative">
             <Parallax offset={i === 1 ? 22 : 14}>
               <div
-                className="relative aspect-[4/5] overflow-hidden rounded-2xl p-10 shadow-soft ring-1 ring-[color:var(--color-border)]"
+                className="shadow-soft relative aspect-[4/5] overflow-hidden rounded-2xl p-10 ring-1 ring-[color:var(--color-border)]"
                 style={{ background: CRAFT_BACKDROP }}
               >
                 <Image
@@ -72,17 +72,15 @@ export function CraftStrip() {
                 />
                 <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
                   <div>
-                    <p className="font-display text-xs tracking-[0.3em] text-theme-ink/45">
+                    <p className="font-display text-theme-ink/45 text-xs tracking-[0.3em]">
                       {c.step}
                     </p>
-                    <h3 className="font-display text-2xl font-semibold text-theme-ink">
-                      {c.title}
-                    </h3>
+                    <h3 className="font-display text-theme-ink text-2xl">{c.title}</h3>
                   </div>
                 </div>
               </div>
             </Parallax>
-            <p className="mt-5 text-sm leading-relaxed text-theme-ink/75">{c.caption}</p>
+            <p className="text-theme-ink/75 mt-5 text-sm leading-relaxed">{c.caption}</p>
           </li>
         ))}
       </ol>

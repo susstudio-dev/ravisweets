@@ -170,18 +170,17 @@ export function AdminProductsNew() {
       <header>
         <Link
           href="/admin/products"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-theme-ink/65 hover:text-theme-accent"
+          className="text-theme-ink/65 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back to products
         </Link>
-        <h1 className="mt-2 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+        <h1 className="font-display text-theme-ink mt-2 text-3xl md:text-4xl">
           Launch a new product
         </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
-          Fill in the basics + first variant. You can add more variants, second
-          images, ingredients, and nutrition from the edit drawer right after
-          creation.
+        <p className="text-theme-ink/65 mt-1 text-sm">
+          Fill in the basics + first variant. You can add more variants, second images, ingredients,
+          and nutrition from the edit drawer right after creation.
         </p>
       </header>
 
@@ -270,7 +269,7 @@ export function AdminProductsNew() {
                   className={`rounded-full border px-3 py-1 text-xs font-semibold capitalize transition-colors ${
                     on
                       ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                      : 'border-[color:var(--color-border)] text-theme-ink/70 hover:border-theme-accent'
+                      : 'text-theme-ink/70 hover:border-theme-accent border-[color:var(--color-border)]'
                   }`}
                 >
                   {t.replace(/-/g, ' ')}
@@ -282,7 +281,7 @@ export function AdminProductsNew() {
 
         {/* Image */}
         <Section title="Primary image" required>
-          <div className="rounded-xl border border-dashed border-[color:var(--color-border)] bg-theme-glow/10 p-3">
+          <div className="bg-theme-glow/10 rounded-xl border border-dashed border-[color:var(--color-border)] p-3">
             <div className="flex items-center gap-3">
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -292,12 +291,12 @@ export function AdminProductsNew() {
                   className="h-20 w-20 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1.5"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider text-theme-ink/40">
+                <div className="text-theme-ink/40 flex h-20 w-20 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider">
                   no image
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-theme-accent px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)]">
+                <label className="bg-theme-accent inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)]">
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml"
@@ -307,7 +306,7 @@ export function AdminProductsNew() {
                   />
                   {uploading ? 'Uploading…' : 'Upload from device'}
                 </label>
-                <p className="mt-1 text-[10px] text-theme-ink/55">
+                <p className="text-theme-ink/55 mt-1 text-[10px]">
                   PNG / JPG / WebP / AVIF / SVG · max 5 MB
                 </p>
                 {uploadErr && (
@@ -323,7 +322,7 @@ export function AdminProductsNew() {
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://ravisweets.com/wp-content/uploads/..."
-                className={inputCls + ' text-xs font-mono'}
+                className={inputCls + ' font-mono text-xs'}
               />
             </Field>
             <Field label="Alt text (accessibility)">
@@ -364,9 +363,7 @@ export function AdminProductsNew() {
                 type="number"
                 min={1}
                 value={variantPriceRupees}
-                onChange={(e) =>
-                  setVariantPriceRupees(Math.max(1, Number(e.target.value) || 1))
-                }
+                onChange={(e) => setVariantPriceRupees(Math.max(1, Number(e.target.value) || 1))}
                 className={inputCls + ' font-mono'}
               />
             </Field>
@@ -389,10 +386,10 @@ export function AdminProductsNew() {
               />
             </Field>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+              <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
                 Sold by
               </span>
-              <div className="inline-flex rounded-full border border-[color:var(--color-border)] bg-surface p-0.5">
+              <div className="bg-surface inline-flex rounded-full border border-[color:var(--color-border)] p-0.5">
                 {(['weight', 'quantity'] as const).map((m) => (
                   <button
                     key={m}
@@ -420,11 +417,13 @@ export function AdminProductsNew() {
               type="checkbox"
               checked={builderEligible}
               onChange={(e) => setBuilderEligible(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+              className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded"
             />
             <span>
-              <span className="font-medium text-theme-ink">Available in the corporate hamper builder</span>
-              <span className="block text-[11px] text-theme-ink/55">
+              <span className="text-theme-ink font-medium">
+                Available in the corporate hamper builder
+              </span>
+              <span className="text-theme-ink/55 block text-[11px]">
                 Off for fragile or cold-chain SKUs.
               </span>
             </span>
@@ -432,16 +431,12 @@ export function AdminProductsNew() {
         </Section>
 
         {/* Submit */}
-        <div className="sticky bottom-0 -mx-5 -mb-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] bg-surface-elevated/95 px-5 py-3 backdrop-blur md:-mx-8 md:-mb-8 md:px-8">
-          <div>
-            {error && (
-              <p className="text-xs font-semibold text-red-700">{error}</p>
-            )}
-          </div>
+        <div className="bg-surface-elevated/95 sticky bottom-0 -mx-5 -mb-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] px-5 py-3 backdrop-blur md:-mx-8 md:-mb-8 md:px-8">
+          <div>{error && <p className="text-xs font-semibold text-red-700">{error}</p>}</div>
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Check className="h-4 w-4" aria-hidden="true" />
             {busy ? 'Creating…' : 'Create product'}
@@ -465,8 +460,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+    <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+      <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
         {title} {required && <span className="text-theme-accent">·</span>}
       </h2>
       <div className="mt-3">{children}</div>
@@ -485,7 +480,7 @@ function Field({
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+      <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
         {label} {required && <span className="text-theme-accent">·</span>}
       </span>
       {children}

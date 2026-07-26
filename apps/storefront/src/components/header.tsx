@@ -2,20 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  ChevronDown,
-  Menu,
-  Search,
-  ShoppingBag,
-  Sparkles,
-  X,
-} from 'lucide-react';
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-} from 'motion/react';
+import { ChevronDown, Menu, Search, ShoppingBag, Sparkles, X } from 'lucide-react';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { Paisley } from '@/components/brand/paisley';
 
@@ -39,17 +27,33 @@ const SHOP_SECTIONS: NavSection[] = [
   {
     heading: 'Sweets',
     items: [
-      { label: 'Hyderabadi specials', href: '/category/hyderabadi-specials', tagline: 'Qubani · Double ka Meetha · Badam ki Jali' },
-      { label: 'Sweets', href: '/category/sweets', tagline: 'Kaju Katli · Gulab Jamun · Soan Papdi' },
+      {
+        label: 'Hyderabadi specials',
+        href: '/category/hyderabadi-specials',
+        tagline: 'Qubani · Double ka Meetha · Badam ki Jali',
+      },
+      {
+        label: 'Sweets',
+        href: '/category/sweets',
+        tagline: 'Kaju Katli · Gulab Jamun · Soan Papdi',
+      },
       { label: 'Sweet bites', href: '/category/sweet-bites', tagline: 'Twelve flavours, one box' },
-      { label: 'Healthy sweets', href: '/category/healthy-sweets', tagline: 'Booster · Gondh · Millet laddu' },
+      {
+        label: 'Healthy sweets',
+        href: '/category/healthy-sweets',
+        tagline: 'Booster · Gondh · Millet laddu',
+      },
     ],
   },
   {
     heading: 'Savoury',
     items: [
       { label: 'Namkeens', href: '/category/namkeens', tagline: 'Mixture · Chivda · Sev' },
-      { label: 'Savouries', href: '/category/savouries', tagline: 'Chegodilu · Janthikalu · Karapusa' },
+      {
+        label: 'Savouries',
+        href: '/category/savouries',
+        tagline: 'Chegodilu · Janthikalu · Karapusa',
+      },
       { label: 'Pickles', href: '/category/pickles', tagline: 'Gongura · Allam · Mamidikaya' },
       { label: 'Podis & powders', href: '/category/powders', tagline: 'Karam · Kandi · Sambar' },
     ],
@@ -57,10 +61,18 @@ const SHOP_SECTIONS: NavSection[] = [
   {
     heading: 'Pantry',
     items: [
-      { label: 'Dry fruits', href: '/category/dry-fruits', tagline: 'Anjeer · Badam · Kaju · Pista' },
+      {
+        label: 'Dry fruits',
+        href: '/category/dry-fruits',
+        tagline: 'Anjeer · Badam · Kaju · Pista',
+      },
       { label: 'Biscuits', href: '/category/biscuits', tagline: 'Vegan, butter-rich' },
       { label: 'Combos', href: '/category/combos', tagline: 'Chai-time · Festival pairs' },
-      { label: 'Gift hampers', href: '/category/gift-hampers', tagline: 'Diwali · Wedding · Corporate' },
+      {
+        label: 'Gift hampers',
+        href: '/category/gift-hampers',
+        tagline: 'Diwali · Wedding · Corporate',
+      },
     ],
   },
 ];
@@ -134,16 +146,16 @@ export function Header() {
             animate={reduced ? { opacity: 1 } : { height: 36, opacity: 1 }}
             exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
             transition={{ duration: DURATION.quick, ease: EASE.standard }}
-            className="overflow-hidden bg-theme-ink text-[color:var(--theme-base)]"
+            className="bg-theme-ink overflow-hidden text-[color:var(--theme-base)]"
           >
             <div className="container-site relative flex h-9 items-center justify-center gap-2 text-[11px] font-medium tracking-wide">
-              <Sparkles className="h-3 w-3 text-theme-glow" aria-hidden="true" />
+              <Sparkles className="text-theme-glow h-3 w-3" aria-hidden="true" />
               <span>{banner}</span>
               <button
                 type="button"
                 onClick={dismissBanner}
                 aria-label="Dismiss announcement"
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[color:var(--theme-base)]/65 transition-colors hover:bg-white/10 hover:text-[color:var(--theme-base)]"
+                className="text-[color:var(--theme-base)]/65 absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 transition-colors hover:bg-white/10 hover:text-[color:var(--theme-base)]"
               >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>
@@ -171,11 +183,7 @@ export function Header() {
       >
         <div className="container-site flex h-full items-center justify-between gap-6">
           {/* Brand logo — official Ravi Sweets mark, scales on scroll */}
-          <Link
-            href="/"
-            className="group flex items-center gap-3"
-            aria-label="Ravi Sweets — home"
-          >
+          <Link href="/" className="group flex items-center gap-3" aria-label="Ravi Sweets — home">
             <motion.div
               animate={{
                 width: scrolled ? 44 : 64,
@@ -201,7 +209,7 @@ export function Header() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={reduced ? { opacity: 0 } : { opacity: 0, x: -6 }}
                   transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.32em] text-theme-ink/55 sm:block"
+                  className="text-theme-ink/55 hidden text-[10px] font-semibold uppercase tracking-[0.32em] sm:block"
                 >
                   Khammam · est. 1985
                 </motion.span>
@@ -225,7 +233,7 @@ export function Header() {
             <Link
               href="/cart"
               aria-label={`Cart — ${lineCount} ${lineCount === 1 ? 'item' : 'items'}`}
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-all duration-200 hover:bg-theme-glow/25 hover:text-theme-ink"
+              className="text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink relative inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200"
             >
               <ShoppingBag className="h-4 w-4" aria-hidden="true" />
               <AnimatePresence mode="popLayout">
@@ -237,7 +245,7 @@ export function Header() {
                     exit={{ opacity: 0, scale: 0.4 }}
                     transition={{ duration: DURATION.quick, ease: EASE.emphasised }}
                     aria-hidden="true"
-                    className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[color:var(--theme-base)] px-1 text-[10px] font-semibold tabular-nums text-theme-accent ring-1 ring-theme-accent shadow-[0_2px_6px_color-mix(in_oklab,var(--theme-ink)_25%,transparent)]"
+                    className="text-theme-accent ring-theme-accent absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[color:var(--theme-base)] px-1 text-[10px] font-semibold tabular-nums shadow-[0_2px_6px_color-mix(in_oklab,var(--theme-ink)_25%,transparent)] ring-1"
                   >
                     {lineCount}
                   </motion.span>
@@ -249,9 +257,13 @@ export function Header() {
               onClick={() => setMobileOpen((v) => !v)}
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted lg:hidden"
+              className="bg-theme-accent shadow-soft hover:shadow-lifted ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 lg:hidden"
             >
-              {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+              {mobileOpen ? (
+                <X className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <Menu className="h-5 w-5" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -266,7 +278,7 @@ export function Header() {
               exit={{ opacity: 0, scaleX: 0.6 }}
               transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-12 bottom-0 h-px bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent"
+              className="via-theme-accent/40 pointer-events-none absolute inset-x-12 bottom-0 h-px bg-gradient-to-r from-transparent to-transparent"
             />
           )}
         </AnimatePresence>
@@ -302,7 +314,7 @@ function IconButton({
       onClick={onClick}
       aria-label={ariaLabel}
       title={title}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-all duration-200 hover:bg-theme-glow/25 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+      className="text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2"
     >
       {children}
     </button>
@@ -344,14 +356,11 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
             aria-haspopup="menu"
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
-            className="group relative inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-ink/85 transition-colors hover:text-theme-accent"
+            className="text-theme-ink/85 hover:text-theme-accent group relative inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors"
           >
             Shop
             <ChevronDown
-              className={cn(
-                'h-3 w-3 transition-transform duration-300',
-                open && 'rotate-180',
-              )}
+              className={cn('h-3 w-3 transition-transform duration-300', open && 'rotate-180')}
               aria-hidden="true"
             />
             <Underline active={open} />
@@ -364,7 +373,7 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                className="absolute left-1/2 top-full z-50 mt-4 w-[44rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-[#e8d8a8] bg-[#fbf3df] text-[#1f0c02] shadow-lifted"
+                className="shadow-lifted absolute left-1/2 top-full z-50 mt-4 w-[44rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-[#e8d8a8] bg-[#fbf3df] text-[#1f0c02]"
               >
                 <div className="grid grid-cols-3 gap-5 p-6">
                   {sections.map((section) => (
@@ -380,7 +389,7 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
                               onClick={() => setOpen(false)}
                               className="group/item block rounded-lg px-2 py-1.5 transition-colors hover:bg-[#f2e2b6]"
                             >
-                              <span className="block text-sm font-semibold text-[#1f0c02] group-hover/item:text-theme-accent">
+                              <span className="group-hover/item:text-theme-accent block text-sm font-semibold text-[#1f0c02]">
                                 {item.label}
                               </span>
                               {item.tagline && (
@@ -422,7 +431,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="group relative inline-flex items-center rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-ink/85 transition-colors hover:text-theme-accent"
+      className="text-theme-ink/85 hover:text-theme-accent group relative inline-flex items-center rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors"
     >
       {children}
       <Underline />
@@ -439,7 +448,7 @@ function Underline({ active = false }: { active?: boolean }) {
     <span
       aria-hidden="true"
       className={cn(
-        'pointer-events-none absolute inset-x-3 bottom-1 h-px origin-center bg-theme-accent transition-transform duration-300',
+        'bg-theme-accent pointer-events-none absolute inset-x-3 bottom-1 h-px origin-center transition-transform duration-300',
         active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
       )}
     />
@@ -511,7 +520,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
             <div className="flex items-center justify-between border-b border-[#e8d8a8] px-5 py-4">
               <div className="flex items-center gap-2">
                 <Paisley size="sm" />
-                <span className="font-display text-lg font-bold">Ravi Sweets</span>
+                <span className="font-display text-lg">Ravi Sweets</span>
               </div>
               <button
                 type="button"
@@ -533,7 +542,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
               >
                 <span className="flex items-center gap-2.5">
                   <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-                  <span className="font-display text-base font-semibold">Your cart</span>
+                  <span className="font-display text-base">Your cart</span>
                 </span>
                 <span className="rounded-full bg-[#f0bd4a] px-2.5 py-0.5 text-xs font-bold tabular-nums text-[#2e1c04]">
                   {lineCount}

@@ -75,7 +75,9 @@ export function AdminSchedule() {
       setFeedback(`Publish failed: ${r.reason}`);
       return;
     }
-    setFeedback(r.applied === 0 ? 'No changes due right now.' : `Published ${r.applied} change(s).`);
+    setFeedback(
+      r.applied === 0 ? 'No changes due right now.' : `Published ${r.applied} change(s).`,
+    );
     void refresh();
   }
 
@@ -88,17 +90,17 @@ export function AdminSchedule() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           <CalendarClock className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
           Schedule
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">
           Plan changes ahead.
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-theme-ink/65">
-          Queue a banner swap, festival activation, or theme change for a
-          specific moment. The brand owner taps "Publish due" once a day to
-          flip everything that's ready (Phase D adds an automatic cron).
+        <p className="text-theme-ink/65 mt-2 max-w-2xl text-sm">
+          Queue a banner swap, festival activation, or theme change for a specific moment. The brand
+          owner taps "Publish due" once a day to flip everything that's ready (Phase D adds an
+          automatic cron).
         </p>
       </header>
 
@@ -109,19 +111,22 @@ export function AdminSchedule() {
       )}
 
       {/* New scheduled change form */}
-      <form onSubmit={onSchedule} className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <form
+        onSubmit={onSchedule}
+        className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
+      >
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Queue a new change
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <label className="flex flex-col gap-1">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+            <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
               What changes
             </span>
             <select
               value={kind}
               onChange={(e) => setKind(e.target.value as ScheduledKind)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               {(Object.keys(KIND_LABEL) as ScheduledKind[]).map((k) => (
                 <option key={k} value={k}>
@@ -131,18 +136,18 @@ export function AdminSchedule() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+            <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
               Effective at
             </span>
             <input
               type="datetime-local"
               value={effectiveAt}
               onChange={(e) => setEffectiveAt(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </label>
           <label className="flex flex-col gap-1 md:col-span-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+            <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
               Payload (JSON)
             </span>
             <textarea
@@ -150,16 +155,16 @@ export function AdminSchedule() {
               value={payload}
               onChange={(e) => setPayload(e.target.value)}
               spellCheck={false}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-xs"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-xs"
               placeholder={
                 kind === 'active_festival'
                   ? '{ "slug": "diwali", "banner_text": "Diwali pre-orders open", "ends_at": "2026-11-08T18:30:00Z", "curated_product_ids": [], "auto_apply_theme": true }'
                   : '{ ...the payload to upsert into site_content }'
               }
             />
-            <span className="text-[10px] text-theme-ink/55">
-              Shape depends on kind. For active_festival — the same JSON the
-              Festival manager writes. Phase D adds a friendly form per kind.
+            <span className="text-theme-ink/55 text-[10px]">
+              Shape depends on kind. For active_festival — the same JSON the Festival manager
+              writes. Phase D adds a friendly form per kind.
             </span>
           </label>
         </div>
@@ -167,7 +172,7 @@ export function AdminSchedule() {
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-ink px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
+            className="bg-theme-ink inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
           >
             <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
             Queue change
@@ -176,24 +181,24 @@ export function AdminSchedule() {
             type="button"
             onClick={onPublishDue}
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-accent px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
+            className="bg-theme-accent inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
           >
             <Check className="h-3.5 w-3.5" aria-hidden="true" />
             Publish due now
           </button>
-          {feedback && <p className="text-xs font-semibold text-theme-ink/65">{feedback}</p>}
+          {feedback && <p className="text-theme-ink/65 text-xs font-semibold">{feedback}</p>}
         </div>
       </form>
 
       {/* Queued list */}
       <section>
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Queue
         </h2>
         {loading ? (
-          <div className="mt-3 h-12 w-32 animate-pulse rounded bg-theme-ink/10" />
+          <div className="bg-theme-ink/10 mt-3 h-12 w-32 animate-pulse rounded" />
         ) : rows.length === 0 ? (
-          <p className="mt-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm text-theme-ink/55">
+          <p className="text-theme-ink/55 mt-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm">
             Nothing queued. Queue a change above.
           </p>
         ) : (
@@ -203,10 +208,10 @@ export function AdminSchedule() {
               return (
                 <li
                   key={r.id}
-                  className="flex items-start justify-between gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface-elevated p-3 text-sm"
+                  className="bg-surface-elevated flex items-start justify-between gap-3 rounded-xl border border-[color:var(--color-border)] p-3 text-sm"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-base font-semibold text-theme-ink">
+                    <p className="font-display text-theme-ink text-base">
                       {KIND_LABEL[r.kind]}
                       {r.applied_at ? (
                         <span className="ml-2 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
@@ -217,16 +222,17 @@ export function AdminSchedule() {
                           Due now
                         </span>
                       ) : (
-                        <span className="ml-2 rounded-full bg-theme-glow/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+                        <span className="bg-theme-glow/30 text-theme-accent ml-2 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
                           Scheduled
                         </span>
                       )}
                     </p>
-                    <p className="mt-0.5 text-[11px] text-theme-ink/55">
+                    <p className="text-theme-ink/55 mt-0.5 text-[11px]">
                       Effective {new Date(r.effective_at).toLocaleString('en-IN')}
-                      {r.applied_at && ` · Applied ${new Date(r.applied_at).toLocaleString('en-IN')}`}
+                      {r.applied_at &&
+                        ` · Applied ${new Date(r.applied_at).toLocaleString('en-IN')}`}
                     </p>
-                    <pre className="mt-2 max-h-28 overflow-auto rounded bg-theme-ink/5 p-2 font-mono text-[10px] text-theme-ink/75">
+                    <pre className="bg-theme-ink/5 text-theme-ink/75 mt-2 max-h-28 overflow-auto rounded p-2 font-mono text-[10px]">
                       {JSON.stringify(r.payload, null, 2)}
                     </pre>
                   </div>
@@ -235,7 +241,7 @@ export function AdminSchedule() {
                       type="button"
                       onClick={() => onDelete(r.id)}
                       aria-label="Cancel scheduled change"
-                      className="rounded-full p-1.5 text-theme-ink/55 transition-colors hover:bg-red-500/10 hover:text-red-700"
+                      className="text-theme-ink/55 rounded-full p-1.5 transition-colors hover:bg-red-500/10 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </button>

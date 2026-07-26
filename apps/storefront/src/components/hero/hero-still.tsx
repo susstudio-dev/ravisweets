@@ -42,12 +42,19 @@ export function HeroStill() {
   const reduced = useReducedMotion();
   const { hero } = useSiteContent();
   const { active: theme } = useActiveTheme();
-  const heroEyebrowIndic = hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'ఖమ్మం';
+  const heroEyebrowIndic =
+    hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'ఖమ్మం';
   const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Khammam · Telangana';
-  const heroHeadline = hero?.headline ?? theme?.hero.headline ?? 'The sweetness of Telangana, slow-cooked in Khammam.';
-  const heroBody = hero?.body ?? theme?.hero.body ?? 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
-  const primaryCtaLabel = hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? 'Shop Hyderabadi specials';
-  const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/category/hyderabadi-specials';
+  const heroHeadline =
+    hero?.headline ?? theme?.hero.headline ?? 'The sweetness of Telangana, slow-cooked in Khammam.';
+  const heroBody =
+    hero?.body ??
+    theme?.hero.body ??
+    'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
+  const primaryCtaLabel =
+    hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? 'Shop Hyderabadi specials';
+  const primaryCtaHref =
+    hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/category/hyderabadi-specials';
   const secondaryCtaLabel = hero?.secondaryCtaLabel ?? 'Corporate gifting';
   const secondaryCtaHref = hero?.secondaryCtaHref ?? '/corporate';
 
@@ -80,7 +87,7 @@ export function HeroStill() {
     >
       {/* Vertical side ribbon */}
       <div
-        className="pointer-events-none absolute left-4 top-1/2 hidden -translate-y-1/2 -rotate-90 origin-left font-body text-[10px] font-semibold uppercase tracking-[0.4em] text-theme-ink/40 md:block"
+        className="font-body text-theme-ink/40 pointer-events-none absolute left-4 top-1/2 hidden origin-left -translate-y-1/2 -rotate-90 text-[10px] font-semibold uppercase tracking-[0.4em] md:block"
         aria-hidden="true"
       >
         Est. Khammam · Since generations
@@ -96,7 +103,7 @@ export function HeroStill() {
           {SAFFRON_STRANDS.map((s, i) => (
             <span
               key={i}
-              className="absolute text-theme-accent"
+              className="text-theme-accent absolute"
               style={{
                 top: s.top,
                 left: s.left,
@@ -116,13 +123,13 @@ export function HeroStill() {
       )}
 
       <motion.div
-        className="container-site relative grid gap-10 py-16 md:grid-cols-[1.1fr_1fr] md:items-center md:py-24 lg:py-28"
+        className="container-site relative grid gap-10 pb-16 pt-10 md:grid-cols-[1.1fr_1fr] md:items-center md:pb-24 md:pt-14 lg:pb-28 lg:pt-16"
         style={reduced ? undefined : { opacity: contentOpacity, y: contentY }}
       >
         {/* Copy column */}
         <div className="relative z-10 flex flex-col gap-6">
           <Reveal delay={0.05}>
-            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               <span
                 className="text-base font-normal normal-case tracking-normal"
@@ -130,7 +137,9 @@ export function HeroStill() {
               >
                 {heroEyebrowIndic}
               </span>
-              <span aria-hidden="true" className="opacity-50">·</span>
+              <span aria-hidden="true" className="opacity-50">
+                ·
+              </span>
               <span>{heroEyebrowEn}</span>
             </p>
           </Reveal>
@@ -141,18 +150,18 @@ export function HeroStill() {
             text={heroHeadline}
             split="word"
             gap={55}
-            className="font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl"
+            className="font-display text-display-lg text-theme-ink md:text-display-xl leading-[1.02]"
           />
 
           <Reveal delay={0.25}>
-            <p className="max-w-xl text-lg leading-relaxed text-theme-ink/75">{heroBody}</p>
+            <p className="text-theme-ink/75 max-w-xl text-lg leading-relaxed">{heroBody}</p>
           </Reveal>
 
           <Reveal delay={0.35}>
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
                 href={primaryCtaHref}
-                className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+                className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
               >
                 {primaryCtaLabel}
                 <ArrowRight
@@ -162,7 +171,7 @@ export function HeroStill() {
               </Link>
               <Link
                 href={secondaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-6 py-3 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
+                className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
               >
                 {secondaryCtaLabel}
               </Link>
@@ -170,21 +179,21 @@ export function HeroStill() {
           </Reveal>
 
           <Reveal delay={0.5}>
-            <dl className="mt-3 flex gap-8 text-xs text-theme-ink/60">
+            <dl className="text-theme-ink/60 mt-3 flex gap-8 text-xs">
               <div>
-                <dt className="font-semibold uppercase tracking-wider text-theme-ink/80">
+                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
                   FSSAI certified
                 </dt>
                 <dd className="mt-1">Kitchen &amp; pack</dd>
               </div>
               <div>
-                <dt className="font-semibold uppercase tracking-wider text-theme-ink/80">
+                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
                   No preservatives
                 </dt>
                 <dd className="mt-1">Ever</dd>
               </div>
               <div>
-                <dt className="font-semibold uppercase tracking-wider text-theme-ink/80">
+                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
                   Fresh daily
                 </dt>
                 <dd className="mt-1">Same-day dispatch</dd>
@@ -206,7 +215,7 @@ export function HeroStill() {
               caused the inner card to collapse and the gold ring to dominate.
             */}
             <div
-              className="relative aspect-square rounded-[2rem] p-[3px] shadow-lifted"
+              className="shadow-lifted relative aspect-square rounded-[2rem] p-[3px]"
               style={{
                 background:
                   'linear-gradient(135deg, #f2c66f 0%, #c08a18 35%, #fff5d4 60%, #c08a18 80%, #8a5a10 100%)',
@@ -217,7 +226,7 @@ export function HeroStill() {
                 style={{ background: HERO_BACKDROP }}
               >
                 {/* Premium stamp — top-left */}
-                <span className="absolute left-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full bg-theme-ink/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--theme-base)] backdrop-blur">
+                <span className="bg-theme-ink/85 absolute left-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--theme-base)] backdrop-blur">
                   <span
                     aria-hidden="true"
                     className="h-1.5 w-1.5 rounded-full"
@@ -227,7 +236,7 @@ export function HeroStill() {
                 </span>
                 {/* Italic eyebrow — top-right */}
                 <span
-                  className="absolute right-6 top-5 z-10 font-display text-sm italic"
+                  className="font-display absolute right-6 top-5 z-10 text-sm italic"
                   style={{ color: '#8a5a10' }}
                 >
                   Today&rsquo;s pick
@@ -249,16 +258,16 @@ export function HeroStill() {
                 <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[#fdf6ec] via-[#fdf6ec]/85 to-transparent px-6 pb-5 pt-10">
                   <div className="flex items-end justify-between gap-3">
                     <div>
-                      <p className="font-display text-lg font-semibold text-theme-ink md:text-xl">
+                      <p className="font-display text-theme-ink text-lg md:text-xl">
                         Premium Kaju Katli
                       </p>
-                      <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-theme-ink/55">
+                      <p className="text-theme-ink/55 mt-0.5 text-[10px] uppercase tracking-[0.18em]">
                         250 g · silver leaf · cardamom
                       </p>
                     </div>
                     <Link
                       href="/product/kaju-katli"
-                      className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-theme-ink px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5"
+                      className="bg-theme-ink shadow-soft pointer-events-auto inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5"
                     >
                       ₹449
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -272,14 +281,14 @@ export function HeroStill() {
           {/* Single subtle ornament — anchors the visual without crowding. */}
           <motion.div
             style={reduced ? undefined : { y: ornamentTopY, x: ornamentMidX }}
-            className="pointer-events-none absolute -right-2 -top-6 hidden text-theme-accent/40 md:block"
+            className="text-theme-accent/40 pointer-events-none absolute -right-2 -top-6 hidden md:block"
             aria-hidden="true"
           >
             <Paisley size="lg" rotate={20} />
           </motion.div>
           <motion.div
             style={reduced ? undefined : { y: ornamentBottomY }}
-            className="pointer-events-none absolute -bottom-4 -left-2 hidden text-theme-glow/45 md:block"
+            className="text-theme-glow/45 pointer-events-none absolute -bottom-4 -left-2 hidden md:block"
             aria-hidden="true"
           >
             <Paisley size="md" rotate={200} />
@@ -297,17 +306,15 @@ export function HeroStill() {
                 <li key={c.slug}>
                   <Link
                     href={`/category/${c.slug}`}
-                    className="group flex h-full flex-col items-start justify-between gap-1 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated/85 p-3 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft"
+                    className="bg-surface-elevated/85 hover:border-theme-accent hover:shadow-soft group flex h-full flex-col items-start justify-between gap-1 rounded-2xl border border-[color:var(--color-border)] p-3 backdrop-blur transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                    <span className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.18em]">
                       {c.sub}
                     </span>
                     <span className="flex w-full items-center justify-between gap-1.5">
-                      <span className="font-display text-sm font-semibold text-theme-ink">
-                        {c.label}
-                      </span>
+                      <span className="font-display text-theme-ink text-sm">{c.label}</span>
                       <ArrowRight
-                        className="h-3.5 w-3.5 text-theme-ink/40 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-theme-accent"
+                        className="text-theme-ink/40 group-hover:text-theme-accent h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                         aria-hidden="true"
                       />
                     </span>
@@ -319,7 +326,7 @@ export function HeroStill() {
 
           {/* Trust + delivery pill — closes the right column with confidence */}
           <Reveal delay={0.7}>
-            <div className="mx-auto flex w-full max-w-[460px] flex-wrap items-center justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated/70 px-5 py-3 backdrop-blur">
+            <div className="bg-surface-elevated/70 mx-auto flex w-full max-w-[460px] flex-wrap items-center justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] px-5 py-3 backdrop-blur">
               <div className="flex items-center gap-2.5">
                 <span
                   aria-hidden="true"
@@ -329,17 +336,17 @@ export function HeroStill() {
                   <Paisley size="sm" color="#3a1505" />
                 </span>
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                  <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
                     Made fresh in Khammam
                   </p>
-                  <p className="text-xs text-theme-ink/65">
+                  <p className="text-theme-ink/65 text-xs">
                     Free shipping above ₹999 · ships across India
                   </p>
                 </div>
               </div>
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-theme-ink/75 hover:text-theme-accent"
+                className="text-theme-ink/75 hover:text-theme-accent inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider"
               >
                 Shop all
                 <ArrowRight className="h-3 w-3" aria-hidden="true" />
@@ -361,11 +368,11 @@ export function HeroStill() {
       {/* Scroll cue */}
       <Reveal delay={0.9} className="absolute bottom-6 left-1/2 -translate-x-1/2">
         <div
-          className="flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-theme-ink/50"
+          className="text-theme-ink/50 flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em]"
           aria-hidden="true"
         >
           <span>Scroll</span>
-          <span className="h-8 w-px animate-pulse bg-theme-ink/25" />
+          <span className="bg-theme-ink/25 h-8 w-px animate-pulse" />
         </div>
       </Reveal>
     </section>

@@ -69,13 +69,13 @@ export function AdminProducts() {
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+          <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
             Catalogue
           </p>
-          <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+          <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">
             Products ({CATALOGUE.length})
           </h1>
-          <p className="mt-1 text-sm text-theme-ink/65">
+          <p className="text-theme-ink/65 mt-1 text-sm">
             {configured
               ? 'Inline edit on price, stock, sale, image upload + flags. Click "Add product" to launch a new SKU.'
               : 'Read-only — connect Supabase to edit.'}
@@ -83,7 +83,7 @@ export function AdminProducts() {
         </div>
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center gap-2 rounded-full bg-theme-ink px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted"
+          className="bg-theme-ink shadow-soft hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
           Add product
@@ -92,7 +92,7 @@ export function AdminProducts() {
 
       <label className="relative block max-w-md">
         <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-theme-ink/40"
+          className="text-theme-ink/40 absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
           aria-hidden="true"
         />
         <input
@@ -100,13 +100,13 @@ export function AdminProducts() {
           placeholder="Search by title, slug, or category…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full rounded-full border border-[color:var(--color-border)] bg-surface-elevated px-9 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          className="bg-surface-elevated text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
         />
       </label>
 
-      <div className="overflow-x-auto rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated">
+      <div className="bg-surface-elevated overflow-x-auto rounded-2xl border border-[color:var(--color-border)]">
         <table className="w-full text-sm">
-          <thead className="bg-theme-glow/10 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+          <thead className="bg-theme-glow/10 text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3 text-left">Title</th>
               <th className="px-4 py-3 text-left">Category</th>
@@ -123,16 +123,16 @@ export function AdminProducts() {
                 <tr
                   key={p.id}
                   onClick={() => setActive(p)}
-                  className="cursor-pointer border-t border-[color:var(--color-border)] transition-colors hover:bg-theme-glow/10"
+                  className="hover:bg-theme-glow/10 cursor-pointer border-t border-[color:var(--color-border)] transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <p className="font-medium text-theme-ink">{p.title}</p>
-                    <p className="text-[11px] text-theme-ink/55">/product/{p.slug}</p>
+                    <p className="text-theme-ink font-medium">{p.title}</p>
+                    <p className="text-theme-ink/55 text-[11px]">/product/{p.slug}</p>
                   </td>
-                  <td className="px-4 py-3 text-theme-ink/65 capitalize">
+                  <td className="text-theme-ink/65 px-4 py-3 capitalize">
                     {p.category.replace(/-/g, ' ')}
                   </td>
-                  <td className="px-4 py-3 text-theme-ink/65">{p.variants.length}</td>
+                  <td className="text-theme-ink/65 px-4 py-3">{p.variants.length}</td>
                   <td className="px-4 py-3 text-right">
                     <span
                       className={`font-mono ${totalStock <= 25 ? 'text-red-700' : 'text-theme-ink/85'}`}
@@ -147,7 +147,7 @@ export function AdminProducts() {
                       {p.new && <Tag>New</Tag>}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right text-theme-ink/40">
+                  <td className="text-theme-ink/40 px-4 py-3 text-right">
                     <ArrowRight className="ml-auto h-4 w-4" aria-hidden="true" />
                   </td>
                 </tr>
@@ -169,9 +169,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     bestseller: product.bestseller,
     new: product.new,
   });
-  const [unitMode, setUnitMode] = useState<'weight' | 'quantity'>(
-    product.unit_mode ?? 'weight',
-  );
+  const [unitMode, setUnitMode] = useState<'weight' | 'quantity'>(product.unit_mode ?? 'weight');
   const [description, setDescription] = useState(product.description);
   const [category, setCategory] = useState<CategorySlug>(product.category);
   const [dietaryTags, setDietaryTags] = useState<DietaryTag[]>(product.dietary_tags);
@@ -288,7 +286,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         setBusy(false);
         return;
       }
-      await logAdminAction('update-description', 'product', product.id, { description: product.description }, { description });
+      await logAdminAction(
+        'update-description',
+        'product',
+        product.id,
+        { description: product.description },
+        { description },
+      );
     }
 
     if (category !== product.category) {
@@ -298,7 +302,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         setBusy(false);
         return;
       }
-      await logAdminAction('update-category', 'product', product.id, { category: product.category }, { category });
+      await logAdminAction(
+        'update-category',
+        'product',
+        product.id,
+        { category: product.category },
+        { category },
+      );
     }
 
     const tagsChanged =
@@ -311,7 +321,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         setBusy(false);
         return;
       }
-      await logAdminAction('update-dietary-tags', 'product', product.id, { dietary_tags: product.dietary_tags }, { dietary_tags: dietaryTags });
+      await logAdminAction(
+        'update-dietary-tags',
+        'product',
+        product.id,
+        { dietary_tags: product.dietary_tags },
+        { dietary_tags: dietaryTags },
+      );
     }
 
     if (shelfLifeDays !== product.shelf_life_days) {
@@ -321,7 +337,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         setBusy(false);
         return;
       }
-      await logAdminAction('update-shelf-life', 'product', product.id, { shelf_life_days: product.shelf_life_days }, { shelf_life_days: shelfLifeDays });
+      await logAdminAction(
+        'update-shelf-life',
+        'product',
+        product.id,
+        { shelf_life_days: product.shelf_life_days },
+        { shelf_life_days: shelfLifeDays },
+      );
     }
 
     if (builderEligible !== product.builder_eligible) {
@@ -331,7 +353,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         setBusy(false);
         return;
       }
-      await logAdminAction('update-builder-eligible', 'product', product.id, { builder_eligible: product.builder_eligible }, { builder_eligible: builderEligible });
+      await logAdminAction(
+        'update-builder-eligible',
+        'product',
+        product.id,
+        { builder_eligible: product.builder_eligible },
+        { builder_eligible: builderEligible },
+      );
     }
 
     if (imageUrl !== (primaryImage?.url ?? '') || imageAlt !== (primaryImage?.alt ?? '')) {
@@ -342,7 +370,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           setBusy(false);
           return;
         }
-        await logAdminAction('update-primary-image', 'product', product.id, { url: primaryImage?.url, alt: primaryImage?.alt }, { url: imageUrl, alt: imageAlt });
+        await logAdminAction(
+          'update-primary-image',
+          'product',
+          product.id,
+          { url: primaryImage?.url, alt: primaryImage?.alt },
+          { url: imageUrl, alt: imageAlt },
+        );
       }
     }
 
@@ -464,42 +498,42 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     <aside
       role="dialog"
       aria-modal="true"
-      className="fixed inset-y-0 right-0 z-50 w-full max-w-lg overflow-y-auto border-l border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-lifted"
+      className="bg-surface-elevated shadow-lifted fixed inset-y-0 right-0 z-50 w-full max-w-lg overflow-y-auto border-l border-[color:var(--color-border)] p-6"
     >
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-semibold text-theme-ink">{product.title}</h2>
+        <h2 className="font-display text-theme-ink text-2xl">{product.title}</h2>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="rounded-full p-1.5 text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink"
+          className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink rounded-full p-1.5"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
-      <p className="mt-1 font-mono text-xs text-theme-ink/55">/product/{product.slug}</p>
+      <p className="text-theme-ink/55 mt-1 font-mono text-xs">/product/{product.slug}</p>
 
       {/* Description */}
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Description
       </h3>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={5}
-        className="mt-2 w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm leading-relaxed text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+        className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 mt-2 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm leading-relaxed focus-visible:outline-none focus-visible:ring-2"
       />
 
       {/* Category + shelf life — paired row */}
       <div className="mt-6 grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Category
           </span>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CategorySlug)}
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           >
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c.value} value={c.value}>
@@ -509,7 +543,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Shelf life (days)
           </span>
           <input
@@ -517,13 +551,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             min={1}
             value={shelfLifeDays}
             onChange={(e) => setShelfLifeDays(Math.max(1, Number(e.target.value) || 1))}
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
           />
         </label>
       </div>
 
       {/* Dietary tags */}
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Dietary tags
       </h3>
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -538,7 +572,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
               className={`rounded-full border px-3 py-1 text-[11px] font-semibold capitalize transition-colors ${
                 on
                   ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                  : 'border-[color:var(--color-border)] text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent'
+                  : 'text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent border-[color:var(--color-border)]'
               }`}
             >
               {t.replace(/-/g, ' ')}
@@ -548,7 +582,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       </div>
 
       {/* Primary image — upload file OR paste URL */}
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Primary image
       </h3>
       <div className="mt-2 grid gap-2">
@@ -558,7 +592,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           onUploaded={(url) => setImageUrl(url)}
         />
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             …or paste a URL
           </span>
           <input
@@ -566,11 +600,11 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             placeholder="https://ravisweets.com/wp-content/uploads/..."
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-xs font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-xs focus-visible:outline-none focus-visible:ring-2"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             Alt text (accessibility)
           </span>
           <input
@@ -578,7 +612,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             value={imageAlt}
             onChange={(e) => setImageAlt(e.target.value)}
             placeholder={`${product.title} — photographed at the Khammam kitchen`}
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           />
         </label>
         {imageUrl && (
@@ -586,20 +620,20 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           <img
             src={imageUrl}
             alt={imageAlt}
-            className="mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] bg-theme-glow/15 object-contain p-2"
+            className="bg-theme-glow/15 mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] object-contain p-2"
           />
         )}
       </div>
 
       {/* Nutrition — per 100g, all optional. Surfaces below ingredients on
           the product detail page when ANY field is set. */}
-      <div className="mt-6 rounded-2xl border border-[color:var(--color-border)] bg-surface p-4">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <div className="bg-surface mt-6 rounded-2xl border border-[color:var(--color-border)] p-4">
+        <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Nutrition (per 100g)
         </p>
-        <p className="mt-0.5 text-[11px] text-theme-ink/55">
-          Fill from the FSSAI nutrition sheet for this batch. Leave blank to hide
-          the panel on the storefront.
+        <p className="text-theme-ink/55 mt-0.5 text-[11px]">
+          Fill from the FSSAI nutrition sheet for this batch. Leave blank to hide the panel on the
+          storefront.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
           {(
@@ -614,7 +648,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             ] as const
           ).map((f) => (
             <label key={f.k} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+              <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                 {f.label}
               </span>
               <input
@@ -623,7 +657,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                 step="any"
                 value={nutrition[f.k]}
                 onChange={(e) => setNutrition((p) => ({ ...p, [f.k]: e.target.value }))}
-                className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </label>
           ))}
@@ -632,21 +666,19 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
       {/* Sale pricing — admin-toggleable per product. Drives the strikethrough
           + sale badge on every storefront card and detail page. */}
-      <div className="mt-6 rounded-2xl border border-[color:var(--color-border)] bg-surface p-4">
+      <div className="bg-surface mt-6 rounded-2xl border border-[color:var(--color-border)] p-4">
         <label className="flex items-start gap-2 text-sm">
           <input
             type="checkbox"
             checked={onSale}
             onChange={(e) => setOnSale(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+            className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded"
           />
           <span>
-            <span className="font-display text-base font-semibold text-theme-ink">
-              Put this product on sale
-            </span>
-            <span className="block text-[11px] text-theme-ink/55">
-              Storefront shows a strikethrough on the regular price + a "Sale" badge.
-              Optional auto-end timestamp hides the sale without a manual write.
+            <span className="font-display text-theme-ink text-base">Put this product on sale</span>
+            <span className="text-theme-ink/55 block text-[11px]">
+              Storefront shows a strikethrough on the regular price + a "Sale" badge. Optional
+              auto-end timestamp hides the sale without a manual write.
             </span>
           </span>
         </label>
@@ -654,7 +686,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         {onSale && (
           <div className="mt-4 grid gap-3 pl-6">
             {/* Mode toggle */}
-            <div className="inline-flex w-fit rounded-full border border-[color:var(--color-border)] bg-surface-elevated p-1">
+            <div className="bg-surface-elevated inline-flex w-fit rounded-full border border-[color:var(--color-border)] p-1">
               {(['percent', 'flat'] as const).map((m) => (
                 <button
                   key={m}
@@ -675,7 +707,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             <div className="grid grid-cols-2 gap-2">
               {saleMode === 'percent' ? (
                 <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                  <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                     Discount %
                   </span>
                   <input
@@ -686,40 +718,38 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                     onChange={(e) =>
                       setSalePercent(Math.min(99, Math.max(1, Number(e.target.value) || 1)))
                     }
-                    className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </label>
               ) : (
                 <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                  <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                     Sale price (₹)
                   </span>
                   <input
                     type="number"
                     min={1}
                     value={salePriceRupees}
-                    onChange={(e) =>
-                      setSalePriceRupees(Math.max(1, Number(e.target.value) || 1))
-                    }
-                    className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    onChange={(e) => setSalePriceRupees(Math.max(1, Number(e.target.value) || 1))}
+                    className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </label>
               )}
               <label className="flex flex-col gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                   Sale ends (optional)
                 </span>
                 <input
                   type="datetime-local"
                   value={saleEndsAt}
                   onChange={(e) => setSaleEndsAt(e.target.value)}
-                  className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </label>
             </div>
 
             <label className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+              <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                 Sale badge label (optional)
               </span>
               <input
@@ -727,17 +757,17 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                 value={saleLabel}
                 onChange={(e) => setSaleLabel(e.target.value.slice(0, 32))}
                 placeholder='e.g. "Diwali pre-order" or "Clearance"'
-                className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface-elevated text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </label>
 
             {/* Live preview of the strikethrough */}
-            <div className="rounded-lg bg-theme-glow/15 px-3 py-2 text-xs">
+            <div className="bg-theme-glow/15 rounded-lg px-3 py-2 text-xs">
               <span className="text-theme-ink/55">Preview · </span>
               <span className="text-theme-ink/55 line-through">
                 {`₹${Math.round((product.variants[0]?.price.amount ?? 0) / 100)}`}
               </span>
-              <span className="ml-2 font-display text-base font-semibold text-theme-accent">
+              <span className="font-display text-theme-accent ml-2 text-base">
                 {saleMode === 'percent'
                   ? `₹${Math.round(((product.variants[0]?.price.amount ?? 0) * (100 - salePercent)) / 100 / 100)}`
                   : `₹${salePriceRupees}`}
@@ -756,21 +786,23 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           type="checkbox"
           checked={builderEligible}
           onChange={(e) => setBuilderEligible(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+          className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded"
         />
         <span>
-          <span className="font-medium text-theme-ink">Available in the corporate hamper builder</span>
-          <span className="block text-[11px] text-theme-ink/55">
+          <span className="text-theme-ink font-medium">
+            Available in the corporate hamper builder
+          </span>
+          <span className="text-theme-ink/55 block text-[11px]">
             Uncheck for fragile / cold-chain SKUs (e.g. Gulab Jamun, full hampers themselves).
           </span>
         </span>
       </label>
 
       {/* Unit mode toggle — drives the variant-picker label on the storefront */}
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Sold by
       </h3>
-      <div className="mt-2 inline-flex rounded-full border border-[color:var(--color-border)] bg-surface p-1">
+      <div className="bg-surface mt-2 inline-flex rounded-full border border-[color:var(--color-border)] p-1">
         {(['weight', 'quantity'] as const).map((m) => (
           <button
             key={m}
@@ -787,18 +819,21 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           </button>
         ))}
       </div>
-      <p className="mt-1 text-[11px] text-theme-ink/55">
+      <p className="text-theme-ink/55 mt-1 text-[11px]">
         Storefront variant chips will say {unitMode === 'weight' ? '"Size"' : '"Pack"'}.
       </p>
 
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Variants — title, price &amp; stock
       </h3>
       <ul className="mt-2 flex flex-col gap-2">
         {variants.map((v, i) => (
-          <li key={v.id} className="rounded-lg border border-[color:var(--color-border)] bg-surface p-3">
+          <li
+            key={v.id}
+            className="bg-surface rounded-lg border border-[color:var(--color-border)] p-3"
+          >
             <label className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+              <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                 Variant label
               </span>
               <input
@@ -810,13 +845,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                   setVariants(next);
                 }}
                 placeholder={unitMode === 'weight' ? '250 g' : 'Box of 12'}
-                className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </label>
-            <p className="mt-1 font-mono text-[11px] text-theme-ink/55">SKU {v.sku}</p>
+            <p className="text-theme-ink/55 mt-1 font-mono text-[11px]">SKU {v.sku}</p>
             <div className="mt-2 grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                   Price (₹)
                 </span>
                 <input
@@ -827,11 +862,11 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                     next[i] = { ...next[i]!, price: Number(e.target.value) };
                     setVariants(next);
                   }}
-                  className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
                   Stock
                 </span>
                 <input
@@ -842,7 +877,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
                     next[i] = { ...next[i]!, stock: Number(e.target.value) };
                     setVariants(next);
                   }}
-                  className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated px-3 py-1.5 text-sm font-mono text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </label>
             </div>
@@ -850,7 +885,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         ))}
       </ul>
 
-      <h3 className="mt-6 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
         Flags
       </h3>
       <div className="mt-2 flex flex-col gap-2 text-sm">
@@ -859,7 +894,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             type="checkbox"
             checked={flags.featured}
             onChange={(e) => setFlags({ ...flags, featured: e.target.checked })}
-            className="h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+            className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
           />
           Featured (appears on home / corporate)
         </label>
@@ -868,7 +903,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             type="checkbox"
             checked={flags.bestseller}
             onChange={(e) => setFlags({ ...flags, bestseller: e.target.checked })}
-            className="h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+            className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
           />
           Bestseller
         </label>
@@ -877,7 +912,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
             type="checkbox"
             checked={flags.new}
             onChange={(e) => setFlags({ ...flags, new: e.target.checked })}
-            className="h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+            className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
           />
           New arrival
         </label>
@@ -888,7 +923,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
           type="button"
           onClick={save}
           disabled={busy || !configured}
-          className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-theme-accent shadow-soft hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
           {busy ? 'Saving…' : saved ? 'Saved ✓' : 'Save changes'}
@@ -896,13 +931,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent"
+          className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold"
         >
           Close
         </button>
       </div>
 
-      <p className="mt-4 text-[11px] text-theme-ink/55">
+      <p className="text-theme-ink/55 mt-4 text-[11px]">
         Note: storefront catalogue is currently bundled at build. Live edits land here in
         <code> products </code> + <code>variants</code> tables and become visible on the storefront
         once Phase 3&rsquo;s build-time fetch + webhook rebuild is wired.
@@ -913,7 +948,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-theme-glow/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+    <span className="bg-theme-glow/30 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
       {children}
     </span>
   );
@@ -954,7 +989,7 @@ function ImageUpload({ productId, currentUrl, onUploaded }: ImageUploadProps) {
   }
 
   return (
-    <div className="rounded-xl border border-dashed border-[color:var(--color-border)] bg-theme-glow/10 p-3">
+    <div className="bg-theme-glow/10 rounded-xl border border-dashed border-[color:var(--color-border)] p-3">
       <div className="flex items-center gap-3">
         {currentUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -964,15 +999,15 @@ function ImageUpload({ productId, currentUrl, onUploaded }: ImageUploadProps) {
             className="h-16 w-16 shrink-0 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1"
           />
         ) : (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider text-theme-ink/40">
+          <div className="text-theme-ink/40 flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider">
             no image
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             Upload product photo
           </p>
-          <label className="mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-theme-accent px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)] transition-colors hover:bg-theme-accent/85">
+          <label className="bg-theme-accent hover:bg-theme-accent/85 mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)] transition-colors">
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml"
@@ -982,9 +1017,9 @@ function ImageUpload({ productId, currentUrl, onUploaded }: ImageUploadProps) {
             />
             {busy ? 'Uploading…' : 'Choose file'}
           </label>
-          <p className="mt-1 text-[10px] text-theme-ink/55">
-            PNG / JPG / WebP / AVIF / SVG · max 5 MB. Stored in Supabase Storage,
-            served from the public `product-images` bucket.
+          <p className="text-theme-ink/55 mt-1 text-[10px]">
+            PNG / JPG / WebP / AVIF / SVG · max 5 MB. Stored in Supabase Storage, served from the
+            public `product-images` bucket.
           </p>
         </div>
       </div>

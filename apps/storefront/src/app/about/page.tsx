@@ -17,38 +17,32 @@ const TIMELINE = [
   {
     year: 'Generations ago',
     title: 'A small kitchen in Khammam',
-    body:
-      'The first copper pan, the first recipe card, the first box with a paisley tag. A family ritual becomes a trade.',
+    body: 'The first copper pan, the first recipe card, the first box with a paisley tag. A family ritual becomes a trade.',
   },
   {
     year: 'Since',
     title: 'The same slow way',
-    body:
-      'We still reduce rabri by hand. We still cut the katli in diamonds. We still roast almonds in small trays. The method is the brand.',
+    body: 'We still reduce rabri by hand. We still cut the katli in diamonds. We still roast almonds in small trays. The method is the brand.',
   },
   {
     year: 'Today',
     title: 'Delivered across India',
-    body:
-      'Hand-made, preservative-free, boxed fresh every morning. Global shipping, coming soon.',
+    body: 'Hand-made, preservative-free, boxed fresh every morning. Global shipping, coming soon.',
   },
 ];
 
 const PILLARS = [
   {
     title: 'Nothing rushed.',
-    body:
-      'Four hours for the qubani, not four minutes. The kitchen’s first rule is the slower way.',
+    body: 'Four hours for the qubani, not four minutes. The kitchen’s first rule is the slower way.',
   },
   {
     title: 'Nothing substituted.',
-    body:
-      'Ghee is ghee. Saffron is real. If we can’t find the ingredient we want, the sweet doesn’t leave the kitchen.',
+    body: 'Ghee is ghee. Saffron is real. If we can’t find the ingredient we want, the sweet doesn’t leave the kitchen.',
   },
   {
     title: 'Nothing hidden.',
-    body:
-      'FSSAI number on every box. Shelf-life on every label. Ingredient list on every page.',
+    body: 'FSSAI number on every box. Shelf-life on every label. Ingredient list on every page.',
   },
 ];
 
@@ -77,30 +71,31 @@ export default function AboutPage() {
         <div className="container-site grid gap-10 py-16 md:grid-cols-[1.1fr_1fr] md:items-center md:py-24">
           <div>
             <Reveal>
-              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
                 <Paisley size="sm" />
                 <span style={{ fontFamily: 'var(--font-indic)' }}>మా కథ</span>
-                <span aria-hidden="true" className="opacity-50">·</span>
+                <span aria-hidden="true" className="opacity-50">
+                  ·
+                </span>
                 <span>Our story</span>
               </p>
             </Reveal>
             <Reveal delay={0.05}>
-              <h1 className="mt-4 font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl">
-                A family kitchen,{' '}
-                <span className="italic text-theme-accent">still open.</span>
+              <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 leading-[1.02]">
+                A family kitchen, <span className="text-theme-accent italic">still open.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.15}>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-theme-ink/75">
-                Ravi Sweets began in a single Khammam kitchen with a copper pan, a recipe
-                card in someone&rsquo;s handwriting, and the promise that nothing would be
-                hurried. That promise has outlived everything else we&rsquo;ve had to change.
+              <p className="text-theme-ink/75 mt-6 max-w-xl text-lg leading-relaxed">
+                Ravi Sweets began in a single Khammam kitchen with a copper pan, a recipe card in
+                someone&rsquo;s handwriting, and the promise that nothing would be hurried. That
+                promise has outlived everything else we&rsquo;ve had to change.
               </p>
             </Reveal>
           </div>
           <Parallax offset={30}>
             <div
-              className="relative aspect-[4/5] overflow-hidden rounded-[2rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+              className="shadow-lifted relative aspect-[4/5] overflow-hidden rounded-[2rem] p-12 ring-1 ring-[color:var(--color-border)]"
               style={{ background: PORTRAIT_BACKDROP }}
             >
               <Image
@@ -113,7 +108,7 @@ export default function AboutPage() {
                 className="object-contain drop-shadow-[0_30px_40px_rgba(60,30,5,0.22)]"
               />
               <Grain />
-              <div className="pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+              <div className="text-theme-ink/55 pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em]">
                 Kaju Katli · Khammam kitchen
               </div>
             </div>
@@ -126,12 +121,12 @@ export default function AboutPage() {
       {/* Timeline */}
       <section aria-labelledby="timeline-heading" className="container-site py-16">
         <Reveal className="mb-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent text-xs font-semibold uppercase tracking-[0.22em]">
             A short history
           </p>
           <h2
             id="timeline-heading"
-            className="mt-2 font-display text-display-md text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-2"
           >
             Three moments that still matter.
           </h2>
@@ -139,14 +134,12 @@ export default function AboutPage() {
         <ol className="grid gap-8 md:grid-cols-3">
           {TIMELINE.map((t, i) => (
             <Reveal key={t.year} delay={i * 0.08}>
-              <li className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <li className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-6">
+                <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]">
                   {t.year}
                 </p>
-                <h3 className="mt-2 font-display text-xl font-semibold text-theme-ink">
-                  {t.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-theme-ink/75">{t.body}</p>
+                <h3 className="font-display text-theme-ink mt-2 text-xl">{t.title}</h3>
+                <p className="text-theme-ink/75 mt-3 text-sm leading-relaxed">{t.body}</p>
               </li>
             </Reveal>
           ))}
@@ -164,7 +157,7 @@ export default function AboutPage() {
         <div className="container-site grid gap-10 py-20 md:grid-cols-2 md:items-center">
           <Parallax offset={40}>
             <div
-              className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] p-12 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+              className="shadow-lifted relative aspect-[4/5] overflow-hidden rounded-[1.75rem] p-12 ring-1 ring-[color:var(--color-border)]"
               style={{ background: PORTRAIT_BACKDROP }}
             >
               <Image
@@ -175,19 +168,19 @@ export default function AboutPage() {
                 className="object-contain drop-shadow-[0_24px_32px_rgba(60,30,5,0.2)]"
               />
               <Grain />
-              <div className="pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+              <div className="text-theme-ink/55 pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em]">
                 Boondi Laddu · made fresh each morning
               </div>
             </div>
           </Parallax>
           <div>
             <Reveal>
-              <figure className="border-l-2 border-theme-accent/50 pl-6">
-                <blockquote className="font-display text-2xl italic leading-snug text-theme-ink md:text-3xl">
-                  &ldquo;If a sweet can be made faster, it can also be made less well. We chose
-                  the slower way, and kept choosing it.&rdquo;
+              <figure className="border-theme-accent/50 border-l-2 pl-6">
+                <blockquote className="font-display text-theme-ink text-2xl italic leading-snug md:text-3xl">
+                  &ldquo;If a sweet can be made faster, it can also be made less well. We chose the
+                  slower way, and kept choosing it.&rdquo;
                 </blockquote>
-                <figcaption className="mt-4 text-sm text-theme-ink/60">
+                <figcaption className="text-theme-ink/60 mt-4 text-sm">
                   — Ravi, on the kitchen&rsquo;s first rule
                 </figcaption>
               </figure>
@@ -201,10 +194,9 @@ export default function AboutPage() {
         <Reveal>
           <h2
             id="pillars-heading"
-            className="max-w-3xl font-display text-display-md text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg max-w-3xl"
           >
-            Three short promises,{' '}
-            <span className="italic text-theme-accent">kept every day.</span>
+            Three short promises, <span className="text-theme-accent italic">kept every day.</span>
           </h2>
         </Reveal>
         <div className="mt-10 grid gap-8 md:grid-cols-3">
@@ -212,8 +204,8 @@ export default function AboutPage() {
             <Reveal key={p.title} delay={i * 0.08}>
               <div className="flex flex-col gap-3">
                 <Paisley size="md" />
-                <h3 className="font-display text-xl font-semibold text-theme-ink">{p.title}</h3>
-                <p className="text-sm leading-relaxed text-theme-ink/75">{p.body}</p>
+                <h3 className="font-display text-theme-ink text-xl">{p.title}</h3>
+                <p className="text-theme-ink/75 text-sm leading-relaxed">{p.body}</p>
               </div>
             </Reveal>
           ))}
@@ -238,8 +230,8 @@ export default function AboutPage() {
                   Come taste what we mean.
                 </h2>
                 <p className="mt-2 text-sm text-[#fdf6ec]/85 md:text-base">
-                  Start with the Hyderabadi specials — Qubani ka Meetha and Badam ki Jali are
-                  where most first-time customers begin.
+                  Start with the Hyderabadi specials — Qubani ka Meetha and Badam ki Jali are where
+                  most first-time customers begin.
                 </p>
               </div>
               <Link

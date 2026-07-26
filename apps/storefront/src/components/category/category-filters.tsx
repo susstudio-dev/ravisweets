@@ -62,13 +62,13 @@ export function CategoryFilters({
 
   return (
     <aside className="md:sticky md:top-20 md:self-start" aria-label="Filters">
-      <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+      <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-theme-ink">Refine</h2>
+          <h2 className="font-display text-theme-ink text-lg">Refine</h2>
           {hasFilters && (
             <Link
               href={`/category/${categorySlug}`}
-              className="text-xs font-semibold text-theme-accent hover:underline"
+              className="text-theme-accent text-xs font-semibold hover:underline"
               replace
             >
               Clear
@@ -77,7 +77,7 @@ export function CategoryFilters({
         </div>
 
         <fieldset className="mb-5">
-          <legend className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
             Dietary
           </legend>
           <div className="flex flex-wrap gap-2">
@@ -90,10 +90,10 @@ export function CategoryFilters({
                   onClick={() => toggleDiet(opt.value)}
                   aria-pressed={active}
                   className={cn(
-                    'rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                    'focus-visible:ring-theme-accent rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
                     active
                       ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                      : 'border-[color:var(--color-border)] bg-surface text-theme-ink/80 hover:-translate-y-0.5 hover:border-theme-accent',
+                      : 'bg-surface text-theme-ink/80 hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
                   )}
                 >
                   {opt.label}
@@ -104,28 +104,30 @@ export function CategoryFilters({
         </fieldset>
 
         <fieldset className="mb-5">
-          <legend className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
             Availability
           </legend>
-          <label className="flex items-center gap-2 text-sm text-theme-ink/85">
+          <label className="text-theme-ink/85 flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => updateParam('stock', e.target.checked ? 'in' : undefined)}
-              className="h-4 w-4 rounded border-[color:var(--color-border)] text-theme-accent focus:ring-theme-accent"
+              className="text-theme-accent focus:ring-theme-accent h-4 w-4 rounded border-[color:var(--color-border)]"
             />
             In stock only
           </label>
         </fieldset>
 
         <fieldset>
-          <legend className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
             Sort by
           </legend>
           <select
             value={activeSort}
-            onChange={(e) => updateParam('sort', e.target.value === 'featured' ? undefined : e.target.value)}
-            className="w-full rounded-full border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            onChange={(e) =>
+              updateParam('sort', e.target.value === 'featured' ? undefined : e.target.value)
+            }
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>

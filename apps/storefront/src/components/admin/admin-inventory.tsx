@@ -21,21 +21,19 @@ export function AdminInventory() {
   return (
     <div className="flex flex-col gap-5">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           Stock
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Inventory
-        </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Inventory</h1>
+        <p className="text-theme-ink/65 mt-1 text-sm">
           Showing {rows.length} variants. Sorted by lowest stock first. Inline editing arrives once
           the variants table is in Supabase.
         </p>
       </header>
 
-      <div className="overflow-x-auto rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated">
+      <div className="bg-surface-elevated overflow-x-auto rounded-2xl border border-[color:var(--color-border)]">
         <table className="w-full text-sm">
-          <thead className="bg-theme-glow/10 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+          <thead className="bg-theme-glow/10 text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3 text-left">SKU</th>
               <th className="px-4 py-3 text-left">Product</th>
@@ -51,11 +49,11 @@ export function AdminInventory() {
               return (
                 <tr
                   key={r.sku}
-                  className="border-t border-[color:var(--color-border)] hover:bg-theme-glow/10"
+                  className="hover:bg-theme-glow/10 border-t border-[color:var(--color-border)]"
                 >
-                  <td className="px-4 py-3 font-mono text-xs text-theme-ink/65">{r.sku}</td>
-                  <td className="px-4 py-3 text-theme-ink">{r.productTitle}</td>
-                  <td className="px-4 py-3 text-theme-ink/65">{r.variantTitle}</td>
+                  <td className="text-theme-ink/65 px-4 py-3 font-mono text-xs">{r.sku}</td>
+                  <td className="text-theme-ink px-4 py-3">{r.productTitle}</td>
+                  <td className="text-theme-ink/65 px-4 py-3">{r.variantTitle}</td>
                   <td
                     className={`px-4 py-3 text-right font-mono ${
                       low ? 'text-red-700' : 'text-theme-ink/85'
@@ -63,7 +61,7 @@ export function AdminInventory() {
                   >
                     {r.stock}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-theme-ink/55">
+                  <td className="text-theme-ink/55 px-4 py-3 text-right font-mono">
                     {r.threshold}
                   </td>
                   <td className="px-4 py-3">

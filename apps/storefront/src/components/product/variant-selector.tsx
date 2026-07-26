@@ -34,11 +34,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
   return (
     <div className="flex flex-col gap-5">
       {/* Price with crossfade — strikethrough + sale badge when on sale */}
-      <div
-        className="relative min-h-12"
-        aria-live="polite"
-        aria-atomic="true"
-      >
+      <div className="relative min-h-12" aria-live="polite" aria-atomic="true">
         <AnimatePresence initial={false} mode="popLayout">
           <motion.div
             key={active.id}
@@ -53,10 +49,10 @@ export function VariantSelector({ product }: VariantSelectorProps) {
               if (eff.salePrice !== null) {
                 return (
                   <>
-                    <span className="font-display text-4xl font-semibold text-theme-accent">
+                    <span className="font-display text-theme-accent text-4xl">
                       {formatMoney({ amount: eff.salePrice, currency: 'INR' })}
                     </span>
-                    <span className="font-display text-xl text-theme-ink/40 line-through">
+                    <span className="font-display text-theme-ink/40 text-xl line-through">
                       {formatMoney(active.price)}
                     </span>
                     <span className="rounded-full bg-red-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
@@ -66,7 +62,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
                 );
               }
               return (
-                <span className="font-display text-4xl font-semibold text-theme-accent">
+                <span className="font-display text-theme-accent text-4xl">
                   {formatMoney(active.price)}
                 </span>
               );
@@ -78,7 +74,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
       {/* Variant chips (hidden if only one) */}
       {product.variants.length > 1 && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
+          <p className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
             {product.unit_mode === 'quantity' ? 'Pack' : 'Size'}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -91,10 +87,10 @@ export function VariantSelector({ product }: VariantSelectorProps) {
                   onClick={() => setActiveId(v.id)}
                   aria-pressed={selected}
                   className={cn(
-                    'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                    'focus-visible:ring-theme-accent inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2',
                     selected
-                      ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)] shadow-soft'
-                      : 'border-[color:var(--color-border)] bg-surface-elevated text-theme-ink hover:-translate-y-0.5 hover:border-theme-accent',
+                      ? 'border-theme-accent bg-theme-accent shadow-soft text-[color:var(--theme-base)]'
+                      : 'bg-surface-elevated text-theme-ink hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
                   )}
                 >
                   <span>{v.title}</span>
@@ -113,9 +109,7 @@ export function VariantSelector({ product }: VariantSelectorProps) {
         {outOfStock ? (
           <span className="font-semibold text-red-700">Out of stock</span>
         ) : lowStock ? (
-          <span className="font-semibold text-amber-800">
-            Only {active.stock_available} left
-          </span>
+          <span className="font-semibold text-amber-800">Only {active.stock_available} left</span>
         ) : (
           <span className="text-theme-ink/70">In stock · ships today</span>
         )}

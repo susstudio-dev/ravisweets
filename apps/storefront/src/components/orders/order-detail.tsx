@@ -44,7 +44,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
     return (
       <section className="container-site flex min-h-[60vh] items-center justify-center py-20">
         <motion.span
-          className="inline-block h-6 w-6 rounded-full border-2 border-theme-accent border-t-transparent"
+          className="border-theme-accent inline-block h-6 w-6 rounded-full border-2 border-t-transparent"
           animate={{ rotate: 360 }}
           transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
           aria-label="Loading order"
@@ -58,12 +58,12 @@ export function OrderDetail({ orderId }: { orderId: string }) {
       <section className="container-site flex min-h-[60vh] flex-col items-start gap-5 py-20">
         <Paisley size="lg" />
         <h1 className="font-display text-display-md text-theme-ink">Order not found.</h1>
-        <p className="max-w-lg text-theme-ink/70">
+        <p className="text-theme-ink/70 max-w-lg">
           This order isn&rsquo;t on this device. If you placed it elsewhere, sign in to see it.
         </p>
         <Link
           href="/account"
-          className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
+          className="bg-theme-accent inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
         >
           Your orders
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -79,8 +79,8 @@ export function OrderDetail({ orderId }: { orderId: string }) {
       <div>
         {/* Success banner */}
         <Reveal>
-          <div className="flex items-center gap-3 rounded-full bg-theme-glow/20 px-4 py-2 text-sm text-theme-ink">
-            <Check className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+          <div className="bg-theme-glow/20 text-theme-ink flex items-center gap-3 rounded-full px-4 py-2 text-sm">
+            <Check className="text-theme-accent h-4 w-4" aria-hidden="true" />
             <span className="font-semibold">Order placed.</span>
             <span className="text-theme-ink/70">
               A confirmation is on its way to {order.address.email}.
@@ -89,13 +89,13 @@ export function OrderDetail({ orderId }: { orderId: string }) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <p className="mt-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent mt-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Order {order.number}
           </p>
         </Reveal>
         <Reveal delay={0.14}>
-          <h1 className="mt-2 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
             Thank you. We&rsquo;re on it.
           </h1>
         </Reveal>
@@ -132,7 +132,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </motion.div>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-theme-ink/80">
+                <p className="text-theme-ink/80 mt-2 text-xs font-semibold uppercase tracking-wider">
                   {STATUS_LABEL[s]}
                 </p>
               </li>
@@ -141,8 +141,8 @@ export function OrderDetail({ orderId }: { orderId: string }) {
         </ol>
 
         {/* Line items */}
-        <div className="mt-10 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-          <h2 className="font-display text-lg font-semibold text-theme-ink">Items</h2>
+        <div className="bg-surface-elevated mt-10 rounded-2xl border border-[color:var(--color-border)] p-5">
+          <h2 className="font-display text-theme-ink text-lg">Items</h2>
           <ul className="mt-4 flex flex-col divide-y divide-[color:var(--color-border)]">
             {order.lines.map((l) => (
               <li key={`${l.productId}-${l.variantId}`} className="flex gap-4 py-4">
@@ -155,15 +155,15 @@ export function OrderDetail({ orderId }: { orderId: string }) {
                   <div>
                     <Link
                       href={`/product/${l.productSlug}`}
-                      className="font-display text-base font-semibold text-theme-ink hover:text-theme-accent"
+                      className="font-display text-theme-ink hover:text-theme-accent text-base"
                     >
                       {l.productTitle}
                     </Link>
-                    <p className="text-xs text-theme-ink/60">
+                    <p className="text-theme-ink/60 text-xs">
                       {l.variantTitle} · × {l.quantity}
                     </p>
                   </div>
-                  <span className="font-semibold tabular-nums text-theme-ink">
+                  <span className="text-theme-ink font-semibold tabular-nums">
                     {formatMoney(l.lineTotal)}
                   </span>
                 </div>
@@ -175,14 +175,14 @@ export function OrderDetail({ orderId }: { orderId: string }) {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-5 py-2.5 text-sm font-semibold text-theme-ink transition-colors hover:border-theme-accent hover:text-theme-accent"
+            className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back to home
           </Link>
           <Link
             href="/account"
-            className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+            className="bg-theme-accent hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
           >
             Your orders
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -193,11 +193,11 @@ export function OrderDetail({ orderId }: { orderId: string }) {
       {/* Right: address + payment + total */}
       <aside aria-label="Order details">
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
+          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
               Shipping to
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-theme-ink/85">
+            <p className="text-theme-ink/85 mt-2 text-sm leading-relaxed">
               {order.address.name}
               <br />
               {order.address.line1}
@@ -208,31 +208,31 @@ export function OrderDetail({ orderId }: { orderId: string }) {
               {order.address.phone}
             </p>
           </div>
-          <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
+          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
               Payment
             </h3>
-            <p className="mt-2 text-sm text-theme-ink/85">
+            <p className="text-theme-ink/85 mt-2 text-sm">
               {order.payment.method.toUpperCase()} · ref{' '}
               <span className="font-mono text-xs">{order.payment.reference}</span>
             </p>
           </div>
-          <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-theme-ink/60">
+          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
               Totals
             </h3>
             <dl className="mt-2 space-y-1 text-sm">
               <div className="flex items-center justify-between">
                 <dt className="text-theme-ink/70">Subtotal</dt>
-                <dd className="tabular-nums text-theme-ink">{formatMoney(order.subtotal)}</dd>
+                <dd className="text-theme-ink tabular-nums">{formatMoney(order.subtotal)}</dd>
               </div>
               <div className="flex items-center justify-between">
                 <dt className="text-theme-ink/70">Shipping</dt>
-                <dd className="tabular-nums text-theme-ink">{formatMoney(order.shipping)}</dd>
+                <dd className="text-theme-ink tabular-nums">{formatMoney(order.shipping)}</dd>
               </div>
               <div className="flex items-center justify-between border-t border-[color:var(--color-border)] pt-2">
-                <dt className="font-semibold text-theme-ink">Total</dt>
-                <dd className="font-display text-xl font-semibold text-theme-accent tabular-nums">
+                <dt className="text-theme-ink font-semibold">Total</dt>
+                <dd className="font-display text-theme-accent text-xl tabular-nums">
                   {formatMoney(order.total)}
                 </dd>
               </div>

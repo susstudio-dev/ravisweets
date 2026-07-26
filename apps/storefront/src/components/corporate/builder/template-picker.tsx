@@ -82,8 +82,8 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
       <BuilderHero />
 
       <fieldset className="mt-8">
-        <legend className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
-          <Sparkles className="h-3.5 w-3.5 text-theme-accent" aria-hidden="true" />
+        <legend className="text-theme-ink/60 mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider">
+          <Sparkles className="text-theme-accent h-3.5 w-3.5" aria-hidden="true" />
           Start from a template
         </legend>
         <Stagger gap={70} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -98,15 +98,15 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                 onClick={() => handleClick(id)}
                 aria-pressed={active}
                 className={cn(
-                  'group relative flex flex-col gap-3 overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                  'focus-visible:ring-theme-accent group relative flex flex-col gap-3 overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2',
                   active
                     ? 'border-theme-accent bg-theme-glow/15 shadow-soft'
-                    : 'border-[color:var(--color-border)] bg-surface-elevated hover:-translate-y-1 hover:border-theme-accent hover:shadow-lifted',
+                    : 'bg-surface-elevated hover:border-theme-accent hover:shadow-lifted border-[color:var(--color-border)] hover:-translate-y-1',
                 )}
               >
                 <div className="absolute right-3 top-3 z-10">
                   <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white shadow-soft"
+                    className="shadow-soft rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white"
                     style={{ backgroundColor: visual.accent }}
                   >
                     {visual.badge}
@@ -114,7 +114,7 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                 </div>
 
                 {active && (
-                  <span className="absolute right-3 top-9 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-soft">
+                  <span className="bg-theme-accent shadow-soft absolute right-3 top-9 z-10 flex h-7 w-7 items-center justify-center rounded-full text-[color:var(--theme-base)]">
                     <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                   </span>
                 )}
@@ -133,16 +133,16 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                   >
                     <visual.icon className="h-4 w-4" aria-hidden="true" />
                   </span>
-                  <p className="font-display text-xl font-semibold text-theme-ink">{t.title}</p>
+                  <p className="font-display text-theme-ink text-xl">{t.title}</p>
                 </div>
 
-                <p className="text-xs leading-relaxed text-theme-ink/70">{t.description}</p>
+                <p className="text-theme-ink/70 text-xs leading-relaxed">{t.description}</p>
 
-                <p className="mt-auto flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
-                  <span className="font-display text-base text-theme-ink">{t.items.length}</span>
+                <p className="text-theme-ink/55 mt-auto flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
+                  <span className="font-display text-theme-ink text-base">{t.items.length}</span>
                   items
                   <span aria-hidden="true">·</span>
-                  <span className="font-display text-base text-theme-ink">{t.startingUnits}+</span>
+                  <span className="font-display text-theme-ink text-base">{t.startingUnits}+</span>
                   units
                 </p>
               </button>
@@ -171,32 +171,32 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
               onClick={() => setPending(null)}
             />
             <motion.div
-              className="relative z-10 max-w-md rounded-3xl border border-[color:var(--color-border)] bg-surface p-6 shadow-lifted"
+              className="bg-surface shadow-lifted relative z-10 max-w-md rounded-3xl border border-[color:var(--color-border)] p-6"
               initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
               animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
             >
-              <h2 id="tpl-confirm-title" className="font-display text-xl font-semibold text-theme-ink">
+              <h2 id="tpl-confirm-title" className="font-display text-theme-ink text-xl">
                 Replace current hamper?
               </h2>
-              <p className="mt-3 text-sm text-theme-ink/75">
+              <p className="text-theme-ink/75 mt-3 text-sm">
                 You have items in your hamper. Switching to the{' '}
-                <span className="font-semibold text-theme-ink">{TEMPLATES[pending].title}</span>{' '}
+                <span className="text-theme-ink font-semibold">{TEMPLATES[pending].title}</span>{' '}
                 template will replace them.
               </p>
               <div className="mt-6 flex flex-wrap justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setPending(null)}
-                  className="rounded-full border border-theme-ink/25 px-4 py-2 text-sm font-semibold text-theme-ink transition-colors hover:border-theme-accent hover:text-theme-accent"
+                  className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
                 >
                   Keep current
                 </button>
                 <button
                   type="button"
                   onClick={confirm}
-                  className="rounded-full bg-theme-accent px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+                  className="bg-theme-accent shadow-soft hover:shadow-lifted rounded-full px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Replace
                 </button>
@@ -214,14 +214,14 @@ function BuilderHero() {
   const reduced = useReducedMotion();
   return (
     <Reveal>
-      <div className="relative h-32 overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-gradient-to-br from-theme-glow/25 via-surface-elevated to-theme-accent/10 md:h-40">
+      <div className="from-theme-glow/25 via-surface-elevated to-theme-accent/10 relative h-32 overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-gradient-to-br md:h-40">
         {/* Floating motif row */}
         <div className="absolute inset-0 flex items-center justify-around px-6">
           {['◉', '✦', '❋', '◇', '✦', '◉', '❋'].map((motif, i) => (
             <motion.span
               key={i}
               aria-hidden="true"
-              className="font-display text-3xl text-theme-accent/35 md:text-4xl"
+              className="font-display text-theme-accent/35 text-3xl md:text-4xl"
               initial={reduced ? { opacity: 0.6 } : { y: 0, opacity: 0.4 }}
               animate={
                 reduced
@@ -253,22 +253,20 @@ function BuilderHero() {
           className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent"
           initial={{ x: 0 }}
           animate={reduced ? {} : { x: ['0%', '300%'] }}
-          transition={
-            reduced ? {} : { duration: 6, repeat: Infinity, ease: 'linear', delay: 1 }
-          }
+          transition={reduced ? {} : { duration: 6, repeat: Infinity, ease: 'linear', delay: 1 }}
           style={{ filter: 'blur(20px)' }}
         />
 
         <div className="relative z-10 flex h-full items-center justify-between px-6 md:px-8">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
               Step 1
             </p>
-            <p className="mt-1 font-display text-lg font-semibold text-theme-ink md:text-xl">
+            <p className="font-display text-theme-ink mt-1 text-lg md:text-xl">
               Pick the box that fits your story.
             </p>
           </div>
-          <span className="hidden h-12 w-12 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-lifted md:flex">
+          <span className="bg-theme-accent shadow-lifted hidden h-12 w-12 items-center justify-center rounded-full text-[color:var(--theme-base)] md:flex">
             <Gift className="h-5 w-5" aria-hidden="true" />
           </span>
         </div>
@@ -294,7 +292,7 @@ function TemplateVisual({
     >
       <svg
         viewBox="0 0 160 100"
-        className="h-full w-auto motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-105"
+        className="h-full w-auto group-hover:scale-105 motion-safe:transition-transform motion-safe:duration-500"
         aria-hidden="true"
       >
         {/* Box body */}
@@ -353,9 +351,36 @@ function TemplateVisual({
         )}
         {pattern === 'blank' && (
           <>
-            <line x1="44" y1="58" x2="116" y2="58" stroke={glow} strokeWidth="0.6" opacity="0.4" strokeDasharray="3 4" />
-            <line x1="44" y1="68" x2="116" y2="68" stroke={glow} strokeWidth="0.6" opacity="0.4" strokeDasharray="3 4" />
-            <line x1="44" y1="78" x2="116" y2="78" stroke={glow} strokeWidth="0.6" opacity="0.4" strokeDasharray="3 4" />
+            <line
+              x1="44"
+              y1="58"
+              x2="116"
+              y2="58"
+              stroke={glow}
+              strokeWidth="0.6"
+              opacity="0.4"
+              strokeDasharray="3 4"
+            />
+            <line
+              x1="44"
+              y1="68"
+              x2="116"
+              y2="68"
+              stroke={glow}
+              strokeWidth="0.6"
+              opacity="0.4"
+              strokeDasharray="3 4"
+            />
+            <line
+              x1="44"
+              y1="78"
+              x2="116"
+              y2="78"
+              stroke={glow}
+              strokeWidth="0.6"
+              opacity="0.4"
+              strokeDasharray="3 4"
+            />
           </>
         )}
         {/* Bow */}

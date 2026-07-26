@@ -99,18 +99,15 @@ export function CustomisationPanel({
   return (
     <section
       aria-labelledby="custom-heading"
-      className="flex flex-col gap-5 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5"
+      className="bg-surface-elevated flex flex-col gap-5 rounded-2xl border border-[color:var(--color-border)] p-5"
     >
-      <h2
-        id="custom-heading"
-        className="font-display text-lg font-semibold text-theme-ink"
-      >
+      <h2 id="custom-heading" className="font-display text-theme-ink text-lg">
         Customise
       </h2>
 
       {/* Ribbon */}
       <fieldset>
-        <legend className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+        <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
           Ribbon colour
         </legend>
         <div className="flex flex-wrap gap-2">
@@ -124,9 +121,9 @@ export function CustomisationPanel({
                 aria-pressed={active}
                 aria-label={`Ribbon colour: ${r.label}`}
                 className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                  'focus-visible:ring-theme-accent flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
                   active
-                    ? 'border-theme-accent ring-2 ring-theme-accent/30'
+                    ? 'border-theme-accent ring-theme-accent/30 ring-2'
                     : 'border-[color:var(--color-border)] hover:-translate-y-0.5',
                 )}
                 title={r.label}
@@ -140,7 +137,7 @@ export function CustomisationPanel({
 
       {/* Box finish */}
       <fieldset>
-        <legend className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+        <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
           Box finish
         </legend>
         <div className="flex flex-col gap-2">
@@ -153,7 +150,7 @@ export function CustomisationPanel({
                   'flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-all',
                   active
                     ? 'border-theme-accent bg-theme-glow/10'
-                    : 'border-[color:var(--color-border)] bg-surface hover:-translate-y-0.5 hover:border-theme-accent',
+                    : 'bg-surface hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
                 )}
               >
                 <input
@@ -162,11 +159,11 @@ export function CustomisationPanel({
                   value={f.id}
                   checked={active}
                   onChange={() => onBoxChange(f.id)}
-                  className="mt-1 h-4 w-4 text-theme-accent focus:ring-theme-accent"
+                  className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4"
                 />
                 <div>
-                  <p className="text-sm font-semibold text-theme-ink">{f.label}</p>
-                  <p className="text-xs text-theme-ink/60">{f.sub}</p>
+                  <p className="text-theme-ink text-sm font-semibold">{f.label}</p>
+                  <p className="text-theme-ink/60 text-xs">{f.sub}</p>
                 </div>
               </label>
             );
@@ -176,7 +173,7 @@ export function CustomisationPanel({
 
       {/* Logo print + upload */}
       <div>
-        <label className="flex items-start gap-2 text-sm text-theme-ink">
+        <label className="text-theme-ink flex items-start gap-2 text-sm">
           <input
             type="checkbox"
             checked={logoPrint}
@@ -184,11 +181,11 @@ export function CustomisationPanel({
               onLogoToggle(e.target.checked);
               if (!e.target.checked) clearLogo();
             }}
-            className="mt-1 h-4 w-4 rounded border-[color:var(--color-border)] text-theme-accent focus:ring-theme-accent"
+            className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4 rounded border-[color:var(--color-border)]"
           />
           <span>
             <span className="font-semibold">Logo printing</span>
-            <span className="ml-1 text-xs text-theme-ink/60">
+            <span className="text-theme-ink/60 ml-1 text-xs">
               — our design team prints your logo on the packaging
             </span>
           </span>
@@ -202,7 +199,7 @@ export function CustomisationPanel({
             </p>
 
             {logoDataUrl ? (
-              <div className="flex items-center gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface p-3">
+              <div className="bg-surface flex items-center gap-3 rounded-xl border border-[color:var(--color-border)] p-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={logoDataUrl}
@@ -210,13 +207,13 @@ export function CustomisationPanel({
                   className="h-16 w-16 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1.5"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+                  <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.18em]">
                     Uploaded
                   </p>
-                  <p className="truncate text-sm font-medium text-theme-ink">
+                  <p className="text-theme-ink truncate text-sm font-medium">
                     {logoName ?? 'logo'}
                   </p>
-                  <p className="text-[11px] text-theme-ink/55">
+                  <p className="text-theme-ink/55 text-[11px]">
                     PNG/SVG preferred · 1:1 ratio prints sharpest on the box lid
                   </p>
                 </div>
@@ -224,18 +221,18 @@ export function CustomisationPanel({
                   type="button"
                   onClick={clearLogo}
                   aria-label="Remove uploaded logo"
-                  className="rounded-full p-1.5 text-theme-ink/55 transition-colors hover:bg-red-500/10 hover:text-red-700"
+                  className="text-theme-ink/55 rounded-full p-1.5 transition-colors hover:bg-red-500/10 hover:text-red-700"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             ) : (
-              <label className="flex cursor-pointer flex-col items-start gap-1 rounded-xl border border-dashed border-[color:var(--color-border)] bg-surface px-4 py-3 transition-colors hover:border-theme-accent hover:bg-theme-glow/10">
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-theme-ink">
-                  <Upload className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+              <label className="bg-surface hover:border-theme-accent hover:bg-theme-glow/10 flex cursor-pointer flex-col items-start gap-1 rounded-xl border border-dashed border-[color:var(--color-border)] px-4 py-3 transition-colors">
+                <span className="text-theme-ink inline-flex items-center gap-2 text-sm font-semibold">
+                  <Upload className="text-theme-accent h-4 w-4" aria-hidden="true" />
                   Upload your logo
                 </span>
-                <span className="text-[11px] text-theme-ink/60">
+                <span className="text-theme-ink/60 text-[11px]">
                   PNG, SVG, JPG or WebP · max 512 KB · vectors print sharpest
                 </span>
                 <input
@@ -260,7 +257,7 @@ export function CustomisationPanel({
       {/* Personalised message */}
       <div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+          <span className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
             <Type className="mr-1 inline h-3 w-3" aria-hidden="true" />
             Personalised message (optional)
           </span>
@@ -270,10 +267,10 @@ export function CustomisationPanel({
             placeholder="A short message printed on the enclosed card."
             rows={3}
             className={cn(
-              'rounded-xl border bg-surface px-3 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 transition-colors focus-visible:outline-none focus-visible:ring-2',
+              'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
               overLimit
                 ? 'border-red-600 focus-visible:border-red-600 focus-visible:ring-red-600/30'
-                : 'border-[color:var(--color-border)] focus-visible:border-theme-accent focus-visible:ring-theme-accent/30',
+                : 'focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 border-[color:var(--color-border)]',
             )}
           />
           <span

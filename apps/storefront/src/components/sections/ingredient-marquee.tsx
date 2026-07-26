@@ -23,8 +23,7 @@ const INGREDIENTS = [
   'Milk',
 ];
 
-const MACRO =
-  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
+const MACRO = 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
 
 /**
  * A foreground product macro with a slow-moving horizontal marquee of ingredient
@@ -57,9 +56,12 @@ export function IngredientMarquee() {
       }}
     >
       {/* Background marquee layers (decorative, aria-hidden) */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-center gap-4" aria-hidden="true">
+      <div
+        className="pointer-events-none absolute inset-0 flex flex-col justify-center gap-4"
+        aria-hidden="true"
+      >
         <motion.div
-          className="flex shrink-0 whitespace-nowrap font-display text-[18vw] font-semibold italic leading-[0.95] text-theme-accent/10 md:text-[14vw]"
+          className="font-display text-theme-accent/10 flex shrink-0 whitespace-nowrap text-[18vw] italic leading-[0.95] md:text-[14vw]"
           style={reduced ? undefined : { x: marqueeX }}
         >
           {/* Doubled so the track wraps seamlessly */}
@@ -67,7 +69,7 @@ export function IngredientMarquee() {
           <span className="pr-16">{INGREDIENTS.join(' · ')}</span>
         </motion.div>
         <motion.div
-          className="flex shrink-0 whitespace-nowrap font-display text-[12vw] font-normal leading-[0.9] text-theme-ink/8 md:text-[9vw]"
+          className="font-display text-theme-ink/8 flex shrink-0 whitespace-nowrap text-[12vw] font-normal leading-[0.9] md:text-[9vw]"
           style={reduced ? undefined : { x: marqueeXReverse }}
         >
           <span className="pr-16">{INGREDIENTS.slice().reverse().join(' · ')}</span>
@@ -79,7 +81,7 @@ export function IngredientMarquee() {
       <div className="container-site relative grid gap-10 md:grid-cols-[1fr_1.1fr] md:items-center md:gap-16">
         <div className="flex flex-col gap-4 md:max-w-md">
           <Reveal>
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               Ingredient list, unedited
             </p>
@@ -87,7 +89,7 @@ export function IngredientMarquee() {
           <Reveal delay={0.08}>
             <h2
               id="ingredient-heading"
-              className="font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg"
+              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.02]"
             >
               What you read is what&rsquo;s in the bowl.
             </h2>
@@ -102,7 +104,7 @@ export function IngredientMarquee() {
           <Reveal delay={0.24}>
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 self-start rounded-full border border-theme-ink/25 px-5 py-2.5 text-sm font-semibold text-theme-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-theme-accent hover:text-theme-accent"
+              className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent group inline-flex items-center gap-2 self-start rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
             >
               Read the kitchen rules
               <ArrowRight
@@ -115,7 +117,7 @@ export function IngredientMarquee() {
 
         <motion.div
           style={reduced ? undefined : { y: macroY }}
-          className="relative aspect-[5/6] w-full max-w-lg justify-self-center overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]"
+          className="shadow-lifted relative aspect-[5/6] w-full max-w-lg justify-self-center overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)]"
         >
           <Image
             src={MACRO}

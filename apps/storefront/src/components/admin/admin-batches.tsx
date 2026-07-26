@@ -103,17 +103,17 @@ export function AdminBatches() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           <Beaker className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
           Batches
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">
           Kitchen production log.
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-theme-ink/65">
-          Every kitchen run is a batch with a lot number, made-on, and
-          expires-on. Phase D adds FIFO order picking — orders consume from the
-          oldest batch first. For now this is the FSSAI audit log.
+        <p className="text-theme-ink/65 mt-2 max-w-2xl text-sm">
+          Every kitchen run is a batch with a lot number, made-on, and expires-on. Phase D adds FIFO
+          order picking — orders consume from the oldest batch first. For now this is the FSSAI
+          audit log.
         </p>
       </header>
 
@@ -123,19 +123,22 @@ export function AdminBatches() {
         </div>
       )}
 
-      <form onSubmit={onCreate} className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <form
+        onSubmit={onCreate}
+        className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
+      >
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Log a new batch
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           <label className="flex flex-col gap-1 md:col-span-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Variant
             </span>
             <select
               value={variantId}
               onChange={(e) => setVariantId(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               <option value="">Pick a variant…</option>
               {variants.map((v) => (
@@ -146,7 +149,7 @@ export function AdminBatches() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Lot number
             </span>
             <input
@@ -154,33 +157,33 @@ export function AdminBatches() {
               value={lotNumber}
               onChange={(e) => setLotNumber(e.target.value)}
               placeholder="auto"
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm font-mono"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Made on
             </span>
             <input
               type="date"
               value={madeOn}
               onChange={(e) => setMadeOn(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Expires on
             </span>
             <input
               type="date"
               value={expiresOn}
               onChange={(e) => setExpiresOn(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Quantity
             </span>
             <input
@@ -188,17 +191,17 @@ export function AdminBatches() {
               min={1}
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm font-mono"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Location
             </span>
             <select
               value={location}
               onChange={(e) => setLocation(e.target.value as StoreLocation)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               {STORE_LOCATIONS.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -208,7 +211,7 @@ export function AdminBatches() {
             </select>
           </label>
           <label className="flex flex-col gap-1 md:col-span-3">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Notes (optional)
             </span>
             <input
@@ -216,7 +219,7 @@ export function AdminBatches() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Kitchen team note (e.g. 'extra cardamom this batch')"
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
@@ -224,24 +227,24 @@ export function AdminBatches() {
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-accent px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
+            className="bg-theme-accent inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
           >
             <Plus className="h-3.5 w-3.5" aria-hidden="true" />
             Log batch
           </button>
-          {feedback && <p className="text-xs text-theme-ink/70">{feedback}</p>}
+          {feedback && <p className="text-theme-ink/70 text-xs">{feedback}</p>}
         </div>
       </form>
 
       {/* Batch list — sorted by expiry */}
       <section>
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           All batches (FIFO order — soonest expiry first)
         </h2>
         {loading ? (
-          <div className="mt-3 h-12 w-32 animate-pulse rounded bg-theme-ink/10" />
+          <div className="bg-theme-ink/10 mt-3 h-12 w-32 animate-pulse rounded" />
         ) : batches.length === 0 ? (
-          <p className="mt-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm text-theme-ink/55">
+          <p className="text-theme-ink/55 mt-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm">
             No batches logged yet.
           </p>
         ) : (
@@ -258,15 +261,15 @@ export function AdminBatches() {
                   className={`flex items-center justify-between gap-3 rounded-xl border p-3 text-sm ${
                     expiringSoon
                       ? 'border-red-500/40 bg-red-500/5'
-                      : 'border-[color:var(--color-border)] bg-surface-elevated'
+                      : 'bg-surface-elevated border-[color:var(--color-border)]'
                   }`}
                 >
                   <div className="min-w-0">
-                    <p className="font-mono text-xs font-semibold text-theme-ink">{b.lot_number}</p>
-                    <p className="text-[11px] text-theme-ink/65">
+                    <p className="text-theme-ink font-mono text-xs font-semibold">{b.lot_number}</p>
+                    <p className="text-theme-ink/65 text-[11px]">
                       {b.variant_id} · {b.location}
                     </p>
-                    <p className="mt-1 text-[11px] text-theme-ink/55">
+                    <p className="text-theme-ink/55 mt-1 text-[11px]">
                       Made {b.made_on} · Expires {b.expires_on}
                       {expiringSoon && (
                         <span className="ml-1 font-semibold text-red-700">
@@ -276,10 +279,8 @@ export function AdminBatches() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-mono text-base font-semibold text-theme-ink">
-                      {remaining}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-wider text-theme-ink/55">
+                    <p className="text-theme-ink font-mono text-base font-semibold">{remaining}</p>
+                    <p className="text-theme-ink/55 text-[10px] uppercase tracking-wider">
                       of {b.quantity}
                     </p>
                   </div>

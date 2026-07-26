@@ -93,9 +93,7 @@ const POLICIES: Record<Slug, Policy> = {
       },
       {
         heading: 'If an order is wrong',
-        body: [
-          'Contact us within 7 days and we’ll make it right — free re-ship or refund.',
-        ],
+        body: ['Contact us within 7 days and we’ll make it right — free re-ship or refund.'],
       },
       {
         heading: 'Refund timelines',
@@ -177,11 +175,7 @@ export async function generateMetadata({
   return { title: p.title, description: p.intro };
 }
 
-export default async function PolicyPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function PolicyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = POLICIES[slug as Slug];
   if (!p) notFound();
@@ -191,7 +185,7 @@ export default async function PolicyPage({
       <div className="mb-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60 transition-colors hover:text-theme-accent"
+          className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back to home
@@ -199,28 +193,26 @@ export default async function PolicyPage({
       </div>
 
       <Reveal>
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
           <Paisley size="sm" />
           {p.eyebrow}
         </p>
       </Reveal>
       <Reveal delay={0.06}>
-        <h1 className="mt-3 max-w-3xl font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+        <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 max-w-3xl leading-[1.02]">
           {p.title}
         </h1>
       </Reveal>
       <Reveal delay={0.12}>
-        <p className="mt-6 max-w-3xl text-lg leading-relaxed text-theme-ink/80">{p.intro}</p>
+        <p className="text-theme-ink/80 mt-6 max-w-3xl text-lg leading-relaxed">{p.intro}</p>
       </Reveal>
 
       <div className="mt-12 grid gap-10">
         {p.sections.map((s, i) => (
           <Reveal key={s.heading} delay={0.05 + i * 0.06}>
             <section>
-              <h2 className="font-display text-heading font-semibold text-theme-ink">
-                {s.heading}
-              </h2>
-              <ul className="mt-3 flex flex-col gap-2 text-theme-ink/80">
+              <h2 className="font-display text-heading text-theme-ink">{s.heading}</h2>
+              <ul className="text-theme-ink/80 mt-3 flex flex-col gap-2">
                 {s.body.map((b, j) => (
                   <li key={j} className="leading-relaxed">
                     {b}
@@ -232,7 +224,7 @@ export default async function PolicyPage({
         ))}
       </div>
 
-      <p className="mt-14 text-xs text-theme-ink/55">Last updated {p.updated}.</p>
+      <p className="text-theme-ink/55 mt-14 text-xs">Last updated {p.updated}.</p>
     </article>
   );
 }

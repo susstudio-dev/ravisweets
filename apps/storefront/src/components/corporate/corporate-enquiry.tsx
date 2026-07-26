@@ -177,7 +177,10 @@ export function CorporateEnquiry() {
       if (!/^\+?\d{10,13}$/.test(form.phone.replace(/\s/g, ''))) {
         next.phone = 'Phone must be 10–13 digits';
       }
-      if (form.gstin && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(form.gstin)) {
+      if (
+        form.gstin &&
+        !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(form.gstin)
+      ) {
         next.gstin = 'Invalid GSTIN format';
       }
     }
@@ -215,7 +218,6 @@ export function CorporateEnquiry() {
           builderState: searchParams.get('state') ?? undefined,
         });
         if (!result.ok) {
-
           console.warn('Supabase enquiry insert failed:', result.reason);
         }
       }
@@ -230,32 +232,33 @@ export function CorporateEnquiry() {
         initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
-        className="rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-10 text-center shadow-soft"
+        className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-10 text-center"
       >
-        <CheckCircle2 className="mx-auto h-12 w-12 text-theme-accent" aria-hidden="true" />
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <CheckCircle2 className="text-theme-accent mx-auto h-12 w-12" aria-hidden="true" />
+        <p className="text-theme-accent mt-3 text-[11px] font-semibold uppercase tracking-[0.18em]">
           Enquiry received
         </p>
-        <h2 className="mt-2 font-display text-3xl font-semibold text-theme-ink">
+        <h2 className="font-display text-theme-ink mt-2 text-3xl">
           Thank you, {form.name || 'there'}.
         </h2>
-        <p className="mt-3 max-w-xl mx-auto text-theme-ink/75">
-          Your reference code is <span className="font-mono font-semibold text-theme-accent">{refCode}</span>.
-          Our corporate team will respond within one business day to {form.email}.
+        <p className="text-theme-ink/75 mx-auto mt-3 max-w-xl">
+          Your reference code is{' '}
+          <span className="text-theme-accent font-mono font-semibold">{refCode}</span>. Our
+          corporate team will respond within one business day to {form.email}.
         </p>
       </motion.div>
     );
   }
 
   return (
-    <div className="rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft md:p-10">
+    <div className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-6 md:p-10">
       <div className="flex items-center gap-2">
         <Paisley size="sm" />
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]">
           Tell us what you&rsquo;re planning
         </p>
       </div>
-      <h2 className="mt-2 font-display text-2xl font-semibold text-theme-ink md:text-3xl">
+      <h2 className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">
         {STEP_LABEL[step].title}
       </h2>
 
@@ -276,13 +279,13 @@ export function CorporateEnquiry() {
                   'flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors',
                   isCurrent && 'bg-theme-accent text-[color:var(--theme-base)]',
                   !isCurrent && i <= idx && 'bg-theme-glow/15 text-theme-ink',
-                  i > idx && 'cursor-not-allowed text-theme-ink/40',
+                  i > idx && 'text-theme-ink/40 cursor-not-allowed',
                 )}
               >
                 <span
                   className={cn(
                     'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
-                    isCurrent && 'bg-[color:var(--theme-base)] text-theme-accent',
+                    isCurrent && 'text-theme-accent bg-[color:var(--theme-base)]',
                     !isCurrent && isDone && 'bg-theme-accent text-[color:var(--theme-base)]',
                     !isCurrent && !isDone && 'border border-[color:var(--color-border)]',
                   )}
@@ -308,27 +311,29 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-6"
             >
-              <p className="text-sm text-theme-ink/70">
+              <p className="text-theme-ink/70 text-sm">
                 What&rsquo;s the occasion? Picking one helps us suggest the right hampers.
               </p>
               <div className="grid gap-3 sm:grid-cols-3">
-                {(['diwali', 'wedding', 'corporate', 'eid', 'rakhi', 'other'] as Occasion[]).map((o) => (
-                  <button
-                    key={o}
-                    type="button"
-                    onClick={() => update('occasion', o)}
-                    className={cn(
-                      'rounded-xl border px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft',
-                      form.occasion === o
-                        ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                        : 'border-[color:var(--color-border)] bg-surface text-theme-ink/85',
-                    )}
-                  >
-                    <p className="font-display text-base font-semibold capitalize">
-                      {o === 'rakhi' ? 'Raksha Bandhan' : o}
-                    </p>
-                  </button>
-                ))}
+                {(['diwali', 'wedding', 'corporate', 'eid', 'rakhi', 'other'] as Occasion[]).map(
+                  (o) => (
+                    <button
+                      key={o}
+                      type="button"
+                      onClick={() => update('occasion', o)}
+                      className={cn(
+                        'hover:shadow-soft rounded-xl border px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5',
+                        form.occasion === o
+                          ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
+                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
+                      )}
+                    >
+                      <p className="font-display text-base capitalize">
+                        {o === 'rakhi' ? 'Raksha Bandhan' : o}
+                      </p>
+                    </button>
+                  ),
+                )}
               </div>
               {errors.occasion && (
                 <p className="text-xs font-medium text-[#c0392b]">{errors.occasion}</p>
@@ -339,7 +344,7 @@ export function CorporateEnquiry() {
                   type="date"
                   value={form.eventDate}
                   onChange={(e) => update('eventDate', e.target.value)}
-                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </Field>
             </motion.div>
@@ -354,7 +359,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-5"
             >
-              <p className="text-sm text-theme-ink/70">
+              <p className="text-theme-ink/70 text-sm">
                 Roughly how many hampers, and what&rsquo;s your per-unit budget?
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -367,7 +372,7 @@ export function CorporateEnquiry() {
                     placeholder="e.g. 100"
                     value={form.quantity}
                     onChange={(e) => update('quantity', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
                 <Field label="Per-unit budget (₹)" htmlFor="budget">
@@ -378,7 +383,7 @@ export function CorporateEnquiry() {
                     placeholder="e.g. 1500"
                     value={form.budgetPerUnit}
                     onChange={(e) => update('budgetPerUnit', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
               </div>
@@ -393,7 +398,7 @@ export function CorporateEnquiry() {
                         'rounded-lg border px-3 py-2 text-sm transition-colors',
                         form.hamperTier === t
                           ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                          : 'border-[color:var(--color-border)] bg-surface text-theme-ink/85',
+                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
                       )}
                     >
                       {t === 'custom' ? 'Custom build' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -402,11 +407,11 @@ export function CorporateEnquiry() {
                 </div>
               </Field>
               {form.fromBuilderSummary && (
-                <details className="rounded-lg border border-[color:var(--color-border)] bg-surface p-3 text-sm">
-                  <summary className="cursor-pointer font-semibold text-theme-ink">
+                <details className="bg-surface rounded-lg border border-[color:var(--color-border)] p-3 text-sm">
+                  <summary className="text-theme-ink cursor-pointer font-semibold">
                     Loaded from builder
                   </summary>
-                  <pre className="mt-2 whitespace-pre-wrap text-xs text-theme-ink/70">
+                  <pre className="text-theme-ink/70 mt-2 whitespace-pre-wrap text-xs">
                     {form.fromBuilderSummary}
                   </pre>
                 </details>
@@ -423,7 +428,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-5"
             >
-              <p className="text-sm text-theme-ink/70">
+              <p className="text-theme-ink/70 text-sm">
                 How should we deliver, and would you like the box customised?
               </p>
               <Field label="Delivery">
@@ -437,13 +442,13 @@ export function CorporateEnquiry() {
                         'rounded-lg border px-3 py-3 text-left text-sm transition-colors',
                         form.deliveryMode === m
                           ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                          : 'border-[color:var(--color-border)] bg-surface text-theme-ink/85',
+                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
                       )}
                     >
                       <span className="block font-semibold">
                         {m === 'single' ? 'Single address' : 'Multi-address (CSV)'}
                       </span>
-                      <span className="block text-xs text-theme-ink/60">
+                      <span className="text-theme-ink/60 block text-xs">
                         {m === 'single'
                           ? 'One bulk delivery to your office'
                           : 'Per-recipient with tracking links'}
@@ -458,7 +463,7 @@ export function CorporateEnquiry() {
                   type="date"
                   value={form.deliveryDate}
                   onChange={(e) => update('deliveryDate', e.target.value)}
-                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </Field>
               <Field label="Customisation">
@@ -468,9 +473,9 @@ export function CorporateEnquiry() {
                       type="checkbox"
                       checked={form.logoPrint}
                       onChange={(e) => update('logoPrint', e.target.checked)}
-                      className="h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+                      className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
                     />
-                    <PaintBucket className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+                    <PaintBucket className="text-theme-accent h-4 w-4" aria-hidden="true" />
                     Add our logo to the box
                   </label>
                   <Field label="Personalised note (max 240 chars)" htmlFor="personalNote">
@@ -480,7 +485,7 @@ export function CorporateEnquiry() {
                       maxLength={240}
                       onChange={(e) => update('personalNote', e.target.value)}
                       rows={3}
-                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                       placeholder="From all of us at Acme Pvt Ltd…"
                     />
                   </Field>
@@ -490,7 +495,7 @@ export function CorporateEnquiry() {
                       value={form.customisation}
                       onChange={(e) => update('customisation', e.target.value)}
                       rows={3}
-                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                       placeholder="Dietary restrictions, special wrap, ribbon colour, etc."
                     />
                   </Field>
@@ -508,8 +513,9 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-4"
             >
-              <p className="text-sm text-theme-ink/70">
-                Where should we send the quote? GSTIN is optional but unlocks GST-compliant invoicing.
+              <p className="text-theme-ink/70 text-sm">
+                Where should we send the quote? GSTIN is optional but unlocks GST-compliant
+                invoicing.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Your name" htmlFor="name" error={errors.name}>
@@ -518,7 +524,7 @@ export function CorporateEnquiry() {
                     type="text"
                     value={form.name}
                     onChange={(e) => update('name', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
                 <Field label="Company / business" htmlFor="company">
@@ -527,7 +533,7 @@ export function CorporateEnquiry() {
                     type="text"
                     value={form.company}
                     onChange={(e) => update('company', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
                 <Field label="Email" htmlFor="email" error={errors.email}>
@@ -536,7 +542,7 @@ export function CorporateEnquiry() {
                     type="email"
                     value={form.email}
                     onChange={(e) => update('email', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
                 <Field label="Phone" htmlFor="phone" error={errors.phone}>
@@ -547,7 +553,7 @@ export function CorporateEnquiry() {
                     placeholder="+91 90000 00000"
                     value={form.phone}
                     onChange={(e) => update('phone', e.target.value)}
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
                 <Field label="GSTIN (optional)" htmlFor="gstin" error={errors.gstin}>
@@ -557,16 +563,16 @@ export function CorporateEnquiry() {
                     value={form.gstin}
                     onChange={(e) => update('gstin', e.target.value.toUpperCase())}
                     placeholder="22ABCDE1234F1Z5"
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-sm uppercase text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm uppercase focus-visible:outline-none focus-visible:ring-2"
                   />
                 </Field>
               </div>
-              <label className="flex items-start gap-2 text-xs text-theme-ink/65">
+              <label className="text-theme-ink/65 flex items-start gap-2 text-xs">
                 <input
                   type="checkbox"
                   checked={form.marketingConsent}
                   onChange={(e) => update('marketingConsent', e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-theme-ink/30 text-theme-accent focus:ring-theme-accent"
+                  className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded"
                 />
                 <span>
                   I&rsquo;d like occasional updates on seasonal hampers and corporate runs.
@@ -579,11 +585,11 @@ export function CorporateEnquiry() {
       </div>
 
       {/* Help row */}
-      <div className="mt-8 flex items-start gap-2 rounded-lg border border-dashed border-[color:var(--color-border)] p-3 text-xs text-theme-ink/65">
-        <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+      <div className="text-theme-ink/65 mt-8 flex items-start gap-2 rounded-lg border border-dashed border-[color:var(--color-border)] p-3 text-xs">
+        <HelpCircle className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         <span>
-          Your draft is saved automatically — refreshing won&rsquo;t lose your progress.
-          {' '}MOQ is 25 hampers; lead time is 7–10 business days from confirmation.
+          Your draft is saved automatically — refreshing won&rsquo;t lose your progress. MOQ is 25
+          hampers; lead time is 7–10 business days from confirmation.
         </span>
       </div>
 
@@ -593,7 +599,7 @@ export function CorporateEnquiry() {
           type="button"
           onClick={prevStep}
           disabled={idx === 0}
-          className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold text-theme-ink/80 transition-colors hover:border-theme-accent hover:text-theme-accent disabled:cursor-not-allowed disabled:opacity-40"
+          className="text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
@@ -602,17 +608,20 @@ export function CorporateEnquiry() {
           <button
             type="button"
             onClick={nextStep}
-            className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
           >
             Continue
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
           </button>
         ) : (
           <button
             type="button"
             onClick={submit}
             disabled={state === 'pending'}
-            className="group inline-flex items-center gap-2 rounded-full bg-theme-ink px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-ink shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Send className="h-4 w-4" aria-hidden="true" />
             Send enquiry
@@ -638,7 +647,7 @@ function Field({
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={htmlFor}
-        className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65"
+        className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider"
       >
         {label}
       </label>

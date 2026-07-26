@@ -26,13 +26,7 @@ export function SignatureMoment() {
       style={{ backgroundColor: '#1a0e05' }}
     >
       <MaskReveal direction="left" className="absolute inset-0 -z-10">
-        <Image
-          src={m.image.url}
-          alt={m.image.alt}
-          fill
-          sizes="100vw"
-          className="object-cover"
-        />
+        <Image src={m.image.url} alt={m.image.alt} fill sizes="100vw" className="object-cover" />
       </MaskReveal>
 
       {/* Gradient mask: opaque ink at bottom, transparent at ~55% */}
@@ -60,17 +54,22 @@ export function SignatureMoment() {
         <Reveal>
           <p className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#f2c66f]">
             <Paisley size="sm" color="#f2c66f" />
-            <span className="text-base font-normal normal-case tracking-normal" style={{ fontFamily: 'var(--font-indic)' }}>
+            <span
+              className="text-base font-normal normal-case tracking-normal"
+              style={{ fontFamily: 'var(--font-indic)' }}
+            >
               {m.copy.eyebrow_indic}
             </span>
-            <span aria-hidden="true" className="opacity-50">·</span>
+            <span aria-hidden="true" className="opacity-50">
+              ·
+            </span>
             <span>{m.copy.eyebrow_en}</span>
           </p>
         </Reveal>
 
         <h2
           id="signature-heading"
-          className="font-display text-display-lg font-semibold leading-[1.02] text-[#fdf6ec] md:text-display-xl"
+          className="font-display text-display-lg md:text-display-xl leading-[1.02] text-[#fdf6ec]"
         >
           <TextKinetic as="span" text={m.copy.headline} split="word" gap={55} />{' '}
           <span className="block italic text-[#f2c66f]">

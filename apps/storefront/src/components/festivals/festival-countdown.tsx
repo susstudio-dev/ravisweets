@@ -24,7 +24,13 @@ function diff(targetIso: string): Parts {
   return { days, hours, minutes, seconds, past: false };
 }
 
-export function FestivalCountdown({ target, accentColor }: { target: string; accentColor: string }) {
+export function FestivalCountdown({
+  target,
+  accentColor,
+}: {
+  target: string;
+  accentColor: string;
+}) {
   const [parts, setParts] = useState<Parts | null>(null);
 
   useEffect(() => {
@@ -85,7 +91,7 @@ export function FestivalCountdown({ target, accentColor }: { target: string; acc
       {entries.map(([label, v]) => (
         <div key={label} className="flex flex-col items-start gap-0.5">
           <span
-            className="font-display text-4xl font-semibold tabular-nums md:text-5xl"
+            className="font-display text-4xl tabular-nums md:text-5xl"
             style={{ color: accentColor }}
           >
             {String(v).padStart(2, '0')}

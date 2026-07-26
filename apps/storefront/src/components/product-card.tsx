@@ -40,7 +40,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
   return (
     <HoverLift className="h-full">
       <CursorGlow
-        className="group relative h-full overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated shadow-soft transition-shadow duration-300 hover:shadow-lifted"
+        className="bg-surface-elevated shadow-soft hover:shadow-lifted group relative h-full overflow-hidden rounded-2xl border border-[color:var(--color-border)] transition-shadow duration-300"
         color={theme_palette.glow}
       >
         <Link
@@ -72,7 +72,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
                 can see, so it belongs above bestseller / new. */}
             <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
               {onSale && (
-                <span className="rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-soft">
+                <span className="shadow-soft rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                   {effective.label
                     ? effective.label
                     : effective.percentOff
@@ -89,7 +89,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
                 </span>
               )}
               {product.new && (
-                <span className="rounded-full bg-theme-ink px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--theme-base)]">
+                <span className="bg-theme-ink rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--theme-base)]">
                   New
                 </span>
               )}
@@ -103,33 +103,25 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
             </div>
           </motion.div>
           <div className="flex flex-1 flex-col gap-1.5 p-4">
-            <h3 className="font-display text-lg font-semibold leading-snug text-theme-ink">
-              {product.title}
-            </h3>
-            <p className="line-clamp-2 text-sm text-theme-ink/70">{product.description}</p>
+            <h3 className="font-display text-theme-ink text-lg leading-snug">{product.title}</h3>
+            <p className="text-theme-ink/70 line-clamp-2 text-sm">{product.description}</p>
             <div className="mt-auto flex items-end justify-between gap-2 pt-3">
               <div className="flex flex-col">
                 {onSale && effective.salePrice !== null ? (
                   <span className="flex items-baseline gap-1.5">
-                    <span
-                      className="font-display text-lg font-semibold"
-                      style={{ color: theme_palette.accent }}
-                    >
+                    <span className="font-display text-lg" style={{ color: theme_palette.accent }}>
                       {formatMoney({ amount: effective.salePrice, currency: 'INR' })}
                     </span>
-                    <span className="text-xs text-theme-ink/45 line-through">
+                    <span className="text-theme-ink/45 text-xs line-through">
                       {formatMoney(primaryVariant.price)}
                     </span>
                   </span>
                 ) : (
-                  <span
-                    className="font-display text-lg font-semibold"
-                    style={{ color: theme_palette.accent }}
-                  >
+                  <span className="font-display text-lg" style={{ color: theme_palette.accent }}>
                     {formatMoney(primaryVariant.price)}
                   </span>
                 )}
-                <span className="text-xs text-theme-ink/60">{primaryVariant.title}</span>
+                <span className="text-theme-ink/60 text-xs">{primaryVariant.title}</span>
               </div>
               {quickAdd && (
                 <button
@@ -145,7 +137,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
                       window.setTimeout(() => setAdded(false), 1800);
                     });
                   }}
-                  className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  className="shadow-soft hover:shadow-lifted relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   style={{
                     backgroundColor: added ? '#15803d' : theme_palette.accent,
                   }}

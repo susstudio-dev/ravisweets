@@ -69,18 +69,16 @@ export function AdminContent() {
     window.setTimeout(() => setSaved(null), 1800);
   }
 
-  if (!state) return <div className="h-8 w-32 animate-pulse rounded bg-theme-ink/10" />;
+  if (!state) return <div className="bg-theme-ink/10 h-8 w-32 animate-pulse rounded" />;
 
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           Site copy
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Content
-        </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Content</h1>
+        <p className="text-theme-ink/65 mt-1 text-sm">
           Edit hero, signature moment, editorial band, footer, and home trust cards. Changes
           propagate live (within ~3 seconds via Supabase Realtime) — no rebuild needed.
         </p>
@@ -120,17 +118,13 @@ export function AdminContent() {
           <Field label="Primary CTA label">
             <Input
               value={state.hero.primaryCtaLabel ?? ''}
-              onChange={(v) =>
-                setState({ ...state, hero: { ...state.hero, primaryCtaLabel: v } })
-              }
+              onChange={(v) => setState({ ...state, hero: { ...state.hero, primaryCtaLabel: v } })}
             />
           </Field>
           <Field label="Primary CTA href">
             <Input
               value={state.hero.primaryCtaHref ?? ''}
-              onChange={(v) =>
-                setState({ ...state, hero: { ...state.hero, primaryCtaHref: v } })
-              }
+              onChange={(v) => setState({ ...state, hero: { ...state.hero, primaryCtaHref: v } })}
             />
           </Field>
           <Field label="Secondary CTA label">
@@ -144,9 +138,7 @@ export function AdminContent() {
           <Field label="Secondary CTA href">
             <Input
               value={state.hero.secondaryCtaHref ?? ''}
-              onChange={(v) =>
-                setState({ ...state, hero: { ...state.hero, secondaryCtaHref: v } })
-              }
+              onChange={(v) => setState({ ...state, hero: { ...state.hero, secondaryCtaHref: v } })}
             />
           </Field>
         </Grid>
@@ -254,9 +246,7 @@ export function AdminContent() {
           <Field label="FSSAI / GSTIN line" full>
             <Input
               value={state.footer.fssaiLine ?? ''}
-              onChange={(v) =>
-                setState({ ...state, footer: { ...state.footer, fssaiLine: v } })
-              }
+              onChange={(v) => setState({ ...state, footer: { ...state.footer, fssaiLine: v } })}
             />
           </Field>
           <Field label="Phone">
@@ -325,14 +315,14 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+    <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold text-theme-ink">{title}</h2>
+        <h2 className="font-display text-theme-ink text-lg">{title}</h2>
         <button
           type="button"
           onClick={onSave}
           disabled={busy}
-          className="inline-flex items-center gap-1.5 rounded-full bg-theme-accent px-4 py-1.5 text-xs font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-theme-accent hover:shadow-soft inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Save className="h-3.5 w-3.5" aria-hidden="true" />
           {busy ? 'Saving…' : saved ? 'Saved ✓' : 'Save'}
@@ -347,10 +337,18 @@ function Grid({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-3 sm:grid-cols-2">{children}</div>;
 }
 
-function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
+function Field({
+  label,
+  children,
+  full,
+}: {
+  label: string;
+  children: React.ReactNode;
+  full?: boolean;
+}) {
   return (
     <label className={`flex flex-col gap-1 ${full ? 'sm:col-span-2' : ''}`}>
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       {children}
@@ -364,7 +362,7 @@ function Input({ value, onChange }: { value: string; onChange: (v: string) => vo
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
     />
   );
 }
@@ -375,7 +373,7 @@ function TextArea({ value, onChange }: { value: string; onChange: (v: string) =>
       rows={3}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
     />
   );
 }

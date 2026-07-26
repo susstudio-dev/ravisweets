@@ -78,8 +78,7 @@ const HAMPERS = [
     priceFrom: '₹899',
     moq: '50 units',
     contents: 'Kaju Katli · Badam ki Jali · Pistachios · Brass diya',
-    image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
   },
   {
     title: 'Premium',
@@ -88,8 +87,7 @@ const HAMPERS = [
     priceFrom: '₹1,499',
     moq: '50 units',
     contents: 'Qubani ka Meetha · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
-    image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
   },
   {
     title: 'Grande',
@@ -98,8 +96,7 @@ const HAMPERS = [
     priceFrom: '₹2,499',
     moq: '25 units',
     contents: 'Full Hyderabadi spread · custom silk wrap · hand-painted brass box',
-    image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
   },
 ];
 
@@ -144,29 +141,29 @@ export default function CorporatePage() {
         <div className="container-site relative grid gap-10 py-20 md:grid-cols-[1.1fr_1fr] md:items-center md:py-28">
           <div>
             <Reveal>
-              <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <p className="text-theme-accent flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
                 <Paisley size="sm" />
                 For HR &amp; Admin teams
               </p>
             </Reveal>
             <Reveal delay={0.06}>
-              <h1 className="mt-4 font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl">
+              <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 leading-[1.02]">
                 Corporate gifting,{' '}
-                <span className="italic text-theme-accent">done the Hyderabadi way.</span>
+                <span className="text-theme-accent italic">done the Hyderabadi way.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.14}>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-theme-ink/75">
-                MOQ-based pricing. Logo-printed packaging. Multi-address CSV delivery.
-                GST-compliant invoices. One account manager, one phone number, one box arriving
-                exactly when it should.
+              <p className="text-theme-ink/75 mt-5 max-w-xl text-lg leading-relaxed">
+                MOQ-based pricing. Logo-printed packaging. Multi-address CSV delivery. GST-compliant
+                invoices. One account manager, one phone number, one box arriving exactly when it
+                should.
               </p>
             </Reveal>
             <Reveal delay={0.22}>
               <div className="mt-7 flex flex-wrap gap-3">
                 <a
                   href="#enquiry"
-                  className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+                  className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Request a quote
                   <ArrowRight
@@ -176,17 +173,17 @@ export default function CorporatePage() {
                 </a>
                 <Link
                   href="/corporate/builder?t=premium"
-                  className="inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-6 py-3 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
+                  className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
                 >
                   Build your own hamper
                 </Link>
               </div>
             </Reveal>
             <Reveal delay={0.3}>
-              <dl className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-theme-ink/65">
+              <dl className="text-theme-ink/65 mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs">
                 {TRUST_BADGES.map((b) => (
                   <div key={b.label} className="flex items-center gap-2">
-                    <b.icon className="h-3.5 w-3.5 text-theme-accent" aria-hidden="true" />
+                    <b.icon className="text-theme-accent h-3.5 w-3.5" aria-hidden="true" />
                     <span className="font-semibold uppercase tracking-wider">{b.label}</span>
                   </div>
                 ))}
@@ -195,7 +192,7 @@ export default function CorporatePage() {
           </div>
 
           <Parallax offset={30}>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-[color:var(--color-border)]">
+            <div className="shadow-lifted relative aspect-[4/5] overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)]">
               <Image
                 src={HERO_IMAGE}
                 alt="A premium Diwali hamper wrapped in silk with brass accents"
@@ -215,10 +212,10 @@ export default function CorporatePage() {
               />
               <Grain />
               <div className="absolute bottom-4 left-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-glow">
+                <p className="text-theme-glow text-[11px] font-semibold uppercase tracking-[0.22em]">
                   Pictured
                 </p>
-                <p className="font-display text-lg font-semibold" style={{ color: 'var(--theme-base)' }}>
+                <p className="font-display text-lg" style={{ color: 'var(--theme-base)' }}>
                   Premium hamper, 2024 Diwali run
                 </p>
               </div>
@@ -233,13 +230,13 @@ export default function CorporatePage() {
       {/* Hampers catalogue */}
       <section aria-labelledby="catalogue-heading" id="catalogue" className="container-site py-20">
         <Reveal className="mb-10">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Curated hampers
           </p>
           <h2
             id="catalogue-heading"
-            className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
           >
             Three tiers, endlessly customisable.
           </h2>
@@ -250,7 +247,7 @@ export default function CorporatePage() {
             <Link
               key={h.title}
               href={`/corporate/builder?t=${h.templateId}`}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+              className="bg-surface-elevated shadow-soft hover:shadow-lifted group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] transition-all duration-300 hover:-translate-y-0.5"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
@@ -268,25 +265,23 @@ export default function CorporatePage() {
                   }}
                   aria-hidden="true"
                 />
-                <div className="absolute left-3 top-3 rounded-full bg-theme-accent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                <div className="bg-theme-accent absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
                   {h.tier}
                 </div>
               </div>
               <div className="flex flex-1 flex-col gap-2 p-5">
-                <h3 className="font-display text-xl font-semibold text-theme-ink">{h.title}</h3>
-                <p className="text-sm text-theme-ink/70">{h.contents}</p>
+                <h3 className="font-display text-theme-ink text-xl">{h.title}</h3>
+                <p className="text-theme-ink/70 text-sm">{h.contents}</p>
                 <div className="mt-auto flex items-end justify-between pt-4 text-sm">
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+                    <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
                       From
                     </p>
-                    <p className="font-display text-2xl font-semibold text-theme-accent">
-                      {h.priceFrom}
-                    </p>
+                    <p className="font-display text-theme-accent text-2xl">{h.priceFrom}</p>
                   </div>
                   <p className="text-theme-ink/60">MOQ · {h.moq}</p>
                 </div>
-                <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-theme-accent transition-transform duration-300 group-hover:translate-x-1">
+                <div className="text-theme-accent mt-3 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">
                   Build from this template
                   <ArrowRight className="h-3 w-3" aria-hidden="true" />
                 </div>
@@ -296,7 +291,7 @@ export default function CorporatePage() {
         </Stagger>
 
         <Reveal delay={0.15}>
-          <p className="mt-8 max-w-2xl text-sm text-theme-ink/70">
+          <p className="text-theme-ink/70 mt-8 max-w-2xl text-sm">
             These are starting points — every corporate order is built around your needs. Price
             drops at 100+ units, 500+ units, and 1000+ units. Email us with your scale and
             we&rsquo;ll quote within 24 hours.
@@ -309,13 +304,13 @@ export default function CorporatePage() {
       {/* How it works */}
       <section aria-labelledby="how-heading" className="container-site py-20">
         <Reveal className="mb-12">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             How it works
           </p>
           <h2
             id="how-heading"
-            className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
           >
             Five steps from enquiry to delivery.
           </h2>
@@ -325,16 +320,16 @@ export default function CorporatePage() {
           {HOW_IT_WORKS.map((s) => (
             <div
               key={s.step}
-              className="flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5"
+              className="bg-surface-elevated flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-5"
             >
               <div className="flex items-center gap-3">
-                <span className="font-display text-xs font-semibold tracking-[0.22em] text-theme-accent">
+                <span className="font-display text-theme-accent text-xs tracking-[0.22em]">
                   {s.step}
                 </span>
-                <s.icon className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+                <s.icon className="text-theme-accent h-4 w-4" aria-hidden="true" />
               </div>
-              <h3 className="font-display text-lg font-semibold text-theme-ink">{s.title}</h3>
-              <p className="text-sm leading-relaxed text-theme-ink/70">{s.body}</p>
+              <h3 className="font-display text-theme-ink text-lg">{s.title}</h3>
+              <p className="text-theme-ink/70 text-sm leading-relaxed">{s.body}</p>
             </div>
           ))}
         </Stagger>
@@ -348,7 +343,7 @@ export default function CorporatePage() {
       >
         <div>
           <Reveal>
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               Request a quote
             </p>
@@ -356,41 +351,44 @@ export default function CorporatePage() {
           <Reveal delay={0.06}>
             <h2
               id="enquiry-heading"
-              className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg"
+              className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
             >
               Tell us what you&rsquo;re planning.
             </h2>
           </Reveal>
           <Reveal delay={0.14}>
-            <p className="mt-5 text-theme-ink/70 md:text-lg">
-              Your account manager will respond within 24 hours (often sooner). Shorter lead
-              times for established customers and existing POs.
+            <p className="text-theme-ink/70 mt-5 md:text-lg">
+              Your account manager will respond within 24 hours (often sooner). Shorter lead times
+              for established customers and existing POs.
             </p>
           </Reveal>
           <Reveal delay={0.22}>
             <dl className="mt-8 flex flex-col gap-4 text-sm">
               <div className="flex items-start gap-3">
-                <Users className="mt-0.5 h-5 w-5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <Users className="text-theme-accent mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                 <div>
-                  <dt className="font-semibold text-theme-ink">Your dedicated contact</dt>
+                  <dt className="text-theme-ink font-semibold">Your dedicated contact</dt>
                   <dd className="text-theme-ink/70">
                     corporate@ravisweets.com · +91 98765 43210 (WhatsApp)
                   </dd>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-5 w-5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <Calendar
+                  className="text-theme-accent mt-0.5 h-5 w-5 shrink-0"
+                  aria-hidden="true"
+                />
                 <div>
-                  <dt className="font-semibold text-theme-ink">Diwali cut-offs</dt>
+                  <dt className="text-theme-ink font-semibold">Diwali cut-offs</dt>
                   <dd className="text-theme-ink/70">
                     Place orders by 6 weeks out for standard hampers, 8 weeks for bespoke.
                   </dd>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Package className="mt-0.5 h-5 w-5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <Package className="text-theme-accent mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                 <div>
-                  <dt className="font-semibold text-theme-ink">Sample pack</dt>
+                  <dt className="text-theme-ink font-semibold">Sample pack</dt>
                   <dd className="text-theme-ink/70">
                     Tick &ldquo;request a sample&rdquo; below and we send a small box your way.
                   </dd>
@@ -400,7 +398,7 @@ export default function CorporatePage() {
           </Reveal>
         </div>
 
-        <Suspense fallback={<div className="h-96 animate-pulse rounded-3xl bg-theme-ink/5" />}>
+        <Suspense fallback={<div className="bg-theme-ink/5 h-96 animate-pulse rounded-3xl" />}>
           <CorporateEnquiry />
         </Suspense>
       </section>
@@ -410,13 +408,13 @@ export default function CorporatePage() {
       {/* FAQ */}
       <section aria-labelledby="faq-heading" className="container-site py-20">
         <Reveal className="mb-10">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Frequently asked
           </p>
           <h2
             id="faq-heading"
-            className="mt-3 font-display text-display-md text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
           >
             The practical stuff.
           </h2>
@@ -425,17 +423,17 @@ export default function CorporatePage() {
         <div className="grid gap-5 md:grid-cols-2">
           {FAQS.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
-              <details className="group rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5 open:shadow-soft">
-                <summary className="flex cursor-pointer items-start justify-between gap-4 font-display text-base font-semibold text-theme-ink marker:hidden [&::-webkit-details-marker]:hidden">
+              <details className="bg-surface-elevated open:shadow-soft group rounded-2xl border border-[color:var(--color-border)] p-5">
+                <summary className="font-display text-theme-ink flex cursor-pointer items-start justify-between gap-4 text-base marker:hidden [&::-webkit-details-marker]:hidden">
                   {f.q}
                   <span
                     aria-hidden="true"
-                    className="shrink-0 text-theme-accent transition-transform duration-300 group-open:rotate-45"
+                    className="text-theme-accent shrink-0 transition-transform duration-300 group-open:rotate-45"
                   >
                     +
                   </span>
                 </summary>
-                <p className="mt-3 text-sm leading-relaxed text-theme-ink/75">{f.a}</p>
+                <p className="text-theme-ink/75 mt-3 text-sm leading-relaxed">{f.a}</p>
               </details>
             </Reveal>
           ))}
@@ -445,22 +443,22 @@ export default function CorporatePage() {
       {/* Bottom CTA */}
       <section className="container-site pb-20">
         <Reveal>
-          <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-8 md:flex-row md:items-center md:p-10">
+          <div className="bg-surface-elevated flex flex-col items-start justify-between gap-6 rounded-3xl border border-[color:var(--color-border)] p-8 md:flex-row md:items-center md:p-10">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+              <p className="text-theme-accent text-xs font-semibold uppercase tracking-[0.22em]">
                 Download our catalogue
               </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-theme-ink md:text-3xl">
+              <h2 className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">
                 Prefer to share with stakeholders?
               </h2>
-              <p className="mt-2 max-w-lg text-sm text-theme-ink/70">
+              <p className="text-theme-ink/70 mt-2 max-w-lg text-sm">
                 A PDF catalogue with all hampers, customisation options, pricing tiers, and our
                 kitchen process — five minutes of reading.
               </p>
             </div>
             <Link
               href="#enquiry"
-              className="inline-flex items-center gap-2 rounded-full bg-theme-ink px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+              className="bg-theme-ink hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
             >
               <FileText className="h-4 w-4" aria-hidden="true" />
               Request the catalogue

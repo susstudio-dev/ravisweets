@@ -23,13 +23,11 @@ export function AdminDashboard() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           Today
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Dashboard</h1>
+        <p className="text-theme-ink/65 mt-1 text-sm">
           Operating snapshot — refresh the page to update. Numbers are demo until Supabase lifts.
         </p>
       </header>
@@ -89,13 +87,13 @@ export function AdminDashboard() {
       </div>
 
       {/* Sparkline — last 14 days revenue */}
-      <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+      <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-theme-ink">
-            <BarChart3 className="mr-1.5 inline h-4 w-4 text-theme-accent" aria-hidden="true" />
+          <h2 className="font-display text-theme-ink text-lg">
+            <BarChart3 className="text-theme-accent mr-1.5 inline h-4 w-4" aria-hidden="true" />
             Revenue · last 14 days
           </h2>
-          <p className="text-xs font-semibold text-theme-ink/55">
+          <p className="text-theme-ink/55 text-xs font-semibold">
             Peak ₹{stats.peakDay.toLocaleString('en-IN')}
           </p>
         </div>
@@ -103,15 +101,15 @@ export function AdminDashboard() {
       </section>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+        <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5 lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold text-theme-ink">
-              <Sparkles className="mr-1.5 inline h-4 w-4 text-theme-accent" aria-hidden="true" />
+            <h2 className="font-display text-theme-ink text-lg">
+              <Sparkles className="text-theme-accent mr-1.5 inline h-4 w-4" aria-hidden="true" />
               Top SKUs · 7 days
             </h2>
             <Link
               href="/admin/products"
-              className="text-xs font-semibold text-theme-ink/65 hover:text-theme-accent"
+              className="text-theme-ink/65 hover:text-theme-accent text-xs font-semibold"
             >
               View all <ArrowRight className="inline h-3.5 w-3.5" />
             </Link>
@@ -123,10 +121,10 @@ export function AdminDashboard() {
               {stats.topSkus.map((s) => (
                 <li
                   key={s.id}
-                  className="flex items-center justify-between rounded-lg border border-[color:var(--color-border)] bg-surface px-4 py-2 text-sm"
+                  className="bg-surface flex items-center justify-between rounded-lg border border-[color:var(--color-border)] px-4 py-2 text-sm"
                 >
-                  <span className="font-medium text-theme-ink">{s.title}</span>
-                  <span className="font-mono text-theme-ink/60">
+                  <span className="text-theme-ink font-medium">{s.title}</span>
+                  <span className="text-theme-ink/60 font-mono">
                     {s.units} units · ₹{s.revenue.toLocaleString('en-IN')}
                   </span>
                 </li>
@@ -135,15 +133,15 @@ export function AdminDashboard() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+        <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold text-theme-ink">
-              <Boxes className="mr-1.5 inline h-4 w-4 text-theme-accent" aria-hidden="true" />
+            <h2 className="font-display text-theme-ink text-lg">
+              <Boxes className="text-theme-accent mr-1.5 inline h-4 w-4" aria-hidden="true" />
               Low stock
             </h2>
             <Link
               href="/admin/inventory"
-              className="text-xs font-semibold text-theme-ink/65 hover:text-theme-accent"
+              className="text-theme-ink/65 hover:text-theme-accent text-xs font-semibold"
             >
               Inventory →
             </Link>
@@ -157,7 +155,7 @@ export function AdminDashboard() {
                   key={s.sku}
                   className="flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/5 px-4 py-2 text-sm"
                 >
-                  <span className="font-medium text-theme-ink">{s.title}</span>
+                  <span className="text-theme-ink font-medium">{s.title}</span>
                   <span className="font-mono text-red-700">{s.stock} left</span>
                 </li>
               ))}
@@ -187,22 +185,22 @@ function StatCard({
       className={`rounded-2xl border p-5 ${
         accent
           ? 'border-theme-accent/30 bg-theme-glow/15'
-          : 'border-[color:var(--color-border)] bg-surface-elevated'
+          : 'bg-surface-elevated border-[color:var(--color-border)]'
       }`}
     >
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
-        <Icon className="h-3.5 w-3.5 text-theme-accent" aria-hidden="true" />
+      <div className="text-theme-ink/55 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider">
+        <Icon className="text-theme-accent h-3.5 w-3.5" aria-hidden="true" />
         {label}
       </div>
-      <p className="mt-2 font-display text-2xl font-semibold text-theme-ink md:text-3xl">{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-theme-ink/55">{sub}</p>}
+      <p className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">{value}</p>
+      {sub && <p className="text-theme-ink/55 mt-0.5 text-xs">{sub}</p>}
     </div>
   );
 }
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-6 rounded-lg border border-dashed border-[color:var(--color-border)] p-4 text-center text-sm text-theme-ink/55">
+    <p className="text-theme-ink/55 mt-6 rounded-lg border border-dashed border-[color:var(--color-border)] p-4 text-center text-sm">
       {children}
     </p>
   );
@@ -214,7 +212,12 @@ interface OrderShape {
   placedAt: number;
   total: { amount: number };
   address?: { email?: string };
-  lines: { productId: string; productTitle: string; quantity: number; lineTotal: { amount: number } }[];
+  lines: {
+    productId: string;
+    productTitle: string;
+    quantity: number;
+    lineTotal: { amount: number };
+  }[];
 }
 
 function computeStats(orders: OrderShape[]) {
@@ -232,7 +235,10 @@ function computeStats(orders: OrderShape[]) {
     orders30d = 0,
     pending = 0,
     cancelled30d = 0;
-  const skuTallies = new Map<string, { id: string; title: string; units: number; revenue: number }>();
+  const skuTallies = new Map<
+    string,
+    { id: string; title: string; units: number; revenue: number }
+  >();
   const buyers30d = new Map<string, number>(); // email → order count
   const dailyRevenue = new Map<string, number>(); // YYYY-MM-DD → paise
 
@@ -308,8 +314,7 @@ function computeStats(orders: OrderShape[]) {
   // Reuses the 30-day buyer map for simplicity (Phase D upgrades to 90d).
   const uniqueBuyers90d = buyers30d.size;
   const repeatBuyers = Array.from(buyers30d.values()).filter((n) => n >= 2).length;
-  const repeatRate =
-    uniqueBuyers90d > 0 ? Math.round((repeatBuyers * 100) / uniqueBuyers90d) : 0;
+  const repeatRate = uniqueBuyers90d > 0 ? Math.round((repeatBuyers * 100) / uniqueBuyers90d) : 0;
 
   // Δ vs prior 7d for the headline 7-day revenue card.
   const deltaPctVsPrev7d =
@@ -346,7 +351,7 @@ function computeStats(orders: OrderShape[]) {
 function Sparkline({ points }: { points: number[] }) {
   if (points.length === 0) {
     return (
-      <p className="mt-4 rounded-lg border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm text-theme-ink/55">
+      <p className="text-theme-ink/55 mt-4 rounded-lg border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm">
         No order data in the last 14 days.
       </p>
     );
@@ -359,7 +364,7 @@ function Sparkline({ points }: { points: number[] }) {
   const polyline = points
     .map((v, i) => {
       const x = pad + i * stepX;
-      const y = h - pad - ((v / max) * (h - pad * 2));
+      const y = h - pad - (v / max) * (h - pad * 2);
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
@@ -379,13 +384,13 @@ function Sparkline({ points }: { points: number[] }) {
         />
         {points.map((v, i) => {
           const x = pad + i * stepX;
-          const y = h - pad - ((v / max) * (h - pad * 2));
+          const y = h - pad - (v / max) * (h - pad * 2);
           return (
             <circle key={i} cx={x} cy={y} r={v === max ? 3.5 : 2} fill="var(--theme-accent)" />
           );
         })}
       </svg>
-      <div className="mt-1 flex justify-between text-[10px] font-mono text-theme-ink/45">
+      <div className="text-theme-ink/45 mt-1 flex justify-between font-mono text-[10px]">
         <span>14 days ago</span>
         <span>today</span>
       </div>

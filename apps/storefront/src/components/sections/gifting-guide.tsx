@@ -24,8 +24,7 @@ const PERSONAS = [
     title: 'Weddings',
     body: 'Custom trousseau boxes, bulk sangeet favours, and personalised name-cards. Minimum 50 units.',
     href: '/corporate#enquiry',
-    image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
     accent: '#c0592b',
     bg: 'linear-gradient(135deg, #1a0606 0%, #4a1a10 60%, #7a2c1e 100%)',
   },
@@ -35,8 +34,7 @@ const PERSONAS = [
     title: 'Corporate',
     body: 'Logo-printed packaging, multi-address CSV dispatch, GST-compliant invoices. One account manager per order.',
     href: '/corporate',
-    image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
+    image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
     accent: '#d6c796',
     bg: 'linear-gradient(135deg, #1a1408 0%, #2c220e 60%, #4a3c20 100%)',
   },
@@ -47,20 +45,20 @@ export function GiftingGuide() {
     <section aria-labelledby="gifting-heading" className="container-site py-20 md:py-24">
       <Reveal className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-8">
         <div>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Gifting, by occasion
           </p>
           <h2
             id="gifting-heading"
-            className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.05]"
           >
             A box for every kind of day.
           </h2>
         </div>
-        <p className="max-w-sm text-theme-ink/70">
-          Every gift leaves the kitchen the morning it ships, sealed by hand with a paisley
-          tag and a note in our own ink.
+        <p className="text-theme-ink/70 max-w-sm">
+          Every gift leaves the kitchen the morning it ships, sealed by hand with a paisley tag and
+          a note in our own ink.
         </p>
       </Reveal>
 
@@ -69,7 +67,7 @@ export function GiftingGuide() {
           <Link
             key={p.slug}
             href={p.href}
-            className="group relative flex min-h-[24rem] flex-col overflow-hidden rounded-[1.75rem] text-white shadow-lifted ring-1 ring-[color:var(--color-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+            className="shadow-lifted focus-visible:ring-theme-accent group relative flex min-h-[24rem] flex-col overflow-hidden rounded-[1.75rem] text-white ring-1 ring-[color:var(--color-border)] focus-visible:outline-none focus-visible:ring-2"
             style={{ background: p.bg }}
           >
             {/* Brass radial glow */}
@@ -89,7 +87,7 @@ export function GiftingGuide() {
                   alt=""
                   fill
                   sizes="240px"
-                  className="object-contain opacity-90 drop-shadow-[0_30px_40px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 group-hover:rotate-3"
+                  className="object-contain opacity-90 drop-shadow-[0_30px_40px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-3 group-hover:scale-110"
                 />
               </div>
             </Parallax>
@@ -102,7 +100,7 @@ export function GiftingGuide() {
                 <Paisley size="sm" color={p.accent} />
                 {p.eyebrow}
               </p>
-              <h3 className="font-display text-3xl font-semibold leading-tight">{p.title}</h3>
+              <h3 className="font-display text-3xl leading-tight">{p.title}</h3>
               <p className="max-w-sm text-sm leading-relaxed text-white/85">{p.body}</p>
               <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">
                 Explore

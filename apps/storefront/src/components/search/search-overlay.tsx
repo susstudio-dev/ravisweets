@@ -122,32 +122,35 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: -20, scale: 0.97 }}
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -20, scale: 0.97 }}
-            transition={{ duration: reduced ? DURATION.fast : DURATION.slow, ease: EASE.emphasised }}
-            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] bg-surface-elevated shadow-lifted ring-1 ring-[color:var(--color-border)]"
+            transition={{
+              duration: reduced ? DURATION.fast : DURATION.slow,
+              ease: EASE.emphasised,
+            }}
+            className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)]"
           >
             <h2 id="search-overlay-title" className="sr-only">
               Search the catalogue
             </h2>
             <div className="flex items-center gap-3 border-b border-[color:var(--color-border)] px-5 py-4">
-              <SearchIcon className="h-5 w-5 shrink-0 text-theme-ink/50" aria-hidden="true" />
+              <SearchIcon className="text-theme-ink/50 h-5 w-5 shrink-0" aria-hidden="true" />
               <input
                 ref={inputRef}
                 type="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Kaju Katli, Hyderabadi, gift hamper…"
-                className="flex-1 bg-transparent text-base text-theme-ink placeholder:text-theme-ink/40 focus:outline-none"
+                className="text-theme-ink placeholder:text-theme-ink/40 flex-1 bg-transparent text-base focus:outline-none"
                 autoComplete="off"
                 enterKeyHint="search"
               />
-              <kbd className="hidden rounded border border-[color:var(--color-border)] bg-surface px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-ink/50 sm:inline-block">
+              <kbd className="bg-surface text-theme-ink/50 hidden rounded border border-[color:var(--color-border)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider sm:inline-block">
                 Esc
               </kbd>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="rounded-full p-1.5 text-theme-ink/60 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -156,7 +159,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <div className="max-h-[60vh] overflow-y-auto px-3 py-3" role="listbox">
               {!hasQuery ? (
                 <div className="px-2 py-3">
-                  <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-ink/55">
+                  <p className="text-theme-ink/55 px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em]">
                     Try
                   </p>
                   <div className="flex flex-wrap gap-2 px-2">
@@ -165,19 +168,21 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                         key={s}
                         type="button"
                         onClick={() => setQ(s)}
-                        className="rounded-full border border-[color:var(--color-border)] bg-surface px-3 py-1 text-xs font-medium text-theme-ink/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent"
+                        className="bg-surface text-theme-ink/80 hover:border-theme-accent rounded-full border border-[color:var(--color-border)] px-3 py-1 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5"
                       >
                         {s}
                       </button>
                     ))}
                   </div>
-                  <div className="mt-5 flex items-center gap-2 px-2 text-xs text-theme-ink/55">
+                  <div className="text-theme-ink/55 mt-5 flex items-center gap-2 px-2 text-xs">
                     <Paisley size="sm" />
-                    <span>Match titles, ingredients, dietary tags. Press Enter to open the full search.</span>
+                    <span>
+                      Match titles, ingredients, dietary tags. Press Enter to open the full search.
+                    </span>
                   </div>
                 </div>
               ) : results.length === 0 ? (
-                <p className="px-4 py-8 text-sm text-theme-ink/70">
+                <p className="text-theme-ink/70 px-4 py-8 text-sm">
                   No matches for &ldquo;{q}&rdquo;. Try a different spelling.
                 </p>
               ) : (
@@ -197,14 +202,14 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                         }`}
                       >
                         <span className="flex flex-col gap-0.5">
-                          <span className="font-display text-base font-semibold">{p.title}</span>
-                          <span className="text-xs text-theme-ink/55">
+                          <span className="font-display text-base">{p.title}</span>
+                          <span className="text-theme-ink/55 text-xs">
                             {p.category.replace(/-/g, ' ')}
                             {' · '}
                             {p.shelf_life_days}d shelf
                           </span>
                         </span>
-                        <span className="font-display text-sm font-semibold text-theme-accent">
+                        <span className="font-display text-theme-accent text-sm">
                           {p.variants[0] ? `₹${p.variants[0].price.amount}` : '—'}
                         </span>
                       </button>
@@ -214,11 +219,11 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
               )}
             </div>
             {hasQuery && (
-              <div className="border-t border-[color:var(--color-border)] px-5 py-3 text-xs text-theme-ink/60">
+              <div className="text-theme-ink/60 border-t border-[color:var(--color-border)] px-5 py-3 text-xs">
                 <Link
                   href={`/search?q=${encodeURIComponent(q.trim())}`}
                   onClick={onClose}
-                  className="font-semibold text-theme-accent hover:underline"
+                  className="text-theme-accent font-semibold hover:underline"
                 >
                   See all results for &ldquo;{q.trim()}&rdquo; →
                 </Link>

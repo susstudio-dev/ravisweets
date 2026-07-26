@@ -107,12 +107,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
   if (!ADMIN_ENABLED) {
     return (
       <main className="container-site flex min-h-[60vh] items-center justify-center py-20">
-        <div className="max-w-md rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-8 text-center">
+        <div className="bg-surface-elevated max-w-md rounded-2xl border border-[color:var(--color-border)] p-8 text-center">
           <AlertTriangle className="mx-auto h-8 w-8 text-amber-500" />
-          <h1 className="mt-3 font-display text-2xl font-semibold text-theme-ink">
-            Admin disabled
-          </h1>
-          <p className="mt-2 text-sm text-theme-ink/70">
+          <h1 className="font-display text-theme-ink mt-3 text-2xl">Admin disabled</h1>
+          <p className="text-theme-ink/70 mt-2 text-sm">
             Set <code className="font-mono">NEXT_PUBLIC_ADMIN_ENABLED=true</code> in your env to
             enable the admin panel.
           </p>
@@ -122,28 +120,29 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   if (isLoginPage) {
-    return <main className="min-h-[100vh] bg-theme-base">{children}</main>;
+    return <main className="bg-theme-base min-h-[100vh]">{children}</main>;
   }
 
   if (!configured) {
     return (
       <main className="container-site flex min-h-[60vh] items-center justify-center py-20">
-        <div className="max-w-lg rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-8">
+        <div className="bg-surface-elevated max-w-lg rounded-2xl border border-[color:var(--color-border)] p-8">
           <Paisley size="md" />
-          <h1 className="mt-4 font-display text-3xl font-semibold text-theme-ink">
+          <h1 className="font-display text-theme-ink mt-4 text-3xl">
             Connect Supabase to enable admin
           </h1>
-          <p className="mt-3 text-sm text-theme-ink/75">
-            The admin panel is built and ready. To turn it on, provision a free Supabase
-            project and add these to <code className="font-mono">.env.local</code>:
+          <p className="text-theme-ink/75 mt-3 text-sm">
+            The admin panel is built and ready. To turn it on, provision a free Supabase project and
+            add these to <code className="font-mono">.env.local</code>:
           </p>
-          <pre className="mt-4 overflow-x-auto rounded-lg bg-[color:var(--theme-ink)]/5 p-3 text-xs">
+          <pre className="bg-[color:var(--theme-ink)]/5 mt-4 overflow-x-auto rounded-lg p-3 text-xs">
             <code>{`NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
           </pre>
-          <p className="mt-4 text-xs text-theme-ink/60">
-            Then run the migration at <code className="font-mono">supabase/migrations/0001_init.sql</code>{' '}
-            in the Supabase SQL editor. Restart the dev server and refresh.
+          <p className="text-theme-ink/60 mt-4 text-xs">
+            Then run the migration at{' '}
+            <code className="font-mono">supabase/migrations/0001_init.sql</code> in the Supabase SQL
+            editor. Restart the dev server and refresh.
           </p>
         </div>
       </main>
@@ -153,7 +152,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
   if (loading || !user || role !== 'admin') {
     return (
       <main className="container-site flex min-h-[60vh] items-center justify-center py-20">
-        <div className="h-8 w-32 animate-pulse rounded bg-theme-ink/10" />
+        <div className="bg-theme-ink/10 h-8 w-32 animate-pulse rounded" />
       </main>
     );
   }
@@ -164,25 +163,25 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
   }
 
   return (
-    <div className="flex min-h-screen bg-theme-base">
+    <div className="bg-theme-base flex min-h-screen">
       {/* Desktop sidebar — hidden on small screens */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] bg-surface-elevated md:flex">
+      <aside className="bg-surface-elevated hidden w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] md:flex">
         <Link href="/admin" className="flex items-center gap-2 px-5 py-5">
           <Paisley size="sm" />
-          <span className="font-display text-lg font-bold text-theme-ink">Ravi Admin</span>
+          <span className="font-display text-theme-ink text-lg">Ravi Admin</span>
         </Link>
         <nav className="flex-1 px-2">
           <AdminNavList pathname={pathname} />
         </nav>
         <div className="border-t border-[color:var(--color-border)] p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Signed in
           </p>
-          <p className="mt-0.5 truncate text-sm font-medium text-theme-ink">{user.email}</p>
+          <p className="text-theme-ink mt-0.5 truncate text-sm font-medium">{user.email}</p>
           <button
             type="button"
             onClick={handleSignOut}
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-theme-ink/65 hover:text-theme-accent"
+            className="text-theme-ink/65 hover:text-theme-accent mt-3 inline-flex items-center gap-1.5 text-xs font-semibold"
           >
             <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
             Sign out
@@ -214,7 +213,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
                 className="flex items-center gap-2"
               >
                 <Paisley size="sm" />
-                <span className="font-display text-lg font-bold">Ravi Admin</span>
+                <span className="font-display text-lg">Ravi Admin</span>
               </Link>
               <button
                 type="button"
@@ -239,9 +238,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           'flex h-12 items-center gap-3 rounded-lg px-3 text-[15px] font-medium transition-colors',
-                          active
-                            ? 'bg-[#a85a08] text-white'
-                            : 'text-[#1f0c02] hover:bg-[#f2e2b6]',
+                          active ? 'bg-[#a85a08] text-white' : 'text-[#1f0c02] hover:bg-[#f2e2b6]',
                         )}
                       >
                         <item.icon className="h-4 w-4" aria-hidden="true" />
@@ -281,25 +278,25 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
       )}
 
       <div className="flex flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-[color:var(--color-border)] bg-surface-elevated/85 px-4 backdrop-blur md:h-16 md:px-8">
+        <header className="bg-surface-elevated/85 flex h-14 items-center justify-between border-b border-[color:var(--color-border)] px-4 backdrop-blur md:h-16 md:px-8">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-expanded={mobileOpen}
               aria-label="Open admin menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 md:hidden"
+              className="bg-theme-accent shadow-soft inline-flex h-10 w-10 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 md:hidden"
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60">
+            <p className="text-theme-ink/60 text-xs font-semibold uppercase tracking-[0.18em]">
               <Building2 className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">Khammam · </span>Ravi Sweets
             </p>
           </div>
           <Link
             href="/"
-            className="text-xs font-semibold text-theme-ink/65 transition-colors hover:text-theme-accent"
+            className="text-theme-ink/65 hover:text-theme-accent text-xs font-semibold transition-colors"
           >
             View storefront →
           </Link>
@@ -315,8 +312,7 @@ function AdminNavList({ pathname }: { pathname: string }) {
     <ul className="flex flex-col gap-0.5">
       {NAV.map((item) => {
         const active =
-          pathname === item.href ||
-          (item.href !== '/admin' && pathname.startsWith(item.href));
+          pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
         return (
           <li key={item.href}>
             <Link

@@ -63,8 +63,8 @@ export function CategoryBrowser({
 
       <div>
         <div className="mb-6 flex items-center justify-between">
-          <p className="text-sm text-theme-ink/60">
-            Showing <span className="font-semibold text-theme-ink">{shown.length}</span>{' '}
+          <p className="text-theme-ink/60 text-sm">
+            Showing <span className="text-theme-ink font-semibold">{shown.length}</span>{' '}
             {shown.length === 1 ? 'product' : 'products'}
           </p>
         </div>
@@ -72,13 +72,11 @@ export function CategoryBrowser({
         {shown.length === 0 ? (
           <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-8">
             <Paisley size="md" />
-            <p className="font-display text-lg font-semibold text-theme-ink">
-              Nothing matches those filters.
-            </p>
-            <p className="text-sm text-theme-ink/70">Try removing a dietary tag, or browse all.</p>
+            <p className="font-display text-theme-ink text-lg">Nothing matches those filters.</p>
+            <p className="text-theme-ink/70 text-sm">Try removing a dietary tag, or browse all.</p>
             <Link
               href={`/category/${categorySlug}`}
-              className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-theme-accent hover:underline"
+              className="text-theme-accent mt-2 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
             >
               Clear filters
             </Link>

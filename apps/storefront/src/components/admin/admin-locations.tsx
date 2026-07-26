@@ -95,16 +95,14 @@ export function AdminLocations() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           <MapPin className="mr-1.5 inline h-3.5 w-3.5" aria-hidden="true" />
           Multi-location stock
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Stock by store.
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-theme-ink/65">
-          Three counters: Khammam Flagship, Khammam Second, Kondapur. Each
-          adjustment is a row in the immutable ledger so audits are clean.
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Stock by store.</h1>
+        <p className="text-theme-ink/65 mt-2 max-w-2xl text-sm">
+          Three counters: Khammam Flagship, Khammam Second, Kondapur. Each adjustment is a row in
+          the immutable ledger so audits are clean.
         </p>
       </header>
 
@@ -115,19 +113,22 @@ export function AdminLocations() {
       )}
 
       {/* Adjustment form */}
-      <form onSubmit={onAdjust} className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <form
+        onSubmit={onAdjust}
+        className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
+      >
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           New stock adjustment
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Variant
             </span>
             <select
               value={variantId}
               onChange={(e) => setVariantId(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               <option value="">Pick a variant…</option>
               {variants.map((v) => (
@@ -138,13 +139,13 @@ export function AdminLocations() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Location
             </span>
             <select
               value={location}
               onChange={(e) => setLocation(e.target.value as StoreLocation)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               {STORE_LOCATIONS.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -154,24 +155,24 @@ export function AdminLocations() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Delta (+/−)
             </span>
             <input
               type="number"
               value={delta}
               onChange={(e) => setDelta(Number(e.target.value) || 0)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm font-mono"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm"
             />
           </label>
           <label className="flex flex-col gap-1 md:col-span-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Reason
             </span>
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value as StockAdjustmentReason)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               {REASON_OPTIONS.map((r) => (
                 <option key={r.value} value={r.value}>
@@ -181,14 +182,14 @@ export function AdminLocations() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+            <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
               Notes (optional)
             </span>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </label>
         </div>
@@ -196,26 +197,30 @@ export function AdminLocations() {
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-accent px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
+            className="bg-theme-accent inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:opacity-50"
           >
-            {delta >= 0 ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+            {delta >= 0 ? (
+              <ArrowUp className="h-3.5 w-3.5" />
+            ) : (
+              <ArrowDown className="h-3.5 w-3.5" />
+            )}
             Apply adjustment
           </button>
-          {feedback && <p className="text-xs text-theme-ink/70">{feedback}</p>}
+          {feedback && <p className="text-theme-ink/70 text-xs">{feedback}</p>}
         </div>
       </form>
 
       {/* Stock-by-location table */}
       <section>
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <h2 className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           Stock by variant × location
         </h2>
         {loading ? (
-          <div className="mt-3 h-12 w-32 animate-pulse rounded bg-theme-ink/10" />
+          <div className="bg-theme-ink/10 mt-3 h-12 w-32 animate-pulse rounded" />
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated">
+          <div className="bg-surface-elevated mt-3 overflow-x-auto rounded-2xl border border-[color:var(--color-border)]">
             <table className="w-full text-sm">
-              <thead className="bg-theme-glow/10 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+              <thead className="bg-theme-glow/10 text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3 text-left">Product · Variant</th>
                   {STORE_LOCATIONS.map((l) => (
@@ -234,9 +239,9 @@ export function AdminLocations() {
                   const total = a + b + c;
                   return (
                     <tr key={v.variantId} className="border-t border-[color:var(--color-border)]">
-                      <td className="px-4 py-2 text-theme-ink">
+                      <td className="text-theme-ink px-4 py-2">
                         <p className="font-medium">{v.productTitle}</p>
-                        <p className="text-[11px] text-theme-ink/55">{v.variantTitle}</p>
+                        <p className="text-theme-ink/55 text-[11px]">{v.variantTitle}</p>
                       </td>
                       <td className="px-4 py-2 text-right font-mono">{a}</td>
                       <td className="px-4 py-2 text-right font-mono">{b}</td>
@@ -249,9 +254,9 @@ export function AdminLocations() {
             </table>
           </div>
         )}
-        <p className="mt-3 text-[11px] text-theme-ink/55">
-          <Plus className="mr-1 inline h-3 w-3" /> stock is added via the adjustment
-          form above. Phase D moves checkout-driven decrements server-side.
+        <p className="text-theme-ink/55 mt-3 text-[11px]">
+          <Plus className="mr-1 inline h-3 w-3" /> stock is added via the adjustment form above.
+          Phase D moves checkout-driven decrements server-side.
         </p>
       </section>
     </div>

@@ -28,7 +28,7 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
   return (
     <nav
       aria-label="Builder steps"
-      className="mt-8 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-3"
+      className="bg-surface-elevated mt-8 rounded-2xl border border-[color:var(--color-border)] p-3"
     >
       <ol className="grid gap-2 md:grid-cols-4">
         {STEP_ORDER.map((step, i) => {
@@ -46,7 +46,7 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
                 aria-current={isCurrent ? 'step' : undefined}
                 className={cn(
                   'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200',
-                  isCurrent && 'bg-theme-accent text-[color:var(--theme-base)] shadow-soft',
+                  isCurrent && 'bg-theme-accent shadow-soft text-[color:var(--theme-base)]',
                   !isCurrent && enabled && 'hover:bg-theme-glow/15',
                   !enabled && 'cursor-not-allowed opacity-55',
                 )}
@@ -54,9 +54,11 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
                 <span
                   className={cn(
                     'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                    isCurrent && 'bg-[color:var(--theme-base)] text-theme-accent',
+                    isCurrent && 'text-theme-accent bg-[color:var(--theme-base)]',
                     !isCurrent && isDone && 'bg-theme-accent text-[color:var(--theme-base)]',
-                    !isCurrent && !isDone && 'border border-[color:var(--color-border)] bg-surface text-theme-ink/70',
+                    !isCurrent &&
+                      !isDone &&
+                      'bg-surface text-theme-ink/70 border border-[color:var(--color-border)]',
                   )}
                 >
                   {isDone ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : meta.num}
@@ -72,7 +74,7 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
                   </span>
                   <span
                     className={cn(
-                      'block truncate font-display text-sm font-semibold',
+                      'font-display block truncate text-sm',
                       isCurrent ? 'text-[color:var(--theme-base)]' : 'text-theme-ink',
                     )}
                   >
@@ -83,7 +85,7 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
                   <motion.span
                     layoutId="stepper-active"
                     aria-hidden="true"
-                    className="absolute inset-0 rounded-xl ring-2 ring-theme-accent"
+                    className="ring-theme-accent absolute inset-0 rounded-xl ring-2"
                     transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
                   />
                 )}
@@ -92,7 +94,7 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
           );
         })}
       </ol>
-      <p className="mt-2 px-1 text-xs text-theme-ink/65">{STEP_LABEL[current].sub}</p>
+      <p className="text-theme-ink/65 mt-2 px-1 text-xs">{STEP_LABEL[current].sub}</p>
     </nav>
   );
 }

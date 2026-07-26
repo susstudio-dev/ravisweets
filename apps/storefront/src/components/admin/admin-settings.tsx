@@ -38,19 +38,17 @@ export function AdminSettings() {
     window.alert('Settings saved.');
   }
 
-  if (!settings) return <div className="h-8 w-32 animate-pulse rounded bg-theme-ink/10" />;
+  if (!settings) return <div className="bg-theme-ink/10 h-8 w-32 animate-pulse rounded" />;
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+          <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
             Configuration
           </p>
-          <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-            Settings
-          </h1>
-          <p className="mt-1 text-sm text-theme-ink/65">
+          <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Settings</h1>
+          <p className="text-theme-ink/65 mt-1 text-sm">
             Store hours, delivery zones, owner profile, and filter taxonomy. All edits land in the
             singleton <code>store_settings</code> row.
           </p>
@@ -59,7 +57,7 @@ export function AdminSettings() {
           type="button"
           onClick={save}
           disabled={busy || !configured}
-          className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-theme-accent shadow-soft hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
           {busy ? 'Saving…' : 'Save settings'}
@@ -229,7 +227,10 @@ export function AdminSettings() {
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  ownerProfile: { ...settings.ownerProfile, gstinNumber: e.target.value.toUpperCase() },
+                  ownerProfile: {
+                    ...settings.ownerProfile,
+                    gstinNumber: e.target.value.toUpperCase(),
+                  },
                 })
               }
               className={`${inputCls} font-mono uppercase`}
@@ -239,7 +240,7 @@ export function AdminSettings() {
       </Section>
 
       <Section title="Filter taxonomy">
-        <p className="text-[11px] text-theme-ink/65">
+        <p className="text-theme-ink/65 text-[11px]">
           One filter group per row. Comma-separated values. The shop page reads these to render
           facets.
         </p>
@@ -265,7 +266,10 @@ export function AdminSettings() {
                 type="text"
                 value={values.join(', ')}
                 onChange={(e) => {
-                  const next = e.target.value.split(',').map((s) => s.trim()).filter(Boolean);
+                  const next = e.target.value
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                   setSettings({
                     ...settings,
                     filterTaxonomy: { ...settings.filterTaxonomy, [group]: next },
@@ -302,8 +306,8 @@ const inputCls =
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-      <h2 className="font-display text-lg font-semibold text-theme-ink">{title}</h2>
+    <section className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+      <h2 className="font-display text-theme-ink text-lg">{title}</h2>
       <div className="mt-4 flex flex-col gap-3">{children}</div>
     </section>
   );
@@ -312,7 +316,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       {children}
@@ -325,7 +329,7 @@ function AddBtn({ children, onClick }: { children: React.ReactNode; onClick: () 
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex w-fit items-center gap-1.5 rounded-full border border-dashed border-[color:var(--color-border)] px-3 py-1.5 text-xs font-semibold text-theme-ink/65 hover:border-theme-accent hover:text-theme-accent"
+      className="text-theme-ink/65 hover:border-theme-accent hover:text-theme-accent inline-flex w-fit items-center gap-1.5 rounded-full border border-dashed border-[color:var(--color-border)] px-3 py-1.5 text-xs font-semibold"
     >
       <Plus className="h-3.5 w-3.5" aria-hidden="true" />
       {children}
@@ -339,7 +343,7 @@ function RemoveBtn({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Remove row"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/55 hover:bg-red-500/10 hover:text-red-700"
+      className="text-theme-ink/55 inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-red-500/10 hover:text-red-700"
     >
       <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
     </button>

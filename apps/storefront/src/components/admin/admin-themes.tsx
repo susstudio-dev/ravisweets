@@ -11,14 +11,21 @@ const FALLBACK_PRESETS: ThemePreset[] = [
     id: 'pista-rose',
     name: 'Pista & Rose — kalakand cream',
     active: true,
-    palette: { base: '#f4efde', accent: '#a8345d', glow: '#c9d99c', ink: '#1f1820', grainOpacity: 0.05 },
+    palette: {
+      base: '#f4efde',
+      accent: '#a8345d',
+      glow: '#c9d99c',
+      ink: '#1f1820',
+      grainOpacity: 0.05,
+    },
     hero: {
       eyebrow: 'Khammam · est. 1985',
       headline: 'Slow-cooked sweets, packed with rose and pistachio.',
       body: 'Kalakand, Badam ki Jali, Qubani ka Meetha — the Hyderabadi sweet shop, plated the slow way.',
       ctaLabel: 'Shop the kitchen',
       ctaHref: '/shop',
-      imageUrl: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+      imageUrl:
+        'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
     },
     bannerText: null,
   },
@@ -26,14 +33,21 @@ const FALLBACK_PRESETS: ThemePreset[] = [
     id: 'saffron-cardamom',
     name: 'Saffron & Cardamom — festival crimson',
     active: false,
-    palette: { base: '#fbf2e6', accent: '#b8312c', glow: '#f2b96a', ink: '#221008', grainOpacity: 0.05 },
+    palette: {
+      base: '#fbf2e6',
+      accent: '#b8312c',
+      glow: '#f2b96a',
+      ink: '#221008',
+      grainOpacity: 0.05,
+    },
     hero: {
       eyebrow: 'Festival ready',
       headline: 'A box for every occasion — from rakhi to christmas.',
       body: 'Festival hampers, corporate runs, and pre-order drops timed to every Indian calendar.',
       ctaLabel: 'Shop festival hampers',
       ctaHref: '/category/festival-specials',
-      imageUrl: 'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+      imageUrl:
+        'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
     },
     bannerText: 'Free festival shipping above ₹1499',
   },
@@ -41,7 +55,13 @@ const FALLBACK_PRESETS: ThemePreset[] = [
     id: 'brass-ghee',
     name: 'Brass & Ghee — heritage warm',
     active: false,
-    palette: { base: '#fbf3df', accent: '#a8501f', glow: '#e9b249', ink: '#1f0c02', grainOpacity: 0.05 },
+    palette: {
+      base: '#fbf3df',
+      accent: '#a8501f',
+      glow: '#e9b249',
+      ink: '#1f0c02',
+      grainOpacity: 0.05,
+    },
     hero: {
       eyebrow: 'Heritage line',
       headline: 'Forty years of slow sweetness, in a brass tin.',
@@ -56,14 +76,21 @@ const FALLBACK_PRESETS: ThemePreset[] = [
     id: 'midnight-saffron',
     name: 'Midnight Saffron — late-festival',
     active: false,
-    palette: { base: '#1a1208', accent: '#f2b96a', glow: '#e9b249', ink: '#fdf6ec', grainOpacity: 0.07 },
+    palette: {
+      base: '#1a1208',
+      accent: '#f2b96a',
+      glow: '#e9b249',
+      ink: '#fdf6ec',
+      grainOpacity: 0.07,
+    },
     hero: {
       eyebrow: 'Late festival drops',
       headline: 'Sweets for the night before the morning prasad.',
       body: 'Saffron-amber boxes for last-mile festival pickups — Khammam + Hyderabad same-day.',
       ctaLabel: 'Shop tonight',
       ctaHref: '/category/sweets',
-      imageUrl: 'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
+      imageUrl:
+        'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
     },
     bannerText: 'Same-day pickup · Khammam + Hyderabad',
   },
@@ -115,19 +142,17 @@ export function AdminThemes() {
   }
 
   if (!themes) {
-    return <div className="h-8 w-32 animate-pulse rounded bg-theme-ink/10" />;
+    return <div className="bg-theme-ink/10 h-8 w-32 animate-pulse rounded" />;
   }
 
   return (
     <div className="flex flex-col gap-5">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           Brand
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Themes
-        </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Themes</h1>
+        <p className="text-theme-ink/65 mt-1 text-sm">
           {configured
             ? 'Live from Supabase. Activating a different preset writes the active flag and (Phase 3) triggers a storefront rebuild webhook.'
             : 'Showing demo presets. Connect Supabase to manage real themes.'}
@@ -138,12 +163,12 @@ export function AdminThemes() {
         {themes.map((t) => (
           <article
             key={t.id}
-            className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5 shadow-soft"
+            className="bg-surface-elevated shadow-soft rounded-2xl border border-[color:var(--color-border)] p-5"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h2 className="font-display text-lg font-semibold text-theme-ink">{t.name}</h2>
-                <p className="font-mono text-[11px] text-theme-ink/55">/{t.id}</p>
+                <h2 className="font-display text-theme-ink text-lg">{t.name}</h2>
+                <p className="text-theme-ink/55 font-mono text-[11px]">/{t.id}</p>
               </div>
               {t.active && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
@@ -166,14 +191,14 @@ export function AdminThemes() {
               )}
             </div>
 
-            <p className="mt-4 line-clamp-2 text-xs text-theme-ink/65">{t.hero.headline}</p>
+            <p className="text-theme-ink/65 mt-4 line-clamp-2 text-xs">{t.hero.headline}</p>
 
             <div className="mt-5 flex gap-2">
               <button
                 type="button"
                 onClick={() => activate(t)}
                 disabled={t.active || !configured}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-theme-accent px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-theme-accent inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Power className="h-3.5 w-3.5" aria-hidden="true" />
                 {t.active ? 'Currently active' : 'Activate'}
@@ -182,7 +207,7 @@ export function AdminThemes() {
                 type="button"
                 onClick={() => setEditing(t)}
                 disabled={!configured}
-                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-3 py-2 text-xs font-semibold text-theme-ink/85 transition-colors hover:border-theme-accent hover:text-theme-accent disabled:cursor-not-allowed disabled:opacity-50"
+                className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent inline-flex items-center justify-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-3 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                 Edit
@@ -192,13 +217,7 @@ export function AdminThemes() {
         ))}
       </div>
 
-      {editing && (
-        <ThemeForm
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSave={save}
-        />
-      )}
+      {editing && <ThemeForm initial={editing} onCancel={() => setEditing(null)} onSave={save} />}
     </div>
   );
 }
@@ -215,10 +234,7 @@ function ThemeForm({
   const [t, setT] = useState<ThemePreset>(initial);
   const [busy, setBusy] = useState(false);
 
-  function updateHero<K extends keyof ThemePreset['hero']>(
-    key: K,
-    value: ThemePreset['hero'][K],
-  ) {
+  function updateHero<K extends keyof ThemePreset['hero']>(key: K, value: ThemePreset['hero'][K]) {
     setT((prev) => ({ ...prev, hero: { ...prev.hero, [key]: value } }));
   }
   function updatePalette<K extends keyof ThemePreset['palette']>(
@@ -232,18 +248,18 @@ function ThemeForm({
     <aside
       role="dialog"
       aria-modal="true"
-      className="fixed inset-y-0 right-0 z-50 w-full max-w-lg overflow-y-auto border-l border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-lifted"
+      className="bg-surface-elevated shadow-lifted fixed inset-y-0 right-0 z-50 w-full max-w-lg overflow-y-auto border-l border-[color:var(--color-border)] p-6"
     >
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-semibold text-theme-ink">
-          <Sparkles className="mr-2 inline h-5 w-5 text-theme-accent" aria-hidden="true" />
+        <h2 className="font-display text-theme-ink text-2xl">
+          <Sparkles className="text-theme-accent mr-2 inline h-5 w-5" aria-hidden="true" />
           {t.name}
         </h2>
         <button
           type="button"
           onClick={onCancel}
           aria-label="Close"
-          className="rounded-full p-1.5 text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink"
+          className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink rounded-full p-1.5"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -264,24 +280,40 @@ function ThemeForm({
             required
             value={t.name}
             onChange={(e) => setT((p) => ({ ...p, name: e.target.value }))}
-            className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           />
         </Field>
 
         <fieldset className="rounded-xl border border-[color:var(--color-border)] p-4">
-          <legend className="px-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+          <legend className="text-theme-ink/65 px-2 text-[11px] font-semibold uppercase tracking-wider">
             Palette
           </legend>
           <div className="grid gap-3 sm:grid-cols-2">
-            <ColorField label="Base" value={t.palette.base} onChange={(v) => updatePalette('base', v)} />
-            <ColorField label="Accent" value={t.palette.accent} onChange={(v) => updatePalette('accent', v)} />
-            <ColorField label="Glow" value={t.palette.glow} onChange={(v) => updatePalette('glow', v)} />
-            <ColorField label="Ink" value={t.palette.ink} onChange={(v) => updatePalette('ink', v)} />
+            <ColorField
+              label="Base"
+              value={t.palette.base}
+              onChange={(v) => updatePalette('base', v)}
+            />
+            <ColorField
+              label="Accent"
+              value={t.palette.accent}
+              onChange={(v) => updatePalette('accent', v)}
+            />
+            <ColorField
+              label="Glow"
+              value={t.palette.glow}
+              onChange={(v) => updatePalette('glow', v)}
+            />
+            <ColorField
+              label="Ink"
+              value={t.palette.ink}
+              onChange={(v) => updatePalette('ink', v)}
+            />
           </div>
         </fieldset>
 
         <fieldset className="rounded-xl border border-[color:var(--color-border)] p-4">
-          <legend className="px-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+          <legend className="text-theme-ink/65 px-2 text-[11px] font-semibold uppercase tracking-wider">
             Hero copy
           </legend>
           <div className="flex flex-col gap-3">
@@ -290,7 +322,7 @@ function ThemeForm({
                 type="text"
                 value={t.hero.eyebrow}
                 onChange={(e) => updateHero('eyebrow', e.target.value)}
-                className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </Field>
             <Field label="Headline">
@@ -298,7 +330,7 @@ function ThemeForm({
                 type="text"
                 value={t.hero.headline}
                 onChange={(e) => updateHero('headline', e.target.value)}
-                className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </Field>
             <Field label="Body">
@@ -306,7 +338,7 @@ function ThemeForm({
                 rows={3}
                 value={t.hero.body}
                 onChange={(e) => updateHero('body', e.target.value)}
-                className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </Field>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -315,7 +347,7 @@ function ThemeForm({
                   type="text"
                   value={t.hero.ctaLabel}
                   onChange={(e) => updateHero('ctaLabel', e.target.value)}
-                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </Field>
               <Field label="CTA href">
@@ -323,7 +355,7 @@ function ThemeForm({
                   type="text"
                   value={t.hero.ctaHref}
                   onChange={(e) => updateHero('ctaHref', e.target.value)}
-                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-2"
                 />
               </Field>
             </div>
@@ -332,7 +364,7 @@ function ThemeForm({
                 type="text"
                 value={t.bannerText ?? ''}
                 onChange={(e) => setT((p) => ({ ...p, bannerText: e.target.value || null }))}
-                className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </Field>
           </div>
@@ -342,19 +374,19 @@ function ThemeForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-full border border-[color:var(--color-border)] px-5 py-2 text-sm font-semibold text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent"
+            className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-5 py-2 text-sm font-semibold"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={busy}
-            className="rounded-full bg-theme-accent px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? 'Saving…' : 'Save changes'}
           </button>
         </div>
-        <p className="text-[11px] text-theme-ink/55">
+        <p className="text-theme-ink/55 text-[11px]">
           Theme edits write to <code>theme_presets</code>. Storefront rebuild via webhook lands in
           Phase 3 — until then, the active theme is consumed at the next manual rebuild.
         </p>
@@ -374,7 +406,7 @@ function ColorField({
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+      <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       <div className="flex items-center gap-2">
@@ -388,7 +420,7 @@ function ColorField({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-xs text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 flex-1 rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-xs focus-visible:outline-none focus-visible:ring-2"
         />
       </div>
     </label>
@@ -398,7 +430,7 @@ function ColorField({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+      <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       {children}

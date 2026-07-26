@@ -98,7 +98,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
           animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 20 }}
           transition={{ duration: reduced ? DURATION.fast : DURATION.slow, ease: EASE.emphasised }}
-          className="relative z-10 grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-surface shadow-lifted ring-1 ring-[color:var(--color-border)] md:grid-cols-[1.05fr_1fr]"
+          className="bg-surface shadow-lifted relative z-10 grid w-full max-w-5xl overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)] md:grid-cols-[1.05fr_1fr]"
           style={{ maxHeight: 'calc(100vh - 4rem)' }}
         >
           {/* Close button */}
@@ -107,7 +107,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
             type="button"
             onClick={close}
             aria-label="Close"
-            className="absolute right-4 top-4 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+            className="focus-visible:ring-theme-accent absolute right-4 top-4 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -136,7 +136,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
             <Grain />
             {!reduced && <Garnish mark={product.garnish} seed={`qv-${product.id}`} count={10} />}
             <div
-              className="pointer-events-none absolute left-4 top-4 text-theme-glow opacity-80"
+              className="text-theme-glow pointer-events-none absolute left-4 top-4 opacity-80"
               aria-hidden="true"
             >
               <Paisley size="md" rotate={20} />
@@ -151,7 +151,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
 
           {/* Info */}
           <div className="flex flex-col gap-5 overflow-y-auto p-6 md:p-8">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               Quick view
             </p>
@@ -161,7 +161,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               text={product.title}
               split="word"
               gap={35}
-              className="font-display text-display-md font-semibold leading-[1.05] text-theme-ink"
+              className="font-display text-display-md text-theme-ink leading-[1.05]"
             />
             {/* Screen reader title anchor */}
             <span id="qv-title" className="sr-only">
@@ -192,28 +192,26 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               className="grid grid-cols-3 gap-3 border-t border-[color:var(--color-border)] pt-5 text-sm"
             >
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
                   Shelf life
                 </dt>
-                <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
+                <dd className="font-display text-theme-ink mt-1 text-base">
                   {product.shelf_life_days}d
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
                   Weight
                 </dt>
-                <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
+                <dd className="font-display text-theme-ink mt-1 text-base">
                   {product.variants[0]?.weight_grams}g
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
                   From
                 </dt>
-                <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
-                  Khammam
-                </dd>
+                <dd className="font-display text-theme-ink mt-1 text-base">Khammam</dd>
               </div>
             </motion.dl>
 
@@ -231,7 +229,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               */}
               <a
                 href={`/product/${product.slug}`}
-                className="group inline-flex items-center gap-1.5 text-sm font-semibold text-theme-ink/80 transition-colors hover:text-theme-accent"
+                className="text-theme-ink/80 hover:text-theme-accent group inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
               >
                 View full details
                 <ArrowRight

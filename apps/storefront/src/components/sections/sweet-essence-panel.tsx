@@ -58,7 +58,7 @@ export function SweetEssencePanel() {
       <div className="container-site relative grid gap-10 py-16 md:grid-cols-[1fr_1.1fr] md:items-center md:py-20">
         {/* Image column with multi-rate parallax — smaller / lighter than before */}
         <motion.div
-          className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] p-8 shadow-lifted ring-1 ring-[color:var(--color-border)] md:aspect-[4/5]"
+          className="shadow-lifted relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] p-8 ring-1 ring-[color:var(--color-border)] md:aspect-[4/5]"
           style={
             reduced
               ? { background: ESSENCE_BACKDROP }
@@ -84,7 +84,7 @@ export function SweetEssencePanel() {
               {STRANDS.map((s, i) => (
                 <span
                   key={i}
-                  className="absolute text-theme-glow"
+                  className="text-theme-glow absolute"
                   style={{
                     top: s.top,
                     left: s.left,
@@ -103,9 +103,7 @@ export function SweetEssencePanel() {
             </motion.div>
           )}
 
-          <div
-            className="pointer-events-none absolute bottom-4 left-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55"
-          >
+          <div className="text-theme-ink/55 pointer-events-none absolute bottom-4 left-5 text-[10px] font-semibold uppercase tracking-[0.22em]">
             Kaju Katli · Khammam kitchen
           </div>
         </motion.div>
@@ -116,7 +114,7 @@ export function SweetEssencePanel() {
           style={reduced ? undefined : { y: textY }}
         >
           <Reveal>
-            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               <span
                 className="text-base font-normal normal-case tracking-normal"
@@ -124,28 +122,30 @@ export function SweetEssencePanel() {
               >
                 మాధుర్యం
               </span>
-              <span aria-hidden="true" className="opacity-50">·</span>
+              <span aria-hidden="true" className="opacity-50">
+                ·
+              </span>
               <span>The essence</span>
             </p>
           </Reveal>
           <Reveal delay={0.06}>
             <h2
               id="essence-heading"
-              className="font-display text-display-md font-semibold leading-[1.05] text-theme-ink md:text-display-lg"
+              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
             >
               Saffron, slowly. Cardamom, gently. Time, generously.
             </h2>
           </Reveal>
           <Reveal delay={0.14}>
-            <p className="max-w-xl text-lg leading-relaxed text-theme-ink/75">
-              Three ingredients, one rule — the slow way is the only way. Every box
-              that leaves our Khammam kitchen carries that patience inside it.
+            <p className="text-theme-ink/75 max-w-xl text-lg leading-relaxed">
+              Three ingredients, one rule — the slow way is the only way. Every box that leaves our
+              Khammam kitchen carries that patience inside it.
             </p>
           </Reveal>
           <Reveal delay={0.22}>
             <Link
               href="/about"
-              className="group inline-flex w-fit items-center gap-2 rounded-full border border-theme-ink/25 px-6 py-3 text-sm font-semibold text-theme-ink transition-colors duration-300 hover:border-theme-accent hover:text-theme-accent"
+              className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent group inline-flex w-fit items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
             >
               See how we make it
               <ArrowRight

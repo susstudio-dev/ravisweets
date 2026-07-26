@@ -69,7 +69,13 @@ export function AdminReviews() {
   }
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { pending: 0, approved: 0, flagged: 0, rejected: 0, all: allReviews.length };
+    const counts: Record<string, number> = {
+      pending: 0,
+      approved: 0,
+      flagged: 0,
+      rejected: 0,
+      all: allReviews.length,
+    };
     for (const r of allReviews) counts[r.status]!++;
     return counts;
   }, [allReviews]);
@@ -77,13 +83,11 @@ export function AdminReviews() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
           Customer feedback
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
-          Reviews
-        </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Reviews</h1>
+        <p className="text-theme-ink/65 mt-1 text-sm">
           Moderate, reply, and analyse customer reviews. Auto-approval kicks in for verified
           purchases at 4★+ with clean text.
         </p>
@@ -126,7 +130,7 @@ export function AdminReviews() {
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                   tab === t.key
                     ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                    : 'border-[color:var(--color-border)] text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent'
+                    : 'text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent border-[color:var(--color-border)]'
                 }`}
               >
                 {t.label}
@@ -136,9 +140,9 @@ export function AdminReviews() {
           </div>
 
           {reviews === null ? (
-            <div className="h-32 animate-pulse rounded-2xl bg-theme-ink/5" />
+            <div className="bg-theme-ink/5 h-32 animate-pulse rounded-2xl" />
           ) : reviews.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm text-theme-ink/55">
+            <div className="text-theme-ink/55 rounded-2xl border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm">
               No reviews in this tab yet.
             </div>
           ) : (
@@ -146,13 +150,14 @@ export function AdminReviews() {
               {reviews.map((r) => (
                 <li
                   key={r.id}
-                  className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5"
+                  className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-3">
                       <Stars value={r.rating} />
-                      <span className="text-xs text-theme-ink/55">
-                        {productLabel(r.productId)} · {new Date(r.createdAt).toLocaleDateString('en-IN')}
+                      <span className="text-theme-ink/55 text-xs">
+                        {productLabel(r.productId)} ·{' '}
+                        {new Date(r.createdAt).toLocaleDateString('en-IN')}
                       </span>
                       {r.verified && (
                         <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
@@ -163,17 +168,15 @@ export function AdminReviews() {
                     </div>
                   </div>
                   {r.title && (
-                    <h3 className="mt-2 font-display text-base font-semibold text-theme-ink">
-                      {r.title}
-                    </h3>
+                    <h3 className="font-display text-theme-ink mt-2 text-base">{r.title}</h3>
                   )}
-                  <p className="mt-1 text-sm text-theme-ink/85">{r.body}</p>
+                  <p className="text-theme-ink/85 mt-1 text-sm">{r.body}</p>
                   {r.brandReply && (
-                    <div className="mt-3 rounded-lg border-l-2 border-theme-accent bg-theme-glow/10 p-3 text-sm">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+                    <div className="border-theme-accent bg-theme-glow/10 mt-3 rounded-lg border-l-2 p-3 text-sm">
+                      <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-wider">
                         Your reply
                       </p>
-                      <p className="mt-1 text-theme-ink/85">{r.brandReply}</p>
+                      <p className="text-theme-ink/85 mt-1">{r.brandReply}</p>
                     </div>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -206,22 +209,28 @@ export function AdminReviews() {
         </section>
 
         {/* Per-SKU sidebar */}
-        <aside className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-          <h2 className="font-display text-lg font-semibold text-theme-ink">
-            <Star className="mr-1.5 inline h-4 w-4 text-theme-accent" aria-hidden="true" />
+        <aside className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+          <h2 className="font-display text-theme-ink text-lg">
+            <Star className="text-theme-accent mr-1.5 inline h-4 w-4" aria-hidden="true" />
             Per-SKU rating
           </h2>
           {metrics.lowSkuAlerts.length > 0 && (
             <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/5 p-3">
               <p className="flex items-center gap-1.5 text-xs font-semibold text-red-700">
                 <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-                {metrics.lowSkuAlerts.length} SKU{metrics.lowSkuAlerts.length === 1 ? '' : 's'} averaging below 3.5
+                {metrics.lowSkuAlerts.length} SKU{metrics.lowSkuAlerts.length === 1 ? '' : 's'}{' '}
+                averaging below 3.5
               </p>
               <ul className="mt-2 flex flex-col gap-1 text-xs">
                 {metrics.lowSkuAlerts.map((s) => (
-                  <li key={s.productId} className="flex items-center justify-between text-theme-ink">
+                  <li
+                    key={s.productId}
+                    className="text-theme-ink flex items-center justify-between"
+                  >
                     <span>{productLabel(s.productId)}</span>
-                    <span className="font-mono">{s.avg.toFixed(1)} · n={s.count}</span>
+                    <span className="font-mono">
+                      {s.avg.toFixed(1)} · n={s.count}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -231,17 +240,17 @@ export function AdminReviews() {
             {metrics.bySku.map((s) => (
               <li
                 key={s.productId}
-                className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-theme-glow/15"
+                className="hover:bg-theme-glow/15 flex items-center justify-between rounded px-2 py-1.5"
               >
                 <span className="text-theme-ink/85">{productLabel(s.productId)}</span>
-                <span className="font-mono text-theme-ink/65">
+                <span className="text-theme-ink/65 font-mono">
                   {s.avg.toFixed(1)}★ · n={s.count}
                 </span>
               </li>
             ))}
           </ul>
           {metrics.bySku.length === 0 && (
-            <p className="mt-3 text-xs text-theme-ink/55">No reviews yet.</p>
+            <p className="text-theme-ink/55 mt-3 text-xs">No reviews yet.</p>
           )}
         </aside>
       </div>
@@ -275,16 +284,14 @@ function Metric({
       className={`rounded-2xl border p-4 ${
         accent
           ? 'border-theme-accent/40 bg-theme-glow/15'
-          : 'border-[color:var(--color-border)] bg-surface-elevated'
+          : 'bg-surface-elevated border-[color:var(--color-border)]'
       }`}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
         {label}
       </p>
-      <p className="mt-1 font-display text-2xl font-semibold text-theme-ink tabular-nums">
-        {value}
-      </p>
-      {sub && <p className="mt-0.5 text-[11px] text-theme-ink/55">{sub}</p>}
+      <p className="font-display text-theme-ink mt-1 text-2xl tabular-nums">{value}</p>
+      {sub && <p className="text-theme-ink/55 mt-0.5 text-[11px]">{sub}</p>}
     </div>
   );
 }
@@ -337,8 +344,8 @@ function Action({
     variant === 'danger'
       ? 'border-red-500/40 text-red-700 hover:bg-red-500/10'
       : variant === 'warn'
-      ? 'border-amber-500/40 text-amber-700 hover:bg-amber-500/10'
-      : 'border-[color:var(--color-border)] text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent';
+        ? 'border-amber-500/40 text-amber-700 hover:bg-amber-500/10'
+        : 'border-[color:var(--color-border)] text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent';
   return (
     <button
       type="button"
@@ -360,22 +367,32 @@ function ReplyDialog({ review, onClose }: { review: Review; onClose: () => void 
     const ok = await setBrandReply(review.id, reply.trim());
     setBusy(false);
     if (ok) {
-      await logAdminAction('brand-reply', 'review', review.id, { reply: review.brandReply }, { reply });
+      await logAdminAction(
+        'brand-reply',
+        'review',
+        review.id,
+        { reply: review.brandReply },
+        { reply },
+      );
       onClose();
     }
   }
 
   return (
-    <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
       <button
         type="button"
         aria-label="Close"
         onClick={onClose}
         className="absolute inset-0 bg-black/55 backdrop-blur-sm"
       />
-      <div className="relative z-10 w-full max-w-md rounded-3xl bg-surface-elevated p-6 shadow-lifted">
-        <h2 className="font-display text-lg font-semibold text-theme-ink">Reply to review</h2>
-        <p className="mt-1 text-xs text-theme-ink/65">
+      <div className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-md rounded-3xl p-6">
+        <h2 className="font-display text-theme-ink text-lg">Reply to review</h2>
+        <p className="text-theme-ink/65 mt-1 text-xs">
           Your reply appears under the customer&rsquo;s review on the product page.
         </p>
         <textarea
@@ -384,13 +401,13 @@ function ReplyDialog({ review, onClose }: { review: Review; onClose: () => void 
           onChange={(e) => setReply(e.target.value)}
           maxLength={500}
           placeholder="Thank you for the feedback…"
-          className="mt-4 w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 mt-4 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
         />
         <div className="mt-4 flex items-center justify-end gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent"
+            className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold"
           >
             Cancel
           </button>
@@ -398,7 +415,7 @@ function ReplyDialog({ review, onClose }: { review: Review; onClose: () => void 
             type="button"
             disabled={busy}
             onClick={save}
-            className="rounded-full bg-theme-accent px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-accent rounded-full px-4 py-2 text-xs font-semibold text-[color:var(--theme-base)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? 'Saving…' : 'Save reply'}
           </button>
@@ -415,8 +432,7 @@ function productLabel(productId: string): string {
 
 function buildMetrics(reviews: Review[]) {
   const totalCount = reviews.length;
-  const totalAvg =
-    totalCount === 0 ? 0 : reviews.reduce((s, r) => s + r.rating, 0) / totalCount;
+  const totalAvg = totalCount === 0 ? 0 : reviews.reduce((s, r) => s + r.rating, 0) / totalCount;
   const verified = reviews.filter((r) => r.verified).length;
   const verifiedPct = totalCount === 0 ? 0 : Math.round((verified / totalCount) * 100);
 
@@ -444,5 +460,14 @@ function buildMetrics(reviews: Review[]) {
 
   const lowSkuAlerts = bySku.filter((s) => s.avg < 3.5 && s.count >= 5);
 
-  return { totalCount, totalAvg, verifiedPct, last30Count, last30Avg, replyRate, bySku, lowSkuAlerts };
+  return {
+    totalCount,
+    totalAvg,
+    verifiedPct,
+    last30Count,
+    last30Avg,
+    replyRate,
+    bySku,
+    lowSkuAlerts,
+  };
 }

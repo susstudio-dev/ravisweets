@@ -132,22 +132,22 @@ export function SweetCursor() {
         <div
           role="dialog"
           aria-label="Choose your sweet cursor"
-          className="flex w-64 flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-4 shadow-lifted"
+          className="bg-surface-elevated shadow-lifted flex w-64 flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-4"
         >
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+            <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
               Pick your sweet
             </p>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close cursor picker"
-              className="rounded-full p-1 text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink"
+              className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink rounded-full p-1"
             >
               <X className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
           </div>
-          <p className="text-xs leading-relaxed text-theme-ink/65">
+          <p className="text-theme-ink/65 text-xs leading-relaxed">
             Turn your cursor into one of our sweets. Saved to this browser.
           </p>
           <div className="grid grid-cols-3 gap-2">
@@ -164,7 +164,7 @@ export function SweetCursor() {
                     'group flex flex-col items-center gap-1 rounded-xl border px-2 py-2 text-[10px] font-semibold uppercase tracking-wider transition-all ' +
                     (selected
                       ? 'border-theme-accent bg-theme-glow/15 text-theme-accent shadow-soft'
-                      : 'border-[color:var(--color-border)] bg-surface text-theme-ink/70 hover:-translate-y-0.5 hover:border-theme-accent hover:text-theme-accent')
+                      : 'bg-surface text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5')
                   }
                 >
                   <span
@@ -198,17 +198,17 @@ export function SweetCursor() {
         aria-expanded={open}
         aria-label={open ? 'Close cursor picker' : 'Sweet cursor — pick a sweet'}
         title="Sweet cursor — make your pointer a sweet"
-        className="group relative inline-flex h-14 items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-[#c0592b] to-[#8a3a10] pl-2 pr-4 text-[color:var(--theme-base)] shadow-lifted ring-2 ring-[#fff5d4]/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-[#fff5d4]/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-theme-glow"
+        className="shadow-lifted focus-visible:ring-theme-glow group relative inline-flex h-14 items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-[#c0592b] to-[#8a3a10] pl-2 pr-4 text-[color:var(--theme-base)] ring-2 ring-[#fff5d4]/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-[#fff5d4]/80 focus-visible:outline-none focus-visible:ring-4"
       >
         {/* Soft pulsing halo so the button reads 'interactive' even on first paint */}
         {!open && active === 'off' && (
           <span
             aria-hidden="true"
-            className="absolute inset-0 animate-ping rounded-full bg-theme-glow/30"
+            className="bg-theme-glow/30 absolute inset-0 animate-ping rounded-full"
             style={{ animationDuration: '2.6s' }}
           />
         )}
-        <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#fff5d4]/95 text-[#3a1505] shadow-soft">
+        <span className="shadow-soft relative flex h-10 w-10 items-center justify-center rounded-full bg-[#fff5d4]/95 text-[#3a1505]">
           {active !== 'off' ? (
             <span
               aria-hidden="true"
@@ -221,7 +221,7 @@ export function SweetCursor() {
             <MousePointer2 className="h-5 w-5 -rotate-12" aria-hidden="true" />
           )}
         </span>
-        <span className="relative font-display text-xs font-semibold uppercase tracking-[0.18em]">
+        <span className="font-display relative text-xs uppercase tracking-[0.18em]">
           {active === 'off' ? 'Sweet cursor' : SWEETS.find((s) => s.id === active)?.label}
         </span>
       </button>

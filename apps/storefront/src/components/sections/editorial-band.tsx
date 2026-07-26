@@ -53,7 +53,11 @@ export function EditorialBand({
   const textY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   const alignCls =
-    align === 'left' ? 'items-start text-left' : align === 'right' ? 'items-end text-right' : 'items-center text-center';
+    align === 'left'
+      ? 'items-start text-left'
+      : align === 'right'
+        ? 'items-end text-right'
+        : 'items-center text-center';
 
   return (
     <section
@@ -61,8 +65,7 @@ export function EditorialBand({
       aria-label={headline}
       className="relative isolate overflow-hidden"
       style={{
-        background:
-          'radial-gradient(ellipse at 80% 30%, #5a3010 0%, #2a1505 55%, #150a02 100%)',
+        background: 'radial-gradient(ellipse at 80% 30%, #5a3010 0%, #2a1505 55%, #150a02 100%)',
       }}
     >
       {/* Background product accent — a brand-tinted PNG contained on the right.
@@ -96,7 +99,9 @@ export function EditorialBand({
         style={reduced ? undefined : { y: textY }}
         className={`container-site relative z-10 flex min-h-[60vh] flex-col justify-center gap-5 py-24 md:min-h-[70vh] md:py-32 ${alignCls}`}
       >
-        <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] ${align !== 'center' ? '' : 'justify-center'}`}>
+        <div
+          className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] ${align !== 'center' ? '' : 'justify-center'}`}
+        >
           <Paisley size="sm" color="#f2c66f" />
           <span className="text-[#f2c66f]">{eyebrow}</span>
         </div>
@@ -105,7 +110,7 @@ export function EditorialBand({
           text={headline}
           split="word"
           gap={60}
-          className="max-w-3xl font-display text-display-lg font-semibold leading-[1.02] text-[#fdf6ec] md:text-display-xl"
+          className="font-display text-display-lg md:text-display-xl max-w-3xl leading-[1.02] text-[#fdf6ec]"
         />
         <p className="max-w-2xl text-[#fdf6ec]/85 md:text-lg">{body}</p>
         <Link

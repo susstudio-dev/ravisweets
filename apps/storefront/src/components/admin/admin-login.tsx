@@ -55,20 +55,18 @@ export function AdminLogin() {
   }
 
   return (
-    <section className="flex min-h-screen items-center justify-center bg-theme-base px-4 py-12">
-      <div className="w-full max-w-md rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-8 shadow-soft">
+    <section className="bg-theme-base flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="bg-surface-elevated shadow-soft w-full max-w-md rounded-3xl border border-[color:var(--color-border)] p-8">
         <Paisley size="md" />
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <p className="text-theme-accent mt-3 text-[11px] font-semibold uppercase tracking-[0.22em]">
           Ravi admin
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink">
-          Sign in to manage the brand.
-        </h1>
+        <h1 className="font-display text-theme-ink mt-1 text-3xl">Sign in to manage the brand.</h1>
 
         {!SUPABASE_CONFIGURED && (
-          <div className="mt-5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-theme-ink">
+          <div className="text-theme-ink mt-5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs">
             <p className="font-semibold">Supabase not configured</p>
-            <p className="mt-1 text-theme-ink/70">
+            <p className="text-theme-ink/70 mt-1">
               Add <code>NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
               <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to <code>.env.local</code>, run{' '}
               <code>supabase/migrations/0001_init.sql</code>, and create an admin user in the
@@ -79,7 +77,7 @@ export function AdminLogin() {
         )}
 
         {reason === 'forbidden' && (
-          <div className="mt-5 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs text-theme-ink">
+          <div className="text-theme-ink mt-5 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs">
             <ShieldAlert className="mt-0.5 h-4 w-4 text-red-600" aria-hidden="true" />
             <span>This account doesn&rsquo;t have admin access. Sign in with an admin email.</span>
           </div>
@@ -93,7 +91,7 @@ export function AdminLogin() {
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3.5 py-2.5 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+              className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3.5 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2"
             />
           </Field>
           <Field label="Password">
@@ -103,7 +101,7 @@ export function AdminLogin() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3.5 py-2.5 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+              className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3.5 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2"
             />
           </Field>
           {error && (
@@ -114,7 +112,7 @@ export function AdminLogin() {
           <button
             type="submit"
             disabled={busy}
-            className="group inline-flex items-center justify-center gap-2 rounded-full bg-theme-ink px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-ink shadow-soft hover:shadow-lifted group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Lock className="h-4 w-4" aria-hidden="true" />
             {busy ? 'Signing in…' : 'Sign in'}
@@ -122,19 +120,19 @@ export function AdminLogin() {
           </button>
         </form>
 
-        <details className="mt-6 rounded-lg border border-[color:var(--color-border)] bg-surface p-3 text-[11px] text-theme-ink/70">
-          <summary className="cursor-pointer font-semibold text-theme-ink">
+        <details className="bg-surface text-theme-ink/70 mt-6 rounded-lg border border-[color:var(--color-border)] p-3 text-[11px]">
+          <summary className="text-theme-ink cursor-pointer font-semibold">
             Can&rsquo;t sign in? Quick checklist
           </summary>
           <ol className="mt-3 list-decimal space-y-2 pl-4">
             <li>
-              In Supabase Dashboard → Authentication → Users, your admin user must exist
-              with a password set (not just an OTP/magic-link account).
+              In Supabase Dashboard → Authentication → Users, your admin user must exist with a
+              password set (not just an OTP/magic-link account).
             </li>
             <li>
               That user&rsquo;s <code className="font-mono">app_metadata</code> must contain{' '}
-              <code className="font-mono">{'{ "role": "admin" }'}</code>. The storefront
-              gates <code className="font-mono">/admin/*</code> on this claim.
+              <code className="font-mono">{'{ "role": "admin" }'}</code>. The storefront gates{' '}
+              <code className="font-mono">/admin/*</code> on this claim.
             </li>
             <li>
               Email Confirmation must be done — either toggle <em>Auto Confirm User</em>
@@ -142,7 +140,7 @@ export function AdminLogin() {
             </li>
             <li>
               SQL shortcut to set the role:
-              <pre className="mt-1 overflow-x-auto rounded bg-[color:var(--theme-ink)]/5 p-2 font-mono text-[10px]">
+              <pre className="bg-[color:var(--theme-ink)]/5 mt-1 overflow-x-auto rounded p-2 font-mono text-[10px]">
                 {`update auth.users
 set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'::jsonb
 where email = 'you@ravisweets.com';`}
@@ -158,7 +156,7 @@ where email = 'you@ravisweets.com';`}
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/65">
+      <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       {children}

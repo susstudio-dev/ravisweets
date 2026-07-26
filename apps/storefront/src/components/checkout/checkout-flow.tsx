@@ -168,12 +168,12 @@ export function CheckoutFlow() {
       <section className="container-site flex min-h-[60vh] flex-col items-start gap-5 py-24">
         <Paisley size="lg" />
         <h1 className="font-display text-display-md text-theme-ink">Your cart is empty.</h1>
-        <p className="max-w-lg text-theme-ink/70">
+        <p className="text-theme-ink/70 max-w-lg">
           Add something before you check out — our Hyderabadi specials are a good place to start.
         </p>
         <Link
           href="/category/hyderabadi-specials"
-          className="inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
+          className="bg-theme-accent inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
         >
           Shop now
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -189,20 +189,20 @@ export function CheckoutFlow() {
         <Reveal>
           <Link
             href="/cart"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60 transition-colors hover:text-theme-accent"
+            className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to cart
           </Link>
         </Reveal>
         <Reveal delay={0.05}>
-          <p className="mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Checkout
           </p>
         </Reveal>
         <Reveal delay={0.1}>
-          <h1 className="mt-2 font-display text-display-md leading-[1.02] text-theme-ink md:text-display-lg">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
             One more step, then it&rsquo;s wrapped.
           </h1>
         </Reveal>
@@ -220,8 +220,8 @@ export function CheckoutFlow() {
                     done
                       ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
                       : active
-                      ? 'border-theme-accent text-theme-accent'
-                      : 'border-[color:var(--color-border)] text-theme-ink/40',
+                        ? 'border-theme-accent text-theme-accent'
+                        : 'text-theme-ink/40 border-[color:var(--color-border)]',
                   )}
                 >
                   {done ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : i + 1}
@@ -235,7 +235,10 @@ export function CheckoutFlow() {
                   {s === 'address' ? 'Address' : s === 'payment' ? 'Payment' : 'Review'}
                 </span>
                 {i < STEP_ORDER.length - 1 && (
-                  <span className="mx-1 h-px w-6 bg-[color:var(--color-border)]" aria-hidden="true" />
+                  <span
+                    className="mx-1 h-px w-6 bg-[color:var(--color-border)]"
+                    aria-hidden="true"
+                  />
                 )}
               </li>
             );
@@ -338,7 +341,7 @@ export function CheckoutFlow() {
                 transition={{ duration: DURATION.quick, ease: EASE.standard }}
                 className="flex flex-col gap-3"
               >
-                <p className="text-sm text-theme-ink/70">
+                <p className="text-theme-ink/70 text-sm">
                   We&rsquo;ll simulate the payment in this demo — nothing is charged.
                 </p>
                 <ul className="grid gap-2">
@@ -351,7 +354,7 @@ export function CheckoutFlow() {
                             'flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all',
                             selected
                               ? 'border-theme-accent bg-theme-glow/10 shadow-soft'
-                              : 'border-[color:var(--color-border)] bg-surface-elevated hover:-translate-y-0.5 hover:border-theme-accent',
+                              : 'bg-surface-elevated hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
                           )}
                         >
                           <input
@@ -360,13 +363,11 @@ export function CheckoutFlow() {
                             value={m.id}
                             checked={selected}
                             onChange={() => setPayment(m.id)}
-                            className="mt-1 h-4 w-4 text-theme-accent focus:ring-theme-accent"
+                            className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4"
                           />
                           <div>
-                            <p className="font-display text-base font-semibold text-theme-ink">
-                              {m.label}
-                            </p>
-                            <p className="text-xs text-theme-ink/60">{m.sub}</p>
+                            <p className="font-display text-theme-ink text-base">{m.label}</p>
+                            <p className="text-theme-ink/60 text-xs">{m.sub}</p>
                           </div>
                         </label>
                       </li>
@@ -385,20 +386,18 @@ export function CheckoutFlow() {
                 transition={{ duration: DURATION.quick, ease: EASE.standard }}
                 className="flex flex-col gap-5"
               >
-                <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-display text-base font-semibold text-theme-ink">
-                      Shipping to
-                    </h3>
+                    <h3 className="font-display text-theme-ink text-base">Shipping to</h3>
                     <button
                       type="button"
                       onClick={() => setStep('address')}
-                      className="text-xs font-semibold text-theme-accent hover:underline"
+                      className="text-theme-accent text-xs font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-theme-ink/80">
+                  <p className="text-theme-ink/80 mt-2 text-sm leading-relaxed">
                     {address.name}
                     <br />
                     {address.line1}
@@ -409,35 +408,36 @@ export function CheckoutFlow() {
                     {address.phone} · {address.email}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-display text-base font-semibold text-theme-ink">
-                      Paying with
-                    </h3>
+                    <h3 className="font-display text-theme-ink text-base">Paying with</h3>
                     <button
                       type="button"
                       onClick={() => setStep('payment')}
-                      className="text-xs font-semibold text-theme-accent hover:underline"
+                      className="text-theme-accent text-xs font-semibold hover:underline"
                     >
                       Edit
                     </button>
                   </div>
-                  <p className="mt-2 text-sm text-theme-ink/80">
+                  <p className="text-theme-ink/80 mt-2 text-sm">
                     {PAYMENT_METHODS.find((m) => m.id === payment)?.label}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
-                  <h3 className="font-display text-base font-semibold text-theme-ink">
-                    Items · {lineCount}
-                  </h3>
+                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+                  <h3 className="font-display text-theme-ink text-base">Items · {lineCount}</h3>
                   <ul className="mt-3 flex flex-col divide-y divide-[color:var(--color-border)]">
                     {lineViews.map((l) => (
-                      <li key={`${l.productId}-${l.variantId}`} className="flex justify-between gap-4 py-2 text-sm">
+                      <li
+                        key={`${l.productId}-${l.variantId}`}
+                        className="flex justify-between gap-4 py-2 text-sm"
+                      >
                         <span className="text-theme-ink/80">
                           {l.product.title}{' '}
-                          <span className="text-theme-ink/50">· {l.variant.title} × {l.quantity}</span>
+                          <span className="text-theme-ink/50">
+                            · {l.variant.title} × {l.quantity}
+                          </span>
                         </span>
-                        <span className="font-semibold tabular-nums text-theme-ink">
+                        <span className="text-theme-ink font-semibold tabular-nums">
                           {formatMoney(l.lineTotal)}
                         </span>
                       </li>
@@ -455,7 +455,7 @@ export function CheckoutFlow() {
             <button
               type="button"
               onClick={goBack}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-theme-ink/70 transition-colors hover:text-theme-accent"
+              className="text-theme-ink/70 hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back
@@ -467,7 +467,7 @@ export function CheckoutFlow() {
             <button
               type="button"
               onClick={goNext}
-              className="group inline-flex items-center gap-2 rounded-full bg-theme-accent px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+              className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
             >
               Continue
               <ArrowRight
@@ -481,8 +481,8 @@ export function CheckoutFlow() {
               onClick={placeOrder}
               disabled={placing}
               className={cn(
-                'group inline-flex items-center gap-2 rounded-full bg-theme-ink px-7 py-3 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-300',
-                placing ? 'opacity-70' : 'hover:-translate-y-0.5 hover:shadow-lifted',
+                'bg-theme-ink shadow-soft group inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300',
+                placing ? 'opacity-70' : 'hover:shadow-lifted hover:-translate-y-0.5',
               )}
             >
               {placing ? (
@@ -508,21 +508,21 @@ export function CheckoutFlow() {
 
       {/* Right: summary */}
       <aside aria-label="Order summary" className="md:sticky md:top-20 md:self-start">
-        <div className="rounded-3xl border border-[color:var(--color-border)] bg-surface-elevated p-6 shadow-soft">
+        <div className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-6">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4 text-theme-accent" aria-hidden="true" />
-            <h2 className="font-display text-lg font-semibold text-theme-ink">Order summary</h2>
+            <ShoppingBag className="text-theme-accent h-4 w-4" aria-hidden="true" />
+            <h2 className="font-display text-theme-ink text-lg">Order summary</h2>
           </div>
           <ul className="mt-4 flex max-h-60 flex-col gap-3 overflow-y-auto pr-1 text-sm">
             {lineViews.map((l) => (
               <li key={`${l.productId}-${l.variantId}`} className="flex justify-between gap-4">
                 <span className="text-theme-ink/80">
                   <span className="line-clamp-1">{l.product.title}</span>
-                  <span className="text-xs text-theme-ink/50">
+                  <span className="text-theme-ink/50 text-xs">
                     {l.variant.title} · × {l.quantity}
                   </span>
                 </span>
-                <span className="shrink-0 font-semibold tabular-nums text-theme-ink">
+                <span className="text-theme-ink shrink-0 font-semibold tabular-nums">
                   {formatMoney(l.lineTotal)}
                 </span>
               </li>
@@ -531,7 +531,7 @@ export function CheckoutFlow() {
           <dl className="mt-6 space-y-2 border-t border-[color:var(--color-border)] pt-5 text-sm">
             <div className="flex items-center justify-between">
               <dt className="text-theme-ink/70">Subtotal</dt>
-              <dd className="tabular-nums text-theme-ink">{formatMoney(subtotal)}</dd>
+              <dd className="text-theme-ink tabular-nums">{formatMoney(subtotal)}</dd>
             </div>
             {totalDiscount > 0 && (
               <div className="flex items-center justify-between">
@@ -545,17 +545,17 @@ export function CheckoutFlow() {
             )}
             <div className="flex items-center justify-between">
               <dt className="text-theme-ink/70">Shipping{freeShipping ? ' · free' : ''}</dt>
-              <dd className="tabular-nums text-theme-ink">
+              <dd className="text-theme-ink tabular-nums">
                 {formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
               </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-theme-ink/70">GST</dt>
-              <dd className="tabular-nums text-theme-ink/60">Included</dd>
+              <dd className="text-theme-ink/60 tabular-nums">Included</dd>
             </div>
             <div className="flex items-center justify-between border-t border-[color:var(--color-border)] pt-3">
-              <dt className="font-semibold text-theme-ink">Total</dt>
-              <dd className="font-display text-2xl font-semibold text-theme-accent tabular-nums">
+              <dt className="text-theme-ink font-semibold">Total</dt>
+              <dd className="font-display text-theme-accent text-2xl tabular-nums">
                 {formatMoney(grandTotal)}
               </dd>
             </div>
@@ -604,7 +604,7 @@ function Field({
   const invalid = Boolean(error);
   return (
     <label className={cn('flex flex-col gap-1.5', className)}>
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+      <span className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       <input
@@ -618,10 +618,10 @@ function Field({
         aria-invalid={invalid}
         aria-describedby={invalid ? `${name}-err` : undefined}
         className={cn(
-          'rounded-xl border bg-surface px-3.5 py-2.5 text-sm text-theme-ink placeholder:text-theme-ink/40 transition-colors focus-visible:outline-none focus-visible:ring-2',
+          'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
           invalid
             ? 'border-red-600 focus-visible:border-red-600 focus-visible:ring-red-600/30'
-            : 'border-[color:var(--color-border)] focus-visible:border-theme-accent focus-visible:ring-theme-accent/30',
+            : 'focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 border-[color:var(--color-border)]',
         )}
       />
       {invalid && (

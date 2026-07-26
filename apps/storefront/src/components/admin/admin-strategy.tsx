@@ -109,11 +109,21 @@ const SECTIONS = [
   { id: 'pr', label: 'PR & influencers', short: 'PR', icon: Trophy },
   { id: 'seo', label: 'SEO + AEO', short: 'SEO', icon: Search },
   { id: 'kpi', label: 'KPIs & dashboard', short: 'KPIs', icon: LineChart },
-  { id: 'economics', label: 'Unit economics → ₹25–30L profit', short: 'Economics', icon: FlaskConical },
+  {
+    id: 'economics',
+    label: 'Unit economics → ₹25–30L profit',
+    short: 'Economics',
+    icon: FlaskConical,
+  },
   { id: 'budget', label: 'Budget · 90 days', short: 'Budget', icon: IndianRupee },
   { id: 'calendar', label: '90-day calendar', short: 'Calendar', icon: CalendarDays },
   { id: 'wins', label: 'Quick wins this week', short: 'Wins', icon: Target },
-  { id: 'playbook', label: 'Founder playbook · minute-by-minute', short: 'Playbook', icon: Sunrise },
+  {
+    id: 'playbook',
+    label: 'Founder playbook · minute-by-minute',
+    short: 'Playbook',
+    icon: Sunrise,
+  },
 ] as const satisfies readonly SectionMeta[];
 
 type SectionId = (typeof SECTIONS)[number]['id'];
@@ -282,32 +292,31 @@ export function AdminStrategy() {
   return (
     <div className="flex flex-col gap-8">
       {/* Page header */}
-      <header className="rounded-2xl border border-[color:var(--color-border)] bg-gradient-to-br from-surface-elevated via-surface-elevated to-theme-glow/10 p-6">
+      <header className="from-surface-elevated via-surface-elevated to-theme-glow/10 rounded-2xl border border-[color:var(--color-border)] bg-gradient-to-br p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em]">
               <Paisley size="sm" />
               Strategy · 2026 growth playbook
             </p>
-            <h1 className="mt-2 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+            <h1 className="font-display text-theme-ink mt-2 text-3xl md:text-4xl">
               Ravi Sweets · 12-month plan
             </h1>
-            <p className="mt-2 max-w-2xl text-sm text-theme-ink/70">
-              The complete market-ready plan — research, ICPs, health-line range, content
-              engine, paid-ads playbook, NRI phases, B2B tiers, KPIs, budget and a 90-day
-              calendar. Mark any section as in-progress or done as you act on it. Notes and
-              decisions persist locally.
+            <p className="text-theme-ink/70 mt-2 max-w-2xl text-sm">
+              The complete market-ready plan — research, ICPs, health-line range, content engine,
+              paid-ads playbook, NRI phases, B2B tiers, KPIs, budget and a 90-day calendar. Mark any
+              section as in-progress or done as you act on it. Notes and decisions persist locally.
             </p>
           </div>
           <div className="flex flex-col items-end gap-2 text-right">
-            <span className="rounded-full bg-theme-accent/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-theme-accent">
+            <span className="bg-theme-accent/15 text-theme-accent rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider">
               v2 · 2026-05-04 · spirulina + ₹25–30L profit path
             </span>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={downloadJson}
-                className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] bg-surface px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent"
+                className="bg-surface text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider"
               >
                 <Download className="h-3 w-3" aria-hidden="true" />
                 Export JSON
@@ -347,16 +356,14 @@ export function AdminStrategy() {
             label="Last edited"
             value={state.lastSavedAt ? new Date(state.lastSavedAt).toLocaleTimeString() : '—'}
             sub={
-              state.lastSavedAt
-                ? new Date(state.lastSavedAt).toLocaleDateString()
-                : 'no edits yet'
+              state.lastSavedAt ? new Date(state.lastSavedAt).toLocaleDateString() : 'no edits yet'
             }
           />
         </div>
 
-        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-theme-ink/10">
+        <div className="bg-theme-ink/10 mt-4 h-2 w-full overflow-hidden rounded-full">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-theme-accent via-theme-glow to-emerald-500 transition-all"
+            className="from-theme-accent via-theme-glow h-full rounded-full bg-gradient-to-r to-emerald-500 transition-all"
             style={{ width: `${overallProgress.pct}%` }}
           />
         </div>
@@ -366,7 +373,7 @@ export function AdminStrategy() {
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
         {/* TOC */}
         <aside className="lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] lg:overflow-y-auto">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+          <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.22em]">
             Sections
           </p>
           <nav className="mt-2 flex flex-col gap-0.5">
@@ -403,9 +410,9 @@ export function AdminStrategy() {
               );
             })}
           </nav>
-          <p className="mt-6 rounded-lg border border-dashed border-[color:var(--color-border)] p-3 text-[11px] leading-relaxed text-theme-ink/55">
-            All edits autosave to your browser. Use <span className="font-semibold">Export JSON</span>{' '}
-            to send a snapshot to the team.
+          <p className="text-theme-ink/55 mt-6 rounded-lg border border-dashed border-[color:var(--color-border)] p-3 text-[11px] leading-relaxed">
+            All edits autosave to your browser. Use{' '}
+            <span className="font-semibold">Export JSON</span> to send a snapshot to the team.
           </p>
         </aside>
 
@@ -418,10 +425,7 @@ export function AdminStrategy() {
             note={state.notes.overview ?? ''}
             onNote={(n) => setNote('overview', n)}
           >
-            <OverviewSection
-              decisions={state.decisions}
-              setDecision={setDecision}
-            />
+            <OverviewSection decisions={state.decisions} setDecision={setDecision} />
           </SectionShell>
 
           <SectionShell
@@ -571,7 +575,10 @@ export function AdminStrategy() {
             note={state.notes.budget ?? ''}
             onNote={(n) => setNote('budget', n)}
           >
-            <BudgetSection tier={state.decisions.budgetTier} setTier={(t) => setDecision('budgetTier', t)} />
+            <BudgetSection
+              tier={state.decisions.budgetTier}
+              setTier={(t) => setDecision('budgetTier', t)}
+            />
           </SectionShell>
 
           <SectionShell
@@ -581,10 +588,7 @@ export function AdminStrategy() {
             note={state.notes.calendar ?? ''}
             onNote={(n) => setNote('calendar', n)}
           >
-            <CalendarSection
-              checked={state.weekChecklist}
-              toggle={toggleWeekItem}
-            />
+            <CalendarSection checked={state.weekChecklist} toggle={toggleWeekItem} />
           </SectionShell>
 
           <SectionShell
@@ -594,10 +598,7 @@ export function AdminStrategy() {
             note={state.notes.wins ?? ''}
             onNote={(n) => setNote('wins', n)}
           >
-            <WinsSection
-              checked={state.weekChecklist}
-              toggle={toggleWeekItem}
-            />
+            <WinsSection checked={state.weekChecklist} toggle={toggleWeekItem} />
           </SectionShell>
 
           <SectionShell
@@ -607,10 +608,7 @@ export function AdminStrategy() {
             note={state.notes.playbook ?? ''}
             onNote={(n) => setNote('playbook', n)}
           >
-            <PlaybookSection
-              checked={state.weekChecklist}
-              toggle={toggleWeekItem}
-            />
+            <PlaybookSection checked={state.weekChecklist} toggle={toggleWeekItem} />
           </SectionShell>
         </div>
       </div>
@@ -639,21 +637,16 @@ function ProgressTile({
         'rounded-xl border p-4',
         accent && 'border-theme-accent/40 bg-theme-accent/5',
         danger && 'border-red-500/40 bg-red-500/5',
-        !accent && !danger && 'border-[color:var(--color-border)] bg-surface',
+        !accent && !danger && 'bg-surface border-[color:var(--color-border)]',
       )}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">
+      <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
         {label}
       </p>
-      <p
-        className={cn(
-          'mt-1 font-display text-2xl font-semibold',
-          danger ? 'text-red-700' : 'text-theme-ink',
-        )}
-      >
+      <p className={cn('font-display mt-1 text-2xl', danger ? 'text-red-700' : 'text-theme-ink')}>
         {value}
       </p>
-      <p className="mt-0.5 text-[11px] text-theme-ink/55">{sub}</p>
+      <p className="text-theme-ink/55 mt-0.5 text-[11px]">{sub}</p>
     </div>
   );
 }
@@ -679,20 +672,18 @@ function SectionShell({
   return (
     <section
       id={section.id}
-      className="scroll-mt-24 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated"
+      className="bg-surface-elevated scroll-mt-24 rounded-2xl border border-[color:var(--color-border)]"
     >
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--color-border)] px-5 py-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-theme-accent/15 text-theme-accent">
+          <span className="bg-theme-accent/15 text-theme-accent flex h-9 w-9 items-center justify-center rounded-full">
             <Icon className="h-4 w-4" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+            <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.22em]">
               §{SECTIONS.findIndex((s) => s.id === section.id) + 1}
             </p>
-            <h2 className="font-display text-xl font-semibold text-theme-ink">
-              {section.label}
-            </h2>
+            <h2 className="font-display text-theme-ink text-xl">{section.label}</h2>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -708,7 +699,7 @@ function SectionShell({
           <select
             value={status}
             onChange={(e) => onStatus(e.target.value as Status)}
-            className="rounded-full border border-[color:var(--color-border)] bg-surface px-2 py-1 text-[11px] font-medium text-theme-ink/70 focus-visible:border-theme-accent focus-visible:outline-none"
+            className="bg-surface text-theme-ink/70 focus-visible:border-theme-accent rounded-full border border-[color:var(--color-border)] px-2 py-1 text-[11px] font-medium focus-visible:outline-none"
             aria-label={`Update status of ${section.label}`}
           >
             <option value="idle">Not started</option>
@@ -721,7 +712,7 @@ function SectionShell({
       <div className="px-5 py-6">{children}</div>
       <footer className="border-t border-[color:var(--color-border)] px-5 py-4">
         <label className="flex flex-col gap-1.5">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
             Founder notes for this section
           </span>
           <textarea
@@ -729,7 +720,7 @@ function SectionShell({
             onChange={(e) => onNote(e.target.value)}
             placeholder="Anything to remember, change, push back on, or hand off…"
             rows={2}
-            className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm focus-visible:border-theme-accent focus-visible:outline-none"
+            className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none"
           />
         </label>
       </footer>
@@ -751,19 +742,19 @@ function OverviewSection({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+      <div className="border-theme-accent/30 bg-theme-accent/5 rounded-xl border p-5">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           North-star · the number that decides everything
         </p>
-        <p className="mt-2 font-display text-xl font-semibold text-theme-ink">
+        <p className="font-display text-theme-ink mt-2 text-xl">
           ₹25–30 L net profit / month by Diwali 2026 · ≈ ₹85L–₹1Cr GMV at 30% blended margin
         </p>
-        <p className="mt-2 text-sm text-theme-ink/70">
-          Five revenue stacks ladder to the target — D2C web (~40%), Corporate B2B (~25%),
-          NRI gifting (~12%), Quick-commerce (~15%), Walk-in (~8%). The new lever versus the
-          v1 plan is the <span className="font-semibold text-theme-accent">Spirulina · Bal protein line</span>{' '}
-          (60–70% protein per 100g, ~78% gross margin). Window before category consolidation:
-          24 months.
+        <p className="text-theme-ink/70 mt-2 text-sm">
+          Five revenue stacks ladder to the target — D2C web (~40%), Corporate B2B (~25%), NRI
+          gifting (~12%), Quick-commerce (~15%), Walk-in (~8%). The new lever versus the v1 plan is
+          the <span className="text-theme-accent font-semibold">Spirulina · Bal protein line</span>{' '}
+          (60–70% protein per 100g, ~78% gross margin). Window before category consolidation: 24
+          months.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {[
@@ -772,22 +763,25 @@ function OverviewSection({
             { k: 'Month 12', v: '₹85L–1Cr', sub: 'GMV → ₹25–30L profit' },
             { k: 'Year 2', v: '₹2–3Cr', sub: 'GMV / month, scale-out' },
           ].map((l) => (
-            <div key={l.k} className="rounded-lg border border-theme-accent/30 bg-surface-elevated px-3 py-2">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+            <div
+              key={l.k}
+              className="border-theme-accent/30 bg-surface-elevated rounded-lg border px-3 py-2"
+            >
+              <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {l.k}
               </p>
-              <p className="font-display text-base font-semibold text-theme-ink">{l.v}</p>
-              <p className="text-[10px] text-theme-ink/55">{l.sub}</p>
+              <p className="font-display text-theme-ink text-base">{l.v}</p>
+              <p className="text-theme-ink/55 text-[10px]">{l.sub}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           Decisions you owe the team
         </p>
-        <p className="mt-1 text-sm text-theme-ink/65">
+        <p className="text-theme-ink/65 mt-1 text-sm">
           Filling these unlocks engineering, marketing and ops in parallel.
         </p>
 
@@ -796,7 +790,7 @@ function OverviewSection({
             <select
               value={decisions.subBrandName}
               onChange={(e) => setDecision('subBrandName', e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               <option>Ravi Sweets · Bellam (బెల్లం)</option>
               <option>Ravi Sweets · Pure</option>
@@ -807,9 +801,12 @@ function OverviewSection({
             <select
               value={decisions.budgetTier}
               onChange={(e) =>
-                setDecision('budgetTier', e.target.value as StrategyState['decisions']['budgetTier'])
+                setDecision(
+                  'budgetTier',
+                  e.target.value as StrategyState['decisions']['budgetTier'],
+                )
               }
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             >
               <option value="">— select —</option>
               <option value="lean">Lean (₹6L)</option>
@@ -822,7 +819,7 @@ function OverviewSection({
               type="date"
               value={decisions.photoshootDate}
               onChange={(e) => setDecision('photoshootDate', e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </DecisionField>
           <DecisionField label="Endocrinologist (name + clinic)">
@@ -831,7 +828,7 @@ function OverviewSection({
               value={decisions.doctorName}
               onChange={(e) => setDecision('doctorName', e.target.value)}
               placeholder="e.g. Dr PV Rao · Apollo Jubilee Hills"
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </DecisionField>
           <DecisionField label="Top engineering item to ship next">
@@ -840,7 +837,7 @@ function OverviewSection({
               value={decisions.engPriority}
               onChange={(e) => setDecision('engPriority', e.target.value)}
               placeholder="e.g. Resend order receipts"
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm"
+              className="bg-surface w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm"
             />
           </DecisionField>
           <div className="grid gap-3">
@@ -864,7 +861,11 @@ function OverviewSection({
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">
-        <Pill icon={Heart} title="Health line" body="10 SKUs · jaggery + millet · doctor-endorsed" />
+        <Pill
+          icon={Heart}
+          title="Health line"
+          body="10 SKUs · jaggery + millet · doctor-endorsed"
+        />
         <Pill icon={Globe2} title="NRI Phase A" body="Send-from-abroad live in 6 weeks" />
         <Pill icon={Building2} title="B2B" body="4 productised tiers + 800 LinkedIn outbound" />
       </div>
@@ -928,12 +929,15 @@ function MarketSection() {
     <div className="flex flex-col gap-6">
       <div className="grid gap-3 md:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">
+          <div
+            key={s.label}
+            className="bg-surface rounded-xl border border-[color:var(--color-border)] p-4"
+          >
+            <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
               {s.label}
             </p>
-            <p className="mt-1 font-display text-2xl font-semibold text-theme-ink">{s.value}</p>
-            <p className="mt-0.5 text-[11px] text-theme-ink/55">{s.hint}</p>
+            <p className="font-display text-theme-ink mt-1 text-2xl">{s.value}</p>
+            <p className="text-theme-ink/55 mt-0.5 text-[11px]">{s.hint}</p>
           </div>
         ))}
       </div>
@@ -963,22 +967,64 @@ function IcpsSection() {
     freq: string;
     driver: string;
   }[] = [
-    { rank: 1, name: 'NRI hamper sender (US/UK/UAE/Aus/Sg/Ca → TG/AP family)', yrGmv: '₹35–60L', aov: '₹3K–₹7K', freq: '4–6×/yr', driver: 'Send-from-Khammam trust + Telugu + WhatsApp' },
-    { rank: 2, name: 'Hyderabad Telugu family (working couple, 28–45)', yrGmv: '₹40–70L', aov: '₹900–₹2.2K', freq: '1–2×/mo', driver: 'Quick-commerce + WA catalogue + Sunday delivery' },
-    { rank: 3, name: 'Telangana SME / corporate buyer', yrGmv: '₹50L–₹2Cr', aov: '₹40K–₹4L', freq: '1–3×/yr', driver: 'Logo + GST + dispatch CSV + WA account manager' },
-    { rank: 4, name: 'Health-first urban buyer (35–55, T1/T2 metro)', yrGmv: '₹15–30L', aov: '₹1.2K–₹3K', freq: '1×/quarter', driver: 'Sugar-free + millet + jaggery + nutrition panel' },
-    { rank: 5, name: 'Wedding / event planner (Hyd · Vij · BLR)', yrGmv: '₹25–60L', aov: '₹40K–₹3L', freq: 'Repeat-client', driver: 'White-label hampers · fast turnaround · photo proof' },
-    { rank: 6, name: 'Khammam local walk-in + JustDial buyer', yrGmv: '₹40–80L', aov: '₹350–₹1.2K', freq: 'Weekly', driver: '40-yr trust · already owned — automate receipts' },
+    {
+      rank: 1,
+      name: 'NRI hamper sender (US/UK/UAE/Aus/Sg/Ca → TG/AP family)',
+      yrGmv: '₹35–60L',
+      aov: '₹3K–₹7K',
+      freq: '4–6×/yr',
+      driver: 'Send-from-Khammam trust + Telugu + WhatsApp',
+    },
+    {
+      rank: 2,
+      name: 'Hyderabad Telugu family (working couple, 28–45)',
+      yrGmv: '₹40–70L',
+      aov: '₹900–₹2.2K',
+      freq: '1–2×/mo',
+      driver: 'Quick-commerce + WA catalogue + Sunday delivery',
+    },
+    {
+      rank: 3,
+      name: 'Telangana SME / corporate buyer',
+      yrGmv: '₹50L–₹2Cr',
+      aov: '₹40K–₹4L',
+      freq: '1–3×/yr',
+      driver: 'Logo + GST + dispatch CSV + WA account manager',
+    },
+    {
+      rank: 4,
+      name: 'Health-first urban buyer (35–55, T1/T2 metro)',
+      yrGmv: '₹15–30L',
+      aov: '₹1.2K–₹3K',
+      freq: '1×/quarter',
+      driver: 'Sugar-free + millet + jaggery + nutrition panel',
+    },
+    {
+      rank: 5,
+      name: 'Wedding / event planner (Hyd · Vij · BLR)',
+      yrGmv: '₹25–60L',
+      aov: '₹40K–₹3L',
+      freq: 'Repeat-client',
+      driver: 'White-label hampers · fast turnaround · photo proof',
+    },
+    {
+      rank: 6,
+      name: 'Khammam local walk-in + JustDial buyer',
+      yrGmv: '₹40–80L',
+      aov: '₹350–₹1.2K',
+      freq: 'Weekly',
+      driver: '40-yr trust · already owned — automate receipts',
+    },
   ];
   return (
     <div className="overflow-x-auto">
-      <p className="mb-4 text-sm text-theme-ink/65">
-        ICPs ranked for 2026. ICPs 1, 3, 4 absorb 80% of marketing budget. ICP 2 is the home
-        base — protect it. ICP 6 is the cash engine — automate it.
+      <p className="text-theme-ink/65 mb-4 text-sm">
+        ICPs ranked for 2026. ICPs 1, 3, 4 absorb 80% of marketing budget. ICP 2 is the home base —
+        protect it. ICP 6 is the cash engine — automate it.
       </p>
       <table className="w-full min-w-[720px] text-left text-sm">
         <thead>
-          <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+          <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
             <Th>#</Th>
             <Th>Segment</Th>
             <Th>Yr-1 GMV</Th>
@@ -989,13 +1035,16 @@ function IcpsSection() {
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.rank} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
+            <tr
+              key={r.rank}
+              className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+            >
               <Td>
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-theme-accent/15 text-[11px] font-semibold text-theme-accent">
+                <span className="bg-theme-accent/15 text-theme-accent inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold">
                   {r.rank}
                 </span>
               </Td>
-              <Td className="font-medium text-theme-ink">{r.name}</Td>
+              <Td className="text-theme-ink font-medium">{r.name}</Td>
               <Td>{r.yrGmv}</Td>
               <Td>{r.aov}</Td>
               <Td>{r.freq}</Td>
@@ -1013,12 +1062,22 @@ function HealthSection({ subBrand }: { subBrand: string }) {
     { name: 'Bellam Boondi Laddu', sweetener: 'Jaggery', hero: 'Bengal gram', price: '₹399' },
     { name: 'Ragi Sunnundalu', sweetener: 'Jaggery', hero: 'Ragi + til', price: '₹449' },
     { name: 'Sajja (Bajra) Burelu', sweetener: 'Jaggery', hero: 'Sajja flour', price: '₹449' },
-    { name: 'Foxtail Millet Halwa', sweetener: 'Jaggery + dates', hero: 'Foxtail millet', price: '₹549' },
+    {
+      name: 'Foxtail Millet Halwa',
+      sweetener: 'Jaggery + dates',
+      hero: 'Foxtail millet',
+      price: '₹549',
+    },
     { name: 'Dates & Almond Katli', sweetener: 'Dates only', hero: 'Almonds', price: '₹699' },
     { name: 'Anjeer Roll', sweetener: 'Figs', hero: 'Pistachio', price: '₹699' },
     { name: 'Kaju Stevia Katli', sweetener: 'Stevia', hero: 'Cashew', price: '₹599' },
     { name: 'Multigrain Chikki', sweetener: 'Jaggery', hero: '7 grains', price: '₹349' },
-    { name: 'A2 Ghee Mysore Pak (slim)', sweetener: 'Cane sugar (controlled)', hero: 'A2 ghee', price: '₹499' },
+    {
+      name: 'A2 Ghee Mysore Pak (slim)',
+      sweetener: 'Cane sugar (controlled)',
+      hero: 'A2 ghee',
+      price: '₹499',
+    },
     { name: 'Protein Laddu', sweetener: 'Dates', hero: 'Almond + whey', price: '₹799' },
   ];
   const trust = [
@@ -1034,17 +1093,17 @@ function HealthSection({ subBrand }: { subBrand: string }) {
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
           Sub-brand · positioning
         </p>
-        <p className="mt-1 font-display text-xl font-semibold text-theme-ink">{subBrand}</p>
-        <p className="mt-2 italic text-theme-ink/75">
-          &ldquo;The sweets your grandmother actually made — before sugar, before maida,
-          before shortcuts.&rdquo;
+        <p className="font-display text-theme-ink mt-1 text-xl">{subBrand}</p>
+        <p className="text-theme-ink/75 mt-2 italic">
+          &ldquo;The sweets your grandmother actually made — before sugar, before maida, before
+          shortcuts.&rdquo;
         </p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>SKU</Th>
               <Th>Sweetener</Th>
               <Th>Hero ingredient</Th>
@@ -1053,11 +1112,14 @@ function HealthSection({ subBrand }: { subBrand: string }) {
           </thead>
           <tbody>
             {skus.map((s) => (
-              <tr key={s.name} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-medium text-theme-ink">{s.name}</Td>
+              <tr
+                key={s.name}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="text-theme-ink font-medium">{s.name}</Td>
                 <Td>{s.sweetener}</Td>
                 <Td>{s.hero}</Td>
-                <Td className="font-display font-semibold">{s.price}</Td>
+                <Td className="font-display">{s.price}</Td>
               </tr>
             ))}
           </tbody>
@@ -1065,13 +1127,16 @@ function HealthSection({ subBrand }: { subBrand: string }) {
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           Trust artefacts (non-negotiable)
         </p>
-        <ul className="mt-2 space-y-1.5 text-sm text-theme-ink/75">
+        <ul className="text-theme-ink/75 mt-2 space-y-1.5 text-sm">
           {trust.map((t) => (
             <li key={t} className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+              <CheckCircle2
+                className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"
+                aria-hidden="true"
+              />
               <span>{t}</span>
             </li>
           ))}
@@ -1100,36 +1165,51 @@ function BrandSection() {
   ];
   return (
     <div className="grid gap-5 md:grid-cols-2">
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Brand pyramid
         </p>
         <div className="mt-3 space-y-3 text-sm">
-          <PyramidLevel label="Why we exist" body='"Sweets that taste like home, from a kitchen that hasn&apos;t moved in 40 years."' />
-          <PyramidLevel label="Who we are" body="A Khammam family kitchen since 1985. Two stores, one recipe book, one founder, no shortcuts." />
-          <PyramidLevel label="What we do" body="Slow-cooked Telangana & Hyderabadi sweets, plus a new jaggery + millet range. National + worldwide shipping. Custom corporate hampers." />
-          <PyramidLevel label="How we differ" body="Khammam-rooted · founder-led · jaggery+millet line · customisable hampers · same-day fresh, no preservatives." />
+          <PyramidLevel
+            label="Why we exist"
+            body='"Sweets that taste like home, from a kitchen that hasn&apos;t moved in 40 years."'
+          />
+          <PyramidLevel
+            label="Who we are"
+            body="A Khammam family kitchen since 1985. Two stores, one recipe book, one founder, no shortcuts."
+          />
+          <PyramidLevel
+            label="What we do"
+            body="Slow-cooked Telangana & Hyderabadi sweets, plus a new jaggery + millet range. National + worldwide shipping. Custom corporate hampers."
+          />
+          <PyramidLevel
+            label="How we differ"
+            body="Khammam-rooted · founder-led · jaggery+millet line · customisable hampers · same-day fresh, no preservatives."
+          />
         </div>
       </div>
       <div className="flex flex-col gap-5">
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Seven phrases we say everywhere
           </p>
-          <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-theme-ink/80">
+          <ol className="text-theme-ink/80 mt-2 list-decimal space-y-1.5 pl-5 text-sm">
             {phrases.map((p) => (
               <li key={p}>{p}</li>
             ))}
           </ol>
         </div>
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Voice rules
           </p>
-          <ul className="mt-2 space-y-1.5 text-sm text-theme-ink/80">
+          <ul className="text-theme-ink/80 mt-2 space-y-1.5 text-sm">
             {voice.map((v) => (
               <li key={v} className="flex items-start gap-2">
-                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <ArrowRight
+                  className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <span>{v}</span>
               </li>
             ))}
@@ -1181,16 +1261,16 @@ function ContentSection() {
   return (
     <div className="flex flex-col gap-5">
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Channel cadence
           </p>
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-left text-sm">
               <tbody>
                 {channels.map((c) => (
-                  <tr key={c.ch} className="border-b border-[color:var(--color-border)]/60">
-                    <Td className="font-medium text-theme-ink">{c.ch}</Td>
+                  <tr key={c.ch} className="border-[color:var(--color-border)]/60 border-b">
+                    <Td className="text-theme-ink font-medium">{c.ch}</Td>
                     <Td className="text-theme-ink/65">{c.cad}</Td>
                     <Td className="text-theme-ink/55 text-xs">{c.goal}</Td>
                   </tr>
@@ -1199,14 +1279,19 @@ function ContentSection() {
             </table>
           </div>
         </div>
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             12 evergreen pillars (rotate weekly)
           </p>
           <ul className="mt-3 grid grid-cols-2 gap-2 text-sm">
             {pillars.map((p, i) => (
-              <li key={p} className="flex items-center gap-2 rounded-lg bg-theme-glow/10 px-2.5 py-1.5">
-                <span className="text-[10px] font-semibold text-theme-accent">{String(i + 1).padStart(2, '0')}</span>
+              <li
+                key={p}
+                className="bg-theme-glow/10 flex items-center gap-2 rounded-lg px-2.5 py-1.5"
+              >
+                <span className="text-theme-accent text-[10px] font-semibold">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
                 <span className="text-theme-ink/80">{p}</span>
               </li>
             ))}
@@ -1214,23 +1299,28 @@ function ContentSection() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Festival calendar 2026 — content campaign windows
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {festivals.map((f) => (
-            <div key={f.f} className="rounded-lg border border-[color:var(--color-border)] bg-surface-elevated p-3">
-              <p className="font-display text-sm font-semibold text-theme-ink">{f.f}</p>
-              <p className="text-[11px] text-theme-ink/55">{f.d}</p>
-              <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+            <div
+              key={f.f}
+              className="bg-surface-elevated rounded-lg border border-[color:var(--color-border)] p-3"
+            >
+              <p className="font-display text-theme-ink text-sm">{f.f}</p>
+              <p className="text-theme-ink/55 text-[11px]">{f.d}</p>
+              <p className="text-theme-accent mt-1 text-[10px] font-semibold uppercase tracking-wider">
                 {f.days}-day campaign
               </p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-xs text-theme-ink/60">
-          Diwali is 30–35% of annual revenue. Allocate <span className="font-semibold text-theme-accent">50% of paid spend</span> to a 45-day Diwali ramp (Sept 25 → Nov 12).
+        <p className="text-theme-ink/60 mt-3 text-xs">
+          Diwali is 30–35% of annual revenue. Allocate{' '}
+          <span className="text-theme-accent font-semibold">50% of paid spend</span> to a 45-day
+          Diwali ramp (Sept 25 → Nov 12).
         </p>
       </div>
     </div>
@@ -1240,52 +1330,72 @@ function ContentSection() {
 function AdsSection() {
   const mix = [
     { ch: 'Meta (IG + FB)', pct: 50, goal: 'Discovery + retargeting', cac: '₹180–₹350' },
-    { ch: 'Google Search + Shopping', pct: 25, goal: 'High-intent (NRI · diabetic · gifting)', cac: '₹150–₹400' },
+    {
+      ch: 'Google Search + Shopping',
+      pct: 25,
+      goal: 'High-intent (NRI · diabetic · gifting)',
+      cac: '₹150–₹400',
+    },
     { ch: 'YouTube (in-feed + Shorts)', pct: 10, goal: 'Brand films + recipes', cac: '₹220–₹500' },
     { ch: 'WhatsApp click-to-chat', pct: 8, goal: 'Conversational sales', cac: '₹250–₹600' },
     { ch: 'Pinterest', pct: 4, goal: 'NRI + wedding planner', cac: '₹180–₹350' },
     { ch: 'LinkedIn (founder + brand)', pct: 3, goal: 'B2B corporate gifting', cac: '₹600–₹1,200' },
   ];
   const meta = [
-    { stage: 'TOF · Reach', audiences: 'Lookalikes · TG/AP/TN/KA 25–55 · NRI lookalikes', creatives: '30s heritage film · founder reel · ASMR · jaggery story', daily: '₹1.5–3.5K/ad-set' },
-    { stage: 'MOF · Traffic', audiences: 'Page engagers 90d · reel viewers ≥75% · site visitors 30d', creatives: 'Product carousels · hamper builder demo · testimonials', daily: '₹1–2.5K/ad-set' },
-    { stage: 'BOF · Conversion', audiences: 'ATC-no-purchase 14d · past purchasers · abandoned checkout', creatives: '"Complete your hamper" · countdown urgency · founder note', daily: '₹0.8–2K/ad-set' },
+    {
+      stage: 'TOF · Reach',
+      audiences: 'Lookalikes · TG/AP/TN/KA 25–55 · NRI lookalikes',
+      creatives: '30s heritage film · founder reel · ASMR · jaggery story',
+      daily: '₹1.5–3.5K/ad-set',
+    },
+    {
+      stage: 'MOF · Traffic',
+      audiences: 'Page engagers 90d · reel viewers ≥75% · site visitors 30d',
+      creatives: 'Product carousels · hamper builder demo · testimonials',
+      daily: '₹1–2.5K/ad-set',
+    },
+    {
+      stage: 'BOF · Conversion',
+      audiences: 'ATC-no-purchase 14d · past purchasers · abandoned checkout',
+      creatives: '"Complete your hamper" · countdown urgency · founder note',
+      daily: '₹0.8–2K/ad-set',
+    },
   ];
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Channel allocation (90-day starting mix)
         </p>
         <div className="mt-4 space-y-3">
           {mix.map((m) => (
             <div key={m.ch}>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-theme-ink">{m.ch}</span>
+                <span className="text-theme-ink font-medium">{m.ch}</span>
                 <span className="text-theme-ink/60">
                   {m.pct}% · CAC {m.cac}
                 </span>
               </div>
-              <div className="mt-1 h-2 overflow-hidden rounded-full bg-theme-ink/10">
+              <div className="bg-theme-ink/10 mt-1 h-2 overflow-hidden rounded-full">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-theme-accent to-theme-glow"
+                  className="from-theme-accent to-theme-glow h-full rounded-full bg-gradient-to-r"
                   style={{ width: `${m.pct * 1.6}%` }}
                 />
               </div>
-              <p className="mt-1 text-[11px] text-theme-ink/55">{m.goal}</p>
+              <p className="text-theme-ink/55 mt-1 text-[11px]">{m.goal}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Meta · always-on funnel
         </p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
-              <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+              <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
                 <Th>Stage</Th>
                 <Th>Audiences</Th>
                 <Th>Creative</Th>
@@ -1294,8 +1404,8 @@ function AdsSection() {
             </thead>
             <tbody>
               {meta.map((m) => (
-                <tr key={m.stage} className="border-b border-[color:var(--color-border)]/60">
-                  <Td className="font-medium text-theme-ink">{m.stage}</Td>
+                <tr key={m.stage} className="border-[color:var(--color-border)]/60 border-b">
+                  <Td className="text-theme-ink font-medium">{m.stage}</Td>
                   <Td className="text-theme-ink/70">{m.audiences}</Td>
                   <Td className="text-theme-ink/70">{m.creatives}</Td>
                   <Td className="text-theme-accent">{m.daily}</Td>
@@ -1305,9 +1415,9 @@ function AdsSection() {
           </table>
         </div>
         <p className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-900">
-          <span className="font-semibold uppercase tracking-wider">Creative guardrails:</span>{' '}
-          9:16 reels-first · brand wordmark in first 1.5s · subtitles + bilingual headline ·
-          bellam stamp / paisley signature in every frame.
+          <span className="font-semibold uppercase tracking-wider">Creative guardrails:</span> 9:16
+          reels-first · brand wordmark in first 1.5s · subtitles + bilingual headline · bellam stamp
+          / paisley signature in every frame.
         </p>
       </div>
     </div>
@@ -1365,22 +1475,25 @@ function GlobalSection() {
             'rounded-xl border p-5',
             p.tone === 'emerald' && 'border-emerald-500/30 bg-emerald-500/5',
             p.tone === 'amber' && 'border-amber-500/30 bg-amber-500/5',
-            p.tone === 'slate' && 'border-[color:var(--color-border)] bg-surface',
+            p.tone === 'slate' && 'bg-surface border-[color:var(--color-border)]',
           )}
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
             {p.tag} · {p.timeline}
           </p>
-          <p className="mt-1 font-display text-xl font-semibold text-theme-ink">{p.title}</p>
-          <ul className="mt-3 space-y-1.5 text-sm text-theme-ink/75">
+          <p className="font-display text-theme-ink mt-1 text-xl">{p.title}</p>
+          <ul className="text-theme-ink/75 mt-3 space-y-1.5 text-sm">
             {p.points.map((pt) => (
               <li key={pt} className="flex items-start gap-2">
-                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <ArrowRight
+                  className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <span dangerouslySetInnerHTML={{ __html: pt }} />
               </li>
             ))}
           </ul>
-          <p className="mt-4 rounded-lg bg-surface-elevated px-3 py-2 text-xs font-semibold text-theme-accent">
+          <p className="bg-surface-elevated text-theme-accent mt-4 rounded-lg px-3 py-2 text-xs font-semibold">
             Target · {p.target}
           </p>
         </div>
@@ -1391,17 +1504,45 @@ function GlobalSection() {
 
 function B2bSection() {
   const tiers = [
-    { name: 'Essentials', content: '4 mini-jars + ribbon + card', price: '₹399', minQty: 50, lead: '5 days', buyer: 'SME, sub-50' },
-    { name: 'Premium', content: '6 SKUs, wooden tray, brand-foiled lid, handwritten card', price: '₹899', minQty: 25, lead: '7 days', buyer: 'Mid-market 50–500' },
-    { name: 'Heritage', content: '8 SKUs (incl. health line) + paisley-foil + founder note + Telugu calligraphy', price: '₹1,799', minQty: 10, lead: '10 days', buyer: 'Senior leadership / VIP' },
-    { name: 'Custom', content: 'Anything from the builder + logo on box + multi-address CSV', price: '₹400–₹5K', minQty: 25, lead: '14 days', buyer: 'Anyone wanting control' },
+    {
+      name: 'Essentials',
+      content: '4 mini-jars + ribbon + card',
+      price: '₹399',
+      minQty: 50,
+      lead: '5 days',
+      buyer: 'SME, sub-50',
+    },
+    {
+      name: 'Premium',
+      content: '6 SKUs, wooden tray, brand-foiled lid, handwritten card',
+      price: '₹899',
+      minQty: 25,
+      lead: '7 days',
+      buyer: 'Mid-market 50–500',
+    },
+    {
+      name: 'Heritage',
+      content: '8 SKUs (incl. health line) + paisley-foil + founder note + Telugu calligraphy',
+      price: '₹1,799',
+      minQty: 10,
+      lead: '10 days',
+      buyer: 'Senior leadership / VIP',
+    },
+    {
+      name: 'Custom',
+      content: 'Anything from the builder + logo on box + multi-address CSV',
+      price: '₹400–₹5K',
+      minQty: 25,
+      lead: '14 days',
+      buyer: 'Anyone wanting control',
+    },
   ];
   return (
     <div className="flex flex-col gap-5">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Tier</Th>
               <Th>Contents</Th>
               <Th>Price</Th>
@@ -1412,8 +1553,11 @@ function B2bSection() {
           </thead>
           <tbody>
             {tiers.map((t) => (
-              <tr key={t.name} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-ink">{t.name}</Td>
+              <tr
+                key={t.name}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="font-display text-theme-ink">{t.name}</Td>
                 <Td className="text-theme-ink/70">{t.content}</Td>
                 <Td className="font-semibold">{t.price}</Td>
                 <Td>{t.minQty}</Td>
@@ -1424,16 +1568,19 @@ function B2bSection() {
           </tbody>
         </table>
       </div>
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Sales motion
         </p>
-        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-theme-ink/80">
+        <ol className="text-theme-ink/80 mt-2 list-decimal space-y-1.5 pl-5 text-sm">
           <li>Inbound: builder → WhatsApp account manager → quote → order.</li>
           <li>
-            Outbound: 800–1,200 SME admins/HRs/founders in Hyd/BLR/Pune/Mumbai. 5-touch
-            email sequence Sept 5 → Sept 25. ₹40K samples to 100 leads → 10–20 corporate
-            accounts at ₹40K–₹3L. <span className="font-semibold text-theme-accent">₹4–40L revenue from ₹1.5L spend.</span>
+            Outbound: 800–1,200 SME admins/HRs/founders in Hyd/BLR/Pune/Mumbai. 5-touch email
+            sequence Sept 5 → Sept 25. ₹40K samples to 100 leads → 10–20 corporate accounts at
+            ₹40K–₹3L.{' '}
+            <span className="text-theme-accent font-semibold">
+              ₹4–40L revenue from ₹1.5L spend.
+            </span>
           </li>
           <li>Channel partners: 8–12 wedding/event planners with 12% revenue share.</li>
         </ol>
@@ -1444,40 +1591,79 @@ function B2bSection() {
 
 function PrSection() {
   const outlets = [
-    'Condé Nast Traveller India', 'The Hindu Friday Review (Hyd)', 'Telangana Today / Deccan Chronicle',
-    'YourStory / Inc42', 'Mint Lounge', 'Times Food / TOI Hyderabad', 'Outlook Traveller', 'Forbes India SmallBiz',
+    'Condé Nast Traveller India',
+    'The Hindu Friday Review (Hyd)',
+    'Telangana Today / Deccan Chronicle',
+    'YourStory / Inc42',
+    'Mint Lounge',
+    'Times Food / TOI Hyderabad',
+    'Outlook Traveller',
+    'Forbes India SmallBiz',
   ];
   const tiers = [
-    { tier: 'Mega', who: '1 Telugu film personality', followers: '1M+', cost: '₹2–8L (or product + invite)', cad: 'Once per festival' },
-    { tier: 'Macro', who: 'Hyd food bloggers (regional)', followers: '100K–1M', cost: '₹40K–₹2L', cad: '2–4/quarter' },
-    { tier: 'Micro', who: 'Telugu home-cook · diabetic-coach · NRI lifestyle', followers: '10K–100K', cost: '₹3K–₹15K + product', cad: '8–12/month' },
-    { tier: 'Nano (UGC)', who: 'Real customers given a free hamper', followers: '<10K', cost: 'Free hamper', cad: 'Continuous' },
+    {
+      tier: 'Mega',
+      who: '1 Telugu film personality',
+      followers: '1M+',
+      cost: '₹2–8L (or product + invite)',
+      cad: 'Once per festival',
+    },
+    {
+      tier: 'Macro',
+      who: 'Hyd food bloggers (regional)',
+      followers: '100K–1M',
+      cost: '₹40K–₹2L',
+      cad: '2–4/quarter',
+    },
+    {
+      tier: 'Micro',
+      who: 'Telugu home-cook · diabetic-coach · NRI lifestyle',
+      followers: '10K–100K',
+      cost: '₹3K–₹15K + product',
+      cad: '8–12/month',
+    },
+    {
+      tier: 'Nano (UGC)',
+      who: 'Real customers given a free hamper',
+      followers: '<10K',
+      cost: 'Free hamper',
+      cad: 'Continuous',
+    },
   ];
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Tier-1 outlets to seed (priority order)
         </p>
         <ul className="mt-3 grid grid-cols-2 gap-1.5 text-sm">
           {outlets.map((o, i) => (
-            <li key={o} className="flex items-center gap-2 rounded-md bg-theme-glow/10 px-2 py-1.5">
-              <span className="text-[10px] font-semibold text-theme-accent">{String(i + 1).padStart(2, '0')}</span>
+            <li key={o} className="bg-theme-glow/10 flex items-center gap-2 rounded-md px-2 py-1.5">
+              <span className="text-theme-accent text-[10px] font-semibold">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               <span className="text-theme-ink/80">{o}</span>
             </li>
           ))}
         </ul>
       </div>
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Influencer tiers
         </p>
         <div className="mt-3 space-y-3 text-sm">
           {tiers.map((t) => (
-            <div key={t.tier} className="rounded-lg border border-[color:var(--color-border)]/60 p-3">
-              <p className="font-display text-base font-semibold text-theme-ink">{t.tier}</p>
-              <p className="text-xs text-theme-ink/65">{t.who} · {t.followers}</p>
-              <p className="mt-1 text-xs text-theme-ink/55">{t.cost} · {t.cad}</p>
+            <div
+              key={t.tier}
+              className="border-[color:var(--color-border)]/60 rounded-lg border p-3"
+            >
+              <p className="font-display text-theme-ink text-base">{t.tier}</p>
+              <p className="text-theme-ink/65 text-xs">
+                {t.who} · {t.followers}
+              </p>
+              <p className="text-theme-ink/55 mt-1 text-xs">
+                {t.cost} · {t.cad}
+              </p>
             </div>
           ))}
         </div>
@@ -1516,13 +1702,13 @@ function SeoSection() {
   ];
   return (
     <div className="flex flex-col gap-5">
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Keyword targets — rank by Diwali 2026
         </p>
         <table className="mt-3 w-full min-w-[560px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Keyword</Th>
               <Th>Target rank</Th>
               <Th>Page</Th>
@@ -1530,23 +1716,30 @@ function SeoSection() {
           </thead>
           <tbody>
             {keywords.map((k) => (
-              <tr key={k.kw} className="border-b border-[color:var(--color-border)]/60">
-                <Td className="font-medium text-theme-ink">{k.kw}</Td>
-                <Td><span className="rounded-full bg-theme-accent/15 px-2 py-0.5 text-xs font-semibold text-theme-accent">{k.target}</span></Td>
-                <Td className="font-mono text-xs text-theme-ink/65">{k.page}</Td>
+              <tr key={k.kw} className="border-[color:var(--color-border)]/60 border-b">
+                <Td className="text-theme-ink font-medium">{k.kw}</Td>
+                <Td>
+                  <span className="bg-theme-accent/15 text-theme-accent rounded-full px-2 py-0.5 text-xs font-semibold">
+                    {k.target}
+                  </span>
+                </Td>
+                <Td className="text-theme-ink/65 font-mono text-xs">{k.page}</Td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           AEO — get cited by ChatGPT / Claude / Perplexity / Google AI Overviews
         </p>
-        <ul className="mt-3 space-y-1.5 text-sm text-theme-ink/80">
+        <ul className="text-theme-ink/80 mt-3 space-y-1.5 text-sm">
           {aeo.map((a) => (
             <li key={a} className="flex items-start gap-2">
-              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+              <Sparkles
+                className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+              />
               <span>{a}</span>
             </li>
           ))}
@@ -1571,18 +1764,18 @@ function KpiSection() {
   ];
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="border-theme-accent/30 bg-theme-accent/5 rounded-xl border p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           North-star
         </p>
-        <p className="mt-1 font-display text-xl font-semibold text-theme-ink">
+        <p className="font-display text-theme-ink mt-1 text-xl">
           Weekly D2C revenue, Yr-1 target ₹25–35L/month by month 12.
         </p>
       </div>
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)]">
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>KPI</Th>
               <Th>Source</Th>
               <Th>Yr-1 target</Th>
@@ -1590,19 +1783,19 @@ function KpiSection() {
           </thead>
           <tbody>
             {kpis.map((k) => (
-              <tr key={k.kpi} className="border-b border-[color:var(--color-border)]/60">
-                <Td className="font-medium text-theme-ink">{k.kpi}</Td>
+              <tr key={k.kpi} className="border-[color:var(--color-border)]/60 border-b">
+                <Td className="text-theme-ink font-medium">{k.kpi}</Td>
                 <Td className="text-theme-ink/65">{k.source}</Td>
-                <Td className="font-semibold text-theme-accent">{k.target}</Td>
+                <Td className="text-theme-accent font-semibold">{k.target}</Td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="text-xs text-theme-ink/60">
-        Tier-2 (review monthly): corporate revenue % of total (target 25%), NRI orders %
-        (12%), health-line % (18%), WhatsApp-driven orders % (20%), 5-star reviews per
-        location (+10/mo), PR mentions per quarter (≥4).
+      <p className="text-theme-ink/60 text-xs">
+        Tier-2 (review monthly): corporate revenue % of total (target 25%), NRI orders % (12%),
+        health-line % (18%), WhatsApp-driven orders % (20%), 5-star reviews per location (+10/mo),
+        PR mentions per quarter (≥4).
       </p>
     </div>
   );
@@ -1649,30 +1842,30 @@ function BudgetSection({
             className={cn(
               'rounded-xl border p-4 text-left transition-all',
               tier === t
-                ? 'border-theme-accent bg-theme-accent/10 ring-2 ring-theme-accent/40'
-                : 'border-[color:var(--color-border)] bg-surface hover:border-theme-accent/40',
+                ? 'border-theme-accent bg-theme-accent/10 ring-theme-accent/40 ring-2'
+                : 'bg-surface hover:border-theme-accent/40 border-[color:var(--color-border)]',
             )}
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
               {t === 'lean' ? 'Lean' : t === 'recommended' ? 'Recommended' : 'Aggressive'}
             </p>
-            <p className="mt-1 font-display text-2xl font-semibold text-theme-ink">
+            <p className="font-display text-theme-ink mt-1 text-2xl">
               {t === 'lean' ? '₹6L' : t === 'recommended' ? '₹15L' : '₹20L'}
             </p>
-            <p className="mt-0.5 text-[11px] text-theme-ink/55">
+            <p className="text-theme-ink/55 mt-0.5 text-[11px]">
               {t === 'lean'
                 ? 'drop PR + halve influencer + defer doc video'
                 : t === 'recommended'
-                ? 'full plan executed cleanly'
-                : '+ Diwali ramp + YouTube studio + US campaign'}
+                  ? 'full plan executed cleanly'
+                  : '+ Diwali ramp + YouTube studio + US campaign'}
             </p>
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)]">
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Line item</Th>
               <Th align="right">M1 (₹K)</Th>
               <Th align="right">M2 (₹K)</Th>
@@ -1682,8 +1875,8 @@ function BudgetSection({
           </thead>
           <tbody>
             {lines.map((l) => (
-              <tr key={l.item} className="border-b border-[color:var(--color-border)]/60">
-                <Td className="font-medium text-theme-ink">{l.item}</Td>
+              <tr key={l.item} className="border-[color:var(--color-border)]/60 border-b">
+                <Td className="text-theme-ink font-medium">{l.item}</Td>
                 <Td align="right">{l.m1.toLocaleString()}</Td>
                 <Td align="right">{l.m2.toLocaleString()}</Td>
                 <Td align="right">{l.m3.toLocaleString()}</Td>
@@ -1697,15 +1890,17 @@ function BudgetSection({
               <Td align="right">{totals.m1.toLocaleString()}</Td>
               <Td align="right">{totals.m2.toLocaleString()}</Td>
               <Td align="right">{totals.m3.toLocaleString()}</Td>
-              <Td align="right" className="text-theme-accent">{grand.toLocaleString()}K · ₹{(grand / 100).toFixed(2)}L</Td>
+              <Td align="right" className="text-theme-accent">
+                {grand.toLocaleString()}K · ₹{(grand / 100).toFixed(2)}L
+              </Td>
             </tr>
           </tbody>
         </table>
       </div>
       <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-900">
-        <span className="font-semibold uppercase tracking-wider">Diwali add-on:</span>{' '}
-        ₹6–10L additional for the 45-day Diwali window (Sept 25 → Nov 8). Single most
-        important spend of the year.
+        <span className="font-semibold uppercase tracking-wider">Diwali add-on:</span> ₹6–10L
+        additional for the 45-day Diwali window (Sept 25 → Nov 8). Single most important spend of
+        the year.
       </p>
     </div>
   );
@@ -1802,16 +1997,20 @@ function CalendarSection({
   return (
     <div className="flex flex-col gap-4">
       {phases.map((phase, pi) => (
-        <details key={phase.label} open={pi === 0} className="group rounded-xl border border-[color:var(--color-border)] bg-surface">
+        <details
+          key={phase.label}
+          open={pi === 0}
+          className="bg-surface group rounded-xl border border-[color:var(--color-border)]"
+        >
           <summary className="cursor-pointer list-none px-5 py-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="font-display text-base font-semibold text-theme-ink">{phase.label}</p>
-              <span className="text-xs text-theme-ink/55">
+              <p className="font-display text-theme-ink text-base">{phase.label}</p>
+              <span className="text-theme-ink/55 text-xs">
                 {phase.items.filter((i) => checked[`cal-${pi}-${i}`]).length} / {phase.items.length}
               </span>
             </div>
           </summary>
-          <ul className="divide-y divide-[color:var(--color-border)]/60 px-5 pb-4">
+          <ul className="divide-[color:var(--color-border)]/60 divide-y px-5 pb-4">
             {phase.items.map((item) => {
               const id = `cal-${pi}-${item}`;
               const isDone = !!checked[id];
@@ -1823,7 +2022,12 @@ function CalendarSection({
                     onChange={() => toggle(id)}
                     className="mt-0.5 h-4 w-4 rounded border-[color:var(--color-border)] accent-[color:var(--color-accent)]"
                   />
-                  <span className={cn('text-sm', isDone ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80')}>
+                  <span
+                    className={cn(
+                      'text-sm',
+                      isDone ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80',
+                    )}
+                  >
                     {item}
                   </span>
                 </li>
@@ -1872,7 +2076,12 @@ function WinsSection({
                 onChange={() => toggle(id)}
                 className="mt-0.5 h-4 w-4 rounded border-emerald-500/40 accent-emerald-600"
               />
-              <span className={cn('text-sm', isDone ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80')}>
+              <span
+                className={cn(
+                  'text-sm',
+                  isDone ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80',
+                )}
+              >
                 {w}
               </span>
             </li>
@@ -1887,12 +2096,7 @@ function WinsSection({
 
 function Th({ children, align }: { children: ReactNode; align?: 'right' }) {
   return (
-    <th
-      className={cn(
-        'px-3 py-2 font-semibold',
-        align === 'right' ? 'text-right' : 'text-left',
-      )}
-    >
+    <th className={cn('px-3 py-2 font-semibold', align === 'right' ? 'text-right' : 'text-left')}>
       {children}
     </th>
   );
@@ -1910,7 +2114,7 @@ function Td({
   return (
     <td
       className={cn(
-        'px-3 py-2.5 align-top text-theme-ink/80',
+        'text-theme-ink/80 px-3 py-2.5 align-top',
         align === 'right' ? 'text-right tabular-nums' : '',
         className,
       )}
@@ -1948,8 +2152,8 @@ function CardList({
       <ul className="mt-3 space-y-3">
         {items.map((i) => (
           <li key={i.heading}>
-            <p className="font-display text-sm font-semibold text-theme-ink">{i.heading}</p>
-            <p className="mt-0.5 text-xs text-theme-ink/70">{i.body}</p>
+            <p className="font-display text-theme-ink text-sm">{i.heading}</p>
+            <p className="text-theme-ink/70 mt-0.5 text-xs">{i.body}</p>
           </li>
         ))}
       </ul>
@@ -1959,11 +2163,11 @@ function CardList({
 
 function PyramidLevel({ label, body }: { label: string; body: string }) {
   return (
-    <div className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+    <div className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3">
+      <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
         {label}
       </p>
-      <p className="mt-1 text-theme-ink/85">{body}</p>
+      <p className="text-theme-ink/85 mt-1">{body}</p>
     </div>
   );
 }
@@ -1971,7 +2175,7 @@ function PyramidLevel({ label, body }: { label: string; body: string }) {
 function DecisionField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">
+      <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
         {label}
       </span>
       {children}
@@ -1989,7 +2193,7 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm">
+    <label className="bg-surface flex items-center justify-between gap-3 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm">
       <span className="text-theme-ink/80">{label}</span>
       <button
         type="button"
@@ -2000,12 +2204,12 @@ function Toggle({
           'relative h-5 w-9 rounded-full border transition-colors',
           checked
             ? 'border-emerald-500/60 bg-emerald-500'
-            : 'border-[color:var(--color-border)] bg-theme-ink/10',
+            : 'bg-theme-ink/10 border-[color:var(--color-border)]',
         )}
       >
         <span
           className={cn(
-            'absolute top-0.5 left-0.5 h-3.5 w-3.5 rounded-full bg-white shadow transition-transform',
+            'absolute left-0.5 top-0.5 h-3.5 w-3.5 rounded-full bg-white shadow transition-transform',
             checked && 'translate-x-4',
           )}
         />
@@ -2014,23 +2218,15 @@ function Toggle({
   );
 }
 
-function Pill({
-  icon: Icon,
-  title,
-  body,
-}: {
-  icon: typeof Compass;
-  title: string;
-  body: string;
-}) {
+function Pill({ icon: Icon, title, body }: { icon: typeof Compass; title: string; body: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-theme-accent/15 text-theme-accent">
+    <div className="bg-surface flex items-start gap-3 rounded-xl border border-[color:var(--color-border)] p-4">
+      <span className="bg-theme-accent/15 text-theme-accent flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
         <Icon className="h-4 w-4" aria-hidden="true" />
       </span>
       <div>
-        <p className="font-display text-sm font-semibold text-theme-ink">{title}</p>
-        <p className="text-xs text-theme-ink/65">{body}</p>
+        <p className="font-display text-theme-ink text-sm">{title}</p>
+        <p className="text-theme-ink/65 text-xs">{body}</p>
       </div>
     </div>
   );
@@ -2045,41 +2241,78 @@ function SpirulinaSection() {
   const facts = [
     {
       title: '57–70 g protein per 100 g',
-      body:
-        'Dried spirulina is 57–70% complete protein by weight (Wikipedia: 57%, premium-grade brands: 60–70%). One tablespoon (~7 g) delivers 4–5 g of complete protein with all 9 essential amino acids. Beats whey on amino-acid completeness on a per-gram basis.',
+      body: 'Dried spirulina is 57–70% complete protein by weight (Wikipedia: 57%, premium-grade brands: 60–70%). One tablespoon (~7 g) delivers 4–5 g of complete protein with all 9 essential amino acids. Beats whey on amino-acid completeness on a per-gram basis.',
     },
     {
       title: 'Plant-based, vegan, gluten-free',
-      body:
-        'Aligns with the fastest-growing food category in India. Plant-based protein market: $634M (2025) → $2.25B (2034), 14.36% CAGR — every other ingredient class trails it.',
+      body: 'Aligns with the fastest-growing food category in India. Plant-based protein market: $634M (2025) → $2.25B (2034), 14.36% CAGR — every other ingredient class trails it.',
     },
     {
       title: 'Low GI when paired right',
-      body:
-        'Spirulina + dates + almonds + jaggery (no refined sugar, no maida) clears the bar for diabetic-friendly snacking. Adds iron, B12, beta-carotene, chlorophyll. 290 kcal / 100g but nutrient-dense, so 50g serving = ~145 kcal with ~12 g protein at 3% inclusion (mass format).',
+      body: 'Spirulina + dates + almonds + jaggery (no refined sugar, no maida) clears the bar for diabetic-friendly snacking. Adds iron, B12, beta-carotene, chlorophyll. 290 kcal / 100g but nutrient-dense, so 50g serving = ~145 kcal with ~12 g protein at 3% inclusion (mass format).',
     },
     {
       title: 'FSSAI-approved as nutraceutical',
-      body:
-        'Listed under FSS (Health Supplements, Nutraceuticals…) Regulations 2016. Need a separate Nutraceutical Division product approval (~30–45 days, ~₹35K) on top of the standard FSSAI license. Cannot make disease-cure claims; can make approved health claims with NABL evidence.',
+      body: 'Listed under FSS (Health Supplements, Nutraceuticals…) Regulations 2016. Need a separate Nutraceutical Division product approval (~30–45 days, ~₹35K) on top of the standard FSSAI license. Cannot make disease-cure claims; can make approved health claims with NABL evidence.',
     },
   ];
 
   const market = [
-    { label: 'India plant-protein market', value: '$634M', hint: '2025 · 14.36% CAGR · fastest-growing food cat.' },
-    { label: 'India protein supplements', value: '$1.03B', hint: '2025 · 13.3% CAGR to $2.71B by 2033' },
-    { label: 'Active gym/yoga participants', value: '~8.5 Cr', hint: '2025 · India · 22% YoY growth' },
+    {
+      label: 'India plant-protein market',
+      value: '$634M',
+      hint: '2025 · 14.36% CAGR · fastest-growing food cat.',
+    },
+    {
+      label: 'India protein supplements',
+      value: '$1.03B',
+      hint: '2025 · 13.3% CAGR to $2.71B by 2033',
+    },
+    {
+      label: 'Active gym/yoga participants',
+      value: '~8.5 Cr',
+      hint: '2025 · India · 22% YoY growth',
+    },
     { label: 'Indian diabetics', value: '77M', hint: '1 in 11 adults · primary low-GI buyer' },
     { label: 'Vegan-curious urban', value: '~9%', hint: 'T1/T2 metros · 25–45 age band' },
-    { label: 'Iyurved (closest competitor)', value: '₹12 Cr', hint: 'FY24 revenue · ayurvedic spreads + laddu' },
+    {
+      label: 'Iyurved (closest competitor)',
+      value: '₹12 Cr',
+      hint: 'FY24 revenue · ayurvedic spreads + laddu',
+    },
   ];
 
   const competitors = [
-    { name: 'Iyurved', focus: 'Ayurvedic spreads + protein laddu (kids-first)', rev: '₹12 Cr (FY24)', gap: 'No premium-mithai positioning · D2C-only · no NRI corridor' },
-    { name: 'Prolgae (Chennai)', focus: 'B2B spirulina supply + planned chocolates', rev: '₹1.5 Cr', gap: 'Supplier mindset · no consumer brand · no Telugu identity' },
-    { name: 'Mirchi · Appetite Food', focus: 'Choc-a-Protein balls (single SKU)', rev: 'Marketplace-only', gap: 'No hamper / corporate / NRI flow' },
-    { name: 'Kovise · AnaFoods', focus: 'Single-SKU spirulina laddu', rev: 'Cottage-tier', gap: 'No brand · no shelf-life guarantee · regional only' },
-    { name: 'Nutrisattva / Wellbeing', focus: 'Tablets + capsules (clinical)', rev: 'Mid-tier', gap: 'Not edible-as-mithai · pharma framing repels mithai buyer' },
+    {
+      name: 'Iyurved',
+      focus: 'Ayurvedic spreads + protein laddu (kids-first)',
+      rev: '₹12 Cr (FY24)',
+      gap: 'No premium-mithai positioning · D2C-only · no NRI corridor',
+    },
+    {
+      name: 'Prolgae (Chennai)',
+      focus: 'B2B spirulina supply + planned chocolates',
+      rev: '₹1.5 Cr',
+      gap: 'Supplier mindset · no consumer brand · no Telugu identity',
+    },
+    {
+      name: 'Mirchi · Appetite Food',
+      focus: 'Choc-a-Protein balls (single SKU)',
+      rev: 'Marketplace-only',
+      gap: 'No hamper / corporate / NRI flow',
+    },
+    {
+      name: 'Kovise · AnaFoods',
+      focus: 'Single-SKU spirulina laddu',
+      rev: 'Cottage-tier',
+      gap: 'No brand · no shelf-life guarantee · regional only',
+    },
+    {
+      name: 'Nutrisattva / Wellbeing',
+      focus: 'Tablets + capsules (clinical)',
+      rev: 'Mid-tier',
+      gap: 'Not edible-as-mithai · pharma framing repels mithai buyer',
+    },
   ];
 
   const skus = [
@@ -2145,25 +2378,58 @@ function SpirulinaSection() {
 
   const launchPlan = [
     { wk: 'W 0–2', task: 'Sourcing locked · 2 supplier samples blind-tasted · final pick' },
-    { wk: 'W 1–3', task: 'Recipe lab — 6 ratios per SKU · founder + chef tasting panel · pick winner' },
+    {
+      wk: 'W 1–3',
+      task: 'Recipe lab — 6 ratios per SKU · founder + chef tasting panel · pick winner',
+    },
     { wk: 'W 2–4', task: 'NABL nutrition panel · ₹6K × 5 SKUs · 14-day turnaround' },
     { wk: 'W 3–5', task: 'FSSAI Nutraceutical product approval filed · ~₹35K · 30–45 days' },
     { wk: 'W 4–6', task: 'Pilot batch · 200 packs · 30-day shelf-life test in real packaging' },
-    { wk: 'W 5–7', task: 'Photography (single shoot, dual-purpose with Bellam) · founder reels × 3' },
+    {
+      wk: 'W 5–7',
+      task: 'Photography (single shoot, dual-purpose with Bellam) · founder reels × 3',
+    },
     { wk: 'W 6–8', task: '/spirulina-bal landing page · 1,000-word evidence-cited content' },
-    { wk: 'W 7–9', task: '4 micro-influencer seeding (gym + diabetic-coach + Telugu home-cook + NRI mom)' },
-    { wk: 'W 8–10', task: 'Soft launch on D2C + WA broadcast · pre-order list (target 200 buyers)' },
+    {
+      wk: 'W 7–9',
+      task: '4 micro-influencer seeding (gym + diabetic-coach + Telugu home-cook + NRI mom)',
+    },
+    {
+      wk: 'W 8–10',
+      task: 'Soft launch on D2C + WA broadcast · pre-order list (target 200 buyers)',
+    },
     { wk: 'W 9–11', task: 'Quick-commerce listings (Zepto/Blinkit) · only Bites + Laddu' },
-    { wk: 'W 10–12', task: 'B2B sample-box add-on · 50 corporate gym partners (CureFit, Anytime, Gold’s Gym Hyd)' },
+    {
+      wk: 'W 10–12',
+      task: 'B2B sample-box add-on · 50 corporate gym partners (CureFit, Anytime, Gold’s Gym Hyd)',
+    },
   ];
 
   const risks = [
-    { r: 'Spirulina taste is polarising', m: 'Cap inclusion at 3% by weight in mass SKUs · pair with cocoa/dates/cardamom · double-blind test against 50-buyer panel before launch' },
-    { r: 'Shelf-life with no preservatives', m: 'Vacuum-pack with nitrogen flush · oxygen scavenger · 90-day life · stamp pack date prominently' },
-    { r: 'Heavy-metal scare from cheap supply', m: 'Only buy COA-backed batches · publish lab certs on /spirulina-bal · reject any supplier without third-party heavy-metal panel' },
-    { r: 'FSSAI Nutraceutical license delay', m: 'File W3 · keep filing receipt visible to ops · launch as "high-protein dessert" (no claim) until license lands' },
-    { r: 'Cannibalisation of traditional line', m: 'Position Bal as additive (gym day + diabetic kin gift) not replacement · bundle 1 traditional + 1 Bal in starter hampers' },
-    { r: 'Sourcing single-supplier risk', m: 'Run 2 suppliers concurrently from W4 · 70/30 split · ratio-flexible recipes to switch in 48h' },
+    {
+      r: 'Spirulina taste is polarising',
+      m: 'Cap inclusion at 3% by weight in mass SKUs · pair with cocoa/dates/cardamom · double-blind test against 50-buyer panel before launch',
+    },
+    {
+      r: 'Shelf-life with no preservatives',
+      m: 'Vacuum-pack with nitrogen flush · oxygen scavenger · 90-day life · stamp pack date prominently',
+    },
+    {
+      r: 'Heavy-metal scare from cheap supply',
+      m: 'Only buy COA-backed batches · publish lab certs on /spirulina-bal · reject any supplier without third-party heavy-metal panel',
+    },
+    {
+      r: 'FSSAI Nutraceutical license delay',
+      m: 'File W3 · keep filing receipt visible to ops · launch as "high-protein dessert" (no claim) until license lands',
+    },
+    {
+      r: 'Cannibalisation of traditional line',
+      m: 'Position Bal as additive (gym day + diabetic kin gift) not replacement · bundle 1 traditional + 1 Bal in starter hampers',
+    },
+    {
+      r: 'Sourcing single-supplier risk',
+      m: 'Run 2 suppliers concurrently from W4 · 70/30 split · ratio-flexible recipes to switch in 48h',
+    },
   ];
 
   return (
@@ -2172,50 +2438,57 @@ function SpirulinaSection() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
           Spirulina · Bal (బలం · &ldquo;strength&rdquo;) — flagship protein-density line
         </p>
-        <p className="mt-2 font-display text-2xl font-semibold text-theme-ink">
+        <p className="font-display text-theme-ink mt-2 text-2xl">
           The Indian sweet that&apos;s also a protein bar.
         </p>
-        <p className="mt-2 text-sm text-theme-ink/75">
-          Spirulina is 57–70% complete protein per 100 g — denser than whey on a gram-for-gram basis.
-          No premium mithai brand has claimed this lane in India yet. Iyurved (₹12 Cr) is closest but
-          children-first; we own the gym-going + diabetic + NRI-corporate corner with mithai craft +
-          founder trust + Telugu identity. Margin profile (~79% gross) funds the entire ad ramp.
+        <p className="text-theme-ink/75 mt-2 text-sm">
+          Spirulina is 57–70% complete protein per 100 g — denser than whey on a gram-for-gram
+          basis. No premium mithai brand has claimed this lane in India yet. Iyurved (₹12 Cr) is
+          closest but children-first; we own the gym-going + diabetic + NRI-corporate corner with
+          mithai craft + founder trust + Telugu identity. Margin profile (~79% gross) funds the
+          entire ad ramp.
         </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
         {facts.map((f) => (
-          <div key={f.title} className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4">
-            <p className="font-display text-base font-semibold text-theme-ink">{f.title}</p>
-            <p className="mt-1 text-xs text-theme-ink/70">{f.body}</p>
+          <div
+            key={f.title}
+            className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4"
+          >
+            <p className="font-display text-theme-ink text-base">{f.title}</p>
+            <p className="text-theme-ink/70 mt-1 text-xs">{f.body}</p>
           </div>
         ))}
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           Market the line is built for
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           {market.map((s) => (
-            <div key={s.label} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">
+            <div
+              key={s.label}
+              className="bg-surface rounded-xl border border-[color:var(--color-border)] p-4"
+            >
+              <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {s.label}
               </p>
-              <p className="mt-1 font-display text-2xl font-semibold text-theme-ink">{s.value}</p>
-              <p className="mt-0.5 text-[11px] text-theme-ink/55">{s.hint}</p>
+              <p className="font-display text-theme-ink mt-1 text-2xl">{s.value}</p>
+              <p className="text-theme-ink/55 mt-0.5 text-[11px]">{s.hint}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Competitor landscape — where we plant the flag
         </p>
         <table className="mt-3 w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Brand</Th>
               <Th>Focus</Th>
               <Th>Revenue</Th>
@@ -2224,24 +2497,27 @@ function SpirulinaSection() {
           </thead>
           <tbody>
             {competitors.map((c) => (
-              <tr key={c.name} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-ink">{c.name}</Td>
+              <tr
+                key={c.name}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="font-display text-theme-ink">{c.name}</Td>
                 <Td className="text-theme-ink/70">{c.focus}</Td>
                 <Td className="text-theme-ink/65">{c.rev}</Td>
-                <Td className="text-emerald-700 text-xs">{c.gap}</Td>
+                <Td className="text-xs text-emerald-700">{c.gap}</Td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           5-SKU launch matrix · go-to-market in 90 days
         </p>
         <table className="mt-3 w-full min-w-[760px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>SKU</Th>
               <Th>Hero composition</Th>
               <Th>Protein density</Th>
@@ -2251,10 +2527,13 @@ function SpirulinaSection() {
           </thead>
           <tbody>
             {skus.map((s) => (
-              <tr key={s.name} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-ink">{s.name}</Td>
+              <tr
+                key={s.name}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="font-display text-theme-ink">{s.name}</Td>
                 <Td className="text-theme-ink/70">{s.hero}</Td>
-                <Td className="text-emerald-700 font-semibold text-xs">{s.protein}</Td>
+                <Td className="text-xs font-semibold text-emerald-700">{s.protein}</Td>
                 <Td className="font-semibold">{s.retail}</Td>
                 <Td className="text-theme-ink/65 text-xs">{s.role}</Td>
               </tr>
@@ -2264,8 +2543,8 @@ function SpirulinaSection() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Unit economics — Spirulina Protein Laddu (50g piece)
           </p>
           <table className="mt-3 w-full text-left text-sm">
@@ -2274,18 +2553,20 @@ function SpirulinaSection() {
                 <tr
                   key={r.k}
                   className={cn(
-                    'border-b border-[color:var(--color-border)]/60',
+                    'border-[color:var(--color-border)]/60 border-b',
                     r.strong && 'bg-emerald-500/5',
                   )}
                 >
-                  <Td className={cn('text-theme-ink/80', r.strong && 'font-semibold text-theme-ink')}>
+                  <Td
+                    className={cn('text-theme-ink/80', r.strong && 'text-theme-ink font-semibold')}
+                  >
                     {r.k}
                   </Td>
                   <Td
                     align="right"
                     className={cn(
                       'tabular-nums',
-                      r.strong && 'font-display font-semibold',
+                      r.strong && 'font-display',
                       r.accent && 'text-emerald-700',
                     )}
                   >
@@ -2295,18 +2576,18 @@ function SpirulinaSection() {
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-[11px] text-theme-ink/55">
-            At ~79% gross margin and ₹599 AOV, every 1,000 boxes/month = ₹4.7L gross profit —
-            funds ~₹3L of paid-ad spend and clears ~₹1.7L net. Break-even on the line at
-            ~280 boxes / month.
+          <p className="text-theme-ink/55 mt-3 text-[11px]">
+            At ~79% gross margin and ₹599 AOV, every 1,000 boxes/month = ₹4.7L gross profit — funds
+            ~₹3L of paid-ad spend and clears ~₹1.7L net. Break-even on the line at ~280 boxes /
+            month.
           </p>
         </div>
 
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Sourcing shortlist (audit before W2)
           </p>
-          <ul className="mt-3 space-y-2 text-xs text-theme-ink/80">
+          <ul className="text-theme-ink/80 mt-3 space-y-2 text-xs">
             {sourcing.map((s) => (
               <li key={s} className="flex items-start gap-2 leading-relaxed">
                 <Leaf className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
@@ -2317,24 +2598,27 @@ function SpirulinaSection() {
           <p className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-[11px] text-amber-900">
             <span className="font-semibold uppercase tracking-wider">FSSAI:</span> file the
             Nutraceutical product approval in W3. Until granted, sell as &ldquo;high-protein
-            dessert&rdquo; with the protein number on-pack but no health claim. Once approved
-            (30–45 days), unlock &ldquo;protein per serve&rdquo; + &ldquo;diabetic-friendly&rdquo;
+            dessert&rdquo; with the protein number on-pack but no health claim. Once approved (30–45
+            days), unlock &ldquo;protein per serve&rdquo; + &ldquo;diabetic-friendly&rdquo;
             front-of-pack badges.
           </p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           12-week launch plan
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
           {launchPlan.map((p) => (
-            <div key={p.wk} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+            <div
+              key={p.wk}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+            >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-700">
                 {p.wk}
               </p>
-              <p className="mt-1 text-xs text-theme-ink/80">{p.task}</p>
+              <p className="text-theme-ink/80 mt-1 text-xs">{p.task}</p>
             </div>
           ))}
         </div>
@@ -2377,7 +2661,7 @@ function LimitedEditionSection() {
     {
       no: '01',
       name: 'Apricot-Almond Protein Caviar',
-      idea: 'Reverse-spherified apricot pearls (sweetened only by soaked dates + the fruit\'s own sugars) that burst over a hung-curd protein cream. No refined sugar, gelatin-free.',
+      idea: "Reverse-spherified apricot pearls (sweetened only by soaked dates + the fruit's own sugars) that burst over a hung-curd protein cream. No refined sugar, gelatin-free.",
       tech: 'Agar/alginate reverse-spherification (veg, gelatin-free)',
       heritage: 'Nizami Qubani ka Meetha',
       nutrition: '~8 g protein · no refined sugar · gut-friendly curd',
@@ -2404,7 +2688,7 @@ function LimitedEditionSection() {
     {
       no: '04',
       name: 'Til Noir — Iron & Calcium Bar',
-      idea: 'Jet-black roasted-black-sesame + black-chana protein + dark jaggery, with a kintsugi vegetarian-silver crack. Sesame brings iron + calcium — a women\'s-health hero.',
+      idea: "Jet-black roasted-black-sesame + black-chana protein + dark jaggery, with a kintsugi vegetarian-silver crack. Sesame brings iron + calcium — a women's-health hero.",
       tech: 'Black sesame + activated-charcoal aesthetic + kintsugi silver',
       heritage: 'Sankranti til (bone-strength tradition)',
       nutrition: '~9 g protein · iron + calcium · no refined sugar',
@@ -2444,7 +2728,7 @@ function LimitedEditionSection() {
       tech: 'Savoury-leaf reduction + protein ganache + temper',
       heritage: 'Andhra gongura + Guntur chilli',
       nutrition: '~7 g protein · antioxidants + iron · low sugar',
-      why: 'A region\'s flavour as a functional antioxidant bonbon — polarising and talked-about.',
+      why: "A region's flavour as a functional antioxidant bonbon — polarising and talked-about.",
     },
     {
       no: '09',
@@ -2467,24 +2751,69 @@ function LimitedEditionSection() {
   ];
 
   const constraints = [
-    { r: 'Some pieces need fresh / cold-chain (01 Caviar, 05 Paan Cloud, 10 Living Rabri)', m: 'Split the box into "shelf-stable 7" for courier nationwide + an in-store / Hyderabad-only "fresh 3" experience. Or gel-pack + 48h dispatch window for metros.' },
-    { r: 'FSSAI bars point-of-sale liquid nitrogen (advisory, Jun 2024)', m: 'Use nitro/blast freezing only back-of-house as a processing aid — all N₂ must fully sublimate before a piece is served or boxed. No "smoke at the table" theatre. Courier 05 as a cold-chain frozen-set truffle, or swap to a shelf-stable paan-gulkand bonbon.' },
-    { r: 'Molecular + nitro need new skills + kit', m: 'Two-week R&D residency: hire one ex-fine-dining commis for the drop, or train one kitchen lead. Kit cost ~₹1.2–1.8L one-time (siphon, nitro dewar, alginate bath, cloche set).' },
-    { r: 'Edible gold + silver must be FSSAI-compliant', m: 'Use only certified VEGETARIAN silver vark (FSSAI 2016 banned animal-origin leaf — machine-beaten on polyester) + food-grade 24K gold (E175), both COA-backed. Market "100% vegetarian vark" as a trust badge. Budget ₹18–28 per gilded piece.' },
-    { r: 'Shelf-life claims with no preservatives', m: 'NABL shelf-life test each shelf-stable piece. Stamp a "best within" date on the numbered box. The fresh pieces are sold as "eat within 48h" by design.' },
-    { r: 'Risk of reading as gimmick not craft', m: 'Every piece must trace to a real technique + a heritage cue (done above). Lead all content with the story + the maker, never just the look.' },
+    {
+      r: 'Some pieces need fresh / cold-chain (01 Caviar, 05 Paan Cloud, 10 Living Rabri)',
+      m: 'Split the box into "shelf-stable 7" for courier nationwide + an in-store / Hyderabad-only "fresh 3" experience. Or gel-pack + 48h dispatch window for metros.',
+    },
+    {
+      r: 'FSSAI bars point-of-sale liquid nitrogen (advisory, Jun 2024)',
+      m: 'Use nitro/blast freezing only back-of-house as a processing aid — all N₂ must fully sublimate before a piece is served or boxed. No "smoke at the table" theatre. Courier 05 as a cold-chain frozen-set truffle, or swap to a shelf-stable paan-gulkand bonbon.',
+    },
+    {
+      r: 'Molecular + nitro need new skills + kit',
+      m: 'Two-week R&D residency: hire one ex-fine-dining commis for the drop, or train one kitchen lead. Kit cost ~₹1.2–1.8L one-time (siphon, nitro dewar, alginate bath, cloche set).',
+    },
+    {
+      r: 'Edible gold + silver must be FSSAI-compliant',
+      m: 'Use only certified VEGETARIAN silver vark (FSSAI 2016 banned animal-origin leaf — machine-beaten on polyester) + food-grade 24K gold (E175), both COA-backed. Market "100% vegetarian vark" as a trust badge. Budget ₹18–28 per gilded piece.',
+    },
+    {
+      r: 'Shelf-life claims with no preservatives',
+      m: 'NABL shelf-life test each shelf-stable piece. Stamp a "best within" date on the numbered box. The fresh pieces are sold as "eat within 48h" by design.',
+    },
+    {
+      r: 'Risk of reading as gimmick not craft',
+      m: 'Every piece must trace to a real technique + a heritage cue (done above). Lead all content with the story + the maker, never just the look.',
+    },
   ];
 
   const dropPlan = [
-    { wk: 'W 0–3', task: 'R&D residency — lock 10 recipes · blind tasting panel scores each piece /10 · cut anything below 7' },
-    { wk: 'W 2–4', task: 'Source edible gold/silver, nitro dewar, alginate, cloche, agar · food-grade COAs filed' },
-    { wk: 'W 3–5', task: 'NABL shelf-life + nutrition on the 7 shelf-stable pieces · FSSAI label copy approved' },
-    { wk: 'W 4–6', task: 'Numbered collector-box design + laser-etch run-number system · unboxing film storyboard' },
-    { wk: 'W 5–7', task: 'Cinematic shoot — one 60s film per piece (the technique, slow-mo) + a master drop trailer' },
-    { wk: 'W 6–8', task: 'Waitlist landing page · /vault-10 · email + WhatsApp capture · "500 boxes only" counter' },
-    { wk: 'W 7–9', task: 'Seed 6 creators (food, design, Hyderabad-culture, NRI) with a numbered box each, embargoed' },
-    { wk: 'W 9', task: 'Drop 01 goes live to waitlist 24h early · then public · live sold-out counter' },
-    { wk: 'W 10–12', task: 'Document the sell-out · open waitlist for Drop 02 (swap 2–3 pieces) · plan quarterly cadence' },
+    {
+      wk: 'W 0–3',
+      task: 'R&D residency — lock 10 recipes · blind tasting panel scores each piece /10 · cut anything below 7',
+    },
+    {
+      wk: 'W 2–4',
+      task: 'Source edible gold/silver, nitro dewar, alginate, cloche, agar · food-grade COAs filed',
+    },
+    {
+      wk: 'W 3–5',
+      task: 'NABL shelf-life + nutrition on the 7 shelf-stable pieces · FSSAI label copy approved',
+    },
+    {
+      wk: 'W 4–6',
+      task: 'Numbered collector-box design + laser-etch run-number system · unboxing film storyboard',
+    },
+    {
+      wk: 'W 5–7',
+      task: 'Cinematic shoot — one 60s film per piece (the technique, slow-mo) + a master drop trailer',
+    },
+    {
+      wk: 'W 6–8',
+      task: 'Waitlist landing page · /vault-10 · email + WhatsApp capture · "500 boxes only" counter',
+    },
+    {
+      wk: 'W 7–9',
+      task: 'Seed 6 creators (food, design, Hyderabad-culture, NRI) with a numbered box each, embargoed',
+    },
+    {
+      wk: 'W 9',
+      task: 'Drop 01 goes live to waitlist 24h early · then public · live sold-out counter',
+    },
+    {
+      wk: 'W 10–12',
+      task: 'Document the sell-out · open waitlist for Drop 02 (swap 2–3 pieces) · plan quarterly cadence',
+    },
   ];
 
   const economics = [
@@ -2501,46 +2830,54 @@ function LimitedEditionSection() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-theme-accent/40 bg-gradient-to-br from-theme-accent/10 via-theme-glow/10 to-transparent p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+      <div className="border-theme-accent/40 from-theme-accent/10 via-theme-glow/10 rounded-xl border bg-gradient-to-br to-transparent p-5">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           The Vault 10 — a numbered, serialised limited-edition drop
         </p>
-        <p className="mt-2 font-display text-2xl font-semibold text-theme-ink">
-          India&apos;s first functional fine-mithai — protein-dense, no refined sugar, never seen before.
+        <p className="font-display text-theme-ink mt-2 text-2xl">
+          India&apos;s first functional fine-mithai — protein-dense, no refined sugar, never seen
+          before.
         </p>
-        <p className="mt-2 text-sm text-theme-ink/75">
+        <p className="text-theme-ink/75 mt-2 text-sm">
           A collector box of ten single-bite sweets engineered like a nutritionist&apos;s tasting
-          flight: ~<span className="font-semibold text-theme-ink">90–100 g protein across the box</span>,
-          <span className="font-semibold text-theme-ink"> zero refined sugar</span> (dates · jaggery ·
-          monk fruit), gut-friendly and low-GI, built on desi superfoods — sattu, makhana, millet,
+          flight: ~
+          <span className="text-theme-ink font-semibold">90–100 g protein across the box</span>,
+          <span className="text-theme-ink font-semibold"> zero refined sugar</span> (dates · jaggery
+          · monk fruit), gut-friendly and low-GI, built on desi superfoods — sattu, makhana, millet,
           black sesame, probiotic cultured milk. Each piece pairs a real technique (spherification,
           dhungar smoke, probiotic culturing, transparent fruit-glass) with a Hyderabadi/Andhra
           heritage cue, so it reads as craft + nutrition science, not a powder rolled into a ball.
           Sold sneaker-style: 500 numbered boxes per drop. Sugar-free/diabetic-friendly foods in
-          India are a $1.12B → $2.58B market (8.93% CAGR) and incumbents (Artinci, Eat Better Co)
-          do sugar-free — <span className="font-semibold text-theme-accent">none fuse functional
-          nutrition + never-seen technique + premium craft.</span> That is the lane.
+          India are a $1.12B → $2.58B market (8.93% CAGR) and incumbents (Artinci, Eat Better Co) do
+          sugar-free —{' '}
+          <span className="text-theme-accent font-semibold">
+            none fuse functional nutrition + never-seen technique + premium craft.
+          </span>{' '}
+          That is the lane.
         </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
         {concept.map((c) => (
-          <div key={c.k} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+          <div
+            key={c.k}
+            className="bg-surface rounded-xl border border-[color:var(--color-border)] p-4"
+          >
+            <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.2em]">
               {c.k}
             </p>
-            <p className="mt-1 text-xs text-theme-ink/75">{c.v}</p>
+            <p className="text-theme-ink/75 mt-1 text-xs">{c.v}</p>
           </div>
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           The collection · pieces 01 → 10
         </p>
         <table className="mt-3 w-full min-w-[920px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>#</Th>
               <Th>Piece</Th>
               <Th>The idea</Th>
@@ -2551,16 +2888,19 @@ function LimitedEditionSection() {
           </thead>
           <tbody>
             {sweets.map((s) => (
-              <tr key={s.no} className="border-b border-[color:var(--color-border)]/60 align-top hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-accent">{s.no}</Td>
-                <Td className="font-display font-semibold text-theme-ink whitespace-nowrap">
+              <tr
+                key={s.no}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b align-top"
+              >
+                <Td className="font-display text-theme-accent">{s.no}</Td>
+                <Td className="font-display text-theme-ink whitespace-nowrap">
                   {s.name}
-                  <span className="mt-0.5 block text-[10px] font-normal uppercase tracking-wider text-theme-ink/45">
+                  <span className="text-theme-ink/45 mt-0.5 block text-[10px] font-normal uppercase tracking-wider">
                     {s.heritage}
                   </span>
                 </Td>
                 <Td className="text-theme-ink/75 text-xs">{s.idea}</Td>
-                <Td className="text-emerald-700 font-semibold text-[11px]">{s.nutrition}</Td>
+                <Td className="text-[11px] font-semibold text-emerald-700">{s.nutrition}</Td>
                 <Td className="text-theme-ink/60 text-[11px]">{s.tech}</Td>
                 <Td className="text-theme-ink/55 text-xs">{s.why}</Td>
               </tr>
@@ -2571,22 +2911,43 @@ function LimitedEditionSection() {
 
       {/* ── Functional market the line is built for ── */}
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           The functional-sweets market (web-researched, May 2026)
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           {[
-            { label: 'Sugar-free / diabetic-friendly foods', value: '$1.12B → $2.58B', hint: '2024→2033 · 8.93% CAGR' },
-            { label: 'India healthy-snacks market', value: '$3.13B → $4.77B', hint: '2025→2034 · plant-protein led' },
+            {
+              label: 'Sugar-free / diabetic-friendly foods',
+              value: '$1.12B → $2.58B',
+              hint: '2024→2033 · 8.93% CAGR',
+            },
+            {
+              label: 'India healthy-snacks market',
+              value: '$3.13B → $4.77B',
+              hint: '2025→2034 · plant-protein led',
+            },
             { label: 'Packaged sweets CAGR', value: '15.36%', hint: 'fastest in years' },
-            { label: 'Urban HHs wanting less sugar', value: '55%', hint: 'open to 25–75% reduced-sugar sweets' },
-            { label: 'Sattu protein density', value: '~20 g / 100g', hint: 'desi protein, beats most flours' },
+            {
+              label: 'Urban HHs wanting less sugar',
+              value: '55%',
+              hint: 'open to 25–75% reduced-sugar sweets',
+            },
+            {
+              label: 'Sattu protein density',
+              value: '~20 g / 100g',
+              hint: 'desi protein, beats most flours',
+            },
             { label: 'Indian diabetics', value: '77M', hint: '1 in 11 adults · low-GI buyer' },
           ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">{s.label}</p>
-              <p className="mt-1 font-display text-xl font-semibold text-theme-ink">{s.value}</p>
-              <p className="mt-0.5 text-[11px] text-theme-ink/55">{s.hint}</p>
+            <div
+              key={s.label}
+              className="bg-surface rounded-xl border border-[color:var(--color-border)] p-4"
+            >
+              <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                {s.label}
+              </p>
+              <p className="font-display text-theme-ink mt-1 text-xl">{s.value}</p>
+              <p className="text-theme-ink/55 mt-0.5 text-[11px]">{s.hint}</p>
             </div>
           ))}
         </div>
@@ -2597,30 +2958,48 @@ function LimitedEditionSection() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
           Why buy from us · reasons to believe
         </p>
-        <p className="mt-1 text-sm text-theme-ink/75">
+        <p className="text-theme-ink/75 mt-1 text-sm">
           The whole point: customers should feel they are choosing the smarter, better-made,
           more-trustworthy sweet — not just a prettier one.
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {[
-            { h: 'Real, lab-verified nutrition', b: 'NABL-tested protein + sugar numbers printed on every piece — not vague "healthy". You know exactly what you eat.' },
-            { h: 'Zero refined sugar', b: 'Sweetened only with dates, jaggery and monk fruit. Diabetic-considerate low-GI options, clearly marked.' },
-            { h: 'Desi superfoods, not imported whey', b: 'Sattu, makhana, ragi/millet, black sesame, probiotic cultured milk — protein that belongs to our food culture.' },
-            { h: '100% vegetarian + clean-label', b: 'Vegetarian vark, gelatin-free spherification, no maida, no preservatives. Ingredients named in full.' },
-            { h: 'Craft + science, not a powder ball', b: 'Every piece uses a real technique and a Hyderabadi/Andhra heritage cue. Functional food that is genuinely delicious.' },
-            { h: 'A 1985 halwai house, not a faceless startup', b: 'Forty years of trust, a real founder on camera, real Khammam + Hyderabad kitchens. FSSAI-safe by design.' },
+            {
+              h: 'Real, lab-verified nutrition',
+              b: 'NABL-tested protein + sugar numbers printed on every piece — not vague "healthy". You know exactly what you eat.',
+            },
+            {
+              h: 'Zero refined sugar',
+              b: 'Sweetened only with dates, jaggery and monk fruit. Diabetic-considerate low-GI options, clearly marked.',
+            },
+            {
+              h: 'Desi superfoods, not imported whey',
+              b: 'Sattu, makhana, ragi/millet, black sesame, probiotic cultured milk — protein that belongs to our food culture.',
+            },
+            {
+              h: '100% vegetarian + clean-label',
+              b: 'Vegetarian vark, gelatin-free spherification, no maida, no preservatives. Ingredients named in full.',
+            },
+            {
+              h: 'Craft + science, not a powder ball',
+              b: 'Every piece uses a real technique and a Hyderabadi/Andhra heritage cue. Functional food that is genuinely delicious.',
+            },
+            {
+              h: 'A 1985 halwai house, not a faceless startup',
+              b: 'Forty years of trust, a real founder on camera, real Khammam + Hyderabad kitchens. FSSAI-safe by design.',
+            },
           ].map((r) => (
-            <div key={r.h} className="rounded-lg border border-emerald-500/25 bg-surface p-4">
-              <p className="font-display text-sm font-semibold text-theme-ink">{r.h}</p>
-              <p className="mt-1 text-xs text-theme-ink/70">{r.b}</p>
+            <div key={r.h} className="bg-surface rounded-lg border border-emerald-500/25 p-4">
+              <p className="font-display text-theme-ink text-sm">{r.h}</p>
+              <p className="text-theme-ink/70 mt-1 text-xs">{r.b}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
-        <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Unit economics — one Vault 10 box (base packaging)
           </p>
           <table className="mt-3 w-full text-left text-sm">
@@ -2629,18 +3008,20 @@ function LimitedEditionSection() {
                 <tr
                   key={r.k}
                   className={cn(
-                    'border-b border-[color:var(--color-border)]/60',
+                    'border-[color:var(--color-border)]/60 border-b',
                     r.strong && 'bg-theme-accent/5',
                   )}
                 >
-                  <Td className={cn('text-theme-ink/80', r.strong && 'font-semibold text-theme-ink')}>
+                  <Td
+                    className={cn('text-theme-ink/80', r.strong && 'text-theme-ink font-semibold')}
+                  >
                     {r.k}
                   </Td>
                   <Td
                     align="right"
                     className={cn(
                       'tabular-nums',
-                      r.strong && 'font-display font-semibold',
+                      r.strong && 'font-display',
                       r.accent && 'text-emerald-700',
                     )}
                   >
@@ -2650,20 +3031,20 @@ function LimitedEditionSection() {
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-[11px] text-theme-ink/55">
-            One drop (500 boxes) clears ≈ ₹8.3L gross on base packaging. Shipping the
-            Tier-A signature packaging (see below) lifts cost to ~₹935/box → ~61% margin,
-            ~₹1,465/box, ≈ ₹7.3L gross/drop — the recommended brand bet. Run quarterly =
-            ₹29–33L/yr gross from a line that is pure brand fuel. The real return is the
-            waitlist, the press, and the halo on the ₹500-AOV core range.
+          <p className="text-theme-ink/55 mt-3 text-[11px]">
+            One drop (500 boxes) clears ≈ ₹8.3L gross on base packaging. Shipping the Tier-A
+            signature packaging (see below) lifts cost to ~₹935/box → ~61% margin, ~₹1,465/box, ≈
+            ₹7.3L gross/drop — the recommended brand bet. Run quarterly = ₹29–33L/yr gross from a
+            line that is pure brand fuel. The real return is the waitlist, the press, and the halo
+            on the ₹500-AOV core range.
           </p>
         </div>
 
-        <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="border-theme-accent/30 bg-theme-accent/5 rounded-xl border p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             The drop mechanic
           </p>
-          <ul className="mt-3 space-y-2 text-xs text-theme-ink/80">
+          <ul className="text-theme-ink/80 mt-3 space-y-2 text-xs">
             {[
               '500 numbered boxes per drop — laser-etched run number (287 / 500).',
               'Waitlist gets 24h early access; public sale after.',
@@ -2673,7 +3054,7 @@ function LimitedEditionSection() {
               'Each drop has one "grail" piece teased first to drive the waitlist.',
             ].map((t) => (
               <li key={t} className="flex items-start gap-2 leading-relaxed">
-                <Gem className="mt-0.5 h-3.5 w-3.5 shrink-0 text-theme-accent" aria-hidden="true" />
+                <Gem className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span>{t}</span>
               </li>
             ))}
@@ -2681,25 +3062,28 @@ function LimitedEditionSection() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           12-week first-drop plan
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
           {dropPlan.map((p) => (
-            <div key={p.wk} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <div
+              key={p.wk}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+            >
+              <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
                 {p.wk}
               </p>
-              <p className="mt-1 text-xs text-theme-ink/80">{p.task}</p>
+              <p className="text-theme-ink/80 mt-1 text-xs">{p.task}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Competitive frame (web-researched, May 2026) ── */}
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Why the lane is open · competitive scan (May 2026)
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
@@ -2717,26 +3101,29 @@ function LimitedEditionSection() {
               w: 'No premium mithai house runs a numbered, sneaker-style drop of technique-driven single-bite sweets. That is the Vault 10 wedge — craft + scarcity + Hyderabad identity.',
             },
           ].map((c) => (
-            <div key={c.n} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
-              <p className="font-display text-sm font-semibold text-theme-ink">{c.n}</p>
-              <p className="mt-1 text-[11px] text-theme-ink/70">{c.w}</p>
+            <div
+              key={c.n}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+            >
+              <p className="font-display text-theme-ink text-sm">{c.n}</p>
+              <p className="text-theme-ink/70 mt-1 text-[11px]">{c.w}</p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[11px] text-theme-ink/55">
-          Industry benchmark: limited drops generate 3–10× revenue per product vs standard
-          launches, and capped quantity + waitlist FOMO justifies a premium price (Shopify /
-          Queue-it, 2025–26). Micro + mid-tier influencer seeding with dramatic unboxing Reels
-          has driven 25M+ combined views and ~300% traffic spikes for small Indian D2C brands.
+        <p className="text-theme-ink/55 mt-3 text-[11px]">
+          Industry benchmark: limited drops generate 3–10× revenue per product vs standard launches,
+          and capped quantity + waitlist FOMO justifies a premium price (Shopify / Queue-it,
+          2025–26). Micro + mid-tier influencer seeding with dramatic unboxing Reels has driven 25M+
+          combined views and ~300% traffic spikes for small Indian D2C brands.
         </p>
       </div>
 
       {/* ── Packaging — the most innovative in Indian mithai ── */}
-      <div className="rounded-xl border border-theme-accent/30 bg-surface p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+      <div className="border-theme-accent/30 bg-surface rounded-xl border p-5">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           Packaging — the box is the product (none done before in Indian mithai)
         </p>
-        <p className="mt-1 text-sm text-theme-ink/75">
+        <p className="text-theme-ink/75 mt-1 text-sm">
           For a ₹2,400 collector drop the unboxing IS the content, the keepsake and the proof of
           authenticity. Shipped in tiers so Drop 01 is achievable and the hero ideas have runway.
         </p>
@@ -2773,12 +3160,20 @@ function LimitedEditionSection() {
               ],
             },
           ].map((t) => (
-            <div key={t.tier} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-4">
-              <p className={cn('text-[10px] font-semibold uppercase tracking-[0.2em]', t.tone)}>{t.tier}</p>
+            <div
+              key={t.tier}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-4"
+            >
+              <p className={cn('text-[10px] font-semibold uppercase tracking-[0.2em]', t.tone)}>
+                {t.tier}
+              </p>
               <ul className="mt-2 space-y-1.5">
                 {t.items.map((i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-theme-ink/75">
-                    <Gem className="mt-0.5 h-3 w-3 shrink-0 text-theme-accent" aria-hidden="true" />
+                  <li
+                    key={i}
+                    className="text-theme-ink/75 flex items-start gap-1.5 text-[11px] leading-relaxed"
+                  >
+                    <Gem className="text-theme-accent mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
                     <span>{i}</span>
                   </li>
                 ))}
@@ -2795,13 +3190,13 @@ function LimitedEditionSection() {
       </div>
 
       {/* ── Marketing engine ── */}
-      <div className="rounded-xl border border-theme-accent/30 bg-gradient-to-br from-theme-accent/8 to-transparent p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+      <div className="border-theme-accent/30 from-theme-accent/8 rounded-xl border bg-gradient-to-br to-transparent p-5">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           Go-to-market · the drop marketing engine
         </p>
-        <p className="mt-1 text-sm text-theme-ink/75">
-          Three acts — build the hunger, run the drop, bank the proof. Short-form video is the
-          core engine; scarcity is the hook; the founder + the craft are the story.
+        <p className="text-theme-ink/75 mt-1 text-sm">
+          Three acts — build the hunger, run the drop, bank the proof. Short-form video is the core
+          engine; scarcity is the hook; the founder + the craft are the story.
         </p>
 
         <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -2837,14 +3232,20 @@ function LimitedEditionSection() {
               ],
             },
           ].map((a) => (
-            <div key={a.act} className="rounded-lg border border-theme-accent/25 bg-surface p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+            <div key={a.act} className="border-theme-accent/25 bg-surface rounded-lg border p-4">
+              <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.2em]">
                 {a.act}
               </p>
               <ul className="mt-2 space-y-1.5">
                 {a.points.map((p) => (
-                  <li key={p} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-theme-ink/75">
-                    <ArrowRight className="mt-0.5 h-3 w-3 shrink-0 text-theme-accent" aria-hidden="true" />
+                  <li
+                    key={p}
+                    className="text-theme-ink/75 flex items-start gap-1.5 text-[11px] leading-relaxed"
+                  >
+                    <ArrowRight
+                      className="text-theme-accent mt-0.5 h-3 w-3 shrink-0"
+                      aria-hidden="true"
+                    />
                     <span>{p}</span>
                   </li>
                 ))}
@@ -2855,13 +3256,13 @@ function LimitedEditionSection() {
       </div>
 
       {/* ── Channel mix + budget ── */}
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Channel mix per drop · ~₹3.2L marketing budget
         </p>
         <table className="mt-3 w-full min-w-[680px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Channel</Th>
               <Th>Play</Th>
               <Th>Spend</Th>
@@ -2870,15 +3271,48 @@ function LimitedEditionSection() {
           </thead>
           <tbody>
             {[
-              { c: 'Cinematic content', p: '1 film per piece (10) + 1 master trailer · in-house + 1 editor', s: '₹60K', j: 'The asset library that powers everything else' },
-              { c: 'Influencer seeding', p: '6 numbered boxes, embargoed · micro + mid-tier · Hyderabad + NRI', s: '₹90K', j: 'Drop-hour credibility + reach' },
-              { c: 'Meta + Instagram ads', p: 'Retarget waitlist + lookalikes · video-first', s: '₹1.0L', j: 'Fill the waitlist, convert fence-sitters' },
-              { c: 'Founder-led organic', p: 'Srinivasa Rao on camera — the craft, the kitchen, the why', s: '₹0', j: 'Trust + the "made by a real halwai house" story' },
-              { c: 'PR + design press', p: 'Pitch the craft + sell-out numbers to food/design/startup desks', s: '₹40K', j: 'Authority + backlinks + halo' },
-              { c: 'Packaging as media', p: 'Numbered box + share card = every buyer is a billboard', s: '₹30K', j: 'Organic UGC loop' },
+              {
+                c: 'Cinematic content',
+                p: '1 film per piece (10) + 1 master trailer · in-house + 1 editor',
+                s: '₹60K',
+                j: 'The asset library that powers everything else',
+              },
+              {
+                c: 'Influencer seeding',
+                p: '6 numbered boxes, embargoed · micro + mid-tier · Hyderabad + NRI',
+                s: '₹90K',
+                j: 'Drop-hour credibility + reach',
+              },
+              {
+                c: 'Meta + Instagram ads',
+                p: 'Retarget waitlist + lookalikes · video-first',
+                s: '₹1.0L',
+                j: 'Fill the waitlist, convert fence-sitters',
+              },
+              {
+                c: 'Founder-led organic',
+                p: 'Srinivasa Rao on camera — the craft, the kitchen, the why',
+                s: '₹0',
+                j: 'Trust + the "made by a real halwai house" story',
+              },
+              {
+                c: 'PR + design press',
+                p: 'Pitch the craft + sell-out numbers to food/design/startup desks',
+                s: '₹40K',
+                j: 'Authority + backlinks + halo',
+              },
+              {
+                c: 'Packaging as media',
+                p: 'Numbered box + share card = every buyer is a billboard',
+                s: '₹30K',
+                j: 'Organic UGC loop',
+              },
             ].map((r) => (
-              <tr key={r.c} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-ink whitespace-nowrap">{r.c}</Td>
+              <tr
+                key={r.c}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="font-display text-theme-ink whitespace-nowrap">{r.c}</Td>
                 <Td className="text-theme-ink/70 text-xs">{r.p}</Td>
                 <Td className="font-semibold tabular-nums">{r.s}</Td>
                 <Td className="text-theme-ink/60 text-xs">{r.j}</Td>
@@ -2886,10 +3320,10 @@ function LimitedEditionSection() {
             ))}
           </tbody>
         </table>
-        <p className="mt-3 text-[11px] text-theme-ink/55">
-          ₹3.2L spend against ≈ ₹8.3L gross per 500-box drop = the drop pays for itself with
-          margin to spare, and the content + waitlist + press are reusable assets that compound
-          across quarterly drops.
+        <p className="text-theme-ink/55 mt-3 text-[11px]">
+          ₹3.2L spend against ≈ ₹8.3L gross per 500-box drop = the drop pays for itself with margin
+          to spare, and the content + waitlist + press are reusable assets that compound across
+          quarterly drops.
         </p>
       </div>
 
@@ -2901,10 +3335,15 @@ function LimitedEditionSection() {
           { k: 'Time to sell out', v: '< 72h', s: 'the headline that fuels Drop 02' },
           { k: 'Content views / drop', v: '1M+', s: 'Reels + Shorts combined' },
         ].map((m) => (
-          <div key={m.k} className="rounded-xl border border-[color:var(--color-border)] bg-surface p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-theme-ink/55">{m.k}</p>
-            <p className="mt-1 font-display text-2xl font-semibold text-theme-ink">{m.v}</p>
-            <p className="mt-0.5 text-[11px] text-theme-ink/55">{m.s}</p>
+          <div
+            key={m.k}
+            className="bg-surface rounded-xl border border-[color:var(--color-border)] p-4"
+          >
+            <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-[0.2em]">
+              {m.k}
+            </p>
+            <p className="font-display text-theme-ink mt-1 text-2xl">{m.v}</p>
+            <p className="text-theme-ink/55 mt-0.5 text-[11px]">{m.s}</p>
           </div>
         ))}
       </div>
@@ -2921,78 +3360,241 @@ function LimitedEditionSection() {
 function EconomicsSection() {
   const profitTarget = '₹25–30L net / month by month 12';
   const ladder = [
-    { m: 'Today', gmv: '₹15–30L', net: 'Break-even / minor', notes: 'Walk-in heavy · D2C nascent · ad spend < ₹1L/mo' },
-    { m: 'M 3', gmv: '₹35L', net: '₹4–6L', notes: 'Foundations live · Meta+Google humming at 2.5× ROAS' },
-    { m: 'M 6', gmv: '₹55–65L', net: '₹10–14L', notes: 'NRI Phase A live · B2B 2 corporates closed · Bellam launched' },
-    { m: 'M 9', gmv: '₹70–80L', net: '₹16–20L', notes: 'Spirulina · Bal soft launch · Diwali ramp begins' },
-    { m: 'M 12', gmv: '₹85L–₹1Cr', net: '₹25–30L', notes: 'Diwali execution · all five revenue stacks producing · 35% repeat rate' },
-    { m: 'Year 2', gmv: '₹2–3Cr', net: '₹60–80L', notes: 'B2B + NRI scale · second city retail · category-defining Bal line' },
+    {
+      m: 'Today',
+      gmv: '₹15–30L',
+      net: 'Break-even / minor',
+      notes: 'Walk-in heavy · D2C nascent · ad spend < ₹1L/mo',
+    },
+    {
+      m: 'M 3',
+      gmv: '₹35L',
+      net: '₹4–6L',
+      notes: 'Foundations live · Meta+Google humming at 2.5× ROAS',
+    },
+    {
+      m: 'M 6',
+      gmv: '₹55–65L',
+      net: '₹10–14L',
+      notes: 'NRI Phase A live · B2B 2 corporates closed · Bellam launched',
+    },
+    {
+      m: 'M 9',
+      gmv: '₹70–80L',
+      net: '₹16–20L',
+      notes: 'Spirulina · Bal soft launch · Diwali ramp begins',
+    },
+    {
+      m: 'M 12',
+      gmv: '₹85L–₹1Cr',
+      net: '₹25–30L',
+      notes: 'Diwali execution · all five revenue stacks producing · 35% repeat rate',
+    },
+    {
+      m: 'Year 2',
+      gmv: '₹2–3Cr',
+      net: '₹60–80L',
+      notes: 'B2B + NRI scale · second city retail · category-defining Bal line',
+    },
   ];
 
   const margin = [
-    { bucket: 'Spirulina · Bal line (premium)', cogs: '21%', gm: '79%', share: '15%', note: 'Funds ad spend' },
-    { bucket: 'Bellam · Health line', cogs: '32%', gm: '68%', share: '18%', note: 'Repeat-rate engine' },
-    { bucket: 'Hampers (incl. corporate)', cogs: '36%', gm: '64%', share: '25%', note: 'AOV ₹2K–₹4L' },
-    { bucket: 'Dry / shelf-stable traditional', cogs: '38%', gm: '62%', share: '20%', note: 'NRI shipping core' },
-    { bucket: 'Fresh traditional (khoya, ghee)', cogs: '46%', gm: '54%', share: '17%', note: 'Walk-in + quick-comm' },
-    { bucket: 'Quick-commerce (Zepto/Blinkit)', cogs: '54%', gm: '46%', share: '5%', note: 'Marketing channel, not profit' },
+    {
+      bucket: 'Spirulina · Bal line (premium)',
+      cogs: '21%',
+      gm: '79%',
+      share: '15%',
+      note: 'Funds ad spend',
+    },
+    {
+      bucket: 'Bellam · Health line',
+      cogs: '32%',
+      gm: '68%',
+      share: '18%',
+      note: 'Repeat-rate engine',
+    },
+    {
+      bucket: 'Hampers (incl. corporate)',
+      cogs: '36%',
+      gm: '64%',
+      share: '25%',
+      note: 'AOV ₹2K–₹4L',
+    },
+    {
+      bucket: 'Dry / shelf-stable traditional',
+      cogs: '38%',
+      gm: '62%',
+      share: '20%',
+      note: 'NRI shipping core',
+    },
+    {
+      bucket: 'Fresh traditional (khoya, ghee)',
+      cogs: '46%',
+      gm: '54%',
+      share: '17%',
+      note: 'Walk-in + quick-comm',
+    },
+    {
+      bucket: 'Quick-commerce (Zepto/Blinkit)',
+      cogs: '54%',
+      gm: '46%',
+      share: '5%',
+      note: 'Marketing channel, not profit',
+    },
   ];
 
   const pnl = [
     { line: 'Revenue (GMV ex-GST)', value: '100.0', commentary: '₹85L–₹1Cr / month' },
     { line: 'Less: COGS (blended)', value: '34.0', commentary: 'Mix-weighted' },
     { line: 'Gross profit', value: '66.0', commentary: 'Gross margin 66%', strong: true },
-    { line: 'Less: marketing (paid + influencer)', value: '15.0', commentary: 'Steady-state · was 18% in M3' },
-    { line: 'Less: payroll (kitchen + content + ops)', value: '6.5', commentary: 'Founder draw separate' },
-    { line: 'Less: logistics + packaging', value: '4.0', commentary: 'Shiprocket + cold-chain bursts' },
+    {
+      line: 'Less: marketing (paid + influencer)',
+      value: '15.0',
+      commentary: 'Steady-state · was 18% in M3',
+    },
+    {
+      line: 'Less: payroll (kitchen + content + ops)',
+      value: '6.5',
+      commentary: 'Founder draw separate',
+    },
+    {
+      line: 'Less: logistics + packaging',
+      value: '4.0',
+      commentary: 'Shiprocket + cold-chain bursts',
+    },
     { line: 'Less: tooling + Razorpay + MSG91 + Resend', value: '1.5', commentary: 'Locked' },
-    { line: 'Less: rent + overhead (3 locations)', value: '4.0', commentary: 'Khammam + Kondapur + central kitchen' },
+    {
+      line: 'Less: rent + overhead (3 locations)',
+      value: '4.0',
+      commentary: 'Khammam + Kondapur + central kitchen',
+    },
     { line: 'Less: PR + miscellaneous', value: '2.0', commentary: 'Retainer + experiments' },
-    { line: 'EBITDA', value: '33.0', commentary: '~₹28–33L / month at scale', strong: true, accent: true },
-    { line: 'Less: tax (effective ~6% of revenue)', value: '6.0', commentary: 'GST set-off · income tax · advance' },
-    { line: 'Net profit', value: '27.0', commentary: '₹23–27L / month landed clean', strong: true, accent: true },
+    {
+      line: 'EBITDA',
+      value: '33.0',
+      commentary: '~₹28–33L / month at scale',
+      strong: true,
+      accent: true,
+    },
+    {
+      line: 'Less: tax (effective ~6% of revenue)',
+      value: '6.0',
+      commentary: 'GST set-off · income tax · advance',
+    },
+    {
+      line: 'Net profit',
+      value: '27.0',
+      commentary: '₹23–27L / month landed clean',
+      strong: true,
+      accent: true,
+    },
   ];
 
   const channels = [
-    { ch: 'D2C web (storefront)', share: 40, aov: '₹1,400', cac: '₹280', ltv: '₹4,200', payback: '2.0 mo' },
-    { ch: 'Corporate B2B', share: 25, aov: '₹62K', cac: '₹3.5K', ltv: '₹1.8L (3 cycles)', payback: '0.7 mo' },
-    { ch: 'Quick-commerce', share: 15, aov: '₹420', cac: 'platform', ltv: '₹1,100', payback: 'low' },
-    { ch: 'NRI gifting (intl cards)', share: 12, aov: '₹4,200', cac: '₹650', ltv: '₹16K (4 occasions)', payback: '0.6 mo' },
-    { ch: 'Walk-in (Khammam + Kondapur)', share: 8, aov: '₹520', cac: '₹0', ltv: '₹14K (40-yr trust)', payback: 'instant' },
+    {
+      ch: 'D2C web (storefront)',
+      share: 40,
+      aov: '₹1,400',
+      cac: '₹280',
+      ltv: '₹4,200',
+      payback: '2.0 mo',
+    },
+    {
+      ch: 'Corporate B2B',
+      share: 25,
+      aov: '₹62K',
+      cac: '₹3.5K',
+      ltv: '₹1.8L (3 cycles)',
+      payback: '0.7 mo',
+    },
+    {
+      ch: 'Quick-commerce',
+      share: 15,
+      aov: '₹420',
+      cac: 'platform',
+      ltv: '₹1,100',
+      payback: 'low',
+    },
+    {
+      ch: 'NRI gifting (intl cards)',
+      share: 12,
+      aov: '₹4,200',
+      cac: '₹650',
+      ltv: '₹16K (4 occasions)',
+      payback: '0.6 mo',
+    },
+    {
+      ch: 'Walk-in (Khammam + Kondapur)',
+      share: 8,
+      aov: '₹520',
+      cac: '₹0',
+      ltv: '₹14K (40-yr trust)',
+      payback: 'instant',
+    },
   ];
 
   const levers = [
-    { name: 'AOV uplift', from: '₹1,200', to: '₹1,800', how: 'Hamper-builder defaults · cross-sell at cart · 3-jar minimum on Bal · gift-add-on (card + foil)' },
-    { name: 'Repeat-rate (90d)', from: '18%', to: '35%', how: 'Loyalty stamps · WA broadcast post-purchase · subscription on Bites + Bellam · founder thank-you note in box' },
-    { name: 'CAC (blended)', from: '₹400', to: '₹250', how: 'Creative win-rate via 4-reel weekly testing · UGC + nano · branded search defence · Pmax for Diwali' },
-    { name: 'ROAS (Meta)', from: '2.5×', to: '4.5×', how: 'Funnel discipline (TOF/MOF/BOF) · catalogue ads · creator-led BOF · pixel + CAPI' },
-    { name: 'Gross margin (blended)', from: '58%', to: '66%', how: 'Bal + Bellam mix shift · drop SKUs <55% GM · rationalise 8 lowest-rotation SKUs · own 1 packaging vendor' },
-    { name: 'Working capital cycle', from: '38 days', to: '14 days', how: 'Pre-paid only on D2C · UPI-first · corporate 50% advance · weekly Razorpay settlements' },
+    {
+      name: 'AOV uplift',
+      from: '₹1,200',
+      to: '₹1,800',
+      how: 'Hamper-builder defaults · cross-sell at cart · 3-jar minimum on Bal · gift-add-on (card + foil)',
+    },
+    {
+      name: 'Repeat-rate (90d)',
+      from: '18%',
+      to: '35%',
+      how: 'Loyalty stamps · WA broadcast post-purchase · subscription on Bites + Bellam · founder thank-you note in box',
+    },
+    {
+      name: 'CAC (blended)',
+      from: '₹400',
+      to: '₹250',
+      how: 'Creative win-rate via 4-reel weekly testing · UGC + nano · branded search defence · Pmax for Diwali',
+    },
+    {
+      name: 'ROAS (Meta)',
+      from: '2.5×',
+      to: '4.5×',
+      how: 'Funnel discipline (TOF/MOF/BOF) · catalogue ads · creator-led BOF · pixel + CAPI',
+    },
+    {
+      name: 'Gross margin (blended)',
+      from: '58%',
+      to: '66%',
+      how: 'Bal + Bellam mix shift · drop SKUs <55% GM · rationalise 8 lowest-rotation SKUs · own 1 packaging vendor',
+    },
+    {
+      name: 'Working capital cycle',
+      from: '38 days',
+      to: '14 days',
+      how: 'Pre-paid only on D2C · UPI-first · corporate 50% advance · weekly Razorpay settlements',
+    },
   ];
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent">
+      <div className="border-theme-accent/30 bg-theme-accent/5 rounded-xl border p-5">
+        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.2em]">
           The math behind the north-star
         </p>
-        <p className="mt-2 font-display text-xl font-semibold text-theme-ink">
+        <p className="font-display text-theme-ink mt-2 text-xl">
           {profitTarget} requires ₹85L–₹1Cr GMV/month at a 30%-net mix
         </p>
-        <p className="mt-2 text-sm text-theme-ink/70">
-          The plan stops being aspirational once these six levers are pulled simultaneously: AOV
-          → ₹1,800 · Repeat → 35% · CAC → ₹250 · ROAS → 4.5× · Blended GM → 66% · Cash cycle → 14 days.
-          Each is independently realistic; together they compound.
+        <p className="text-theme-ink/70 mt-2 text-sm">
+          The plan stops being aspirational once these six levers are pulled simultaneously: AOV →
+          ₹1,800 · Repeat → 35% · CAC → ₹250 · ROAS → 4.5× · Blended GM → 66% · Cash cycle → 14
+          days. Each is independently realistic; together they compound.
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           12-month GMV → profit ladder
         </p>
         <table className="mt-3 w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Period</Th>
               <Th>GMV / month</Th>
               <Th>Net profit</Th>
@@ -3001,10 +3603,13 @@ function EconomicsSection() {
           </thead>
           <tbody>
             {ladder.map((row) => (
-              <tr key={row.m} className="border-b border-[color:var(--color-border)]/60 hover:bg-theme-glow/5">
-                <Td className="font-display font-semibold text-theme-ink">{row.m}</Td>
+              <tr
+                key={row.m}
+                className="border-[color:var(--color-border)]/60 hover:bg-theme-glow/5 border-b"
+              >
+                <Td className="font-display text-theme-ink">{row.m}</Td>
                 <Td className="font-semibold">{row.gmv}</Td>
-                <Td className="text-emerald-700 font-semibold">{row.net}</Td>
+                <Td className="font-semibold text-emerald-700">{row.net}</Td>
                 <Td className="text-theme-ink/65 text-xs">{row.notes}</Td>
               </tr>
             ))}
@@ -3013,13 +3618,13 @@ function EconomicsSection() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Margin stack by SKU bucket
           </p>
           <table className="mt-3 w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+              <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
                 <Th>Bucket</Th>
                 <Th>COGS</Th>
                 <Th>GM</Th>
@@ -3028,27 +3633,27 @@ function EconomicsSection() {
             </thead>
             <tbody>
               {margin.map((m) => (
-                <tr key={m.bucket} className="border-b border-[color:var(--color-border)]/60">
-                  <Td className="font-medium text-theme-ink">{m.bucket}</Td>
+                <tr key={m.bucket} className="border-[color:var(--color-border)]/60 border-b">
+                  <Td className="text-theme-ink font-medium">{m.bucket}</Td>
                   <Td>{m.cogs}</Td>
-                  <Td className="text-emerald-700 font-semibold">{m.gm}</Td>
+                  <Td className="font-semibold text-emerald-700">{m.gm}</Td>
                   <Td>{m.share}</Td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="mt-3 text-[11px] text-theme-ink/55">
+          <p className="text-theme-ink/55 mt-3 text-[11px]">
             Blended GM target: 66% — driven by lifting Bal + Bellam + Hampers to 58% combined mix.
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+        <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
             Channel economics (steady-state)
           </p>
           <table className="mt-3 w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+              <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
                 <Th>Channel</Th>
                 <Th>%</Th>
                 <Th>AOV</Th>
@@ -3057,14 +3662,14 @@ function EconomicsSection() {
             </thead>
             <tbody>
               {channels.map((c) => (
-                <tr key={c.ch} className="border-b border-[color:var(--color-border)]/60">
-                  <Td className="font-medium text-theme-ink">{c.ch}</Td>
+                <tr key={c.ch} className="border-[color:var(--color-border)]/60 border-b">
+                  <Td className="text-theme-ink font-medium">{c.ch}</Td>
                   <Td>{c.share}%</Td>
                   <Td>{c.aov}</Td>
                   <Td className="text-xs">
                     <span className="text-theme-ink/65">{c.cac}</span>{' '}
                     <span className="text-theme-ink/40">→</span>{' '}
-                    <span className="text-emerald-700 font-semibold">{c.ltv}</span>
+                    <span className="font-semibold text-emerald-700">{c.ltv}</span>
                     <span className="text-theme-ink/45"> · {c.payback}</span>
                   </Td>
                 </tr>
@@ -3074,13 +3679,13 @@ function EconomicsSection() {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface overflow-x-auto rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           P&amp;L at month-12 scale (% of revenue)
         </p>
         <table className="mt-3 w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider text-theme-ink/55">
+            <tr className="text-theme-ink/55 border-b border-[color:var(--color-border)] text-[10px] uppercase tracking-wider">
               <Th>Line</Th>
               <Th align="right">% of revenue</Th>
               <Th>Commentary</Th>
@@ -3091,18 +3696,20 @@ function EconomicsSection() {
               <tr
                 key={row.line}
                 className={cn(
-                  'border-b border-[color:var(--color-border)]/60',
+                  'border-[color:var(--color-border)]/60 border-b',
                   row.strong && 'bg-theme-accent/5',
                 )}
               >
-                <Td className={cn('text-theme-ink/80', row.strong && 'font-semibold text-theme-ink')}>
+                <Td
+                  className={cn('text-theme-ink/80', row.strong && 'text-theme-ink font-semibold')}
+                >
                   {row.line}
                 </Td>
                 <Td
                   align="right"
                   className={cn(
                     'tabular-nums',
-                    row.strong && 'font-display font-semibold',
+                    row.strong && 'font-display',
                     row.accent && 'text-emerald-700',
                   )}
                 >
@@ -3113,28 +3720,31 @@ function EconomicsSection() {
             ))}
           </tbody>
         </table>
-        <p className="mt-3 text-[11px] text-theme-ink/55">
-          On ₹1Cr/month revenue: ₹66L gross profit → ₹33L EBITDA → ₹27L net. Allow ±₹3L band for
-          mix variance. Every 1% GM uplift = ₹1L extra net profit / month.
+        <p className="text-theme-ink/55 mt-3 text-[11px]">
+          On ₹1Cr/month revenue: ₹66L gross profit → ₹33L EBITDA → ₹27L net. Allow ±₹3L band for mix
+          variance. Every 1% GM uplift = ₹1L extra net profit / month.
         </p>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
           Six levers — each independently moves the model
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           {levers.map((l) => (
-            <div key={l.name} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+            <div
+              key={l.name}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+            >
               <div className="flex items-center justify-between gap-3">
-                <p className="font-display text-base font-semibold text-theme-ink">{l.name}</p>
+                <p className="font-display text-theme-ink text-base">{l.name}</p>
                 <p className="text-xs">
                   <span className="text-theme-ink/55">{l.from}</span>{' '}
-                  <ArrowRight className="inline h-3 w-3 text-theme-accent" aria-hidden="true" />{' '}
+                  <ArrowRight className="text-theme-accent inline h-3 w-3" aria-hidden="true" />{' '}
                   <span className="font-semibold text-emerald-700">{l.to}</span>
                 </p>
               </div>
-              <p className="mt-1 text-xs text-theme-ink/70">{l.how}</p>
+              <p className="text-theme-ink/70 mt-1 text-xs">{l.how}</p>
             </div>
           ))}
         </div>
@@ -3150,29 +3760,121 @@ interface PlaybookSectionProps {
 
 function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
   const day1 = [
-    { time: '07:00–07:30', task: 'Open Supabase admin · read yesterday’s revenue, orders, AOV, top SKU. Note one number that surprised you.' },
-    { time: '07:30–08:00', task: 'Triage WhatsApp inbox · reply to corporate + NRI inquiries first. SLA: 30 min.' },
+    {
+      time: '07:00–07:30',
+      task: 'Open Supabase admin · read yesterday’s revenue, orders, AOV, top SKU. Note one number that surprised you.',
+    },
+    {
+      time: '07:30–08:00',
+      task: 'Triage WhatsApp inbox · reply to corporate + NRI inquiries first. SLA: 30 min.',
+    },
     { time: '08:00–09:00', task: 'Family / personal block. Non-negotiable.' },
-    { time: '09:00–10:00', task: 'Kitchen walk-through (alternate Khammam ↔ Kondapur weekly). Taste 2 batches. Capture 1 process clip on phone (vertical, 30s, ASMR-style).' },
-    { time: '10:00–11:00', task: 'Founder reel — 60s, phone, no script. Topic: today’s ingredient story OR a customer letter. Hand to content lead by 11:15.' },
-    { time: '11:00–12:00', task: 'Daily standup (15 min) → eng/content/ops blockers. Then deep-work block on one strategic initiative.' },
-    { time: '12:00–13:00', task: 'Founder LinkedIn / IG comment engagement — 25 comments, real replies, no automation.' },
+    {
+      time: '09:00–10:00',
+      task: 'Kitchen walk-through (alternate Khammam ↔ Kondapur weekly). Taste 2 batches. Capture 1 process clip on phone (vertical, 30s, ASMR-style).',
+    },
+    {
+      time: '10:00–11:00',
+      task: 'Founder reel — 60s, phone, no script. Topic: today’s ingredient story OR a customer letter. Hand to content lead by 11:15.',
+    },
+    {
+      time: '11:00–12:00',
+      task: 'Daily standup (15 min) → eng/content/ops blockers. Then deep-work block on one strategic initiative.',
+    },
+    {
+      time: '12:00–13:00',
+      task: 'Founder LinkedIn / IG comment engagement — 25 comments, real replies, no automation.',
+    },
     { time: '13:00–14:00', task: 'Lunch + decompress.' },
-    { time: '14:00–16:00', task: 'Sales block — 3 corporate B2B prospects (15 min each call) + 2 wedding planner intros + 1 NRI partnership ping.' },
-    { time: '16:00–17:00', task: 'Content review — approve captions + reels for next 24h. Reject anything not specific (no "premium ingredients" generic).' },
-    { time: '17:00–18:00', task: 'One initiative push — pick from: Bellam launch / Bal line / NRI page / corporate sample-box / influencer brief.' },
-    { time: '18:00–19:00', task: 'Office hours (open door for team) → end-of-day numbers check → tomorrow’s priority on a sticky note.' },
-    { time: '19:00→', task: 'Off. Phone-on for ops emergencies only. The brand is built on you sleeping.' },
+    {
+      time: '14:00–16:00',
+      task: 'Sales block — 3 corporate B2B prospects (15 min each call) + 2 wedding planner intros + 1 NRI partnership ping.',
+    },
+    {
+      time: '16:00–17:00',
+      task: 'Content review — approve captions + reels for next 24h. Reject anything not specific (no "premium ingredients" generic).',
+    },
+    {
+      time: '17:00–18:00',
+      task: 'One initiative push — pick from: Bellam launch / Bal line / NRI page / corporate sample-box / influencer brief.',
+    },
+    {
+      time: '18:00–19:00',
+      task: 'Office hours (open door for team) → end-of-day numbers check → tomorrow’s priority on a sticky note.',
+    },
+    {
+      time: '19:00→',
+      task: 'Off. Phone-on for ops emergencies only. The brand is built on you sleeping.',
+    },
   ];
 
   const week = [
-    { day: 'Mon', focus: 'Numbers + planning', tasks: ['Weekly KPI review (90 min) · CAC, ROAS, AOV, repeat, GM by SKU bucket', 'Set the 1 thing this week must achieve', 'Founder LinkedIn long post (700 words, story-led)'] },
-    { day: 'Tue', focus: 'B2B day', tasks: ['2 demo calls with corporate prospects (45 min each)', '4 Apollo.io outbound calls', '1 wedding-planner partnership conversation', 'Update B2B pipeline tracker'] },
-    { day: 'Wed', focus: 'Content day', tasks: ['1 hero reel filmed (founder + chef + kitchen)', '4 short B-roll clips for week', '1 long-form YouTube (3–8 min) recorded', 'Caption writing block (60 min)'] },
-    { day: 'Thu', focus: 'NRI + corporate sales push', tasks: ['Send 50 cold emails to NRI Telugu Whatsapp groups (admins + organisers)', '3 corporate quotes turned around within 4 hours', 'WA broadcast to NRI list (1 message)'] },
-    { day: 'Fri', focus: 'Founder + community', tasks: ['Founder Instagram live (15 min, Q&A or kitchen tour)', 'Reply to top 30 IG comments personally', 'Customer thank-you DMs to 10 recent buyers', 'Schedule weekend posts'] },
-    { day: 'Sat', focus: 'Khammam visit + team', tasks: ['Half-day at Khammam kitchen (in-person presence)', 'Tea + chat with kitchen team — surface 1 product idea', 'Walk-in customer interviews (5)', 'Photograph 2 kitchen moments for Instagram'] },
-    { day: 'Sun', focus: 'Off / family', tasks: ['No work email until 5 PM', 'Optional: 30-min reflection log → what worked, what didn’t, what to change Mon'] },
+    {
+      day: 'Mon',
+      focus: 'Numbers + planning',
+      tasks: [
+        'Weekly KPI review (90 min) · CAC, ROAS, AOV, repeat, GM by SKU bucket',
+        'Set the 1 thing this week must achieve',
+        'Founder LinkedIn long post (700 words, story-led)',
+      ],
+    },
+    {
+      day: 'Tue',
+      focus: 'B2B day',
+      tasks: [
+        '2 demo calls with corporate prospects (45 min each)',
+        '4 Apollo.io outbound calls',
+        '1 wedding-planner partnership conversation',
+        'Update B2B pipeline tracker',
+      ],
+    },
+    {
+      day: 'Wed',
+      focus: 'Content day',
+      tasks: [
+        '1 hero reel filmed (founder + chef + kitchen)',
+        '4 short B-roll clips for week',
+        '1 long-form YouTube (3–8 min) recorded',
+        'Caption writing block (60 min)',
+      ],
+    },
+    {
+      day: 'Thu',
+      focus: 'NRI + corporate sales push',
+      tasks: [
+        'Send 50 cold emails to NRI Telugu Whatsapp groups (admins + organisers)',
+        '3 corporate quotes turned around within 4 hours',
+        'WA broadcast to NRI list (1 message)',
+      ],
+    },
+    {
+      day: 'Fri',
+      focus: 'Founder + community',
+      tasks: [
+        'Founder Instagram live (15 min, Q&A or kitchen tour)',
+        'Reply to top 30 IG comments personally',
+        'Customer thank-you DMs to 10 recent buyers',
+        'Schedule weekend posts',
+      ],
+    },
+    {
+      day: 'Sat',
+      focus: 'Khammam visit + team',
+      tasks: [
+        'Half-day at Khammam kitchen (in-person presence)',
+        'Tea + chat with kitchen team — surface 1 product idea',
+        'Walk-in customer interviews (5)',
+        'Photograph 2 kitchen moments for Instagram',
+      ],
+    },
+    {
+      day: 'Sun',
+      focus: 'Off / family',
+      tasks: [
+        'No work email until 5 PM',
+        'Optional: 30-min reflection log → what worked, what didn’t, what to change Mon',
+      ],
+    },
   ];
 
   const morningStack = [
@@ -3184,18 +3886,78 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
   ];
 
   const month12 = [
-    { m: 'Month 1', gmv: '₹20L', focus: 'Foundations + photography + Resend + WA Business + Apollo · ad spend ₹2L · launch IG cadence' },
-    { m: 'Month 2', gmv: '₹26L', focus: 'Meta funnel mature · Bellam first 4 SKUs live · 100 corporate sample-boxes shipped · 1 macro-influencer collab' },
-    { m: 'Month 3', gmv: '₹35L', focus: 'NRI Phase A live · /send-from-abroad · endocrinologist endorsement video · 3 new B2B clients · ROAS 3.0×' },
-    { m: 'Month 4', gmv: '₹42L', focus: 'Spirulina W1–W4 sourcing + recipe lab · LinkedIn 800-prospect sequence · YouTube weekly cadence' },
-    { m: 'Month 5', gmv: '₹48L', focus: 'Bal NABL panels back · FSSAI Nutraceutical filed · pilot batches · 6 micro-influencer collabs · Wikipedia draft submitted' },
-    { m: 'Month 6', gmv: '₹55L', focus: 'Bal soft-launch (D2C + WA only) · loyalty + reviews engine · 5 active corporate accounts · NRI orders 12% of mix' },
-    { m: 'Month 7', gmv: '₹60L', focus: 'Bal full launch · gym partnerships (CureFit, Anytime, Gold’s Gym Hyd) · Diwali photo shoot · Meta budget +30%' },
-    { m: 'Month 8', gmv: '₹65L', focus: 'Pre-Diwali ramp begins · WA broadcast 2/wk · 6 macro-influencer Diwali collabs locked · Pinterest Diwali board live · email weekly' },
-    { m: 'Month 9', gmv: '₹78L', focus: 'Diwali prep · 5 hamper tiers photographed · Google Shopping priority · Meta budget +50% · 200+ corporate orders queued' },
-    { m: 'Month 10', gmv: '₹95L', focus: '🪔 Diwali execution week · daily monitoring · founder live on Dhanteras + Diwali · ROAS 4.5× · zero stock-outs' },
-    { m: 'Month 11', gmv: '₹78L', focus: 'Post-Diwali retargeting (Bhai Dooj + year-end gifting) · review against KPIs · 2027 plan kickoff' },
-    { m: 'Month 12', gmv: '₹88L–₹1Cr', focus: 'Steady-state · 35% repeat rate · all 5 channels firing · ₹25–30L net profit · prep Sankranti + Year-2 expansion' },
+    {
+      m: 'Month 1',
+      gmv: '₹20L',
+      focus:
+        'Foundations + photography + Resend + WA Business + Apollo · ad spend ₹2L · launch IG cadence',
+    },
+    {
+      m: 'Month 2',
+      gmv: '₹26L',
+      focus:
+        'Meta funnel mature · Bellam first 4 SKUs live · 100 corporate sample-boxes shipped · 1 macro-influencer collab',
+    },
+    {
+      m: 'Month 3',
+      gmv: '₹35L',
+      focus:
+        'NRI Phase A live · /send-from-abroad · endocrinologist endorsement video · 3 new B2B clients · ROAS 3.0×',
+    },
+    {
+      m: 'Month 4',
+      gmv: '₹42L',
+      focus:
+        'Spirulina W1–W4 sourcing + recipe lab · LinkedIn 800-prospect sequence · YouTube weekly cadence',
+    },
+    {
+      m: 'Month 5',
+      gmv: '₹48L',
+      focus:
+        'Bal NABL panels back · FSSAI Nutraceutical filed · pilot batches · 6 micro-influencer collabs · Wikipedia draft submitted',
+    },
+    {
+      m: 'Month 6',
+      gmv: '₹55L',
+      focus:
+        'Bal soft-launch (D2C + WA only) · loyalty + reviews engine · 5 active corporate accounts · NRI orders 12% of mix',
+    },
+    {
+      m: 'Month 7',
+      gmv: '₹60L',
+      focus:
+        'Bal full launch · gym partnerships (CureFit, Anytime, Gold’s Gym Hyd) · Diwali photo shoot · Meta budget +30%',
+    },
+    {
+      m: 'Month 8',
+      gmv: '₹65L',
+      focus:
+        'Pre-Diwali ramp begins · WA broadcast 2/wk · 6 macro-influencer Diwali collabs locked · Pinterest Diwali board live · email weekly',
+    },
+    {
+      m: 'Month 9',
+      gmv: '₹78L',
+      focus:
+        'Diwali prep · 5 hamper tiers photographed · Google Shopping priority · Meta budget +50% · 200+ corporate orders queued',
+    },
+    {
+      m: 'Month 10',
+      gmv: '₹95L',
+      focus:
+        '🪔 Diwali execution week · daily monitoring · founder live on Dhanteras + Diwali · ROAS 4.5× · zero stock-outs',
+    },
+    {
+      m: 'Month 11',
+      gmv: '₹78L',
+      focus:
+        'Post-Diwali retargeting (Bhai Dooj + year-end gifting) · review against KPIs · 2027 plan kickoff',
+    },
+    {
+      m: 'Month 12',
+      gmv: '₹88L–₹1Cr',
+      focus:
+        'Steady-state · 35% repeat rate · all 5 channels firing · ₹25–30L net profit · prep Sankranti + Year-2 expansion',
+    },
   ];
 
   const where = [
@@ -3278,12 +4040,13 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
     <div className="flex flex-col gap-6">
       <div className="rounded-xl border border-amber-500/40 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent p-5">
         <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-700">
-          <Sunrise className="h-3.5 w-3.5" aria-hidden="true" /> Where to begin · the founder routine
+          <Sunrise className="h-3.5 w-3.5" aria-hidden="true" /> Where to begin · the founder
+          routine
         </p>
-        <p className="mt-2 font-display text-2xl font-semibold text-theme-ink">
+        <p className="font-display text-theme-ink mt-2 text-2xl">
           The first 7 days, then a routine you can run every week for 12 months.
         </p>
-        <p className="mt-2 text-sm text-theme-ink/75">
+        <p className="text-theme-ink/75 mt-2 text-sm">
           The trap at this stage is doing everything badly. The plan: one anchor activity per day,
           one founder reel per day, one strategic push per day, and a 5-number dashboard you check
           every morning before you talk to anyone. Compounded across 12 months, that&apos;s how the
@@ -3291,29 +4054,37 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
         </p>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-          <Clock className="h-3.5 w-3.5" aria-hidden="true" /> Hour-by-hour · day-1 routine (use this template every weekday)
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
+          <Clock className="h-3.5 w-3.5" aria-hidden="true" /> Hour-by-hour · day-1 routine (use
+          this template every weekday)
         </p>
         <div className="mt-3 grid gap-2">
           {day1.map((d) => (
-            <div key={d.time} className="grid gap-2 rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3 sm:grid-cols-[110px_1fr]">
-              <p className="font-mono text-xs font-semibold text-theme-accent">{d.time}</p>
-              <p className="text-sm text-theme-ink/85">{d.task}</p>
+            <div
+              key={d.time}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated grid gap-2 rounded-lg border p-3 sm:grid-cols-[110px_1fr]"
+            >
+              <p className="text-theme-accent font-mono text-xs font-semibold">{d.time}</p>
+              <p className="text-theme-ink/85 text-sm">{d.task}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-          <ListChecks className="h-3.5 w-3.5" aria-hidden="true" /> Where to begin · the first 7 days, day-by-day
+      <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+        <p className="text-theme-accent flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
+          <ListChecks className="h-3.5 w-3.5" aria-hidden="true" /> Where to begin · the first 7
+          days, day-by-day
         </p>
         <div className="mt-3 grid gap-3 lg:grid-cols-2">
           {where.map((d, di) => (
-            <div key={d.title} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-4">
-              <p className="font-display text-base font-semibold text-theme-ink">{d.title}</p>
-              <ul className="mt-2 divide-y divide-[color:var(--color-border)]/60">
+            <div
+              key={d.title}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-4"
+            >
+              <p className="font-display text-theme-ink text-base">{d.title}</p>
+              <ul className="divide-[color:var(--color-border)]/60 mt-2 divide-y">
                 {d.items.map((item, ii) => {
                   const id = `pb-d${di}-${ii}`;
                   const on = !!checked[id];
@@ -3325,7 +4096,12 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
                         onChange={() => toggle(id)}
                         className="mt-1 h-3.5 w-3.5 rounded border-[color:var(--color-border)] accent-[color:var(--color-accent)]"
                       />
-                      <span className={cn('text-xs leading-relaxed', on ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80')}>
+                      <span
+                        className={cn(
+                          'text-xs leading-relaxed',
+                          on ? 'text-theme-ink/40 line-through' : 'text-theme-ink/80',
+                        )}
+                      >
                         {item}
                       </span>
                     </li>
@@ -3338,20 +4114,24 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="rounded-xl border border-[color:var(--color-border)] bg-surface p-5">
-          <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-            <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" /> Weekly cadence · same 7-day pattern repeats
+        <div className="bg-surface rounded-xl border border-[color:var(--color-border)] p-5">
+          <p className="text-theme-accent flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
+            <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" /> Weekly cadence · same 7-day
+            pattern repeats
           </p>
           <div className="mt-3 space-y-2">
             {week.map((w) => (
-              <div key={w.day} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+              <div
+                key={w.day}
+                className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+              >
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-theme-accent/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-theme-accent">
+                  <span className="bg-theme-accent/15 text-theme-accent rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider">
                     {w.day}
                   </span>
-                  <p className="font-display text-sm font-semibold text-theme-ink">{w.focus}</p>
+                  <p className="font-display text-theme-ink text-sm">{w.focus}</p>
                 </div>
-                <ul className="mt-2 list-disc pl-5 text-xs text-theme-ink/75">
+                <ul className="text-theme-ink/75 mt-2 list-disc pl-5 text-xs">
                   {w.tasks.map((t) => (
                     <li key={t}>{t}</li>
                   ))}
@@ -3364,24 +4144,26 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
         <div className="flex flex-col gap-4">
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-5">
             <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-700">
-              <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" /> Morning dashboard · 5 numbers, every day
+              <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" /> Morning dashboard · 5
+              numbers, every day
             </p>
-            <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-theme-ink/80">
+            <ol className="text-theme-ink/80 mt-3 list-decimal space-y-1.5 pl-5 text-sm">
               {morningStack.map((m) => (
                 <li key={m}>{m}</li>
               ))}
             </ol>
-            <p className="mt-3 text-[11px] text-theme-ink/55">
-              These 5 numbers fit on a phone screen. If you can&apos;t see them in 30 seconds at
-              7 AM, something is broken in your dashboard — fix that before fixing anything else.
+            <p className="text-theme-ink/55 mt-3 text-[11px]">
+              These 5 numbers fit on a phone screen. If you can&apos;t see them in 30 seconds at 7
+              AM, something is broken in your dashboard — fix that before fixing anything else.
             </p>
           </div>
 
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5">
             <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-700">
-              <Zap className="h-3.5 w-3.5" aria-hidden="true" /> &ldquo;Only 2 hours today&rdquo; minimum-viable founder day
+              <Zap className="h-3.5 w-3.5" aria-hidden="true" /> &ldquo;Only 2 hours today&rdquo;
+              minimum-viable founder day
             </p>
-            <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-theme-ink/80">
+            <ol className="text-theme-ink/80 mt-3 list-decimal space-y-1 pl-5 text-sm">
               {minimumDay.map((m) => (
                 <li key={m}>{m}</li>
               ))}
@@ -3393,26 +4175,30 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-theme-accent/30 bg-theme-accent/5 p-5">
-        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
-          <Flame className="h-3.5 w-3.5" aria-hidden="true" /> 12-month milestone ladder · GMV target + the engine of each month
+      <div className="border-theme-accent/30 bg-theme-accent/5 rounded-xl border p-5">
+        <p className="text-theme-accent flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]">
+          <Flame className="h-3.5 w-3.5" aria-hidden="true" /> 12-month milestone ladder · GMV
+          target + the engine of each month
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {month12.map((mo) => (
-            <div key={mo.m} className="rounded-lg border border-[color:var(--color-border)]/60 bg-surface-elevated p-3">
+            <div
+              key={mo.m}
+              className="border-[color:var(--color-border)]/60 bg-surface-elevated rounded-lg border p-3"
+            >
               <div className="flex items-center justify-between gap-2">
-                <p className="font-display text-sm font-semibold text-theme-ink">{mo.m}</p>
+                <p className="font-display text-theme-ink text-sm">{mo.m}</p>
                 <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
                   {mo.gmv}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-theme-ink/75">{mo.focus}</p>
+              <p className="text-theme-ink/75 mt-1 text-xs">{mo.focus}</p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[11px] text-theme-ink/65">
-          Cumulative 12-month GMV: ~₹6.9 Cr · cumulative net profit: ~₹1.4–1.7 Cr. Diwali (M10) alone
-          is ~14% of annual revenue — it pays for itself even if everything else drifts.
+        <p className="text-theme-ink/65 mt-3 text-[11px]">
+          Cumulative 12-month GMV: ~₹6.9 Cr · cumulative net profit: ~₹1.4–1.7 Cr. Diwali (M10)
+          alone is ~14% of annual revenue — it pays for itself even if everything else drifts.
         </p>
       </div>
     </div>

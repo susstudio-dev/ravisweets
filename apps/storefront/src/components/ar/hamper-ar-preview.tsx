@@ -58,11 +58,14 @@ export function HamperARPreview({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group inline-flex items-center gap-2 rounded-full border-2 border-theme-accent bg-theme-glow/15 px-4 py-2 text-sm font-semibold text-theme-accent transition-all hover:-translate-y-0.5 hover:bg-theme-glow/30 hover:shadow-soft"
+        className="border-theme-accent bg-theme-glow/15 text-theme-accent hover:bg-theme-glow/30 hover:shadow-soft group inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all hover:-translate-y-0.5"
       >
         <BoxIcon className="h-4 w-4" aria-hidden="true" />
         Preview the hamper in 3D
-        <RotateCw className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:rotate-90" aria-hidden="true" />
+        <RotateCw
+          className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:rotate-90"
+          aria-hidden="true"
+        />
       </button>
 
       {open && (
@@ -77,22 +80,20 @@ export function HamperARPreview({
             role="dialog"
             aria-modal="true"
             aria-label="3D product preview"
-            className="relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-surface-elevated shadow-lifted"
+            className="bg-surface-elevated shadow-lifted relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-3xl"
           >
             <header className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-3">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-theme-accent">
+                <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
                   Hamper · 3D preview
                 </p>
-                <p className="font-display text-base font-semibold text-theme-ink">
-                  {caption}
-                </p>
+                <p className="font-display text-theme-ink text-base">{caption}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-theme-glow/20 text-theme-ink/65 hover:bg-theme-glow/35"
+                className="bg-theme-glow/20 text-theme-ink/65 hover:bg-theme-glow/35 inline-flex h-9 w-9 items-center justify-center rounded-full"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -113,12 +114,12 @@ export function HamperARPreview({
               />
             </div>
 
-            <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[color:var(--color-border)] bg-theme-glow/10 px-5 py-3 text-[11px] text-theme-ink/65">
+            <footer className="bg-theme-glow/10 text-theme-ink/65 flex flex-wrap items-center justify-between gap-2 border-t border-[color:var(--color-border)] px-5 py-3 text-[11px]">
               <span>
                 <Smartphone className="mr-1 inline h-3 w-3" aria-hidden="true" />
                 AR placement unlocks once the brand&rsquo;s real hamper model is shot.
               </span>
-              <span className="font-semibold text-theme-accent">
+              <span className="text-theme-accent font-semibold">
                 CSS · WebGL-free · Reduced-motion safe
               </span>
             </footer>
@@ -147,10 +148,30 @@ function CssGiftBox({ accent, glow }: { accent: string; glow: string }) {
       >
         <Face accent={accent} glow={glow} transform={`translateZ(${SIZE / 2}px)`} />
         <Face accent={accent} glow={glow} transform={`rotateY(180deg) translateZ(${SIZE / 2}px)`} />
-        <Face accent={accent} glow={glow} transform={`rotateY(90deg) translateZ(${SIZE / 2}px)`} side />
-        <Face accent={accent} glow={glow} transform={`rotateY(-90deg) translateZ(${SIZE / 2}px)`} side />
-        <Face accent={accent} glow={glow} transform={`rotateX(90deg) translateZ(${SIZE / 2}px)`} top />
-        <Face accent={accent} glow={glow} transform={`rotateX(-90deg) translateZ(${SIZE / 2}px)`} bottom />
+        <Face
+          accent={accent}
+          glow={glow}
+          transform={`rotateY(90deg) translateZ(${SIZE / 2}px)`}
+          side
+        />
+        <Face
+          accent={accent}
+          glow={glow}
+          transform={`rotateY(-90deg) translateZ(${SIZE / 2}px)`}
+          side
+        />
+        <Face
+          accent={accent}
+          glow={glow}
+          transform={`rotateX(90deg) translateZ(${SIZE / 2}px)`}
+          top
+        />
+        <Face
+          accent={accent}
+          glow={glow}
+          transform={`rotateX(-90deg) translateZ(${SIZE / 2}px)`}
+          bottom
+        />
 
         <Ribbon orientation="vertical" size={SIZE} glow={glow} />
         <Ribbon orientation="horizontal" size={SIZE} glow={glow} />
@@ -186,10 +207,10 @@ function Face({
   const gradient = top
     ? `linear-gradient(135deg, ${shade(accent, 18)} 0%, ${accent} 60%, ${shade(accent, -10)} 100%)`
     : bottom
-    ? `linear-gradient(135deg, ${shade(accent, -25)} 0%, ${shade(accent, -15)} 100%)`
-    : side
-    ? `linear-gradient(180deg, ${shade(accent, 5)} 0%, ${shade(accent, -10)} 100%)`
-    : `linear-gradient(180deg, ${shade(accent, 12)} 0%, ${accent} 60%, ${shade(accent, -8)} 100%)`;
+      ? `linear-gradient(135deg, ${shade(accent, -25)} 0%, ${shade(accent, -15)} 100%)`
+      : side
+        ? `linear-gradient(180deg, ${shade(accent, 5)} 0%, ${shade(accent, -10)} 100%)`
+        : `linear-gradient(180deg, ${shade(accent, 12)} 0%, ${accent} 60%, ${shade(accent, -8)} 100%)`;
 
   return (
     <div

@@ -202,28 +202,28 @@ export function AdminPromotions() {
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+        <p className="text-theme-accent flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em]">
           <Paisley size="sm" />
           Promotions
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold text-theme-ink md:text-4xl">
+        <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">
           Flash sales &amp; festival banners
         </h1>
-        <p className="mt-1 text-sm text-theme-ink/65">
-          The active promo lives in the strip above the header on every page.
-          One promo at a time. Use a preset or compose your own.
+        <p className="text-theme-ink/65 mt-1 text-sm">
+          The active promo lives in the strip above the header on every page. One promo at a time.
+          Use a preset or compose your own.
         </p>
       </header>
 
       {/* Active promo */}
       <section
         aria-labelledby="active-promo"
-        className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5"
+        className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
       >
         <div className="flex items-center justify-between gap-3">
           <h2
             id="active-promo"
-            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent"
+            className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]"
           >
             Currently live
           </h2>
@@ -242,9 +242,9 @@ export function AdminPromotions() {
         {active ? (
           <PromoPreview promo={active} className="mt-3" />
         ) : (
-          <p className="mt-2 text-sm text-theme-ink/60">
-            No promo is live. The default evergreen &ldquo;Free shipping above
-            ₹999&rdquo; strip is showing.
+          <p className="text-theme-ink/60 mt-2 text-sm">
+            No promo is live. The default evergreen &ldquo;Free shipping above ₹999&rdquo; strip is
+            showing.
           </p>
         )}
       </section>
@@ -253,7 +253,7 @@ export function AdminPromotions() {
       <section aria-labelledby="presets-heading">
         <h2
           id="presets-heading"
-          className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent"
+          className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]"
         >
           One-click presets
         </h2>
@@ -261,7 +261,7 @@ export function AdminPromotions() {
           {PRESETS.map((p) => (
             <article
               key={p.id}
-              className="flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-4"
+              className="bg-surface-elevated flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-4"
             >
               <PromoPreview promo={p} />
               <button
@@ -271,7 +271,7 @@ export function AdminPromotions() {
                   void publish(p);
                   setDraft(p);
                 }}
-                className="self-start rounded-full bg-theme-accent px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] hover:-translate-y-0.5 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-theme-accent hover:shadow-soft self-start rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Sparkles className="mr-1 inline-block h-3 w-3" aria-hidden="true" />
                 Go live
@@ -282,10 +282,13 @@ export function AdminPromotions() {
       </section>
 
       {/* Custom editor */}
-      <section aria-labelledby="custom-heading" className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+      <section
+        aria-labelledby="custom-heading"
+        className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5"
+      >
         <h2
           id="custom-heading"
-          className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent"
+          className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]"
         >
           Compose your own
         </h2>
@@ -297,7 +300,7 @@ export function AdminPromotions() {
               maxLength={120}
               onChange={(e) => setDraft({ ...draft, message: e.target.value })}
               placeholder="e.g. 10% off all hampers — today only"
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm focus-visible:border-theme-accent focus-visible:outline-none"
+              className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none"
             />
           </Field>
           <Field label="Coupon code (optional)">
@@ -305,9 +308,11 @@ export function AdminPromotions() {
               type="text"
               value={draft.code ?? ''}
               maxLength={20}
-              onChange={(e) => setDraft({ ...draft, code: e.target.value.toUpperCase() || undefined })}
+              onChange={(e) =>
+                setDraft({ ...draft, code: e.target.value.toUpperCase() || undefined })
+              }
               placeholder="DIWALI500"
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-sm uppercase focus-visible:border-theme-accent focus-visible:outline-none"
+              className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm uppercase focus-visible:outline-none"
             />
           </Field>
           <Field label="CTA label">
@@ -316,7 +321,7 @@ export function AdminPromotions() {
               value={draft.ctaLabel}
               maxLength={30}
               onChange={(e) => setDraft({ ...draft, ctaLabel: e.target.value })}
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm focus-visible:border-theme-accent focus-visible:outline-none"
+              className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none"
             />
           </Field>
           <Field label="Destination URL">
@@ -325,7 +330,7 @@ export function AdminPromotions() {
               value={draft.href}
               onChange={(e) => setDraft({ ...draft, href: e.target.value })}
               placeholder="/festivals/diwali"
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 font-mono text-xs focus-visible:border-theme-accent focus-visible:outline-none"
+              className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-xs focus-visible:outline-none"
             />
           </Field>
           <Field label="Background — from">
@@ -333,7 +338,7 @@ export function AdminPromotions() {
               type="color"
               value={draft.bgFrom}
               onChange={(e) => setDraft({ ...draft, bgFrom: e.target.value })}
-              className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-surface"
+              className="bg-surface h-10 w-full rounded-lg border border-[color:var(--color-border)]"
             />
           </Field>
           <Field label="Background — to">
@@ -341,7 +346,7 @@ export function AdminPromotions() {
               type="color"
               value={draft.bgTo}
               onChange={(e) => setDraft({ ...draft, bgTo: e.target.value })}
-              className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-surface"
+              className="bg-surface h-10 w-full rounded-lg border border-[color:var(--color-border)]"
             />
           </Field>
           <Field label="Foreground colour">
@@ -349,7 +354,7 @@ export function AdminPromotions() {
               type="color"
               value={draft.fg}
               onChange={(e) => setDraft({ ...draft, fg: e.target.value })}
-              className="h-10 w-full rounded-lg border border-[color:var(--color-border)] bg-surface"
+              className="bg-surface h-10 w-full rounded-lg border border-[color:var(--color-border)]"
             />
           </Field>
           <Field label="Expires at (optional)">
@@ -362,13 +367,13 @@ export function AdminPromotions() {
                   expiresAt: e.target.value ? new Date(e.target.value).toISOString() : undefined,
                 })
               }
-              className="w-full rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm focus-visible:border-theme-accent focus-visible:outline-none"
+              className="bg-surface focus-visible:border-theme-accent w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none"
             />
           </Field>
         </div>
 
         <div className="mt-5 border-t border-[color:var(--color-border)] pt-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-ink/55">
+          <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-[0.22em]">
             Preview
           </p>
           <PromoPreview promo={draft} className="mt-2" />
@@ -379,7 +384,7 @@ export function AdminPromotions() {
             type="button"
             disabled={!draft.message.trim() || busy}
             onClick={() => void publish(draft)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-theme-ink px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-ink shadow-soft hover:shadow-lifted inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             {busy ? 'Saving…' : 'Publish'}
@@ -387,11 +392,11 @@ export function AdminPromotions() {
           <button
             type="button"
             onClick={() => setDraft(emptyPromo())}
-            className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55 hover:text-theme-accent"
+            className="text-theme-ink/55 hover:text-theme-accent text-[11px] font-semibold uppercase tracking-wider"
           >
             Reset form
           </button>
-          {feedback && <p className="text-[11px] text-theme-ink/65">{feedback}</p>}
+          {feedback && <p className="text-theme-ink/65 text-[11px]">{feedback}</p>}
         </div>
       </section>
     </div>
@@ -418,7 +423,10 @@ function PromoPreview({ promo, className }: { promo: Promo; className?: string }
             {promo.code}
           </span>
         )}
-        <span className="ml-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ borderColor: `${promo.fg}55` }}>
+        <span
+          className="ml-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+          style={{ borderColor: `${promo.fg}55` }}
+        >
           {promo.ctaLabel} →
         </span>
       </div>
@@ -429,7 +437,7 @@ function PromoPreview({ promo, className }: { promo: Promo; className?: string }
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+      <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
         {label}
       </span>
       {children}

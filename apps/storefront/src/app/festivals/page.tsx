@@ -25,16 +25,96 @@ interface FestivalRow {
 // list each one with the right palette + tagline. When you add a new festival
 // in the slug page, add it here too.
 const FESTIVALS: FestivalRow[] = [
-  { slug: 'pongal',          title: 'Pongal',          telugu: 'పొంగల్',     date: '2027-01-15', monthLabel: 'Jan',  blurb: 'The clay pot, the harvest, the first morning.',                  palette: { base: '#fbf3df', accent: '#9c5a14', ink: '#2a1a08' } },
-  { slug: 'sankranti',       title: 'Sankranti',       telugu: 'సంక్రాంతి', date: '2027-01-14', monthLabel: 'Jan',  blurb: 'Til, gud, and a new year on the kitchen door.',                  palette: { base: '#fbf2dd', accent: '#a04a14', ink: '#2a1604' } },
-  { slug: 'holi',            title: 'Holi',            telugu: 'హోలీ',      date: '2027-03-13', monthLabel: 'Mar',  blurb: 'A spread as bright as the colours.',                              palette: { base: '#fff0e8', accent: '#c83a6a', ink: '#3a0a1c' } },
-  { slug: 'ugadi',           title: 'Ugadi',           telugu: 'ఉగాది',     date: '2027-03-19', monthLabel: 'Mar',  blurb: 'Six tastes for the Telugu new year.',                             palette: { base: '#fbf2dd', accent: '#7a5612', ink: '#2a1c08' } },
-  { slug: 'eid',             title: 'Eid',             telugu: 'ఈద్',        date: '2026-03-30', monthLabel: 'Mar',  blurb: "A platter worth the long day — Hyderabadi classics, plated.",  palette: { base: '#fff4e3', accent: '#a56a0f', ink: '#2a1a04' } },
-  { slug: 'raksha-bandhan',  title: 'Raksha Bandhan',  telugu: 'రక్షా బంధన్', date: '2026-08-28', monthLabel: 'Aug',  blurb: 'A hamper tied with a thread — done properly.',                   palette: { base: '#fdf3df', accent: '#c0592b', ink: '#3a1e0c' } },
-  { slug: 'ganesh-chaturthi',title: 'Ganesh Chaturthi',telugu: 'వినాయక చవితి', date: '2027-09-15', monthLabel: 'Sep',  blurb: 'Modaks the slow way — and everything for the prasad table.',     palette: { base: '#fff5d4', accent: '#a85a08', ink: '#2a1404' } },
-  { slug: 'onam',            title: 'Onam',            telugu: 'ഓണം',       date: '2027-09-04', monthLabel: 'Sep',  blurb: 'A sadya-sized box for the floor banana leaf.',                   palette: { base: '#f0fae0', accent: '#3a7a1c', ink: '#0a2a04' } },
-  { slug: 'diwali',          title: 'Diwali',          telugu: 'దీపావళి',   date: '2026-11-08', monthLabel: 'Nov',  blurb: 'Wrapped in brass and silk.',                                      palette: { base: '#fff5dc', accent: '#a85a08', ink: '#2a1505' } },
-  { slug: 'christmas',       title: 'Christmas',       telugu: 'క్రిస్మస్',  date: '2026-12-25', monthLabel: 'Dec',  blurb: 'A South Indian table laid for a Christmas Eve.',                  palette: { base: '#fbf0e8', accent: '#a8222a', ink: '#2a0a0c' } },
+  {
+    slug: 'pongal',
+    title: 'Pongal',
+    telugu: 'పొంగల్',
+    date: '2027-01-15',
+    monthLabel: 'Jan',
+    blurb: 'The clay pot, the harvest, the first morning.',
+    palette: { base: '#fbf3df', accent: '#9c5a14', ink: '#2a1a08' },
+  },
+  {
+    slug: 'sankranti',
+    title: 'Sankranti',
+    telugu: 'సంక్రాంతి',
+    date: '2027-01-14',
+    monthLabel: 'Jan',
+    blurb: 'Til, gud, and a new year on the kitchen door.',
+    palette: { base: '#fbf2dd', accent: '#a04a14', ink: '#2a1604' },
+  },
+  {
+    slug: 'holi',
+    title: 'Holi',
+    telugu: 'హోలీ',
+    date: '2027-03-13',
+    monthLabel: 'Mar',
+    blurb: 'A spread as bright as the colours.',
+    palette: { base: '#fff0e8', accent: '#c83a6a', ink: '#3a0a1c' },
+  },
+  {
+    slug: 'ugadi',
+    title: 'Ugadi',
+    telugu: 'ఉగాది',
+    date: '2027-03-19',
+    monthLabel: 'Mar',
+    blurb: 'Six tastes for the Telugu new year.',
+    palette: { base: '#fbf2dd', accent: '#7a5612', ink: '#2a1c08' },
+  },
+  {
+    slug: 'eid',
+    title: 'Eid',
+    telugu: 'ఈద్',
+    date: '2026-03-30',
+    monthLabel: 'Mar',
+    blurb: 'A platter worth the long day — Hyderabadi classics, plated.',
+    palette: { base: '#fff4e3', accent: '#a56a0f', ink: '#2a1a04' },
+  },
+  {
+    slug: 'raksha-bandhan',
+    title: 'Raksha Bandhan',
+    telugu: 'రక్షా బంధన్',
+    date: '2026-08-28',
+    monthLabel: 'Aug',
+    blurb: 'A hamper tied with a thread — done properly.',
+    palette: { base: '#fdf3df', accent: '#c0592b', ink: '#3a1e0c' },
+  },
+  {
+    slug: 'ganesh-chaturthi',
+    title: 'Ganesh Chaturthi',
+    telugu: 'వినాయక చవితి',
+    date: '2027-09-15',
+    monthLabel: 'Sep',
+    blurb: 'Modaks the slow way — and everything for the prasad table.',
+    palette: { base: '#fff5d4', accent: '#a85a08', ink: '#2a1404' },
+  },
+  {
+    slug: 'onam',
+    title: 'Onam',
+    telugu: 'ഓണം',
+    date: '2027-09-04',
+    monthLabel: 'Sep',
+    blurb: 'A sadya-sized box for the floor banana leaf.',
+    palette: { base: '#f0fae0', accent: '#3a7a1c', ink: '#0a2a04' },
+  },
+  {
+    slug: 'diwali',
+    title: 'Diwali',
+    telugu: 'దీపావళి',
+    date: '2026-11-08',
+    monthLabel: 'Nov',
+    blurb: 'Wrapped in brass and silk.',
+    palette: { base: '#fff5dc', accent: '#a85a08', ink: '#2a1505' },
+  },
+  {
+    slug: 'christmas',
+    title: 'Christmas',
+    telugu: 'క్రిస్మస్',
+    date: '2026-12-25',
+    monthLabel: 'Dec',
+    blurb: 'A South Indian table laid for a Christmas Eve.',
+    palette: { base: '#fbf0e8', accent: '#a8222a', ink: '#2a0a0c' },
+  },
 ];
 
 function dayString(iso: string): string {
@@ -57,22 +137,21 @@ export default function FestivalsIndexPage() {
       {/* Hero */}
       <section className="container-site py-16 md:py-24">
         <Reveal>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Festival editions
           </p>
         </Reveal>
         <Reveal delay={0.06}>
-          <h1 className="mt-4 max-w-4xl font-display text-display-lg font-semibold leading-[1.02] text-theme-ink md:text-display-xl">
-            A year of festivals,{' '}
-            <span className="italic text-theme-accent">one kitchen.</span>
+          <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 max-w-4xl leading-[1.02]">
+            A year of festivals, <span className="text-theme-accent italic">one kitchen.</span>
           </h1>
         </Reveal>
         <Reveal delay={0.14}>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-theme-ink/75">
-            Ten festivals, ten boxes. From the Pongal clay pot in January to the Christmas Eve
-            tin in December — every edition is curated, slow-cooked, and shipped from our
-            Khammam kitchen.
+          <p className="text-theme-ink/75 mt-6 max-w-2xl text-lg leading-relaxed">
+            Ten festivals, ten boxes. From the Pongal clay pot in January to the Christmas Eve tin
+            in December — every edition is curated, slow-cooked, and shipped from our Khammam
+            kitchen.
           </p>
         </Reveal>
       </section>
@@ -83,10 +162,13 @@ export default function FestivalsIndexPage() {
       {upcoming.length > 0 && (
         <section aria-labelledby="upcoming-heading" className="container-site py-14">
           <Reveal className="mb-8 flex items-end justify-between gap-4">
-            <h2 id="upcoming-heading" className="font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg">
+            <h2
+              id="upcoming-heading"
+              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
+            >
               Upcoming editions
             </h2>
-            <p className="hidden text-xs font-semibold uppercase tracking-wider text-theme-ink/55 md:block">
+            <p className="text-theme-ink/55 hidden text-xs font-semibold uppercase tracking-wider md:block">
               Reserve early — priority list opens 6 weeks ahead
             </p>
           </Reveal>
@@ -103,12 +185,15 @@ export default function FestivalsIndexPage() {
       {past.length > 0 && (
         <section aria-labelledby="past-heading" className="container-site py-14">
           <Reveal className="mb-8">
-            <h2 id="past-heading" className="font-display text-display-md leading-[1.05] text-theme-ink md:text-display-lg">
+            <h2
+              id="past-heading"
+              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
+            >
               Recent editions
             </h2>
-            <p className="mt-2 text-sm text-theme-ink/65">
-              These pages remain live so corporate accounts can reorder from past festival
-              hampers, or browse for next year.
+            <p className="text-theme-ink/65 mt-2 text-sm">
+              These pages remain live so corporate accounts can reorder from past festival hampers,
+              or browse for next year.
             </p>
           </Reveal>
 
@@ -127,7 +212,7 @@ function FestivalCard({ f }: { f: FestivalRow }) {
   return (
     <Link
       href={`/festivals/${f.slug}`}
-      className="group relative flex min-h-[16rem] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-[color:var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lifted"
+      className="hover:shadow-lifted group relative flex min-h-[16rem] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-[color:var(--color-border)] transition-all duration-300 hover:-translate-y-0.5"
       style={{ backgroundColor: f.palette.base, color: f.palette.ink }}
     >
       <div
@@ -145,9 +230,7 @@ function FestivalCard({ f }: { f: FestivalRow }) {
           <Calendar className="h-3 w-3" aria-hidden="true" />
           {f.monthLabel} · {dayString(f.date)}
         </p>
-        <h3 className="mt-3 font-display text-2xl font-semibold leading-tight">
-          {f.title}
-        </h3>
+        <h3 className="font-display mt-3 text-2xl leading-tight">{f.title}</h3>
         <p
           className="mt-1 text-base"
           style={{ fontFamily: 'var(--font-indic)', color: f.palette.accent }}

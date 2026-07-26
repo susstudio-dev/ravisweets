@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Fraunces, Inter, Tiro_Telugu } from 'next/font/google';
+import { Anek_Latin, Anek_Telugu, Young_Serif } from 'next/font/google';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { SweetCursor } from '@/components/cursor/sweet-cursor';
@@ -16,37 +16,66 @@ import { PageDriftGarnish } from '@/components/decor/page-drift-garnish';
 import { RealtimeThemeBridge } from '@/components/theme/realtime-theme-bridge';
 import './globals.css';
 
-const fraunces = Fraunces({
+/*
+ * Young Serif is a STATIC single-weight face, so next/font requires an explicit
+ * weight. That single weight is the point: display hierarchy comes from size,
+ * never weight (globals.css sets font-synthesis:none to enforce it).
+ *
+ * Chosen over higher-contrast alternatives because its strokes survive on the
+ * pista field — a hairline serif would disappear on #C9D99C, and the field is
+ * the identity.
+ */
+const youngSerif = Young_Serif({
   subsets: ['latin'],
+  weight: '400',
   variable: '--font-display',
   display: 'swap',
-  weight: ['400', '600', '700'],
 });
 
-const inter = Inter({
+/*
+ * Anek Latin and Anek Telugu are the same Ek Type superfamily with identical
+ * axes, designed together for cross-script harmony — the only true
+ * Latin/Telugu pairing on Google Fonts.
+ *
+ * `wdth` is deliberately NOT requested: each extra axis costs font bytes and
+ * nothing in the design varies width. `weight: 'variable'` is explicit so the
+ * axis-discarding defect that silently flattened Fraunces cannot recur.
+ */
+const anekLatin = Anek_Latin({
   subsets: ['latin'],
+  weight: 'variable',
   variable: '--font-body',
   display: 'swap',
 });
 
-const tiroTelugu = Tiro_Telugu({
+/*
+ * preload:false — the Telugu subset is large and is used for one short eyebrow
+ * line, not body copy. Preloading it would compete with the LCP element against
+ * a 2500 ms Lighthouse budget.
+ *
+ * This also fixes a real defect: Tiro Telugu ships only 400/400i, so every bold
+ * Telugu on the site was browser-synthesised faux-bold, which visibly breaks
+ * Indic conjuncts. Anek Telugu is variable 100-800.
+ */
+const anekTelugu = Anek_Telugu({
   subsets: ['telugu', 'latin'],
+  weight: 'variable',
   variable: '--font-indic',
   display: 'swap',
-  weight: ['400'],
+  preload: false,
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ??
-      'https://susstudio-dev.github.io/ravisweets',
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://susstudio-dev.github.io/ravisweets',
   ),
   title: {
-    default: 'Ravi Sweets · Best Sweet Shop in Khammam since 1985 — Telangana Sweets, Namkeens & Gift Hampers',
+    default:
+      'Ravi Sweets · Best Sweet Shop in Khammam since 1985 — Telangana Sweets, Namkeens & Gift Hampers',
     template: '%s | Ravi Sweets',
   },
   description:
-    'Ravi Sweets — Khammam\'s most-loved sweet shop since 1985, now in Hyderabad (Kondapur). Authentic Telangana sweets, Hyderabadi specials, Andhra savouries, and build-your-own gift hampers. Hand-made, FSSAI certified, no preservatives, fresh daily across India.',
+    "Ravi Sweets — Khammam's most-loved sweet shop since 1985, now in Hyderabad (Kondapur). Authentic Telangana sweets, Hyderabadi specials, Andhra savouries, and build-your-own gift hampers. Hand-made, FSSAI certified, no preservatives, fresh daily across India.",
   keywords: [
     'best sweet shop Khammam',
     'sweet shop in Khammam',
@@ -85,31 +114,25 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FFFAF0',
+  themeColor: '#F1F0E2',
   width: 'device-width',
   initialScale: 1,
 };
 
-export default function RootLayout({
-  children,
-  modal,
-}: {
-  children: ReactNode;
-  modal: ReactNode;
-}) {
+export default function RootLayout({ children, modal }: { children: ReactNode; modal: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${tiroTelugu.variable}`}
+      className={`${youngSerif.variable} ${anekLatin.variable} ${anekTelugu.variable}`}
       suppressHydrationWarning
     >
       <body
-        className="flex min-h-screen flex-col bg-theme-base text-theme-ink"
+        className="bg-theme-base text-theme-ink flex min-h-screen flex-col"
         suppressHydrationWarning
       >
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-theme-accent focus:px-4 focus:py-2 focus:text-white"
+          className="focus:bg-theme-accent sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:text-[color:var(--theme-base)]"
         >
           Skip to content
         </a>

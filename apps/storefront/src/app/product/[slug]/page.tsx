@@ -65,9 +65,7 @@ export default async function ProductPage({ params }: PageProps) {
       priceCurrency: v.price.currency,
       price: v.price.amount,
       availability:
-        v.stock_available > 0
-          ? 'https://schema.org/InStock'
-          : 'https://schema.org/OutOfStock',
+        v.stock_available > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     })),
   };
 
@@ -80,7 +78,7 @@ export default async function ProductPage({ params }: PageProps) {
       <div className="container-site pt-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-theme-ink/60 transition-colors hover:text-theme-accent"
+          className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back to home
@@ -100,7 +98,7 @@ export default async function ProductPage({ params }: PageProps) {
         {/* Info */}
         <div className="flex flex-col gap-6">
           <Reveal>
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               {product.category === 'hyderabadi-specials'
                 ? 'Hyderabadi Specials'
@@ -113,11 +111,11 @@ export default async function ProductPage({ params }: PageProps) {
             text={product.title}
             split="word"
             gap={40}
-            className="font-display text-display-md font-semibold leading-[1.05] text-theme-ink md:text-display-lg"
+            className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
           />
 
           <Reveal delay={0.1}>
-            <p className="text-lg leading-relaxed text-theme-ink/75">{product.description}</p>
+            <p className="text-theme-ink/75 text-lg leading-relaxed">{product.description}</p>
           </Reveal>
 
           {primaryVariant && (
@@ -129,8 +127,7 @@ export default async function ProductPage({ params }: PageProps) {
           {/* AR pack-preview — only on hamper / festival SKUs where it makes
               sense to "see the box on your desk". Sweets / pickles / podis
               don't need 3D. */}
-          {(product.category === 'gift-hampers' ||
-            product.category === 'festival-specials') && (
+          {(product.category === 'gift-hampers' || product.category === 'festival-specials') && (
             <Reveal delay={0.22}>
               <HamperARPreview
                 glb={SAMPLE_HAMPER_GLB}
@@ -143,27 +140,27 @@ export default async function ProductPage({ params }: PageProps) {
 
           {/* Quick facts */}
           <Reveal delay={0.26}>
-            <dl className="mt-2 grid grid-cols-3 gap-4 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+            <dl className="bg-surface-elevated mt-2 grid grid-cols-3 gap-4 rounded-2xl border border-[color:var(--color-border)] p-5">
               <div>
-                <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
                   <Leaf className="h-3.5 w-3.5" aria-hidden="true" />
                   Shelf life
                 </dt>
-                <dd className="mt-1 font-display text-base font-semibold text-theme-ink">
+                <dd className="font-display text-theme-ink mt-1 text-base">
                   {product.shelf_life_days} days
                 </dd>
               </div>
               <div>
-                <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
                   <Snowflake className="h-3.5 w-3.5" aria-hidden="true" />
                   Storage
                 </dt>
-                <dd className="mt-1 text-sm font-medium text-theme-ink">
+                <dd className="text-theme-ink mt-1 text-sm font-medium">
                   {product.storage_instructions.split('.')[0]}.
                 </dd>
               </div>
               <div>
-                <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/60">
+                <dt className="text-theme-ink/60 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
                   <Package className="h-3.5 w-3.5" aria-hidden="true" />
                   Dietary
                 </dt>
@@ -171,7 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
                   {product.dietary_tags.slice(0, 3).map((t) => (
                     <span
                       key={t}
-                      className="rounded-full bg-theme-glow/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-ink"
+                      className="bg-theme-glow/25 text-theme-ink rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
                     >
                       {t}
                     </span>
@@ -187,10 +184,7 @@ export default async function ProductPage({ params }: PageProps) {
               className="flex flex-col gap-2 rounded-2xl border border-dashed border-[color:var(--color-border)] p-4 sm:flex-row sm:items-center"
               action="#"
             >
-              <label
-                htmlFor="pincode"
-                className="text-sm font-medium text-theme-ink/80"
-              >
+              <label htmlFor="pincode" className="text-theme-ink/80 text-sm font-medium">
                 Check delivery
               </label>
               <input
@@ -200,11 +194,11 @@ export default async function ProductPage({ params }: PageProps) {
                 inputMode="numeric"
                 pattern="\d{6}"
                 placeholder="6-digit pincode"
-                className="min-w-0 flex-1 rounded-full border border-[color:var(--color-border)] bg-surface px-4 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+                className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 min-w-0 flex-1 rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
               <button
                 type="submit"
-                className="rounded-full border border-theme-ink/25 px-5 py-2 text-sm font-semibold text-theme-ink transition-colors hover:border-theme-accent hover:text-theme-accent"
+                className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent rounded-full border px-5 py-2 text-sm font-semibold transition-colors"
               >
                 Check
               </button>
@@ -228,13 +222,13 @@ export default async function ProductPage({ params }: PageProps) {
       {related.length > 0 && (
         <section aria-labelledby="related-heading" className="container-site py-12">
           <Reveal className="mb-8">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
               <Paisley size="sm" />
               You may also love
             </p>
             <h2
               id="related-heading"
-              className="mt-3 font-display text-display-md leading-[1.05] text-theme-ink"
+              className="font-display text-display-md text-theme-ink mt-3 leading-[1.05]"
             >
               More from the kitchen
             </h2>

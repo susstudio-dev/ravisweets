@@ -91,16 +91,13 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
   return (
     <aside
       aria-labelledby="palette-heading"
-      className="flex min-h-[32rem] flex-col gap-4 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5"
+      className="bg-surface-elevated flex min-h-[32rem] flex-col gap-4 rounded-2xl border border-[color:var(--color-border)] p-5"
     >
       <div className="flex items-center justify-between gap-3">
-        <h2
-          id="palette-heading"
-          className="font-display text-lg font-semibold text-theme-ink"
-        >
+        <h2 id="palette-heading" className="font-display text-theme-ink text-lg">
           Choose items
         </h2>
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+        <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
           {selectedCount} added
         </span>
       </div>
@@ -109,7 +106,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
       <label className="relative">
         <span className="sr-only">Search items</span>
         <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-theme-ink/40"
+          className="text-theme-ink/40 absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
           aria-hidden="true"
         />
         <input
@@ -117,7 +114,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search — e.g. kaju, badam, mixture"
-          className="w-full rounded-full border border-[color:var(--color-border)] bg-surface px-9 py-2 text-sm text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           autoComplete="off"
         />
       </label>
@@ -128,7 +125,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           if (items.length === 0) return null;
           return (
             <div key={cat}>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-theme-ink/55">
+              <p className="text-theme-ink/55 mb-2 text-[11px] font-semibold uppercase tracking-wider">
                 {CATEGORY_LABEL[cat] ?? cat}
               </p>
               {/* Image-led tile grid — 2 columns of square cards. The product
@@ -153,7 +150,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                         type="button"
                         onClick={() => handleAdd(p)}
                         aria-label={`Add ${p.title} to hamper`}
-                        className="group flex w-full flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                        className="hover:border-theme-accent hover:shadow-lifted focus-visible:ring-theme-accent group flex w-full flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] text-left transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2"
                       >
                         <div
                           className="relative aspect-square w-full overflow-hidden"
@@ -170,7 +167,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                           />
                           {/* Floating + button */}
                           <span
-                            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--theme-base)] shadow-soft transition-transform duration-300 group-hover:scale-110"
+                            className="shadow-soft absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-transform duration-300 group-hover:scale-110"
                             style={{ backgroundColor: p.theme_palette.accent }}
                             aria-hidden="true"
                           >
@@ -178,16 +175,14 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                           </span>
                           {/* Variant count chip when product has multiple sizes */}
                           {p.variants.length > 1 && (
-                            <span className="absolute bottom-2 left-2 rounded-full bg-theme-ink/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] backdrop-blur">
+                            <span className="bg-theme-ink/70 absolute bottom-2 left-2 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] backdrop-blur">
                               {p.variants.length} sizes
                             </span>
                           )}
                         </div>
                         <div className="bg-surface px-3 py-2">
-                          <p className="truncate font-display text-sm font-semibold text-theme-ink">
-                            {p.title}
-                          </p>
-                          <p className="text-[11px] text-theme-ink/60">
+                          <p className="font-display text-theme-ink truncate text-sm">{p.title}</p>
+                          <p className="text-theme-ink/60 text-[11px]">
                             from {formatMoney(primary.price)}
                           </p>
                         </div>
@@ -200,7 +195,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                             exit={{ opacity: 0, x: -8 }}
                             transition={{ duration: DURATION.quick, ease: EASE.standard }}
                             role="tooltip"
-                            className="pointer-events-none absolute left-full top-0 z-30 hidden w-72 origin-top-left translate-x-3 rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-3 shadow-lifted lg:block"
+                            className="bg-surface-elevated shadow-lifted pointer-events-none absolute left-full top-0 z-30 hidden w-72 origin-top-left translate-x-3 rounded-2xl border border-[color:var(--color-border)] p-3 lg:block"
                           >
                             <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
                               <Image
@@ -211,23 +206,21 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                                 className="object-cover"
                               />
                             </div>
-                            <p className="mt-3 font-display text-sm font-semibold text-theme-ink">
-                              {p.title}
-                            </p>
-                            <p className="mt-1 line-clamp-2 text-[11px] text-theme-ink/65">
+                            <p className="font-display text-theme-ink mt-3 text-sm">{p.title}</p>
+                            <p className="text-theme-ink/65 mt-1 line-clamp-2 text-[11px]">
                               {p.description}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-1">
                               {p.dietary_tags.slice(0, 4).map((t) => (
                                 <span
                                   key={t}
-                                  className="rounded-full bg-theme-glow/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-theme-accent"
+                                  className="bg-theme-glow/30 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
                                 >
                                   {t}
                                 </span>
                               ))}
                             </div>
-                            <p className="mt-2 text-[10px] uppercase tracking-wider text-theme-ink/50">
+                            <p className="text-theme-ink/50 mt-2 text-[10px] uppercase tracking-wider">
                               Ingredients · {p.ingredients.slice(0, 4).join(', ')}
                               {p.ingredients.length > 4 ? '…' : ''}
                             </p>
@@ -242,7 +235,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           );
         })}
         {query && Array.from(grouped.values()).every((arr) => arr.length === 0) && (
-          <p className="text-sm text-theme-ink/60">No matches for &ldquo;{query}&rdquo;.</p>
+          <p className="text-theme-ink/60 text-sm">No matches for &ldquo;{query}&rdquo;.</p>
         )}
       </div>
 
@@ -270,15 +263,16 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
               animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: reduced ? DURATION.fast : DURATION.slow, ease: EASE.emphasised }}
-              className="relative z-10 w-full max-w-md overflow-hidden rounded-t-3xl bg-surface-elevated p-6 shadow-lifted ring-1 ring-[color:var(--color-border)] sm:rounded-3xl"
+              transition={{
+                duration: reduced ? DURATION.fast : DURATION.slow,
+                ease: EASE.emphasised,
+              }}
+              className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-md overflow-hidden rounded-t-3xl p-6 ring-1 ring-[color:var(--color-border)] sm:rounded-3xl"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+              <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
                 Pick a size
               </p>
-              <h3 className="mt-1 font-display text-2xl font-semibold text-theme-ink">
-                {variantSheet.title}
-              </h3>
+              <h3 className="font-display text-theme-ink mt-1 text-2xl">{variantSheet.title}</h3>
               <ul className="mt-5 flex flex-col gap-2">
                 {variantSheet.variants.map((v) => {
                   const oos = v.stock_available <= 0;
@@ -291,17 +285,17 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                           onAdd(variantSheet.id, v.id);
                           setVariantSheet(null);
                         }}
-                        className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-[color:var(--color-border)] bg-surface px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-theme-accent hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+                        className="bg-surface hover:border-theme-accent hover:shadow-soft group flex w-full items-center justify-between gap-4 rounded-2xl border border-[color:var(--color-border)] px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <span>
-                          <span className="block font-display text-base font-semibold text-theme-ink">
+                          <span className="font-display text-theme-ink block text-base">
                             {v.title}
                           </span>
-                          <span className="block text-xs text-theme-ink/60">
+                          <span className="text-theme-ink/60 block text-xs">
                             {oos ? 'Out of stock' : `${v.stock_available} units in stock`}
                           </span>
                         </span>
-                        <span className="font-display text-base font-semibold text-theme-accent">
+                        <span className="font-display text-theme-accent text-base">
                           {formatMoney(v.price)}
                         </span>
                       </button>
@@ -312,7 +306,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
               <button
                 type="button"
                 onClick={() => setVariantSheet(null)}
-                className="mt-5 w-full rounded-full border border-theme-ink/25 px-5 py-2 text-sm font-semibold text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent"
+                className="border-theme-ink/25 text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent mt-5 w-full rounded-full border px-5 py-2 text-sm font-semibold"
               >
                 Cancel
               </button>

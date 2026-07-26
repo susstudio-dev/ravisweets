@@ -68,23 +68,28 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
       {/* Summary column */}
       <div>
         <Reveal>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
+          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
             <Paisley size="sm" />
             Customer reviews
           </p>
-          <h2 id="reviews-heading" className="mt-2 font-display text-display-md leading-[1.05] text-theme-ink">
+          <h2
+            id="reviews-heading"
+            className="font-display text-display-md text-theme-ink mt-2 leading-[1.05]"
+          >
             What people say.
           </h2>
         </Reveal>
 
         <div className="mt-6 flex items-baseline gap-3">
-          <span className="font-display text-5xl font-semibold text-theme-ink tabular-nums">
+          <span className="font-display text-theme-ink text-5xl tabular-nums">
             {summary.avg.toFixed(1)}
           </span>
           <Stars value={summary.avg} size="lg" />
         </div>
-        <p className="mt-1 text-sm text-theme-ink/65">
-          {summary.count === 0 ? 'No reviews yet — be the first.' : `Based on ${summary.count} review${summary.count === 1 ? '' : 's'}.`}
+        <p className="text-theme-ink/65 mt-1 text-sm">
+          {summary.count === 0
+            ? 'No reviews yet — be the first.'
+            : `Based on ${summary.count} review${summary.count === 1 ? '' : 's'}.`}
         </p>
 
         {summary.count > 0 && (
@@ -94,15 +99,18 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
               const pct = (count / histMax) * 100;
               return (
                 <li key={stars} className="flex items-center gap-2 text-xs">
-                  <span className="w-6 text-right text-theme-ink/65">{stars}</span>
-                  <Star className="h-3 w-3 fill-theme-accent text-theme-accent" aria-hidden="true" />
-                  <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-theme-ink/8">
+                  <span className="text-theme-ink/65 w-6 text-right">{stars}</span>
+                  <Star
+                    className="fill-theme-accent text-theme-accent h-3 w-3"
+                    aria-hidden="true"
+                  />
+                  <div className="bg-theme-ink/8 relative h-2 flex-1 overflow-hidden rounded-full">
                     <div
-                      className="absolute inset-y-0 left-0 rounded-full bg-theme-accent"
+                      className="bg-theme-accent absolute inset-y-0 left-0 rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="w-7 text-right text-theme-ink/55 tabular-nums">{count}</span>
+                  <span className="text-theme-ink/55 w-7 text-right tabular-nums">{count}</span>
                 </li>
               );
             })}
@@ -112,7 +120,7 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
         <button
           type="button"
           onClick={tryOpen}
-          className="mt-7 inline-flex items-center gap-2 rounded-full bg-theme-accent px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted"
+          className="bg-theme-accent shadow-soft hover:shadow-lifted mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5"
         >
           <MessageSquarePlus className="h-4 w-4" aria-hidden="true" />
           {myReview ? 'Update your review' : 'Write a review'}
@@ -122,9 +130,9 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
       {/* Reviews list column */}
       <div>
         {reviews === null ? (
-          <div className="h-32 animate-pulse rounded-2xl bg-theme-ink/5" />
+          <div className="bg-theme-ink/5 h-32 animate-pulse rounded-2xl" />
         ) : reviews.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm text-theme-ink/55">
+          <div className="text-theme-ink/55 rounded-2xl border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm">
             No reviews yet for {productTitle}. Yours could be the first.
           </div>
         ) : (
@@ -167,7 +175,7 @@ function ReviewCard({ review }: { review: Review }) {
     day: 'numeric',
   });
   return (
-    <li className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-5">
+    <li className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
       <div className="flex flex-wrap items-center gap-3">
         <Stars value={review.rating} />
         {review.verified && (
@@ -176,22 +184,20 @@ function ReviewCard({ review }: { review: Review }) {
             Verified buyer
           </span>
         )}
-        <span className="text-xs text-theme-ink/55">{date}</span>
+        <span className="text-theme-ink/55 text-xs">{date}</span>
       </div>
-      {review.title && (
-        <h3 className="mt-3 font-display text-lg font-semibold text-theme-ink">{review.title}</h3>
-      )}
-      <p className="mt-2 text-sm leading-relaxed text-theme-ink/85">{review.body}</p>
+      {review.title && <h3 className="font-display text-theme-ink mt-3 text-lg">{review.title}</h3>}
+      <p className="text-theme-ink/85 mt-2 text-sm leading-relaxed">{review.body}</p>
       {review.brandReply && (
-        <div className="mt-4 rounded-xl border-l-4 border-theme-accent bg-theme-glow/10 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-theme-accent">
+        <div className="border-theme-accent bg-theme-glow/10 mt-4 rounded-xl border-l-4 p-4">
+          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-wider">
             Reply from Ravi Sweets
           </p>
-          <p className="mt-1 text-sm text-theme-ink/85">{review.brandReply}</p>
+          <p className="text-theme-ink/85 mt-1 text-sm">{review.brandReply}</p>
         </div>
       )}
       {review.helpfulCount > 0 && (
-        <p className="mt-3 inline-flex items-center gap-1 text-xs text-theme-ink/55">
+        <p className="text-theme-ink/55 mt-3 inline-flex items-center gap-1 text-xs">
           <ThumbsUp className="h-3 w-3" aria-hidden="true" />
           {review.helpfulCount} found this helpful
         </p>
@@ -277,15 +283,15 @@ function ReviewComposer({
       />
       <form
         onSubmit={send}
-        className="relative z-10 w-full max-w-lg rounded-3xl bg-surface-elevated p-6 shadow-lifted ring-1 ring-[color:var(--color-border)]"
+        className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-lg rounded-3xl p-6 ring-1 ring-[color:var(--color-border)]"
       >
-        <h2 className="font-display text-xl font-semibold text-theme-ink">
+        <h2 className="font-display text-theme-ink text-xl">
           {existing ? 'Update your review' : 'Write a review'}
         </h2>
-        <p className="mt-1 text-xs text-theme-ink/65">{productTitle}</p>
+        <p className="text-theme-ink/65 mt-1 text-xs">{productTitle}</p>
 
         <fieldset className="mt-5">
-          <legend className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <legend className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             Rating
           </legend>
           <div className="mt-2 flex gap-1">
@@ -295,7 +301,7 @@ function ReviewComposer({
                 type="button"
                 aria-label={`${s} stars`}
                 onClick={() => setRating(s)}
-                className="rounded-full p-1 transition-colors hover:bg-theme-glow/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+                className="hover:bg-theme-glow/15 focus-visible:ring-theme-accent rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
                 <Star
                   className={`h-7 w-7 ${s <= rating ? 'fill-theme-accent text-theme-accent' : 'text-theme-ink/25'}`}
@@ -306,7 +312,7 @@ function ReviewComposer({
         </fieldset>
 
         <label className="mt-5 flex flex-col gap-1.5">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             Title (optional)
           </span>
           <input
@@ -315,12 +321,12 @@ function ReviewComposer({
             maxLength={80}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Tastes like my grandmother's"
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           />
         </label>
 
         <label className="mt-3 flex flex-col gap-1.5">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-theme-ink/55">
+          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
             Your review · {body.length}/1500
           </span>
           <textarea
@@ -329,7 +335,7 @@ function ReviewComposer({
             maxLength={1500}
             onChange={(e) => setBody(e.target.value)}
             placeholder="What did you think? Texture, sweetness, packaging — what stood out?"
-            className="rounded-lg border border-[color:var(--color-border)] bg-surface px-3 py-2 text-sm text-theme-ink focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           />
         </label>
 
@@ -340,21 +346,21 @@ function ReviewComposer({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent"
+            className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={busy || tooShort}
-            className="rounded-full bg-theme-accent px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lifted disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-theme-accent shadow-soft hover:shadow-lifted rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? 'Submitting…' : existing ? 'Update review' : 'Submit review'}
           </button>
         </div>
-        <p className="mt-3 text-[10px] text-theme-ink/55">
-          Your name and email are not shown publicly. Verified-buyer badge appears automatically when
-          we can match your account to a delivered order.
+        <p className="text-theme-ink/55 mt-3 text-[10px]">
+          Your name and email are not shown publicly. Verified-buyer badge appears automatically
+          when we can match your account to a delivered order.
         </p>
       </form>
     </div>
