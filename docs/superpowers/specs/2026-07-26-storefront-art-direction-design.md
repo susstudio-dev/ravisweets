@@ -57,7 +57,7 @@ Ten of ten Awwwards food & drink winners 2024–2026 declared **exactly two colo
 
 **D1 "Varak" as the master identity, with a D2 "Bidri" dark register scoped to specific sections.**
 
-- **Varak** promotes pista from decoration to primary brand field, and signals premium with **silver, not gold**. Every competitor uses gold; edible silver leaf (*varak*) is literally what is on kaju katli, and no sampled competitor uses a silver/cool-grey cue.
+- **Varak** promotes pista from decoration to primary brand field, pairs it with an **anjeer** (fig-purple) accent, and signals premium with **silver, not gold**. Every competitor uses gold; edible silver leaf (*varak*) is literally what is on kaju katli, and no sampled competitor uses a silver/cool-grey cue. Anjeer and pista are the two most expensive ingredients in the catalogue, so the palette is named after what the customer is actually paying for.
 - **Bidri** is Hyderabad's own GI-tagged craft — zinc-copper alloy blackened with Bidar soil, inlaid with pure silver. Its grammar is matte near-black ground, fine silver line, high negative space. It is essentially unused in Indian food packaging.
 
 **Why not fully dark.** A study of 420 participants (210 Brazil, 210 France) across seven packaging colours found **black packaging produced expectations of least sweet and most bitter**, with the effect holding across both cultures. That is a feature for 70% dark chocolate and a liability for qubani ka meetha, badam ki jali and double ka meetha, whose entire proposition is sugar, ghee and milk. Light grounds also read product photography more accurately for mainstream retail.
@@ -68,16 +68,20 @@ Ten of ten Awwwards food & drink winners 2024–2026 declared **exactly two colo
 
 ## 3. Palette
 
+The palette is named **Anjeer & Pista** — fig and pistachio.
+
+That is not decoration: anjeer and pista are the two most expensive ingredients in the catalogue and an authentic, established Indian sweet pairing (anjeer barfi, anjeer-pista rolls, dry-fruit chikki — all products Ravi Sweets already sells). It reads as *premium* to an Indian customer because the ingredients themselves are premium, which "rose" never did. Fig-purple and pistachio-green are also near-split-complementary, so the pairing carries real chromatic tension.
+
 ### Light register (default)
 
 | Token | Value | HSL | Role |
 |---|---|---|---|
 | `base` | `#F1F0E2` | `hsl(56 35% 92%)` | page ground — never `#ffffff` |
 | `surfaceElevated` | `#FAF9F0` | `hsl(54 50% 96%)` | cards |
-| `ink` | `#1F1820` | `hsl(292 14% 11%)` | primary type |
+| `ink` | `#221E1A` | `hsl(30 13% 12%)` | primary type — warm charcoal |
 | `inkMuted` | `#5C5347` | `hsl(34 13% 32%)` | secondary type |
-| `accent` | `#4F6024` | `hsl(77 45% 26%)` | links, filled CTA |
-| `accentDeep` | `#33401A` | `hsl(81 42% 18%)` | type on the pista field |
+| `accent` | `#5E2757` | `hsl(308 42% 26%)` | **anjeer** — links, filled CTA |
+| `accentDeep` | `#3E1938` | `hsl(310 42% 17%)` | anjeer panels, type on field |
 | `field` | `#C9D99C` | `hsl(76 45% 73%)` | **the pista panel** |
 | `varak` | `#9A9EA3` | `hsl(213 5% 62%)` | decorative silver fill |
 | `varakRule` | `#7E8286` | `hsl(210 3% 51%)` | informational hairline |
@@ -88,13 +92,17 @@ Ten of ten Awwwards food & drink winners 2024–2026 declared **exactly two colo
 
 | Pair | Ratio | Requirement |
 |---|---|---|
-| ink on base | **15.13:1** | 4.5 ✅ |
+| ink on base | **14.43:1** | 4.5 ✅ |
 | inkMuted on base | **6.58:1** | 4.5 ✅ |
-| accent on base | **6.04:1** | 4.5 ✅ |
-| base on accent (filled button) | **6.04:1** | 4.5 ✅ |
-| ink on field | **11.48:1** | 4.5 ✅ |
-| accentDeep on field | **7.35:1** | 4.5 ✅ |
-| ink on surfaceElevated | **16.43:1** | 4.5 ✅ |
+| ink on surfaceElevated | **15.67:1** | 4.5 ✅ |
+| ink on field | **10.95:1** | 4.5 ✅ |
+| accent on base (links) | **9.61:1** | 4.5 ✅ |
+| base on accent (filled button) | **9.61:1** | 4.5 ✅ |
+| accent on surfaceElevated | **10.44:1** | 4.5 ✅ |
+| accent on field | **7.30:1** | 4.5 ✅ |
+| field on accent (pista button on anjeer) | **7.30:1** | 4.5 ✅ |
+| accentDeep on base | **13.06:1** | 4.5 ✅ |
+| accentDeep on field | **9.91:1** | 4.5 ✅ |
 | varakRule on base | **3.37:1** | 3.0 ✅ |
 
 ### Dark / Bidri register
@@ -105,9 +113,14 @@ Ten of ten Awwwards food & drink winners 2024–2026 declared **exactly two colo
 | `surfaceElevated` | `#202225` | `hsl(216 7% 14%)` | raised cards |
 | `ink` | `#F2EDE0` | `hsl(43 41% 91%)` | warm cream type |
 | `inkMuted` | `#A7A49B` | `hsl(45 6% 63%)` | secondary type |
-| `accent` | `#C9D99C` | `hsl(76 45% 73%)` | pista carries appetite |
+| `accent` | `#C9D99C` | `hsl(76 45% 73%)` | **pista** — links, filled CTA |
+| `field` | `#3E1938` | `hsl(310 42% 17%)` | **anjeer panel** on gunmetal |
 | `accentDeep` | `#8FA85C` | `hsl(80 30% 51%)` | UI states |
 | `varak` | `#C8CBD0` | `hsl(218 8% 80%)` | silver inlay |
+
+**The two brand colours swap roles between registers.** Pista is the *field* on light and the *interactive* colour on dark; anjeer is the *interactive* colour on light and a *panel* colour on dark. One rule, and it keeps both colours load-bearing everywhere instead of one going decorative.
+
+A light anjeer tint (`#C9A3C4`, 8.05:1 on gunmetal) was tested for dark-register links and rejected — at that lightness it reads as washed lilac rather than fig. Pista does the interactive job on dark unambiguously and is appetite-positive, which matters more.
 
 **Computed contrast:**
 
@@ -115,21 +128,38 @@ Ten of ten Awwwards food & drink winners 2024–2026 declared **exactly two colo
 |---|---|---|
 | ink on base | **15.20:1** | 4.5 ✅ |
 | inkMuted on base | **7.13:1** | 4.5 ✅ |
-| accent on base | **11.75:1** | 4.5 ✅ |
+| ink on surfaceElevated | **13.64:1** | 4.5 ✅ |
+| accent on base (links) | **11.75:1** | 4.5 ✅ |
 | base on accent (filled button) | **11.75:1** | 4.5 ✅ |
 | varak on base | **10.92:1** | 4.5 ✅ |
-| ink on surfaceElevated | **13.64:1** | 4.5 ✅ |
 | accentDeep on base | **6.70:1** | 3.0 ✅ |
+| ink on anjeer panel | **12.82:1** | 4.5 ✅ |
+| accent on anjeer panel | **9.91:1** | 4.5 ✅ |
 
 ### Hue-collision check
 
-Minimum hue distance from the pista accents to **any** measured competitor colour (Bombay Sweet Shop wine/petrol/brass, Almond House terracotta, Anand gold/crimson, Haldiram burnt brick, Bikanervala vermilion, Sweet Karam teal) is **30°**. No collisions.
+The anjeer accent (hue **308**) sits in a narrow safe window between two occupied hues, and clears both:
 
-`varak`/`varakRule` sit at hue ~210 but at 3–5% saturation, so they read as neutral metal, not blue.
+| Competitor | Hue | Clearance |
+|---|---|---|
+| **Cadbury Dairy Milk** (Pantone 2685C) | 263 | **45°** |
+| **Bombay Sweet Shop** wine | 336 | **28°** |
+| Old Ravi Sweets rose | 339 | 31° |
+| Anand crimson | 350 | 42° |
+| Khoya oxblood | 0 | 52° |
+| Anand gold | 46 | 98° |
+| Bombay Sweet Shop petrol | 198 | 110° |
+| Sweet Karam teal | 177 | 131° |
+
+Cadbury is the single largest confectionery brand in India and owns purple in the category — it was **not** in the original competitor set and was added during this revision. The usable window between Cadbury (263) and BSS wine (336) at ≥25° clearance from both is hue **288–311**; the accent sits at 308, near the warm end, so it reads as fig rather than as violet.
+
+The pista field (hue 76) is 30° from its nearest competitor (Anand gold, 46). `varak`/`varakRule` sit at hue ~210 but at 3–5% saturation, so they read as neutral metal, not blue.
 
 ### Rules
 
 - **Gold is deleted.** No gold token, no gold-foil gradient, anywhere.
+- **Ink is warm charcoal, not plum-black.** The previous `#1F1820` sat at hue 292 — only 16° from the anjeer accent, which would make links read as ordinary body text. Moving ink to `#221E1A` (hue 30) gives **82° separation**, so the accent does real affordance work. This is a functional requirement, not a preference.
+- **One chroma family owns the brand.** Ink and muted stay near-neutral warm; anjeer and pista are the only saturated colours in the system.
 - Two silver tokens, because decorative fill and informational hairline have different obligations. `varak` need not clear 3:1; `varakRule` must, and `#9A9EA3` did not (2.35:1 on base).
 - The pista field is a **flat fill**. No gradients on brand surfaces.
 - Semantic success/warn/danger consolidate onto the existing `rawPalette.semantic` values; the 8 stray `#c0392b` and the 219 non-token `red-*`/`emerald-*`/`amber-*` utility classes migrate to them.
@@ -349,7 +379,8 @@ Verification is by re-running the audit greps, not by inspection.
 
 | Risk | Mitigation |
 |---|---|
-| Pista field reads "healthy/wellness" rather than indulgent — light packaging raises perceived healthiness but *lowers* purchase intention | Pista is a **field**, not the ground; ink at 11.48:1 keeps it rich rather than pastel. Grain and the Bidri register carry weight. Watch conversion. |
+| Pista field reads "healthy/wellness" rather than indulgent — light packaging raises perceived healthiness but *lowers* purchase intention | **Primary mitigation is the anjeer accent**, which is a deep saturated jewel tone doing the premium/indulgent work that a green accent could not. Pista is also a *field*, not the ground, with ink on it at 10.95:1 so it stays rich rather than pastel. Grain and the Bidri register add weight. Still worth watching conversion. |
+| Anjeer is mistaken for Cadbury purple | 45° of hue clearance, and the accent is a dark 26%-lightness fig rather than Cadbury's mid-tone blue-violet. Verified numerically, not by eye. |
 | Bidri sections read austere or bitter | Confined to story / drops / gifting. Never on PLP, PDP, cart or checkout. |
 | Older Khammam customers find it unfamiliar | Telugu is promoted, not demoted; "1985" is in the hero lockup; the katli cut is more literally the product than paisley ever was. |
 | Young Serif's single weight limits hierarchy | Deliberate. Size-only hierarchy is the editorial register. `font-synthesis-weight: none` prevents fake bold. |
