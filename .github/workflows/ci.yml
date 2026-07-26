@@ -39,6 +39,12 @@ jobs:
       - name: Typecheck all workspaces
         run: pnpm -r typecheck
 
+      - name: Unit tests
+        run: pnpm --filter @ravisweets/storefront test
+
+      - name: Colour ratchet
+        run: pnpm --filter @ravisweets/storefront colour-audit
+
       - name: Lint storefront
         run: pnpm --filter @ravisweets/storefront lint
 
