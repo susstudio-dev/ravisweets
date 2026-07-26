@@ -2067,3 +2067,55 @@ git commit -m "docs(plan): record Plan 1 foundation outcome and measured budgets
 All three declare `weight: 'variable'` where the face is variable, so the axis-discarding defect that broke Fraunces cannot recur silently.
 
 **Two execution bugs caught during review and fixed inline:** `globSync` was imported from `node:fs` in the codemod, which does not exist on Node 20 (pinned by `engines` and CI); and the Anek fonts originally omitted `weight`, which would have relied on implicit variable resolution rather than stating it.
+
+---
+
+## Plan 1 outcome
+
+**Status: Tasks 1–9 complete. Task 10 partially complete — see "Not verified" below.**
+
+Branch: `feat/storefront-anjeer-pista-foundation`.
+
+### Gates, by exit code
+
+| Gate                                              | Result |
+| ------------------------------------------------- | ------ |
+| `@ravisweets/storefront typecheck`                | **0**  |
+| `@ravisweets/shared` + `@ravisweets/ui` typecheck | **0**  |
+| Unit tests (84)                                   | **0**  |
+| `next lint`                                       | **0**  |
+| `link-check`                                      | **0**  |
+| `next build`                                      | **0**  |
+| Colour ratchet                                    | **0**  |
+
+### Measured
+
+| Metric                                          | Start  | Now                                   |
+| ----------------------------------------------- | ------ | ------------------------------------- |
+| Distinct hex literals (outside authoring files) | 184    | **177**                               |
+| Paisley references                              | 164    | 164 (Plan 2)                          |
+| Non-token colour classes                        | 219    | 217                                   |
+| Home First Load JS                              | 195 KB | **196 KB** (+1 KB, palette constants) |
+| Unit tests                                      | 0      | **84**                                |
+
+### Three CI gates were already red on master, none caused by this branch
+
+1. **`pnpm -r typecheck`** — `apps/backend` fails `TS6059`: `medusa-config.ts` is outside `rootDir: 'src'`, and no `src/` exists. Confirms the revenue spec's §2.4 "Medusa is dead weight". Deleting `apps/backend` (its D3) would fix this gate.
+2. **`pnpm format:check`** — `supabase/functions/send-order-email/index.ts:180` has a genuine syntax error (`order.lines as Array<{...}>.map(...)` needs parentheses; `TS1005`). Invisible to CI's typecheck because `pnpm-workspace.yaml` covers only `apps/*` and `packages/*`. **The transactional order email cannot run.** Belongs to the revenue workstream.
+3. **`size-limit`** — exits 1: not a declared dependency anywhere, and its glob `.next/static/chunks/pages/index-*.js` targets a pages-router path that does not exist under the app router. The 185 KB budget has therefore never been measured, and was already exceeded by 10 KB before this branch.
+
+### Deviations from the plan, and why
+
+- **Legibility clamping was added to `applyPalette` beyond what the plan specified.** The mid-tone test fixture exposed that an admin can author a base/ink pair failing AA together (`#7A7A7A` + near-black ink = 4.47:1). `--theme-ink` keeps the authored value; `--color-text-primary` is a derived safe variant, and muted text plus the elevated surface are clamped against the same floor.
+- **`applyPalette` returns a named `ThemeVars` type**, not `Record<string, string>`. `noUncheckedIndexedAccess` is on, so the loose type forced non-null assertions on every consumer.
+- **Header mapped to named tokens, not `var()`**, because four values carry `/55`–`/70` opacity modifiers and Tailwind 3 cannot apply an opacity modifier to an arbitrary `var()` colour.
+- **The token layer is not gated behind `data-theme`** — recorded in §8.7 of this plan and in `visual-v2.ts`.
+
+### Not verified
+
+- **Lighthouse** (`categories:accessibility ≥ 0.95`, LCP < 2500 ms, CLS < 0.1) was **not run**. The font swap is the main CLS/LCP risk and remains unmeasured. Run `npx @lhci/cli autorun` in `apps/storefront` before merging.
+- **Browser checks not performed** — no browser tooling in this environment. Specifically unconfirmed by eye: that `/product/diwali-premium-hamper` (dark base `#2a1505`) now renders dark surfaces and borders, that per-product palettes no longer revert after ~1 s, and that a `data-register="bidri"` subtree re-themes. All three are covered by unit tests at the derivation layer but not end-to-end in a real page.
+
+### Carried into Plan 2 / Plan 3
+
+Paisley (164 refs), the hero rebuild, the katli device, the ~9 hardcoded dark sections, the 26 product-palette assignments, festivals (70 hex), the cursor data-URIs, the order email, and `0009_promotions.sql` defaults.
