@@ -23,6 +23,17 @@
     --color-accent: #5e2757;
     --color-ring: #5e2757;
 
+    /* Channel twins so Tailwind opacity modifiers work (see tailwind.config.ts). */
+    --theme-base-rgb: 241 240 226;
+    --theme-accent-rgb: 94 39 87;
+    --theme-glow-rgb: 201 217 156;
+    --theme-ink-rgb: 34 30 26;
+    --color-surface-rgb: 241 240 226;
+    --color-surface-elevated-rgb: 250 249 240;
+    --color-text-primary-rgb: 34 30 26;
+    --color-text-muted-rgb: 92 83 71;
+    --color-accent-rgb: 94 39 87;
+
     /* Non-authored brand constants. */
     --color-field-deep: #3e1938;
     --color-varak: #9a9ea3;
@@ -58,6 +69,16 @@
     --color-text-muted: #a7a49b;
     --color-accent: #c9d99c;
     --color-ring: #c9d99c;
+
+    --theme-base-rgb: 23 24 26;
+    --theme-accent-rgb: 201 217 156;
+    --theme-glow-rgb: 62 25 56;
+    --theme-ink-rgb: 242 237 224;
+    --color-surface-rgb: 23 24 26;
+    --color-surface-elevated-rgb: 32 34 37;
+    --color-text-primary-rgb: 242 237 224;
+    --color-text-muted-rgb: 167 164 155;
+    --color-accent-rgb: 201 217 156;
 
     --color-field-deep: #3e1938;
     --color-varak: #c8cbd0;

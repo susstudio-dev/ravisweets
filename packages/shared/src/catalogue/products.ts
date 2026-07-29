@@ -1,4 +1,5 @@
 import type { CategorySlug, DietaryTag, GarnishMark, Product } from '../types/product';
+import { ANJEER, HOUSE, PISTA, SAVOURY, VAULT } from './palettes';
 
 /**
  * Ravi Sweets catalogue — single source of truth.
@@ -33,6 +34,36 @@ function ravi(file: string) {
   return `https://ravisweets.com/wp-content/uploads/${file}`;
 }
 
+/**
+ * THEME PALETTES: 26 hand-typed literals, now 5 named ones.
+ *
+ * Every product carries a `theme_palette` that the storefront swaps onto the
+ * :root CSS vars while that product is on screen. Until this commit each of the
+ * 31 entries below carried its own inline literal — 26 distinct ones, all from
+ * the pre-2026 "brass & ghee" era, all a warm cream base with a brass or rust
+ * accent.
+ *
+ * They were near-identical, but by accident rather than by intent: #f5ead2,
+ * #f4ead2 and #f4e9d4 differ by one to three hex digits, which is well under
+ * what an eye can resolve. So the catalogue paid for 26 separate brand colours
+ * and got the visual benefit of roughly one — while still repainting the site a
+ * slightly different brand on every product click, because the values were
+ * different enough for the CSS vars to change even when nobody could see it.
+ *
+ * They now reference five named palettes from ./palettes:
+ *
+ *   pista    nut-forward — kaju, badam, pista, cashew, walnut
+ *   anjeer   dried fruit — fig, date, khajoor, apricot/khubani, cranberry
+ *   savoury  savouries, namkeens, mixtures, pickles, podis
+ *   vault    premium hampers and the Diwali/Vault drop (the dark register)
+ *   house    everything else — the default
+ *
+ * A product now picks a register, not a colour. Generated groups set one
+ * palette for the whole range via `makeProduct` defaults; the handful of SKUs
+ * whose defining ingredient sits in a different family (figs inside the
+ * nut-heavy dry-fruit range, date laddus inside healthy sweets) override it
+ * per SKU with `MiniSku.theme_palette`.
+ */
 export const CATALOGUE: Product[] = [
   // ─── Hyderabadi specials ────────────────────────────────────────────────
   {
@@ -58,7 +89,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: true, bestseller: true, new: false,
-    theme_palette: { base: '#fff4e3', accent: '#c0592b', glow: '#f29f5a', ink: '#3a1e0c', grainOpacity: 0.06 },
+    theme_palette: ANJEER, // apricot (khubani) reduction
     garnish: 'saffron',
     builder_eligible: true,
     rubric_passed_on: TODAY,
@@ -86,7 +117,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
-    theme_palette: { base: '#fbeed0', accent: '#8a5a10', glow: '#d4b36a', ink: '#2a1a04', grainOpacity: 0.06 },
+    theme_palette: HOUSE,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -112,7 +143,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
-    theme_palette: { base: '#fdf3df', accent: '#a07024', glow: '#e4c17a', ink: '#3a280e', grainOpacity: 0.05 },
+    theme_palette: PISTA,
     garnish: 'paisley',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -138,7 +169,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fbf0dc', accent: '#9a4a2a', glow: '#e9b07a', ink: '#2e1a08', grainOpacity: 0.06 },
+    theme_palette: ANJEER, // dates
     garnish: 'rose',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -164,7 +195,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fff0dc', accent: '#a85a1e', glow: '#efa962', ink: '#321606', grainOpacity: 0.06 },
+    theme_palette: ANJEER, // apricot
     garnish: 'silver',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -192,7 +223,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: true, bestseller: true, new: false,
-    theme_palette: { base: '#f8f4ea', accent: '#8a6a2e', glow: '#d6c796', ink: '#2a2010', grainOpacity: 0.04 },
+    theme_palette: PISTA,
     garnish: 'silver',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -217,7 +248,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: true, new: false,
-    theme_palette: { base: '#fff0d8', accent: '#6e2f14', glow: '#d68a4c', ink: '#2a0e04', grainOpacity: 0.06 },
+    theme_palette: HOUSE,
     garnish: 'saffron',
     builder_eligible: false, // Too fragile to travel inside a corporate hamper
     rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
@@ -244,7 +275,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fff3d6', accent: '#b05a0e', glow: '#ecb562', ink: '#2a1704', grainOpacity: 0.05 },
+    theme_palette: HOUSE,
     garnish: 'saffron',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -272,7 +303,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: true, new: false,
-    theme_palette: { base: '#f4e9d4', accent: '#8b3a1f', glow: '#d68854', ink: '#2e1a0b', grainOpacity: 0.05 },
+    theme_palette: SAVOURY,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -298,7 +329,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f5ead2', accent: '#7b4610', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.05 },
+    theme_palette: SAVOURY,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -324,7 +355,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f8eed0', accent: '#8a5410', glow: '#e2b558', ink: '#2a1a04', grainOpacity: 0.05 },
+    theme_palette: SAVOURY,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -352,7 +383,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: false,
-    theme_palette: { base: '#f4ead2', accent: '#6e4a20', glow: '#c19a62', ink: '#2a1a08', grainOpacity: 0.05 },
+    theme_palette: PISTA,
     garnish: 'silver',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -378,7 +409,7 @@ export const CATALOGUE: Product[] = [
     ],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f2e9d0', accent: '#5c6a1e', glow: '#a8b860', ink: '#1e2408', grainOpacity: 0.05 },
+    theme_palette: PISTA,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -402,7 +433,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_cc_750', title: 'Box (750 g total)', weight_grams: 750, price: { amount: 649, currency: 'INR' }, sku: 'RS-CC-750', stock_available: 30, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f3e8d0', accent: '#6e3e10', glow: '#caa060', ink: '#281908', grainOpacity: 0.05 },
+    theme_palette: SAVOURY, // sev + chivda + almonds; an all-savoury tray
     garnish: 'pistachio',
     builder_eligible: false, // Meta-item; builders compose directly
     rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
@@ -425,7 +456,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_fc_900', title: 'Box (900 g total)', weight_grams: 900, price: { amount: 999, currency: 'INR' }, sku: 'RS-FC-900', stock_available: 40, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#faecc8', accent: '#a56a0f', glow: '#e0b870', ink: '#2a1804', grainOpacity: 0.06 },
+    theme_palette: HOUSE, // sweet + savoury pair, neither dominant
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -449,7 +480,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_diwali_premium', title: 'Premium box', weight_grams: 1500, price: { amount: 2499, currency: 'INR' }, sku: 'RS-GH-DIWALI-P', stock_available: 60, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
-    theme_palette: { base: '#2a1505', accent: '#e9ad4a', glow: '#f2c66f', ink: '#fdf6ec', grainOpacity: 0.08 },
+    theme_palette: VAULT,
     garnish: 'paisley',
     builder_eligible: false, // Hampers compose INTO hampers — conflict
     rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
@@ -472,7 +503,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_cgb_1', title: 'Box', weight_grams: 1200, price: { amount: 1499, currency: 'INR' }, sku: 'RS-GH-CLASSIC', stock_available: 50, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: true, new: false,
-    theme_palette: { base: '#faf2dc', accent: '#8a5a1e', glow: '#d6a85c', ink: '#281804', grainOpacity: 0.06 },
+    theme_palette: HOUSE, // the year-round staple, not a premium hamper
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -494,7 +525,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_ceb_1', title: 'Box', weight_grams: 1600, price: { amount: 1799, currency: 'INR' }, sku: 'RS-GH-CORP', stock_available: 75, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f4ead2', accent: '#6e4810', glow: '#c79e5c', ink: '#241608', grainOpacity: 0.05 },
+    theme_palette: HOUSE, // plain-cream corporate box, not a premium hamper
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -518,7 +549,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_rt_1', title: 'Thali', weight_grams: 800, price: { amount: 999, currency: 'INR' }, sku: 'RS-FS-RAKHI', stock_available: 45, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fdf3df', accent: '#c0592b', glow: '#f29f5a', ink: '#3a1e0c', grainOpacity: 0.06 },
+    theme_palette: HOUSE,
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -540,7 +571,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_es_1', title: 'Box', weight_grams: 2000, price: { amount: 1799, currency: 'INR' }, sku: 'RS-FS-EID', stock_available: 35, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fff4e3', accent: '#a56a0f', glow: '#e9ad4a', ink: '#2a1a04', grainOpacity: 0.06 },
+    theme_palette: ANJEER, // sheer khurma + khubani mithai lead the box
     garnish: 'rose',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -564,7 +595,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_sp_500', title: '500 g tin', weight_grams: 500, price: { amount: 449, currency: 'INR' }, sku: 'RS-SP-500', stock_available: 80, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#fbeed0', accent: '#a56a0f', glow: '#e9ad4a', ink: '#2a1a04', grainOpacity: 0.05 },
+    theme_palette: HOUSE,
     garnish: 'pistachio',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -586,7 +617,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_wt_1', title: 'Two-tier box', weight_grams: 2200, price: { amount: 2999, currency: 'INR' }, sku: 'RS-GH-WED', stock_available: 25, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: true, bestseller: false, new: true,
-    theme_palette: { base: '#fdf3df', accent: '#7a4e0a', glow: '#d4a96b', ink: '#2a1a04', grainOpacity: 0.06 },
+    theme_palette: VAULT,
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -608,7 +639,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_pp_1', title: 'Pot + sachet', weight_grams: 900, price: { amount: 799, currency: 'INR' }, sku: 'RS-FS-PONGAL', stock_available: 40, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f5ead2', accent: '#9c5a14', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.06 },
+    theme_palette: HOUSE,
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -630,7 +661,7 @@ export const CATALOGUE: Product[] = [
     variants: [{ id: 'v_oct_1', title: 'Office tray', weight_grams: 1400, price: { amount: 999, currency: 'INR' }, sku: 'RS-CB-OCT', stock_available: 50, hsn_code: '2106' }],
     region_availability: ['in'],
     featured: false, bestseller: false, new: true,
-    theme_palette: { base: '#f4ead2', accent: '#6e4810', glow: '#c79e5c', ink: '#241608', grainOpacity: 0.05 },
+    theme_palette: SAVOURY, // namkeen-led tray
     garnish: 'paisley',
     builder_eligible: false, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
   },
@@ -681,6 +712,12 @@ interface MiniSku {
   bestseller?: boolean;
   isNew?: boolean;
   builder_eligible?: boolean;
+  /**
+   * Overrides the group palette for a SKU whose defining ingredient belongs to
+   * a different family than the rest of its range — e.g. Anjeer (figs) inside
+   * the otherwise nut-forward dry-fruit group.
+   */
+  theme_palette?: Product['theme_palette'];
 }
 
 function makeProduct(
@@ -732,7 +769,7 @@ function makeProduct(
     featured: false,
     bestseller: s.bestseller ?? false,
     new: s.isNew ?? true,
-    theme_palette: defaults.theme_palette,
+    theme_palette: s.theme_palette ?? defaults.theme_palette,
     garnish: defaults.garnish,
     builder_eligible: s.builder_eligible ?? true,
     unit_mode: defaults.unit_mode ?? 'weight',
@@ -765,7 +802,7 @@ function savouriesGroup(): Product[] {
       allergens: ['Gluten', 'Peanuts'],
       storage_instructions: 'Store in an airtight container away from humidity.',
       shelf_life_days: 60,
-      theme_palette: { base: '#f5ead2', accent: '#7b4610', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.05 },
+      theme_palette: SAVOURY,
       garnish: 'pistachio',
     }),
   );
@@ -775,9 +812,9 @@ function sweetBitesGroup(): Product[] {
   const items: MiniSku[] = [
     { slug: 'butterscotch-bites', title: 'Butterscotch Bites', image: ravi('2025/08/BUTTERSCOTCH-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Caramel-toffee bites with a crackle of butterscotch. Sized for a single bite, packed for sharing.' },
     { slug: 'choco-bites', title: 'Choco Bites', image: ravi('2025/08/CHOCO-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Dark-chocolate truffle bites rolled in cocoa nibs. Made with single-origin cacao, set firm.' },
-    { slug: 'kaju-bites', title: 'Kaju Bites', image: ravi('2025/08/KAJU-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cashew-paste bites finished with a touch of cardamom. The little-cousin of our Kaju Katli.', bestseller: true },
+    { slug: 'kaju-bites', title: 'Kaju Bites', image: ravi('2025/08/KAJU-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cashew-paste bites finished with a touch of cardamom. The little-cousin of our Kaju Katli.', bestseller: true, theme_palette: PISTA },
     { slug: 'kesar-bites', title: 'Kesar Bites', image: ravi('2025/08/KESAR-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Saffron-perfumed milk-fudge bites with slivered pistachios on top. A festive favourite.' },
-    { slug: 'khajoor-bites', title: 'Khajoor Bites', image: ravi('2025/08/KHAJOOR-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Date-paste bites bound with cashew and almond — no added sugar, all the natural sweetness of khajoor.' },
+    { slug: 'khajoor-bites', title: 'Khajoor Bites', image: ravi('2025/08/KHAJOOR-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Date-paste bites bound with cashew and almond — no added sugar, all the natural sweetness of khajoor.', theme_palette: ANJEER },
     { slug: 'mango-crunch-bites', title: 'Mango Crunch Bites', image: ravi('2025/08/MANGO-CRUNCH-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Aam-paste bites with a layer of crispy crunch through the centre. Summer in a bite.' },
     { slug: 'mixed-bites', title: 'Mixed Bites', image: ravi('2025/08/MIXED-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'A sampler box — six flavours in one tin so you can pick a favourite before committing.', bestseller: true },
     { slug: 'oreo-bites', title: 'Oreo Bites', image: ravi('2025/08/OREO-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Crushed-cookie bites bound with milk-fudge — the kid-favourite SKU on our counter.' },
@@ -792,7 +829,7 @@ function sweetBitesGroup(): Product[] {
       allergens: ['Nuts', 'Dairy'],
       storage_instructions: 'Refrigerate. Bring to room temperature before serving.',
       shelf_life_days: 21,
-      theme_palette: { base: '#fdf3df', accent: '#a85a1e', glow: '#efa962', ink: '#321606', grainOpacity: 0.06 },
+      theme_palette: HOUSE,
       garnish: 'rose',
       smallGrams: 250,
       largeGrams: 1000,
@@ -805,9 +842,9 @@ function sweetBitesGroup(): Product[] {
 
 function dryFruitsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: ravi('2025/08/ANJEER.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.' },
+    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: ravi('2025/08/ANJEER.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.', theme_palette: ANJEER },
     { slug: 'badam-almonds', title: 'Badam — Whole Almonds', image: ravi('2025/08/BADAM.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 160000, description: 'Whole California almonds, hand-sorted and sealed the same week. Zero broken pieces, no chaff.', bestseller: true },
-    { slug: 'cranberry', title: 'Cranberry', image: ravi('2025/08/CRANBERRY.webp'), variantPaiseSmall: 25000, variantPaiseLarge: 200000, description: 'Sweet-tart dried cranberries — perfect on a granola plate or stirred into your morning yogurt.' },
+    { slug: 'cranberry', title: 'Cranberry', image: ravi('2025/08/CRANBERRY.webp'), variantPaiseSmall: 25000, variantPaiseLarge: 200000, description: 'Sweet-tart dried cranberries — perfect on a granola plate or stirred into your morning yogurt.', theme_palette: ANJEER },
     { slug: 'kaju-cashew', title: 'Kaju — Whole Cashews', image: ravi('2025/08/WhatsApp-Image-2023-08-11-at-4.46.50-PM-400x400.jpeg'), variantPaiseSmall: 25500, variantPaiseLarge: 180000, description: 'Premium W240 cashews — whole, plump, no splits. Sealed in nitrogen pouches for a six-month shelf life.', bestseller: true },
     { slug: 'pista-whole', title: 'Pista — Whole Pistachios', image: ravi('2025/08/PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'Iranian pistachios with a generous shell-split. Snack-grade, crunch-grade, gift-grade.' },
     { slug: 'salted-pista', title: 'Salted Pista', image: ravi('2025/08/SALTED-PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'The same Iranian pistachios, dry-roasted and lightly salted. Travel-tin packaging.' },
@@ -819,7 +856,7 @@ function dryFruitsGroup(): Product[] {
       allergens: ['Nuts'],
       storage_instructions: 'Store in an airtight container away from humidity.',
       shelf_life_days: 180,
-      theme_palette: { base: '#f4ead2', accent: '#6e4a20', glow: '#c19a62', ink: '#2a1a08', grainOpacity: 0.05 },
+      theme_palette: PISTA, // nut-majority range; figs and cranberry opt out per SKU
       garnish: 'silver',
       smallGrams: 250,
       largeGrams: 2000,
@@ -844,7 +881,7 @@ function picklesGroup(): Product[] {
       allergens: ['Mustard'],
       storage_instructions: 'Store in a cool, dry place. Always use a dry spoon. Refrigerate after opening.',
       shelf_life_days: 365,
-      theme_palette: { base: '#f5e9c0', accent: '#a83c10', glow: '#e08438', ink: '#2a1004', grainOpacity: 0.06 },
+      theme_palette: SAVOURY,
       garnish: 'paisley',
       smallGrams: 200,
       largeGrams: 1000,
@@ -871,7 +908,7 @@ function powdersGroup(): Product[] {
       allergens: [],
       storage_instructions: 'Store in an airtight jar away from light.',
       shelf_life_days: 180,
-      theme_palette: { base: '#f9ecc8', accent: '#9b3a10', glow: '#dd8a3a', ink: '#2a0e04', grainOpacity: 0.06 },
+      theme_palette: SAVOURY, // podis
       garnish: 'pistachio',
       smallGrams: 100,
       largeGrams: 250,
@@ -883,8 +920,8 @@ function powdersGroup(): Product[] {
 
 function healthySweetsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'booster-laddu', title: 'Booster Laddu — Energy Dry-Fruit Laddu', image: ravi('2025/08/booster.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Pre-workout / new-mother / school-tiffin laddu — dates, almond, cashew, gondh, ghee. No refined sugar.', bestseller: true },
-    { slug: 'dry-fruit-laddu', title: 'Dry Fruit Laddu — Protein-Rich', image: ravi('2025/08/dry-fruit.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 80500, description: 'A bound-fruit-and-nut laddu sweetened only with dates and jaggery. Travel-friendly tin pack.' },
+    { slug: 'booster-laddu', title: 'Booster Laddu — Energy Dry-Fruit Laddu', image: ravi('2025/08/booster.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Pre-workout / new-mother / school-tiffin laddu — dates, almond, cashew, gondh, ghee. No refined sugar.', bestseller: true, theme_palette: ANJEER },
+    { slug: 'dry-fruit-laddu', title: 'Dry Fruit Laddu — Protein-Rich', image: ravi('2025/08/dry-fruit.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 80500, description: 'A bound-fruit-and-nut laddu sweetened only with dates and jaggery. Travel-friendly tin pack.', theme_palette: ANJEER },
     { slug: 'gondh-laddu', title: 'Gondh Laddu — Calcium-Rich Traditional', image: ravi('2025/08/gondh.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Edible-gum laddu the way the elders made it for new mothers — strengthens bones and joints.' },
     { slug: 'high-protein-laddu', title: 'High Protein Laddu', image: ravi('2025/08/protien.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: '14 g of plant protein per laddu — sprouted moong, almonds, dates. The gym-bag laddu.' },
     { slug: 'millet-laddu', title: 'Millet Laddu — Iron-Rich', image: ravi('2025/08/millet.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Foxtail and ragi millets bound with jaggery and ghee. Iron-rich, low-GI, kid-friendly.' },
@@ -896,7 +933,7 @@ function healthySweetsGroup(): Product[] {
       allergens: ['Nuts', 'Dairy', 'Sesame'],
       storage_instructions: 'Store in an airtight container at room temperature.',
       shelf_life_days: 30,
-      theme_palette: { base: '#f4ead2', accent: '#6e4810', glow: '#c79e5c', ink: '#241608', grainOpacity: 0.05 },
+      theme_palette: HOUSE, // seed/millet/gum laddus; the date-led two opt out per SKU
       garnish: 'silver',
       smallGrams: 250,
       largeGrams: 1000,
@@ -914,7 +951,7 @@ function biscuitsGroup(): Product[] {
       allergens: ['Gluten', 'Dairy'],
       storage_instructions: 'Store in an airtight container.',
       shelf_life_days: 90,
-      theme_palette: { base: '#f5ead2', accent: '#7b4610', glow: '#d6a74c', ink: '#2a1a08', grainOpacity: 0.05 },
+      theme_palette: HOUSE,
       garnish: 'paisley',
       smallGrams: 200,
       largeGrams: 1000,

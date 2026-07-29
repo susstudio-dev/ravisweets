@@ -6,7 +6,6 @@ import { useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { TextKinetic } from '@/components/motion/text-kinetic';
-import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
@@ -28,9 +27,13 @@ interface EditorialBandProps {
 }
 
 /**
- * Full-bleed editorial band — dark overlay, large type, scroll-linked
+ * Full-bleed editorial band — flat Bidri ground, large type, scroll-linked
  * background drift (parallax) and scale. Text stays stationary; image moves.
  * Reduced-motion collapses to a static full-bleed.
+ *
+ * The ground is a single flat colour block from the Bidri register, not a
+ * gradient: `data-register="bidri"` re-themes the whole subtree, so every
+ * colour below is a token and the band follows the palette.
  */
 export function EditorialBand({
   headline,
@@ -62,36 +65,19 @@ export function EditorialBand({
   return (
     <section
       ref={ref}
+      data-register="bidri"
       aria-label={headline}
-      className="relative isolate overflow-hidden"
-      style={{
-        background: 'radial-gradient(ellipse at 80% 30%, #5a3010 0%, #2a1505 55%, #150a02 100%)',
-      }}
+      className="bg-theme-base relative isolate overflow-hidden"
     >
-      {/* Background product accent — a brand-tinted PNG contained on the right.
-          Dropped to opacity-70 + blur so the foreground type wins, but the warm
-          glow of the sweet still anchors the panel. */}
+      {/* Background product accent — a cutout PNG contained on the right. Held
+          below full opacity so the foreground type wins. No blend mode and no
+          glow: on the matte Bidri ground the still carries itself. */}
       <motion.div
         style={reduced ? undefined : { y: bgY, scale: bgScale }}
         className="pointer-events-none absolute -right-10 top-1/2 hidden h-[110%] w-[55%] -translate-y-1/2 md:block"
       >
-        <Image
-          src={image}
-          alt={imageAlt}
-          fill
-          sizes="55vw"
-          className="object-contain opacity-70 mix-blend-screen drop-shadow-[0_40px_60px_rgba(242,198,111,0.25)]"
-        />
+        <Image src={image} alt={imageAlt} fill sizes="55vw" className="object-contain opacity-80" />
       </motion.div>
-      {/* Soft brass radial glow behind the product */}
-      <div
-        className="pointer-events-none absolute right-0 top-0 h-full w-1/2"
-        style={{
-          background:
-            'radial-gradient(ellipse at 70% 50%, rgba(242,198,111,0.18) 0%, transparent 60%)',
-        }}
-        aria-hidden="true"
-      />
       <Grain />
 
       {/* Foreground content */}
@@ -100,22 +86,23 @@ export function EditorialBand({
         className={`container-site relative z-10 flex min-h-[60vh] flex-col justify-center gap-5 py-24 md:min-h-[70vh] md:py-32 ${alignCls}`}
       >
         <div
-          className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] ${align !== 'center' ? '' : 'justify-center'}`}
+          className={`text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] ${align !== 'center' ? '' : 'justify-center'}`}
         >
-          <Paisley size="sm" color="#f2c66f" />
-          <span className="text-[#f2c66f]">{eyebrow}</span>
+          {/* Katli cut — the 45° diamond the sweet is actually cut into */}
+          <span aria-hidden="true" className="bg-theme-accent inline-block h-1.5 w-1.5 rotate-45" />
+          <span>{eyebrow}</span>
         </div>
         <TextKinetic
           as="h2"
           text={headline}
           split="word"
           gap={60}
-          className="font-display text-display-lg md:text-display-xl max-w-3xl leading-[1.02] text-[#fdf6ec]"
+          className="font-display text-display-lg md:text-display-xl text-theme-ink max-w-3xl leading-[1.02]"
         />
-        <p className="max-w-2xl text-[#fdf6ec]/85 md:text-lg">{body}</p>
+        <p className="text-text-muted max-w-2xl md:text-lg">{body}</p>
         <Link
           href={cta.href}
-          className={`group mt-2 inline-flex items-center gap-2 rounded-full bg-[#f2c66f] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#fdf6ec] ${align === 'right' ? 'self-end' : align === 'left' ? 'self-start' : ''}`}
+          className={`bg-theme-accent hover:bg-theme-ink group mt-2 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 ${align === 'right' ? 'self-end' : align === 'left' ? 'self-start' : ''}`}
           scroll={false}
         >
           {cta.label}

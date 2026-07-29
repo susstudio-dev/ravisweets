@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 /** Tighten these as Plan 2 and Plan 3 land. Never raise them. */
-const MAX_DISTINCT_HEX = 177;
-const MAX_PAISLEY = 164;
+const MAX_DISTINCT_HEX = 145;
+const MAX_PAISLEY = 148;
 const MAX_NON_TOKEN_COLOUR_CLASSES = 217;
 
 /** Third-party brand colours we do not own and cannot tokenise. */

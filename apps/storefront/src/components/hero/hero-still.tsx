@@ -3,39 +3,30 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRef } from 'react';
-import { ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { TextKinetic } from '@/components/motion/text-kinetic';
 import { Reveal } from '@/components/motion/reveal';
-import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 import { useSiteContent } from '@/lib/supabase/site-content-context';
 import { useActiveTheme } from '@/lib/theme/active-theme-context';
 
-// Macro close-up — Qubani ka Meetha in saffron syrup, pictured against the dark
-// directional lighting from the La Maison du Chocolat / MFK references in
-// research/benchmark.md §5.1. The hero now layers three independent parallax
-// rates: image (slow), saffron-strand overlay (fast), and content (mid),
-// so scroll feels cinematic rather than flat. Replace when production
-// photography lands per the photography-gating requirement.
+/**
+ * Placeholder art. There is no production photography yet, so the slot is
+ * designed to look deliberate while empty rather than broken: the frame states
+ * its own shot brief. Today's asset is a matting artefact — the cutout ate the
+ * silver leaf — so it is cropped into the plate rather than presented whole.
+ * When the real frame lands, only this URL and the caption change.
+ */
 const HERO_IMAGE =
   'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
 
-const HERO_BACKDROP =
-  'radial-gradient(ellipse at 40% 35%, color-mix(in oklab, var(--theme-glow) 70%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 30%, var(--theme-base)) 50%, var(--theme-base) 90%)';
+/** The katli cut: the 45-degree diamond kaju katli is actually cut into. */
+const KATLI_CLIP = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
 
-// 8 saffron strands scattered with deterministic positions for SSR-stable layout
-const SAFFRON_STRANDS = [
-  { top: '8%', left: '12%', rotate: -18, scale: 0.9, opacity: 0.55 },
-  { top: '22%', left: '78%', rotate: 24, scale: 1.1, opacity: 0.4 },
-  { top: '38%', left: '6%', rotate: -34, scale: 0.7, opacity: 0.5 },
-  { top: '52%', left: '88%', rotate: 12, scale: 0.85, opacity: 0.45 },
-  { top: '68%', left: '20%', rotate: -8, scale: 1, opacity: 0.5 },
-  { top: '78%', left: '70%', rotate: 32, scale: 0.7, opacity: 0.4 },
-  { top: '14%', left: '52%', rotate: 4, scale: 0.6, opacity: 0.35 },
-  { top: '88%', left: '40%', rotate: -22, scale: 0.9, opacity: 0.45 },
-];
+const FOUNDED = '1985';
+
+const SHOT_BRIEF = 'Kaju katli, macro, raking light — silver leaf needs a specular highlight.';
 
 export function HeroStill() {
   const ref = useRef<HTMLElement>(null);
@@ -62,319 +53,125 @@ export function HeroStill() {
     target: ref,
     offset: ['start start', 'end start'],
   });
-  // Three distinct parallax rates layered in z-order:
-  //   image  — slowest (-110 px) so the foreground sits like a still frame
-  //   strands — fastest (-220 px) so saffron drifts past the viewer
-  //   content — mid (40 px down + opacity fade) so headline trails behind the image
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, -110]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const strandsY = useTransform(scrollYProgress, [0, 1], [0, -220]);
-  const ornamentTopY = useTransform(scrollYProgress, [0, 1], [0, 70]);
-  const ornamentBottomY = useTransform(scrollYProgress, [0, 1], [0, -70]);
-  const ornamentMidX = useTransform(scrollYProgress, [0, 1], [0, -30]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 40]);
+  // The only parallax rate in the hero. One plate, one speed, and nothing else
+  // moves against it — layered rates were the tell that this was a template.
+  const plateY = useTransform(scrollYProgress, [0, 1], [0, -72]);
 
   return (
     <section
       ref={ref}
       aria-label="Hero"
-      className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
-      style={{
-        background:
-          'radial-gradient(ellipse at 72% 38%, color-mix(in oklab, var(--theme-glow) 42%, transparent) 0%, transparent 65%), radial-gradient(ellipse at 10% 90%, color-mix(in oklab, var(--theme-accent) 12%, transparent) 0%, transparent 55%), var(--theme-base)',
-      }}
+      className="bg-field text-theme-ink relative isolate overflow-hidden"
     >
-      {/* Vertical side ribbon */}
-      <div
-        className="font-body text-theme-ink/40 pointer-events-none absolute left-4 top-1/2 hidden origin-left -translate-y-1/2 -rotate-90 text-[10px] font-semibold uppercase tracking-[0.4em] md:block"
-        aria-hidden="true"
-      >
-        Est. Khammam · Since generations
+      <div className="container-site relative pb-12 pt-14 md:pb-16 md:pt-20">
+        <div className="grid items-center gap-12 md:grid-cols-[1.05fr_0.95fr] md:gap-10">
+          {/* Copy column */}
+          <div className="flex flex-col gap-7">
+            <Reveal>
+              <p className="text-theme-accent flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span className="font-indic text-xl leading-none">{heroEyebrowIndic}</span>
+                <span aria-hidden="true" className="opacity-40">
+                  ·
+                </span>
+                <span className="text-[11px] uppercase tracking-[0.28em]">{heroEyebrowEn}</span>
+                <span aria-hidden="true" className="opacity-40">
+                  ·
+                </span>
+                <span className="text-[11px] uppercase tracking-[0.28em]">{FOUNDED}</span>
+              </p>
+            </Reveal>
+
+            <TextKinetic
+              key={heroHeadline}
+              as="h1"
+              text={heroHeadline}
+              split="word"
+              gap={50}
+              className="font-display text-display-xl text-theme-ink"
+            />
+
+            <Reveal delay={0.2}>
+              <p className="text-text-muted max-w-[46ch] text-lg leading-relaxed">{heroBody}</p>
+            </Reveal>
+
+            <Reveal delay={0.3}>
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-1">
+                <Link
+                  href={primaryCtaHref}
+                  className="bg-theme-accent inline-flex items-center rounded-sm px-7 py-3.5 text-sm tracking-wide text-[color:var(--theme-base)] transition-opacity duration-300 hover:opacity-90"
+                >
+                  {primaryCtaLabel}
+                </Link>
+                <Link
+                  href={secondaryCtaHref}
+                  className="text-theme-ink hover:text-theme-accent decoration-varak-rule text-sm underline underline-offset-[6px] transition-colors duration-300"
+                >
+                  {secondaryCtaLabel}
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Photo slot — a katli-cut plate, not a cutout on a gradient */}
+          {/*
+            The nudge sits on the <figure>, not on <Reveal>: Reveal is a motion
+            element and its inline transform would win over a translate class.
+          */}
+          <Reveal delay={0.15}>
+            <figure className="flex flex-col gap-5 md:translate-x-[5%] lg:translate-x-[8%]">
+              <motion.div
+                style={reduced ? undefined : { y: plateY }}
+                className="relative mx-auto aspect-square w-[84%] max-w-[320px] md:w-full md:max-w-[520px]"
+              >
+                <div
+                  className="bg-field-deep absolute inset-0 overflow-hidden"
+                  style={{ clipPath: KATLI_CLIP }}
+                >
+                  <Image
+                    src={HERO_IMAGE}
+                    alt="Placeholder art direction: kaju katli cropped into a katli-cut plate, pending production photography"
+                    fill
+                    priority
+                    fetchPriority="high"
+                    sizes="(min-width: 1024px) 520px, (min-width: 768px) 45vw, 84vw"
+                    className="origin-[32%_26%] scale-[1.4] object-cover"
+                  />
+                </div>
+                {/* Silver hairline drawn on the cut, so the stroke stays 1px at any plate size. */}
+                <svg
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  className="text-varak-rule absolute inset-0 h-full w-full"
+                  aria-hidden="true"
+                >
+                  <polygon
+                    points="50,0 100,50 50,100 0,50"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </svg>
+              </motion.div>
+
+              <figcaption className="mx-auto flex max-w-[38ch] flex-col gap-1.5 text-center">
+                <span className="text-theme-accent text-[10px] uppercase tracking-[0.28em]">
+                  Shot brief
+                </span>
+                <span className="text-text-muted text-xs leading-relaxed">{SHOT_BRIEF}</span>
+              </figcaption>
+            </figure>
+          </Reveal>
+        </div>
+
+        {/* Silver hairline, closed by a single katli diamond. */}
+        <div aria-hidden="true" className="mt-14 flex items-center gap-3 md:mt-20">
+          <span className="bg-varak-rule h-px flex-1" />
+          <span className="bg-varak-rule h-2 w-2 rotate-45" />
+        </div>
       </div>
 
-      {/* Saffron-strand parallax overlay — fastest layer */}
-      {!reduced && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 hidden md:block"
-          style={{ y: strandsY }}
-        >
-          {SAFFRON_STRANDS.map((s, i) => (
-            <span
-              key={i}
-              className="text-theme-accent absolute"
-              style={{
-                top: s.top,
-                left: s.left,
-                opacity: s.opacity,
-                transform: `rotate(${s.rotate}deg) scale(${s.scale})`,
-              }}
-            >
-              <svg width="18" height="28" viewBox="0 0 14 22">
-                <path
-                  d="M7 1 C 9 5, 11 9, 9 14 C 7.5 18, 7 20, 7 21 C 7 20, 6.5 18, 5 14 C 3 9, 5 5, 7 1 Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
-          ))}
-        </motion.div>
-      )}
-
-      <motion.div
-        className="container-site relative grid gap-10 pb-16 pt-10 md:grid-cols-[1.1fr_1fr] md:items-center md:pb-24 md:pt-14 lg:pb-28 lg:pt-16"
-        style={reduced ? undefined : { opacity: contentOpacity, y: contentY }}
-      >
-        {/* Copy column */}
-        <div className="relative z-10 flex flex-col gap-6">
-          <Reveal delay={0.05}>
-            <p className="text-theme-accent flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              <span
-                className="text-base font-normal normal-case tracking-normal"
-                style={{ fontFamily: 'var(--font-indic)' }}
-              >
-                {heroEyebrowIndic}
-              </span>
-              <span aria-hidden="true" className="opacity-50">
-                ·
-              </span>
-              <span>{heroEyebrowEn}</span>
-            </p>
-          </Reveal>
-
-          <TextKinetic
-            key={heroHeadline}
-            as="h1"
-            text={heroHeadline}
-            split="word"
-            gap={55}
-            className="font-display text-display-lg text-theme-ink md:text-display-xl leading-[1.02]"
-          />
-
-          <Reveal delay={0.25}>
-            <p className="text-theme-ink/75 max-w-xl text-lg leading-relaxed">{heroBody}</p>
-          </Reveal>
-
-          <Reveal delay={0.35}>
-            <div className="flex flex-wrap gap-3 pt-1">
-              <Link
-                href={primaryCtaHref}
-                className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-              >
-                {primaryCtaLabel}
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
-              <Link
-                href={secondaryCtaHref}
-                className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
-              >
-                {secondaryCtaLabel}
-              </Link>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.5}>
-            <dl className="text-theme-ink/60 mt-3 flex gap-8 text-xs">
-              <div>
-                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
-                  FSSAI certified
-                </dt>
-                <dd className="mt-1">Kitchen &amp; pack</dd>
-              </div>
-              <div>
-                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
-                  No preservatives
-                </dt>
-                <dd className="mt-1">Ever</dd>
-              </div>
-              <div>
-                <dt className="text-theme-ink/80 font-semibold uppercase tracking-wider">
-                  Fresh daily
-                </dt>
-                <dd className="mt-1">Same-day dispatch</dd>
-              </div>
-            </dl>
-          </Reveal>
-        </div>
-
-        {/* Visual column — premium showcase + quick browse strip + trust pill */}
-        <div className="relative z-10 flex flex-col gap-5">
-          <motion.div
-            style={reduced ? undefined : { y: imageY, scale: imageScale }}
-            className="relative mx-auto w-full max-w-[460px]"
-          >
-            {/*
-              Gold-foil gradient ring. The aspect-ratio sits on THIS div so the
-              inner card fills h-full w-full predictably. MouseParallax is dropped
-              — it was wrapping the inner card without forwarding height, which
-              caused the inner card to collapse and the gold ring to dominate.
-            */}
-            <div
-              className="shadow-lifted relative aspect-square rounded-[2rem] p-[3px]"
-              style={{
-                background:
-                  'linear-gradient(135deg, #f2c66f 0%, #c08a18 35%, #fff5d4 60%, #c08a18 80%, #8a5a10 100%)',
-              }}
-            >
-              <div
-                className="relative h-full w-full overflow-hidden rounded-[1.85rem]"
-                style={{ background: HERO_BACKDROP }}
-              >
-                {/* Premium stamp — top-left */}
-                <span className="bg-theme-ink/85 absolute left-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--theme-base)] backdrop-blur">
-                  <span
-                    aria-hidden="true"
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ backgroundColor: '#f2c66f' }}
-                  />
-                  Limited batch
-                </span>
-                {/* Italic eyebrow — top-right */}
-                <span
-                  className="font-display absolute right-6 top-5 z-10 text-sm italic"
-                  style={{ color: '#8a5a10' }}
-                >
-                  Today&rsquo;s pick
-                </span>
-
-                {/* Image fills the card centre (object-contain keeps the cutout intact) */}
-                <Image
-                  src={HERO_IMAGE}
-                  alt="Premium Kaju Katli — silver-leaf cashew diamonds from our Khammam kitchen"
-                  fill
-                  priority
-                  fetchPriority="high"
-                  sizes="(min-width: 1024px) 460px, (min-width: 640px) 60vw, 90vw"
-                  className="object-contain p-12 drop-shadow-[0_30px_50px_rgba(60,30,5,0.28)] md:p-16"
-                />
-                <Grain />
-
-                {/* Caption + CTA — anchored to the bottom */}
-                <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[#fdf6ec] via-[#fdf6ec]/85 to-transparent px-6 pb-5 pt-10">
-                  <div className="flex items-end justify-between gap-3">
-                    <div>
-                      <p className="font-display text-theme-ink text-lg md:text-xl">
-                        Premium Kaju Katli
-                      </p>
-                      <p className="text-theme-ink/55 mt-0.5 text-[10px] uppercase tracking-[0.18em]">
-                        250 g · silver leaf · cardamom
-                      </p>
-                    </div>
-                    <Link
-                      href="/product/kaju-katli"
-                      className="bg-theme-ink shadow-soft pointer-events-auto inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5"
-                    >
-                      ₹449
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Single subtle ornament — anchors the visual without crowding. */}
-          <motion.div
-            style={reduced ? undefined : { y: ornamentTopY, x: ornamentMidX }}
-            className="text-theme-accent/40 pointer-events-none absolute -right-2 -top-6 hidden md:block"
-            aria-hidden="true"
-          >
-            <Paisley size="lg" rotate={20} />
-          </motion.div>
-          <motion.div
-            style={reduced ? undefined : { y: ornamentBottomY }}
-            className="text-theme-glow/45 pointer-events-none absolute -bottom-4 -left-2 hidden md:block"
-            aria-hidden="true"
-          >
-            <Paisley size="md" rotate={200} />
-          </motion.div>
-
-          {/* Quick browse strip — fills the space below the showcase card with
-              three one-tap entry points into the most-loved categories. */}
-          <Reveal delay={0.55}>
-            <ul className="mx-auto grid w-full max-w-[460px] grid-cols-3 gap-2 md:gap-3">
-              {[
-                { slug: 'sweets', label: 'Sweets', sub: 'Bestsellers' },
-                { slug: 'gift-hampers', label: 'Hampers', sub: 'Festival-ready' },
-                { slug: 'savouries', label: 'Savoury', sub: 'Chai-time' },
-              ].map((c) => (
-                <li key={c.slug}>
-                  <Link
-                    href={`/category/${c.slug}`}
-                    className="bg-surface-elevated/85 hover:border-theme-accent hover:shadow-soft group flex h-full flex-col items-start justify-between gap-1 rounded-2xl border border-[color:var(--color-border)] p-3 backdrop-blur transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <span className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.18em]">
-                      {c.sub}
-                    </span>
-                    <span className="flex w-full items-center justify-between gap-1.5">
-                      <span className="font-display text-theme-ink text-sm">{c.label}</span>
-                      <ArrowRight
-                        className="text-theme-ink/40 group-hover:text-theme-accent h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-
-          {/* Trust + delivery pill — closes the right column with confidence */}
-          <Reveal delay={0.7}>
-            <div className="bg-surface-elevated/70 mx-auto flex w-full max-w-[460px] flex-wrap items-center justify-between gap-3 rounded-2xl border border-[color:var(--color-border)] px-5 py-3 backdrop-blur">
-              <div className="flex items-center gap-2.5">
-                <span
-                  aria-hidden="true"
-                  className="flex h-8 w-8 items-center justify-center rounded-full"
-                  style={{ backgroundColor: '#f2c66f' }}
-                >
-                  <Paisley size="sm" color="#3a1505" />
-                </span>
-                <div>
-                  <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
-                    Made fresh in Khammam
-                  </p>
-                  <p className="text-theme-ink/65 text-xs">
-                    Free shipping above ₹999 · ships across India
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/shop"
-                className="text-theme-ink/75 hover:text-theme-accent inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider"
-              >
-                Shop all
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </motion.div>
-
-      {/* Ambient bottom fade into page */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
-        style={{
-          background: 'linear-gradient(to top, var(--theme-base), transparent)',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Scroll cue */}
-      <Reveal delay={0.9} className="absolute bottom-6 left-1/2 -translate-x-1/2">
-        <div
-          className="text-theme-ink/50 flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em]"
-          aria-hidden="true"
-        >
-          <span>Scroll</span>
-          <span className="bg-theme-ink/25 h-8 w-px animate-pulse" />
-        </div>
-      </Reveal>
+      <Grain />
     </section>
   );
 }

@@ -13,19 +13,22 @@ const config: Config = {
       colors: {
         ...rawPalette,
         // semantic + theme tokens consumed via CSS vars
-        surface: 'var(--color-surface)',
-        'surface-elevated': 'var(--color-surface-elevated)',
-        'text-primary': 'var(--color-text-primary)',
-        'text-muted': 'var(--color-text-muted)',
-        accent: 'var(--color-accent)',
-        ring: 'var(--color-ring)',
-        'theme-base': 'var(--theme-base)',
-        'theme-accent': 'var(--theme-accent)',
-        'theme-glow': 'var(--theme-glow)',
-        'theme-ink': 'var(--theme-ink)',
+        // rgb(var(--x-rgb) / <alpha-value>) rather than var(--x), so opacity
+        // modifiers actually emit CSS. With a hex-valued var, `text-theme-ink/60`
+        // silently produces nothing — 1003 such usages were dead across the tree.
+        surface: 'rgb(var(--color-surface-rgb) / <alpha-value>)',
+        'surface-elevated': 'rgb(var(--color-surface-elevated-rgb) / <alpha-value>)',
+        'text-primary': 'rgb(var(--color-text-primary-rgb) / <alpha-value>)',
+        'text-muted': 'rgb(var(--color-text-muted-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent-rgb) / <alpha-value>)',
+        ring: 'rgb(var(--color-accent-rgb) / <alpha-value>)',
+        'theme-base': 'rgb(var(--theme-base-rgb) / <alpha-value>)',
+        'theme-accent': 'rgb(var(--theme-accent-rgb) / <alpha-value>)',
+        'theme-glow': 'rgb(var(--theme-glow-rgb) / <alpha-value>)',
+        'theme-ink': 'rgb(var(--theme-ink-rgb) / <alpha-value>)',
         // Brand tokens. `field` is the pista panel on light and the anjeer
         // panel on dark — it follows --theme-glow, which swaps per register.
-        field: 'var(--theme-glow)',
+        field: 'rgb(var(--theme-glow-rgb) / <alpha-value>)',
         'field-deep': 'var(--color-field-deep)',
         varak: 'var(--color-varak)',
         'varak-rule': 'var(--color-varak-rule)',

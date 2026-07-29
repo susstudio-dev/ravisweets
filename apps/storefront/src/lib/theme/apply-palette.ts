@@ -19,7 +19,7 @@
  * relative luminance. Hence a function rather than a stylesheet.
  */
 
-import { contrastRatio, isLightSurface, mix } from './contrast';
+import { contrastRatio, isLightSurface, mix, toChannels } from './contrast';
 import type { FlavourPalette } from './palette';
 
 /**
@@ -50,6 +50,17 @@ export const THEME_VAR_NAMES = [
   '--color-text-muted',
   '--color-accent',
   '--color-ring',
+  // Channel-valued twins. Tailwind needs `rgb(var(--x) / <alpha-value>)` to
+  // support opacity modifiers; a hex-valued var silently emits nothing.
+  '--theme-base-rgb',
+  '--theme-accent-rgb',
+  '--theme-glow-rgb',
+  '--theme-ink-rgb',
+  '--color-surface-rgb',
+  '--color-surface-elevated-rgb',
+  '--color-text-primary-rgb',
+  '--color-text-muted-rgb',
+  '--color-accent-rgb',
 ] as const;
 
 /**
@@ -124,6 +135,7 @@ export function applyPalette(p: FlavourPalette): ThemeVars {
   // surface that reads as raised — clamped so text stays legible on it.
   const textPrimary = deriveTextPrimary(p.ink, p.base);
   const surfaceElevated = deriveElevated(p.base, textPrimary, light);
+  const muted = deriveMuted(textPrimary, p.base);
 
   return {
     '--theme-base': p.base,
@@ -134,9 +146,18 @@ export function applyPalette(p: FlavourPalette): ThemeVars {
     '--color-surface': p.base,
     '--color-surface-elevated': surfaceElevated,
     '--color-text-primary': textPrimary,
-    '--color-text-muted': deriveMuted(textPrimary, p.base),
+    '--color-text-muted': muted,
     '--color-accent': p.accent,
     '--color-ring': p.accent,
+    '--theme-base-rgb': toChannels(p.base),
+    '--theme-accent-rgb': toChannels(p.accent),
+    '--theme-glow-rgb': toChannels(p.glow),
+    '--theme-ink-rgb': toChannels(p.ink),
+    '--color-surface-rgb': toChannels(p.base),
+    '--color-surface-elevated-rgb': toChannels(surfaceElevated),
+    '--color-text-primary-rgb': toChannels(textPrimary),
+    '--color-text-muted-rgb': toChannels(muted),
+    '--color-accent-rgb': toChannels(p.accent),
   };
 }
 

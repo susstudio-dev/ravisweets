@@ -81,7 +81,7 @@ export function FloatingContact() {
         href={`tel:+${PHONE_E164}`}
         aria-label="Call Ravi Sweets"
         title="+91 93988 59978"
-        className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full bg-[#c0592b] text-white shadow-lifted ring-2 ring-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#a04822] hover:ring-white/70"
+        className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-lifted ring-theme-base/40 hover:ring-theme-base/70 ring-2 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
       >
         <Phone className="h-[22px] w-[22px]" strokeWidth={2.4} aria-hidden="true" />
         <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-theme-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] opacity-0 shadow-soft transition-opacity duration-200 group-hover:opacity-100 md:block">

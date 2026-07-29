@@ -128,3 +128,35 @@ describe('the polarity helper agrees with the registers', () => {
     expect(isLightSurface(BIDRI.base)).toBe(false);
   });
 });
+
+describe('channel twins — the fix for dead opacity modifiers', () => {
+  it('emits a channel twin for every colour Tailwind binds with <alpha-value>', () => {
+    const vars = applyPalette(LIGHT);
+    for (const name of [
+      '--theme-base-rgb',
+      '--theme-accent-rgb',
+      '--theme-glow-rgb',
+      '--theme-ink-rgb',
+      '--color-surface-rgb',
+      '--color-surface-elevated-rgb',
+      '--color-text-primary-rgb',
+      '--color-text-muted-rgb',
+      '--color-accent-rgb',
+    ] as const) {
+      expect(vars[name], `missing ${name}`).toMatch(/^\d{1,3} \d{1,3} \d{1,3}$/);
+    }
+  });
+
+  it('keeps each channel twin in step with its hex counterpart', () => {
+    const vars = applyPalette(BIDRI);
+    expect(vars['--theme-ink-rgb']).toBe('242 237 224'); // #F2EDE0
+    expect(vars['--theme-base-rgb']).toBe('23 24 26'); // #17181A
+    expect(vars['--color-surface-elevated-rgb']).toBe(
+      vars['--color-surface-elevated']
+        .replace('#', '')
+        .match(/.{2}/g)!
+        .map((h) => parseInt(h, 16))
+        .join(' '),
+    );
+  });
+});

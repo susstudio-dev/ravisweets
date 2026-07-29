@@ -93,6 +93,18 @@ export function hue(hex: string): number {
   return Math.round((h + 360) % 360);
 }
 
+/**
+ * Space-separated sRGB channels, e.g. "34 30 26".
+ *
+ * Tailwind can only apply an opacity modifier (`text-theme-ink/60`) to a colour
+ * declared as `rgb(var(--x) / <alpha-value>)`, which requires the variable to
+ * hold CHANNELS, not a hex string. With hex-valued vars the modifier silently
+ * emits no CSS at all — 1003 such usages across this codebase were dead.
+ */
+export function toChannels(hex: string): string {
+  return parse(hex).join(' ');
+}
+
 /** Shortest distance between two hues, 0..180 degrees. */
 export function hueClearance(a: string, b: string): number {
   const d = Math.abs(hue(a) - hue(b)) % 360;

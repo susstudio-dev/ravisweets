@@ -18,6 +18,7 @@ import { EditorialScrollBand } from '@/components/sections/editorial-scroll-band
 import { SignatureMoment } from '@/components/sections/signature-moment';
 import { GiftingGuide } from '@/components/sections/gifting-guide';
 import { HOME_FLAGS } from '@/lib/flags/visual-v2';
+import { cn } from '@/lib/cn';
 
 // Home-route First Load JS budget raised from 180 KB → 185 KB in this change.
 // Per design.md Decision 10 of openspec/changes/app-polish-and-motion-depth,
@@ -38,7 +39,6 @@ const CATEGORIES = [
     slug: 'hyderabadi-specials',
     title: 'Hyderabadi Specials',
     blurb: 'Deccan classics',
-    accent: '#c0592b',
     image:
       'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
   },
@@ -46,28 +46,24 @@ const CATEGORIES = [
     slug: 'sweets',
     title: 'Sweets',
     blurb: 'Kaju Katli · Boondi Laddu · Mysore Pak',
-    accent: '#a56a0f',
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
   },
   {
     slug: 'savouries',
     title: 'Savouries',
     blurb: 'Andhra chai-time crunch',
-    accent: '#7b4610',
     image: 'https://ravisweets.com/wp-content/uploads/2025/08/karapusa.webp',
   },
   {
     slug: 'pickles',
     title: 'Pickles',
     blurb: 'Gongura · Allam · Mamidikaya',
-    accent: '#a83c10',
     image: 'https://ravisweets.com/wp-content/uploads/2025/08/gongura.webp',
   },
   {
     slug: 'gift-hampers',
     title: 'Gift Hampers',
     blurb: 'Diwali · Wedding · Corporate',
-    accent: '#7a4e0a',
     image:
       'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
   },
@@ -75,10 +71,32 @@ const CATEGORIES = [
     slug: 'healthy-sweets',
     title: 'Healthy Sweets',
     blurb: 'Sugar-free laddu range',
-    accent: '#6e4810',
     image: 'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
   },
 ];
+
+/*
+ * Category tiles used to carry six unrelated rust/brass accents, each painted
+ * as a radial gradient behind the product cutout. Six accents is six brands.
+ * They are now flat panels drawn from three system surfaces, rotated by index —
+ * the tiles differ in tone, not in hue family, so the grid reads as one set.
+ * Each tone carries its own ink so contrast never depends on luck.
+ *
+ * Muting is done with `opacity-*` on the element, not a `text-token/70` alpha
+ * modifier: Tailwind 3.4 emits NO rule for an alpha modifier on a colour
+ * declared as a bare `var(--x)`, so `text-theme-ink/65` and friends are dead
+ * classes in this config. Verified by running the Tailwind CLI over these
+ * exact class strings.
+ */
+const TILE_TONES = [
+  { panel: 'bg-field', ink: 'text-field-deep', cta: 'text-field-deep' },
+  { panel: 'bg-surface-elevated', ink: 'text-theme-ink', cta: 'text-theme-accent' },
+  {
+    panel: 'bg-theme-accent',
+    ink: 'text-[color:var(--theme-base)]',
+    cta: 'text-[color:var(--theme-base)]',
+  },
+] as const;
 
 const TRUST = [
   {
@@ -162,38 +180,45 @@ export default function HomePage() {
         </Reveal>
 
         <Stagger gap={70} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIES.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="shadow-soft hover:shadow-lifted group relative flex min-h-[14rem] flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--color-border)] p-5 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                background: `radial-gradient(ellipse at 30% 30%, color-mix(in oklab, ${cat.accent} 18%, var(--theme-base)) 0%, var(--theme-base) 75%)`,
-              }}
-            >
-              {/* Floating product cutout */}
-              <div className="pointer-events-none absolute -right-6 -top-4 h-36 w-36 transition-transform duration-500 group-hover:rotate-3 group-hover:scale-110 md:h-44 md:w-44">
-                <Image
-                  src={cat.image}
-                  alt=""
-                  fill
-                  sizes="200px"
-                  className="object-contain drop-shadow-[0_18px_28px_rgba(60,30,5,0.18)]"
-                />
-              </div>
-              <div className="relative max-w-[60%]">
-                <h3 className="font-display text-theme-ink text-xl md:text-2xl">{cat.title}</h3>
-                <p className="text-theme-ink/65 mt-1 text-xs">{cat.blurb}</p>
-              </div>
-              <div
-                className="relative inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1"
-                style={{ color: cat.accent }}
+          {CATEGORIES.map((cat, i) => {
+            // TILE_TONES is a fixed 3-tuple so the modulo always hits; the ??
+            // satisfies noUncheckedIndexedAccess without a cast.
+            const tone = TILE_TONES[i % TILE_TONES.length] ?? TILE_TONES[0];
+            return (
+              <Link
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className={cn(
+                  tone.panel,
+                  'shadow-soft hover:shadow-lifted group relative flex min-h-[14rem] flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--color-border)] p-5 transition-all duration-300 hover:-translate-y-1',
+                )}
               >
-                Explore
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
-              </div>
-            </Link>
-          ))}
+                {/* Floating product cutout */}
+                <div className="pointer-events-none absolute -right-6 -top-4 h-36 w-36 transition-transform duration-500 group-hover:rotate-3 group-hover:scale-110 md:h-44 md:w-44">
+                  <Image
+                    src={cat.image}
+                    alt=""
+                    fill
+                    sizes="200px"
+                    className="object-contain drop-shadow-[0_18px_28px_rgba(60,30,5,0.18)]"
+                  />
+                </div>
+                <div className="relative max-w-[60%]">
+                  <h3 className={cn('font-display text-xl md:text-2xl', tone.ink)}>{cat.title}</h3>
+                  <p className={cn('mt-1 text-xs opacity-70', tone.ink)}>{cat.blurb}</p>
+                </div>
+                <div
+                  className={cn(
+                    'relative inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1',
+                    tone.cta,
+                  )}
+                >
+                  Explore
+                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                </div>
+              </Link>
+            );
+          })}
         </Stagger>
       </section>
 
@@ -232,10 +257,7 @@ export default function HomePage() {
               key={item.title}
               className="bg-surface-elevated flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-6"
             >
-              <div
-                className="flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)]"
-                style={{ backgroundColor: 'var(--theme-accent)' }}
-              >
+              <div className="bg-theme-accent flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)]">
                 <item.icon className="h-5 w-5" aria-hidden="true" />
               </div>
               <h3 className="font-display text-theme-ink text-lg">{item.title}</h3>
@@ -282,35 +304,28 @@ export default function HomePage() {
       <FestivalTease />
 
       {/* Corporate CTA — now links to the builder */}
+      {/*
+        Bidri register: the dark ground, cream ink and pista accent all come
+        from data-register, so there is no dark hex to hand-maintain here. The
+        gold blur orbs that used to sit behind this panel are gone with the
+        rest of the gold.
+      */}
       <section className="container-site py-20">
         <Reveal direction="up" distance={20}>
           <div
-            className="relative overflow-hidden rounded-3xl p-8 md:p-12"
-            style={{ backgroundColor: '#2a1505', color: '#fdf6ec' }}
+            data-register="bidri"
+            className="bg-theme-base text-theme-ink overflow-hidden rounded-3xl p-8 md:p-12"
           >
-            <div
-              aria-hidden="true"
-              className="absolute -left-20 -top-20 h-72 w-72 rounded-full opacity-30 blur-3xl"
-              style={{ backgroundColor: '#e9ad4a' }}
-            />
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full opacity-20 blur-3xl"
-              style={{ backgroundColor: '#f2c66f' }}
-            />
-            <div className="relative flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
               <div className="max-w-2xl">
-                <p
-                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]"
-                  style={{ color: '#f2c66f' }}
-                >
-                  <Paisley size="sm" color="#f2c66f" />
+                <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
+                  <Paisley size="sm" />
                   For HR &amp; Admin teams
                 </p>
                 <h2 className="font-display text-display-md md:text-display-lg mt-3">
                   Corporate gifting, done the Hyderabadi way.
                 </h2>
-                <p className="mt-3 text-sm text-[#fdf6ec]/85 md:text-base">
+                <p className="mt-3 text-sm opacity-85 md:text-base">
                   Build a custom hamper in two minutes, or start from one of our three templates.
                   MOQ-based pricing, logo-printed packaging, multi-address delivery, GST-compliant
                   invoices. One dedicated account manager for your Diwali run.
@@ -319,14 +334,14 @@ export default function HomePage() {
               <div className="flex flex-col gap-2 md:shrink-0">
                 <Link
                   href="/corporate/builder?t=premium"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#e9ad4a] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f2c66f]"
+                  className="bg-theme-accent inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
                 >
                   Build a hamper
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
                   href="/corporate#enquiry"
-                  className="text-center text-xs font-semibold uppercase tracking-wider text-[#fdf6ec]/70 hover:text-[#f2c66f]"
+                  className="hover:text-theme-accent text-center text-xs font-semibold uppercase tracking-wider opacity-70 transition-all hover:opacity-100"
                 >
                   Or request a quote directly
                 </Link>

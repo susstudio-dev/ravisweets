@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import { getActivePromotion } from '@/lib/supabase/promotions';
+import { cn } from '@/lib/cn';
 
 /**
  * Top-of-page promo / flash-sale strip.
@@ -18,6 +19,16 @@ import { getActivePromotion } from '@/lib/supabase/promotions';
 const STORAGE_KEY = 'ravi.active.promo.v1';
 const DISMISSED_KEY = 'ravi.active.promo.dismissed.v1';
 
+/**
+ * Overlay tint mixed out of the strip's OWN foreground rather than out of
+ * white. `bg-white/15` silently assumed the strip was always dark; these
+ * derive from `currentColor`, so they read correctly on the token ground, on
+ * the bidri register, and on any campaign colour an admin picks.
+ */
+const TINT = 'bg-[color:color-mix(in_oklab,currentColor_16%,transparent)]';
+const TINT_HOVER = 'hover:bg-[color:color-mix(in_oklab,currentColor_16%,transparent)]';
+const HAIRLINE = 'border-[color:color-mix(in_oklab,currentColor_45%,transparent)]';
+
 export interface ActivePromo {
   id: string;
   message: string;
@@ -26,23 +37,32 @@ export interface ActivePromo {
   /** Where the CTA leads. */
   href: string;
   ctaLabel: string;
-  /** Hex pair for the gradient background. */
-  bgFrom: string;
-  bgTo: string;
-  /** Foreground colour. */
-  fg: string;
+  /**
+   * Optional campaign colours, set per-promo from /admin/promotions.
+   *
+   * Leave them off — as the evergreen promo below does — and the strip renders
+   * flat on `--theme-accent`, so it follows the palette and the active register
+   * instead of pinning site chrome to one campaign's colour. Supplying `bgFrom`
+   * alone gives a flat campaign band; supplying `bgTo` as well restores the
+   * two-stop gradient, which exists only for admin-authored campaigns.
+   */
+  bgFrom?: string;
+  bgTo?: string;
+  /** Foreground colour. Only meaningful alongside `bgFrom`. */
+  fg?: string;
   /** Optional ISO timestamp; strip auto-hides past this. */
   expiresAt?: string;
 }
 
+/**
+ * The always-on fallback. Deliberately carries no colour: it is site chrome,
+ * not a campaign, so it should re-theme with everything else.
+ */
 const EVERGREEN: ActivePromo = {
   id: 'evergreen-shipping',
   message: 'Free shipping across India on orders above ₹999',
   href: '/shop',
   ctaLabel: 'Shop now',
-  bgFrom: '#2a1505',
-  bgTo: '#5a3010',
-  fg: '#fdf6ec',
 };
 
 function readActivePromo(): ActivePromo {
@@ -58,6 +78,16 @@ function readActivePromo(): ActivePromo {
   } catch {
     return EVERGREEN;
   }
+}
+
+/**
+ * `promotions.bg_from`/`bg_to`/`fg` are NOT NULL, so a row always hands us a
+ * string. Blank means "no campaign colour" — that is how a promo opts back
+ * into the theme tokens once the column defaults stop being brand colours.
+ */
+function colour(value: string | null | undefined): string | undefined {
+  const v = value?.trim();
+  return v ? v : undefined;
 }
 
 function isDismissed(promoId: string): boolean {
@@ -94,9 +124,9 @@ export function PromoStrip() {
         code: row.code ?? undefined,
         href: row.href,
         ctaLabel: row.cta_label,
-        bgFrom: row.bg_from,
-        bgTo: row.bg_to,
-        fg: row.fg,
+        bgFrom: colour(row.bg_from),
+        bgTo: colour(row.bg_to),
+        fg: colour(row.fg),
         expiresAt: row.expires_at ?? undefined,
       };
       if (live.expiresAt && new Date(live.expiresAt).getTime() < Date.now()) return;
@@ -132,18 +162,38 @@ export function PromoStrip() {
   // Always render an empty placeholder on SSR so layout doesn't shift on hydrate.
   if (!mounted || dismissed) return null;
 
+  /*
+   * Campaign colours win when an admin sets them; otherwise the strip is a
+   * flat accent band on tokens. `color` is set once on the <aside> and every
+   * child inherits it, which is what lets the tints and the hairline below be
+   * pure `currentColor` mixes with no per-element style prop.
+   *
+   * Ground and foreground travel together — a campaign ground with no campaign
+   * foreground is how you get an illegible strip, so that case falls back to
+   * the tokens rather than half-applying.
+   */
+  const campaign = Boolean(promo.bgFrom && promo.fg);
+  const campaignStyle = campaign
+    ? {
+        background: promo.bgTo
+          ? `linear-gradient(90deg, ${promo.bgFrom} 0%, ${promo.bgTo} 100%)`
+          : promo.bgFrom,
+        color: promo.fg,
+      }
+    : undefined;
+
   return (
     <aside
       role="region"
       aria-label="Site-wide promotion"
-      className="relative isolate overflow-hidden"
-      style={{
-        background: `linear-gradient(90deg, ${promo.bgFrom} 0%, ${promo.bgTo} 100%)`,
-        color: promo.fg,
-      }}
+      className={cn(
+        'relative isolate overflow-hidden',
+        !campaign && 'bg-theme-accent text-[color:var(--theme-base)]',
+      )}
+      style={campaignStyle}
     >
       <div className="container-site flex items-center justify-center gap-3 px-4 py-2 text-xs font-medium md:text-sm">
-        <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" style={{ color: promo.fg }} />
+        <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         <p className="truncate">
           <span className="font-semibold">{promo.message}</span>
           {promo.code && (
@@ -151,11 +201,10 @@ export function PromoStrip() {
               {' '}
               · use code{' '}
               <span
-                className="ml-1 inline-block rounded-full px-2 py-0.5 font-mono text-[11px] font-bold"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.18)',
-                  color: promo.fg,
-                }}
+                className={cn(
+                  'rounded-pill ml-1 inline-block px-2 py-0.5 font-mono text-[11px] font-bold',
+                  TINT,
+                )}
               >
                 {promo.code}
               </span>
@@ -164,8 +213,11 @@ export function PromoStrip() {
         </p>
         <Link
           href={promo.href}
-          className="hidden shrink-0 rounded-full border px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-colors hover:bg-white/15 sm:inline-flex"
-          style={{ borderColor: `${promo.fg}55`, color: promo.fg }}
+          className={cn(
+            'rounded-pill hidden shrink-0 border px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-colors sm:inline-flex',
+            HAIRLINE,
+            TINT_HOVER,
+          )}
         >
           {promo.ctaLabel} →
         </Link>
@@ -173,8 +225,7 @@ export function PromoStrip() {
           type="button"
           onClick={handleDismiss}
           aria-label="Dismiss promotion"
-          className="ml-1 shrink-0 rounded-full p-1 transition-colors hover:bg-white/10"
-          style={{ color: promo.fg }}
+          className={cn('rounded-pill ml-1 shrink-0 p-1 transition-colors', TINT_HOVER)}
         >
           <X className="h-3.5 w-3.5" aria-hidden="true" />
         </button>

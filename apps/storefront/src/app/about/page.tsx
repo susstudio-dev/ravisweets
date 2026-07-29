@@ -213,30 +213,30 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
+      {/*
+        Same bidri panel as the corporate CTA on the home page — dark ground,
+        cream ink and pista accent all inherited from data-register, with the
+        gold blur orb deleted.
+      */}
       <section className="container-site pb-20">
         <Reveal>
           <div
-            className="relative overflow-hidden rounded-3xl p-8 md:p-12"
-            style={{ backgroundColor: '#2a1505', color: '#fdf6ec' }}
+            data-register="bidri"
+            className="bg-theme-base text-theme-ink overflow-hidden rounded-3xl p-8 md:p-12"
           >
-            <div
-              aria-hidden="true"
-              className="absolute -left-16 -top-20 h-64 w-64 rounded-full opacity-30 blur-3xl"
-              style={{ backgroundColor: '#e9ad4a' }}
-            />
-            <div className="relative flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
               <div className="max-w-2xl">
                 <h2 className="font-display text-display-md md:text-display-lg">
                   Come taste what we mean.
                 </h2>
-                <p className="mt-2 text-sm text-[#fdf6ec]/85 md:text-base">
+                <p className="mt-2 text-sm opacity-85 md:text-base">
                   Start with the Hyderabadi specials — Qubani ka Meetha and Badam ki Jali are where
                   most first-time customers begin.
                 </p>
               </div>
               <Link
                 href="/category/hyderabadi-specials"
-                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#e9ad4a] px-6 py-3 text-sm font-semibold text-[#2a1505] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f2c66f]"
+                className="bg-theme-accent inline-flex shrink-0 items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
               >
                 Shop Hyderabadi specials
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
