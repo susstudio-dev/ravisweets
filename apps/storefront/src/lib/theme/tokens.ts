@@ -9,19 +9,19 @@
  * zero Tailwind-class usages across the entire tree, so nothing consumed them
  * except by hand-copying hex. Gold is deleted deliberately — see palette.ts.
  */
-import { ANJEER_PISTA, BIDRI_TOKENS, LIGHT } from './palette';
+import { ROSE_CREAM, DUSK_TOKENS, LIGHT } from './palette';
 
 export type { FlavourPalette } from './palette';
-export { ANJEER_PISTA, BIDRI_TOKENS, LIGHT, BIDRI, PRODUCT_PALETTES } from './palette';
+export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palette';
 
 /** Projected into Tailwind. Semantic names only — no numeric brand ramp. */
 export const rawPalette = {
-  cream: ANJEER_PISTA.base,
-  ink: ANJEER_PISTA.ink,
-  anjeer: { DEFAULT: ANJEER_PISTA.accent, deep: ANJEER_PISTA.accentDeep },
-  pista: { DEFAULT: ANJEER_PISTA.field, deep: '#4F6024' },
-  varak: { DEFAULT: ANJEER_PISTA.varak, rule: ANJEER_PISTA.varakRule },
-  gunmetal: { DEFAULT: BIDRI_TOKENS.base, elevated: BIDRI_TOKENS.surfaceElevated },
+  cream: ROSE_CREAM.base,
+  ink: ROSE_CREAM.ink,
+  rose: { DEFAULT: ROSE_CREAM.accent, deep: ROSE_CREAM.accentDeep },
+  marigold: { DEFAULT: ROSE_CREAM.field, deep: '#DCC372' },
+  varak: { DEFAULT: ROSE_CREAM.varak, rule: ROSE_CREAM.varakRule },
+  plum: { DEFAULT: DUSK_TOKENS.base, elevated: DUSK_TOKENS.surfaceElevated },
   neutral: {
     50: '#FAFAF9',
     100: '#F5F5F4',

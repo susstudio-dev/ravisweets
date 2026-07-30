@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { contrastRatio, isLightSurface, relativeLuminance } from './contrast';
-import { BIDRI, LIGHT, type FlavourPalette } from './palette';
+import { DUSK, LIGHT, type FlavourPalette } from './palette';
 import { THEME_VAR_NAMES, applyPalette, paletteToCss } from './apply-palette';
 
 /** A mid-tone base an admin could plausibly type into /admin/themes. */
@@ -22,7 +22,7 @@ const LEGACY_DARK: FlavourPalette = {
 };
 
 describe('completeness', () => {
-  it.each([LIGHT, BIDRI, MIDTONE, LEGACY_DARK])('sets every declared variable', (palette) => {
+  it.each([LIGHT, DUSK, MIDTONE, LEGACY_DARK])('sets every declared variable', (palette) => {
     const vars = applyPalette(palette);
     for (const name of THEME_VAR_NAMES) {
       expect(vars[name], `missing ${name}`).toBeDefined();
@@ -60,9 +60,9 @@ describe('polarity', () => {
   });
 
   it('raises an elevated surface away from the ground on a dark base', () => {
-    const vars = applyPalette(BIDRI);
+    const vars = applyPalette(DUSK);
     expect(relativeLuminance(vars['--color-surface-elevated'])).toBeGreaterThan(
-      relativeLuminance(BIDRI.base),
+      relativeLuminance(DUSK.base),
     );
   });
 
@@ -72,16 +72,16 @@ describe('polarity', () => {
     expect(contrastRatio(vars['--color-surface-elevated'], '#FAF9F0')).toBeLessThan(1.06);
   });
 
-  it('lands close to the authored bidri surfaceElevated', () => {
-    const vars = applyPalette(BIDRI);
-    expect(contrastRatio(vars['--color-surface-elevated'], '#202225')).toBeLessThan(1.15);
+  it('lands close to the authored dusk surfaceElevated', () => {
+    const vars = applyPalette(DUSK);
+    expect(contrastRatio(vars['--color-surface-elevated'], '#4A2A3F')).toBeLessThan(1.15);
   });
 });
 
 describe('derived tokens stay readable on every register', () => {
   it.each([
     ['light', LIGHT],
-    ['bidri', BIDRI],
+    ['dusk', DUSK],
     ['midtone', MIDTONE],
     ['legacy dark', LEGACY_DARK],
   ] as const)('%s keeps primary text at AA on both surfaces', (_label, palette) => {
@@ -96,7 +96,7 @@ describe('derived tokens stay readable on every register', () => {
 
   it.each([
     ['light', LIGHT],
-    ['bidri', BIDRI],
+    ['dusk', DUSK],
     ['legacy dark', LEGACY_DARK],
   ] as const)('%s keeps muted text at AA on the ground', (_label, palette) => {
     const vars = applyPalette(palette);
@@ -125,7 +125,7 @@ describe('paletteToCss', () => {
 describe('the polarity helper agrees with the registers', () => {
   it('reads light as light and bidri as dark', () => {
     expect(isLightSurface(LIGHT.base)).toBe(true);
-    expect(isLightSurface(BIDRI.base)).toBe(false);
+    expect(isLightSurface(DUSK.base)).toBe(false);
   });
 });
 
@@ -148,9 +148,9 @@ describe('channel twins — the fix for dead opacity modifiers', () => {
   });
 
   it('keeps each channel twin in step with its hex counterpart', () => {
-    const vars = applyPalette(BIDRI);
-    expect(vars['--theme-ink-rgb']).toBe('242 237 224'); // #F2EDE0
-    expect(vars['--theme-base-rgb']).toBe('23 24 26'); // #17181A
+    const vars = applyPalette(DUSK);
+    expect(vars['--theme-ink-rgb']).toBe('246 234 216'); // #F6EAD8
+    expect(vars['--theme-base-rgb']).toBe('58 31 49'); // #3A1F31
     expect(vars['--color-surface-elevated-rgb']).toBe(
       vars['--color-surface-elevated']
         .replace('#', '')

@@ -1,38 +1,36 @@
 /**
- * ANJEER & PISTA — the single source of truth for every brand colour.
+ * ROSE & CREAM — the single source of truth for every brand colour.
  *
- * Named for the two most expensive ingredients in the catalogue, which is also
- * why it reads as premium: anjeer (fig) purple and pista (pistachio) green are
- * an established Indian sweet pairing, not an imported colour scheme.
+ * The identity's organising image is the Ravi Sweets shopfront at dusk: cream
+ * plaster, the rose-striped awning, marigold lamplight in the display windows,
+ * brass scale-weights on the counter. Every token maps to that scene.
  *
  * Design decisions encoded here, from
- * docs/superpowers/specs/2026-07-26-storefront-art-direction-design.md:
+ * docs/superpowers/specs/2026-07-31-shop-at-dusk-redesign-design.md:
  *
- *  - GOLD IS DELETED. Every competitor signals premium with gold; silver leaf
- *    (varak) is what is actually on kaju katli, and no sampled competitor uses
- *    a silver/cool-grey cue.
- *  - INK IS WARM CHARCOAL, NOT PLUM-BLACK. The previous #1F1820 sat at hue 292,
- *    only 16 degrees from the accent, which would make links read as body text.
- *    #221E1A is at hue 30 — 82 degrees of separation. Functional, not cosmetic.
- *  - THE ACCENT SITS IN A NARROW WINDOW. Cadbury owns purple in Indian
- *    confectionery (hue 263) and Bombay Sweet Shop owns wine (hue 336). The
- *    usable gap at >=25 degrees clearance from both is hue 288-311; the accent
- *    is at 308, so it reads as fig rather than violet.
- *  - THE TWO BRAND COLOURS SWAP ROLES BETWEEN REGISTERS. Pista is the field on
- *    light and the interactive colour on dark; anjeer is interactive on light
- *    and a panel colour on dark.
+ *  - ROSE IS THE OWNER'S CALL. #A8345D sits ~3 degrees from Bombay Sweet
+ *    Shop's wine hue. The owner was shown that finding and chose rose anyway
+ *    (spec section 1 and 14); palette.test.ts pins the proximity so any future
+ *    accent change re-surfaces the decision instead of silently waiving it.
+ *  - GOLD IS DEMOTED, NOT DELETED. varak/varakRule are brass, allowed only as
+ *    hairlines, dividers and small marks — never fills, frames or gradients.
+ *  - MARIGOLD IS THE LAMPLIGHT. The `field` slot (stored as `glow` in the DB
+ *    shape) is a warm wash and hover glow, not a text panel; the only text
+ *    asserted on it is ink.
+ *  - THE TWO REGISTERS SWAP ROLES. Rose is interactive on light and a panel
+ *    on dusk; marigold is the glow on light and interactive on dusk.
  *
- * palette.test.ts asserts every contrast pair and hue clearance, so this file
- * cannot drift out of spec silently.
+ * palette.test.ts asserts every contrast pair, so this file cannot drift out
+ * of spec silently.
  */
 
 /**
  * The four colours an admin can author via /admin/themes, plus grain.
  *
  * This shape is the `palette` jsonb column on `theme_presets` and the
- * `theme_palette` field on Product. DO NOT rename these keys — 13 seeded DB
- * rows and 3 SQL files depend on them. Note that `glow` is the stored name for
- * what the design calls the "field".
+ * `theme_palette` field on Product. DO NOT rename these keys — the seed SQL
+ * and the admin editor depend on them. Note that `glow` is the stored name
+ * for what the design calls the "field".
  */
 export interface FlavourPalette {
   base: string;
@@ -55,30 +53,30 @@ export interface RegisterTokens {
   varakRule: string;
 }
 
-/** Light register — the default, and the only one used for shop/PDP/cart/checkout. */
-export const ANJEER_PISTA: RegisterTokens = {
-  base: '#F1F0E2', // pista-cream ground; never #ffffff
-  surfaceElevated: '#FAF9F0',
-  ink: '#221E1A', // warm charcoal, hue 30
-  inkMuted: '#5C5347',
-  accent: '#5E2757', // anjeer, hue 308
-  accentDeep: '#3E1938',
-  field: '#C9D99C', // pista, hue 76 — unowned by every competitor measured
-  varak: '#9A9EA3', // decorative silver fill
-  varakRule: '#7E8286', // informational hairline; must clear 3:1, #9A9EA3 does not
+/** Light register — the default, used everywhere commerce happens. */
+export const ROSE_CREAM: RegisterTokens = {
+  base: '#FAF5E9', // cream plaster; never #ffffff
+  surfaceElevated: '#FFFDF6', // butter paper
+  ink: '#2E2118', // teak counter
+  inkMuted: '#6B5A48',
+  accent: '#A8345D', // the awning rose — links, filled CTAs
+  accentDeep: '#7C2344', // awning in shadow
+  field: '#E8A13C', // marigold lamplight — glow washes, never a text panel
+  varak: '#B08D57', // brass, decorative only
+  varakRule: '#9C7C45', // brass hairline; must clear 3:1, #B08D57 does not
 };
 
-/** Bidri register — gunmetal + silver inlay. Story, drops, gifting only. */
-export const BIDRI_TOKENS: RegisterTokens = {
-  base: '#17181A', // Bidar patina gunmetal
-  surfaceElevated: '#202225',
-  ink: '#F2EDE0',
-  inkMuted: '#A7A49B',
-  accent: '#C9D99C', // pista becomes the interactive colour on dark
-  accentDeep: '#8FA85C',
-  field: '#3E1938', // anjeer becomes a panel colour on dark
-  varak: '#C8CBD0', // silver inlay
-  varakRule: '#C8CBD0',
+/** Dusk register — the hero scene's own sky. Story, festival, corporate, footer. */
+export const DUSK_TOKENS: RegisterTokens = {
+  base: '#3A1F31', // deep plum dusk
+  surfaceElevated: '#4A2A3F',
+  ink: '#F6EAD8',
+  inkMuted: '#CBB3A6',
+  accent: '#E8A13C', // marigold becomes the interactive colour on dark
+  accentDeep: '#F2B15C',
+  field: '#7C2344', // rose becomes a panel colour on dark
+  varak: '#D9C6A8', // brass inlay
+  varakRule: '#D9C6A8',
 };
 
 /** Reduce a register to the four authored keys the DB and admin understand. */
@@ -86,55 +84,55 @@ function toFlavour(t: RegisterTokens, grainOpacity: number): FlavourPalette {
   return { base: t.base, accent: t.accent, glow: t.field, ink: t.ink, grainOpacity };
 }
 
-export const LIGHT: FlavourPalette = toFlavour(ANJEER_PISTA, 0.05);
-export const BIDRI: FlavourPalette = toFlavour(BIDRI_TOKENS, 0.07);
+export const LIGHT: FlavourPalette = toFlavour(ROSE_CREAM, 0.05);
+export const DUSK: FlavourPalette = toFlavour(DUSK_TOKENS, 0.07);
 
 /**
- * Named product palettes, replacing 26 hand-typed brass literals that differed
- * by 1-3 hex digits and were all from the pre-2026 "brass & ghee" era.
+ * Named product palettes. Every one is a tonal variation of Rose & Cream, so
+ * a product page never repaints the site a different brand.
  *
- * Every one is a tonal variation of Anjeer & Pista, so a product page no longer
- * repaints the site a different brand. Assignment of products to palettes
- * happens in Plan 3.
+ * NOTE: this set is deliberately duplicated in
+ * packages/shared/src/catalogue/palettes.ts (the shared package cannot import
+ * upward). If you change a value here, change it there too.
  */
 export const PRODUCT_PALETTES = {
   /** Default for sweets — the house palette. */
   house: LIGHT,
-  /** Nut-forward: kaju, badam, pista. Leans further into the field colour. */
-  pista: {
-    base: '#EDEFDD',
-    accent: '#4F6024',
-    glow: '#C9D99C',
-    ink: '#221E1A',
+  /** Nut-forward: kaju, badam, pista, cashew. Roasted-almond warmth. */
+  badam: {
+    base: '#F7EFE2',
+    accent: '#7A4A21',
+    glow: '#DDBE8E',
+    ink: '#2E2118',
     grainOpacity: 0.05,
   },
-  /** Fig / date / dry-fruit. Anjeer-forward. */
-  anjeer: {
-    base: '#F2EEE8',
-    accent: '#5E2757',
-    glow: '#C6A8BE',
-    ink: '#221E1A',
+  /** Dried fruit and floral: fig, date, apricot, rose preserves. */
+  gulkand: {
+    base: '#FAEEE9',
+    accent: '#962D53',
+    glow: '#E9B9C9',
+    ink: '#2E2118',
     grainOpacity: 0.05,
   },
-  /** Savouries and pickles — warmer, earthier ground, still in-system. */
-  savoury: {
-    base: '#F1ECDD',
-    accent: '#5A4A1E',
-    glow: '#D3C88F',
-    ink: '#221E1A',
+  /** Savouries, namkeens, podis — fried-gold, turmeric-deep. */
+  kesar: {
+    base: '#F8F0DC',
+    accent: '#7A5A14',
+    glow: '#DCC372',
+    ink: '#2E2118',
     grainOpacity: 0.06,
   },
-  /** Premium hampers and the Vault drop — the dark register. */
-  vault: BIDRI,
+  /** Premium hampers and drops — the dusk register as a product palette. */
+  hamper: DUSK,
 } as const satisfies Record<string, FlavourPalette>;
 
 export type ProductPaletteName = keyof typeof PRODUCT_PALETTES;
 
 /**
- * Measured competitor colours the accent must clear by >=25 degrees of hue.
- * All extracted from live production CSS on 2026-07-26 except Cadbury, which
- * is Pantone 2685C. Cadbury is the largest confectionery brand in India and was
- * missing from the original research set.
+ * Measured competitor colours, extracted from live production CSS on
+ * 2026-07-26 except Cadbury, which is Pantone 2685C. The accent must clear
+ * Cadbury by >=25 degrees; the Bombay Sweet Shop proximity is an accepted,
+ * pinned exception — see palette.test.ts.
  */
 export const COMPETITOR_HUES: Record<string, string> = {
   'Cadbury Dairy Milk (2685C)': '#3F1B7A',

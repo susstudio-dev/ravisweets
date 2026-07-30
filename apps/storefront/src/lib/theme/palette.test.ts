@@ -1,24 +1,25 @@
 import { describe, expect, it } from 'vitest';
 import { contrastRatio, hueClearance } from './contrast';
-import { ANJEER_PISTA, BIDRI_TOKENS, COMPETITOR_HUES, PRODUCT_PALETTES } from './palette';
+import { COMPETITOR_HUES, DUSK_TOKENS, PRODUCT_PALETTES, ROSE_CREAM } from './palette';
 
 const AA_TEXT = 4.5;
 const AA_UI = 3.0;
 
-describe('light register — every pair in spec section 3', () => {
-  const t = ANJEER_PISTA;
+describe('light register — every pair in spec §2.1', () => {
+  const t = ROSE_CREAM;
   const pairs: ReadonlyArray<[string, string, string, number]> = [
     ['ink on base', t.ink, t.base, AA_TEXT],
     ['inkMuted on base', t.inkMuted, t.base, AA_TEXT],
+    ['inkMuted on surfaceElevated', t.inkMuted, t.surfaceElevated, AA_TEXT],
     ['ink on surfaceElevated', t.ink, t.surfaceElevated, AA_TEXT],
+    // field is the marigold glow: a wash and panel ground for INK, never for
+    // accent-coloured text. The old accent-on-field pair is deliberately gone.
     ['ink on field', t.ink, t.field, AA_TEXT],
     ['accent on base', t.accent, t.base, AA_TEXT],
     ['base on accent', t.base, t.accent, AA_TEXT],
     ['accent on surfaceElevated', t.accent, t.surfaceElevated, AA_TEXT],
-    ['accent on field', t.accent, t.field, AA_TEXT],
-    ['field on accent', t.field, t.accent, AA_TEXT],
     ['accentDeep on base', t.accentDeep, t.base, AA_TEXT],
-    ['accentDeep on field', t.accentDeep, t.field, AA_TEXT],
+    ['accentDeep on field', t.accentDeep, t.field, AA_UI],
     ['varakRule on base', t.varakRule, t.base, AA_UI],
   ];
 
@@ -27,8 +28,8 @@ describe('light register — every pair in spec section 3', () => {
   });
 });
 
-describe('bidri register — every pair in spec section 3', () => {
-  const t = BIDRI_TOKENS;
+describe('dusk register — every pair in spec §2.2', () => {
+  const t = DUSK_TOKENS;
   const pairs: ReadonlyArray<[string, string, string, number]> = [
     ['ink on base', t.ink, t.base, AA_TEXT],
     ['inkMuted on base', t.inkMuted, t.base, AA_TEXT],
@@ -37,8 +38,10 @@ describe('bidri register — every pair in spec section 3', () => {
     ['base on accent', t.base, t.accent, AA_TEXT],
     ['varak on base', t.varak, t.base, AA_TEXT],
     ['accentDeep on base', t.accentDeep, t.base, AA_UI],
-    ['ink on anjeer panel', t.ink, t.field, AA_TEXT],
-    ['accent on anjeer panel', t.accent, t.field, AA_TEXT],
+    ['ink on rose panel', t.ink, t.field, AA_TEXT],
+    // marigold on the rose panel is UI-decoration scale only, never body text
+    ['accent on rose panel', t.accent, t.field, AA_UI],
+    ['accentDeep on rose panel', t.accentDeep, t.field, AA_TEXT],
   ];
 
   it.each(pairs)('%s meets its minimum', (_label, fg, bg, min) => {
@@ -46,26 +49,36 @@ describe('bidri register — every pair in spec section 3', () => {
   });
 });
 
-describe('accent must not collide with the category', () => {
-  // Cadbury owns purple in Indian confectionery; Bombay Sweet Shop owns the
-  // wine that the old Ravi Sweets rose collided with at 3 degrees.
-  it.each(Object.entries(COMPETITOR_HUES))(
-    'clears %s by at least 25 degrees',
-    (_name, competitor) => {
-      expect(hueClearance(ANJEER_PISTA.accent, competitor)).toBeGreaterThanOrEqual(25);
-    },
-  );
+describe('hue positioning — spec §1: the collision is accepted, not accidental', () => {
+  it('clears Cadbury purple, the category owner, by at least 25 degrees', () => {
+    expect(
+      hueClearance(ROSE_CREAM.accent, COMPETITOR_HUES['Cadbury Dairy Milk (2685C)']!),
+    ).toBeGreaterThanOrEqual(25);
+  });
 
-  it('does not reintroduce the old rose hue', () => {
-    expect(hueClearance(ANJEER_PISTA.accent, '#A8345D')).toBeGreaterThanOrEqual(25);
+  it('pins the owner-accepted Bombay Sweet Shop proximity so a future accent change re-evaluates it', () => {
+    // Rose #A8345D sits ~3 degrees from BSS wine. The owner was shown this and
+    // chose rose anyway (spec 2026-07-31 §1, §14). If this assertion ever
+    // fails, the accent moved — re-read that decision before deleting this.
+    expect(hueClearance(ROSE_CREAM.accent, COMPETITOR_HUES['Bombay Sweet Shop wine']!)).toBeLessThan(
+      25,
+    );
+  });
+
+  it('is exactly the owner-approved rose', () => {
+    expect(ROSE_CREAM.accent.toUpperCase()).toBe('#A8345D');
   });
 });
 
 describe('product palettes', () => {
-  it('replaces the 26 stale brass literals with a small named set', () => {
-    const names = Object.keys(PRODUCT_PALETTES);
-    expect(names.length).toBeGreaterThanOrEqual(4);
-    expect(names.length).toBeLessThanOrEqual(8);
+  it('stays a small named set', () => {
+    expect(Object.keys(PRODUCT_PALETTES)).toEqual([
+      'house',
+      'badam',
+      'gulkand',
+      'kesar',
+      'hamper',
+    ]);
   });
 
   it.each(Object.entries(PRODUCT_PALETTES))(

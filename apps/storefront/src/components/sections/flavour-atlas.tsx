@@ -34,21 +34,21 @@ const FLAVOURS: Flavour[] = [
     name: 'Qubani ka Meetha',
     telugu: 'ఖుబానీ',
     note: 'Saffron · Apricot · Malai',
-    palette: { accent: PRODUCT_PALETTES.anjeer.accent, glow: PRODUCT_PALETTES.anjeer.glow },
+    palette: { accent: PRODUCT_PALETTES.gulkand.accent, glow: PRODUCT_PALETTES.gulkand.glow },
   },
   {
     id: 'kaju',
     name: 'Kaju Katli',
     telugu: 'కాజు',
     note: 'Cashew · Silver leaf · Cardamom',
-    palette: { accent: PRODUCT_PALETTES.pista.accent, glow: PRODUCT_PALETTES.pista.glow },
+    palette: { accent: PRODUCT_PALETTES.badam.accent, glow: PRODUCT_PALETTES.badam.glow },
   },
   {
     id: 'double',
     name: 'Double ka Meetha',
     telugu: 'డబుల్',
     note: 'Pistachio · Rabri · Saffron',
-    palette: { accent: PRODUCT_PALETTES.pista.accent, glow: PRODUCT_PALETTES.pista.glow },
+    palette: { accent: PRODUCT_PALETTES.badam.accent, glow: PRODUCT_PALETTES.badam.glow },
   },
   {
     id: 'badam',
@@ -62,14 +62,14 @@ const FLAVOURS: Flavour[] = [
     name: 'Diwali Hamper',
     telugu: 'దీపావళి',
     note: 'Saffron · Brass · Gold-leaf',
-    palette: { accent: PRODUCT_PALETTES.anjeer.accent, glow: PRODUCT_PALETTES.anjeer.glow },
+    palette: { accent: PRODUCT_PALETTES.gulkand.accent, glow: PRODUCT_PALETTES.gulkand.glow },
   },
   {
     id: 'mixture',
     name: 'Hyderabadi Mixture',
     telugu: 'మిక్చర్',
     note: 'Peanut · Curry leaf · Chilli',
-    palette: { accent: PRODUCT_PALETTES.savoury.accent, glow: PRODUCT_PALETTES.savoury.glow },
+    palette: { accent: PRODUCT_PALETTES.kesar.accent, glow: PRODUCT_PALETTES.kesar.glow },
   },
 ];
 

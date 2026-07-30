@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MousePointer2 } from 'lucide-react';
 
-import { ANJEER_PISTA } from '@/lib/theme/palette';
+import { ROSE_CREAM } from '@/lib/theme/palette';
 
 /**
  * Katli Cursor — turn your mouse pointer into the signature katli cut.
@@ -25,16 +25,13 @@ const STORAGE_KEY = 'ravi.cursor.v1';
 /**
  * The katli mark, built from the light register's authored tokens.
  *
- * Pista field with a varak edge and a varak-rule score line: the same three
- * colours the katli device uses everywhere else in the system. The light
- * register is the source here because a cursor is a single bitmap for the whole
- * document — it cannot re-render per section — and this combination stays
- * legible over both the cream ground and the bidri gunmetal one.
+ * Marigold field with a brass edge and score line — the lamplight colours,
+ * legible over both the cream ground and the dusk plum one.
  */
-const KATLI_FIELD = ANJEER_PISTA.field;
-const KATLI_EDGE = ANJEER_PISTA.varak;
-const KATLI_SCORE = ANJEER_PISTA.varakRule;
-const KATLI_SHADOW = ANJEER_PISTA.ink;
+const KATLI_FIELD = ROSE_CREAM.field;
+const KATLI_EDGE = ROSE_CREAM.varak;
+const KATLI_SCORE = ROSE_CREAM.varakRule;
+const KATLI_SHADOW = ROSE_CREAM.ink;
 
 /** The cut itself, single-sourced so the cursor and the on-screen mark agree. */
 const KATLI_EDGE_POINTS = '16,3.5 28.5,16 16,28.5 3.5,16';
