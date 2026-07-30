@@ -27,11 +27,11 @@ interface EditorialBandProps {
 }
 
 /**
- * Full-bleed editorial band — flat Bidri ground, large type, scroll-linked
+ * Full-bleed editorial band — flat dusk plum ground, large type, scroll-linked
  * background drift (parallax) and scale. Text stays stationary; image moves.
  * Reduced-motion collapses to a static full-bleed.
  *
- * The ground is a single flat colour block from the Bidri register, not a
+ * The ground is a single flat colour block from the dusk register, not a
  * gradient: `data-register="dusk"` re-themes the whole subtree, so every
  * colour below is a token and the band follows the palette.
  */
@@ -71,7 +71,7 @@ export function EditorialBand({
     >
       {/* Background product accent — a cutout PNG contained on the right. Held
           below full opacity so the foreground type wins. No blend mode and no
-          glow: on the matte Bidri ground the still carries itself. */}
+          glow: on the matte dusk plum ground the still carries itself. */}
       <motion.div
         style={reduced ? undefined : { y: bgY, scale: bgScale }}
         className="pointer-events-none absolute -right-10 top-1/2 hidden h-[110%] w-[55%] -translate-y-1/2 md:block"

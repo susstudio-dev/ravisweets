@@ -23,7 +23,7 @@ const DISMISSED_KEY = 'ravi.active.promo.dismissed.v1';
  * Overlay tint mixed out of the strip's OWN foreground rather than out of
  * white. `bg-white/15` silently assumed the strip was always dark; these
  * derive from `currentColor`, so they read correctly on the token ground, on
- * the bidri register, and on any campaign colour an admin picks.
+ * the dusk register, and on any campaign colour an admin picks.
  */
 const TINT = 'bg-[color:color-mix(in_oklab,currentColor_16%,transparent)]';
 const TINT_HOVER = 'hover:bg-[color:color-mix(in_oklab,currentColor_16%,transparent)]';

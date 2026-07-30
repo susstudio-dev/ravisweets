@@ -123,7 +123,7 @@ describe('paletteToCss', () => {
 });
 
 describe('the polarity helper agrees with the registers', () => {
-  it('reads light as light and bidri as dark', () => {
+  it('reads light as light and dusk as dark', () => {
     expect(isLightSurface(LIGHT.base)).toBe(true);
     expect(isLightSurface(DUSK.base)).toBe(false);
   });

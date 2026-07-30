@@ -11,8 +11,8 @@ import { SIGNATURE_MOMENT } from './signature-moment.meta';
 
 /**
  * A scrim stop expressed as a share of the register's OWN ground colour, so the
- * mask follows the palette instead of a baked cocoa. Inside the Bidri subtree
- * `--theme-base` is gunmetal; if the register ever changes, the scrim does too.
+ * mask follows the palette instead of a baked cocoa. Inside the dusk subtree
+ * `--theme-base` is plum; if the register ever changes, the scrim does too.
  */
 function scrim(percent: number): string {
   return `color-mix(in oklab, var(--theme-base) ${percent}%, transparent)`;
@@ -23,8 +23,8 @@ function scrim(percent: number): string {
  * screenshot when someone shares the site. Placed between FlavourAtlas
  * and Featured on the home page.
  *
- * Renders in the Bidri register: the whole subtree re-themes to gunmetal +
- * cream + pista from the one `data-register` attribute, so this file carries
+ * Renders in the dusk register: the whole subtree re-themes to plum +
+ * cream + marigold from the one `data-register` attribute, so this file carries
  * no colour of its own.
  *
  * Spec: openspec/changes/app-polish-and-motion-depth/specs/signature-home-moment

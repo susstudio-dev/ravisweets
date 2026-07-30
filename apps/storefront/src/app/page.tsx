@@ -305,7 +305,7 @@ export default function HomePage() {
 
       {/* Corporate CTA — now links to the builder */}
       {/*
-        Bidri register: the dark ground, cream ink and pista accent all come
+        Dusk register: the plum ground, cream ink and marigold accent all come
         from data-register, so there is no dark hex to hand-maintain here. The
         gold blur orbs that used to sit behind this panel are gone with the
         rest of the gold.

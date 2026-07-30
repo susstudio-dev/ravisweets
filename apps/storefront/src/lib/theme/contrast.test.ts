@@ -43,8 +43,8 @@ describe('isLightSurface', () => {
     expect(isLightSurface('#F1F0E2')).toBe(true);
   });
 
-  it('classifies the bidri gunmetal base as dark', () => {
-    expect(isLightSurface('#17181A')).toBe(false);
+  it('classifies the dusk plum base as dark', () => {
+    expect(isLightSurface('#3A1F31')).toBe(false);
   });
 
   it('classifies the legacy dark product base as dark', () => {

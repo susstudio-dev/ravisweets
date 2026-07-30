@@ -67,7 +67,7 @@ const PERSONAS: Persona[] = [
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
     register: 'dusk',
     panel: 'bg-surface',
-    // Inside dusk this is pista on gunmetal.
+    // Inside dusk this is marigold on plum.
     eyebrowTone: 'text-theme-accent',
   },
   {
@@ -152,7 +152,7 @@ export function GiftingGuide() {
               {/*
                * Accent chip. `--theme-base` is always the ground `--theme-accent`
                * was picked to sit on, in either register — cream on anjeer here,
-               * gunmetal on pista inside the dusk card — so one class pair is
+               * marigold on plum inside the dusk card — so one class pair is
                * contrast-correct on all three panels.
                */}
               <span className="bg-theme-accent ease-standard rounded-pill mt-4 inline-flex w-fit items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] transition-transform duration-300 group-hover:translate-x-1">
