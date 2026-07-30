@@ -313,7 +313,7 @@ export default function HomePage() {
       <section className="container-site py-20">
         <Reveal direction="up" distance={20}>
           <div
-            data-register="bidri"
+            data-register="dusk"
             className="bg-theme-base text-theme-ink overflow-hidden rounded-3xl p-8 md:p-12"
           >
             <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">

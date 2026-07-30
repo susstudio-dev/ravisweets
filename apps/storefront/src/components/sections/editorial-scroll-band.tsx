@@ -113,7 +113,7 @@ export function EditorialScrollBand() {
   return (
     <section
       ref={ref}
-      data-register="bidri"
+      data-register="dusk"
       aria-labelledby="eband-heading"
       className="bg-theme-base relative"
     >

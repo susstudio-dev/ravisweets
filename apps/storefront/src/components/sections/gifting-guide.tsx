@@ -29,11 +29,11 @@ interface Persona {
   href: string;
   image: string;
   /**
-   * Opts this card's whole subtree into the dark bidri register. Every token
+   * Opts this card's whole subtree into the dark dusk register. Every token
    * class inside then resolves to gunmetal ground / cream ink / pista accent
    * on its own — which is why no card below carries a colour value.
    */
-  register?: 'bidri';
+  register?: 'dusk';
   /** Flat panel ground. Colour blocks only; no gradients on brand surfaces. */
   panel: string;
   /** Eyebrow tone, chosen per card so it stays legible on that card's ground. */
@@ -42,7 +42,7 @@ interface Persona {
 
 /**
  * Three flat panels, differentiated by register and token rather than by baked
- * colour: the pista field, the bidri register, and the elevated surface. Each
+ * colour: the pista field, the dusk register, and the elevated surface. Each
  * one re-themes with the palette; none of them can drift from it.
  */
 const PERSONAS: Persona[] = [
@@ -65,9 +65,9 @@ const PERSONAS: Persona[] = [
     body: 'Custom trousseau boxes, bulk sangeet favours, and personalised name-cards. Minimum 50 units.',
     href: '/corporate#enquiry',
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
-    register: 'bidri',
+    register: 'dusk',
     panel: 'bg-surface',
-    // Inside bidri this is pista on gunmetal.
+    // Inside dusk this is pista on gunmetal.
     eyebrowTone: 'text-theme-accent',
   },
   {
@@ -152,7 +152,7 @@ export function GiftingGuide() {
               {/*
                * Accent chip. `--theme-base` is always the ground `--theme-accent`
                * was picked to sit on, in either register — cream on anjeer here,
-               * gunmetal on pista inside the bidri card — so one class pair is
+               * gunmetal on pista inside the dusk card — so one class pair is
                * contrast-correct on all three panels.
                */}
               <span className="bg-theme-accent ease-standard rounded-pill mt-4 inline-flex w-fit items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] transition-transform duration-300 group-hover:translate-x-1">

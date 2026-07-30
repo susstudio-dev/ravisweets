@@ -22,7 +22,7 @@ import { applyPalette, writePalette } from './apply-palette';
  * root inline write at all. No specificity fight, and it works in SSR — which
  * also removes the need for a separate dangerouslySetInnerHTML <style> tag.
  *
- * This is the same mechanism behind data-register="bidri".
+ * This is the same mechanism behind data-register="dusk".
  */
 export function FlavourScope({
   palette,

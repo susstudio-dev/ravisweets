@@ -214,14 +214,14 @@ export default function AboutPage() {
 
       {/* CTA */}
       {/*
-        Same bidri panel as the corporate CTA on the home page — dark ground,
+        Same dusk panel as the corporate CTA on the home page — dark ground,
         cream ink and pista accent all inherited from data-register, with the
         gold blur orb deleted.
       */}
       <section className="container-site pb-20">
         <Reveal>
           <div
-            data-register="bidri"
+            data-register="dusk"
             className="bg-theme-base text-theme-ink overflow-hidden rounded-3xl p-8 md:p-12"
           >
             <div className="flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">

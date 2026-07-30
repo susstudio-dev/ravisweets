@@ -32,7 +32,7 @@ interface EditorialBandProps {
  * Reduced-motion collapses to a static full-bleed.
  *
  * The ground is a single flat colour block from the Bidri register, not a
- * gradient: `data-register="bidri"` re-themes the whole subtree, so every
+ * gradient: `data-register="dusk"` re-themes the whole subtree, so every
  * colour below is a token and the band follows the palette.
  */
 export function EditorialBand({
@@ -65,7 +65,7 @@ export function EditorialBand({
   return (
     <section
       ref={ref}
-      data-register="bidri"
+      data-register="dusk"
       aria-label={headline}
       className="bg-theme-base relative isolate overflow-hidden"
     >

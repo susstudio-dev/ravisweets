@@ -33,7 +33,7 @@ export function SignatureMoment() {
   const m = SIGNATURE_MOMENT;
   return (
     <section
-      data-register="bidri"
+      data-register="dusk"
       aria-labelledby="signature-heading"
       className="bg-theme-base relative isolate overflow-hidden"
     >

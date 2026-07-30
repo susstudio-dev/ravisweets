@@ -4,40 +4,40 @@
 
 @layer base {
   /*
-   * ANJEER & PISTA. These :root values are first-paint defaults only — every
+   * ROSE & CREAM. These :root values are first-paint defaults only — every
    * one of them is overwritten at runtime by applyPalette() (see
    * src/lib/theme/apply-palette.ts). Keep them byte-identical to
-   * ANJEER_PISTA in src/lib/theme/palette.ts.
+   * ROSE_CREAM in src/lib/theme/palette.ts.
    */
   :root {
-    --theme-base: #f1f0e2;
-    --theme-accent: #5e2757;
-    --theme-glow: #c9d99c;
-    --theme-ink: #221e1a;
+    --theme-base: #faf5e9;
+    --theme-accent: #a8345d;
+    --theme-glow: #e8a13c;
+    --theme-ink: #2e2118;
     --theme-grain-opacity: 0.05;
 
-    --color-surface: #f1f0e2;
-    --color-surface-elevated: #faf9f0;
-    --color-text-primary: #221e1a;
-    --color-text-muted: #5c5347;
-    --color-accent: #5e2757;
-    --color-ring: #5e2757;
+    --color-surface: #faf5e9;
+    --color-surface-elevated: #fffdf6;
+    --color-text-primary: #2e2118;
+    --color-text-muted: #6b5a48;
+    --color-accent: #a8345d;
+    --color-ring: #a8345d;
 
     /* Channel twins so Tailwind opacity modifiers work (see tailwind.config.ts). */
-    --theme-base-rgb: 241 240 226;
-    --theme-accent-rgb: 94 39 87;
-    --theme-glow-rgb: 201 217 156;
-    --theme-ink-rgb: 34 30 26;
-    --color-surface-rgb: 241 240 226;
-    --color-surface-elevated-rgb: 250 249 240;
-    --color-text-primary-rgb: 34 30 26;
-    --color-text-muted-rgb: 92 83 71;
-    --color-accent-rgb: 94 39 87;
+    --theme-base-rgb: 250 245 233;
+    --theme-accent-rgb: 168 52 93;
+    --theme-glow-rgb: 232 161 60;
+    --theme-ink-rgb: 46 33 24;
+    --color-surface-rgb: 250 245 233;
+    --color-surface-elevated-rgb: 255 253 246;
+    --color-text-primary-rgb: 46 33 24;
+    --color-text-muted-rgb: 107 90 72;
+    --color-accent-rgb: 168 52 93;
 
     /* Non-authored brand constants. */
-    --color-field-deep: #3e1938;
-    --color-varak: #9a9ea3;
-    --color-varak-rule: #7e8286;
+    --color-field-deep: #7c2344;
+    --color-varak: #b08d57;
+    --color-varak-rule: #9c7c45;
 
     /*
      * Alpha border, so it is polarity-agnostic: 12% of whatever the current ink
@@ -52,37 +52,37 @@
   }
 
   /*
-   * BIDRI REGISTER. Any subtree opts in with data-register="bidri" and
+   * DUSK REGISTER. Any subtree opts in with data-register="dusk" and
    * re-themes with zero component changes, because custom properties resolve
-   * to the nearest declaring ancestor. Values match BIDRI_TOKENS in palette.ts.
+   * to the nearest declaring ancestor. Values match DUSK_TOKENS in palette.ts.
    */
-  [data-register='bidri'] {
-    --theme-base: #17181a;
-    --theme-accent: #c9d99c;
-    --theme-glow: #3e1938;
-    --theme-ink: #f2ede0;
+  [data-register='dusk'] {
+    --theme-base: #3a1f31;
+    --theme-accent: #e8a13c;
+    --theme-glow: #7c2344;
+    --theme-ink: #f6ead8;
     --theme-grain-opacity: 0.07;
 
-    --color-surface: #17181a;
-    --color-surface-elevated: #202225;
-    --color-text-primary: #f2ede0;
-    --color-text-muted: #a7a49b;
-    --color-accent: #c9d99c;
-    --color-ring: #c9d99c;
+    --color-surface: #3a1f31;
+    --color-surface-elevated: #4a2a3f;
+    --color-text-primary: #f6ead8;
+    --color-text-muted: #cbb3a6;
+    --color-accent: #e8a13c;
+    --color-ring: #e8a13c;
 
-    --theme-base-rgb: 23 24 26;
-    --theme-accent-rgb: 201 217 156;
-    --theme-glow-rgb: 62 25 56;
-    --theme-ink-rgb: 242 237 224;
-    --color-surface-rgb: 23 24 26;
-    --color-surface-elevated-rgb: 32 34 37;
-    --color-text-primary-rgb: 242 237 224;
-    --color-text-muted-rgb: 167 164 155;
-    --color-accent-rgb: 201 217 156;
+    --theme-base-rgb: 58 31 49;
+    --theme-accent-rgb: 232 161 60;
+    --theme-glow-rgb: 124 35 68;
+    --theme-ink-rgb: 246 234 216;
+    --color-surface-rgb: 58 31 49;
+    --color-surface-elevated-rgb: 74 42 63;
+    --color-text-primary-rgb: 246 234 216;
+    --color-text-muted-rgb: 203 179 166;
+    --color-accent-rgb: 232 161 60;
 
-    --color-field-deep: #3e1938;
-    --color-varak: #c8cbd0;
-    --color-varak-rule: #c8cbd0;
+    --color-field-deep: #7c2344;
+    --color-varak: #d9c6a8;
+    --color-varak-rule: #d9c6a8;
 
     background-color: var(--theme-base);
     color: var(--theme-ink);
@@ -156,7 +156,7 @@
   }
 
   /* multiply makes grain invisible on a dark ground. */
-  [data-register='bidri'] .grain-overlay {
+  [data-register='dusk'] .grain-overlay {
     mix-blend-mode: screen;
   }
 
