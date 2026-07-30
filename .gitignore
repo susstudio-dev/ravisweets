@@ -37,5 +37,8 @@ coverage/
 .vercel
 .sentryclirc
 
+# stray npm artifact — this workspace is pnpm-only
+package-lock.json
+
 # brainstorming companion artifacts
 .superpowers/

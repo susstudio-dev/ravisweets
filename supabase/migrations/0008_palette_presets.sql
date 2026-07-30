@@ -100,6 +100,7 @@ values
   )
 on conflict (id) do update
   set name = excluded.name,
+      active = excluded.active,
       palette = excluded.palette,
       hero = excluded.hero,
       banner_text = excluded.banner_text;
