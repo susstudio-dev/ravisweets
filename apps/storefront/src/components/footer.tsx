@@ -40,7 +40,10 @@ const FOOTER_COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="bg-[color:var(--theme-ink)]/[0.02] mt-16 border-t border-[color:var(--color-border)]">
+    <footer
+      data-register="dusk"
+      className="bg-theme-base text-theme-ink mt-16 border-t border-[color:var(--color-border)]"
+    >
       <div className="container-site py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-1">
