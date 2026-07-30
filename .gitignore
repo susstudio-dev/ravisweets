@@ -36,3 +36,6 @@ coverage/
 .cache/
 .vercel
 .sentryclirc
+
+# brainstorming companion artifacts
+.superpowers/
