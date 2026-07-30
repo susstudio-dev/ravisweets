@@ -7,7 +7,7 @@ import { THEME_VAR_NAMES, applyPalette, paletteToCss } from './apply-palette';
 const MIDTONE: FlavourPalette = {
   base: '#7A7A7A',
   accent: '#2A1A40',
-  glow: '#C9D99C',
+  glow: '#9BB5D6',
   ink: '#100E12',
   grainOpacity: 0.05,
 };

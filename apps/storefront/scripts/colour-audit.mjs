@@ -8,6 +8,7 @@
  * Update the MAX_* values only DOWNWARD, and say why in the commit message.
  */
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 /** Tighten these as Plan 2 and Plan 3 land. Never raise them. */
@@ -27,7 +28,22 @@ const ALLOWED = new Set([
 /** The authoring files — hex here is the point. */
 const EXEMPT = ['src/lib/theme/palette.ts', 'src/lib/theme/contrast.ts'];
 
-const files = execFileSync('git', ['ls-files', 'apps/storefront/src'], { encoding: 'utf8' })
+/*
+ * `git ls-files apps/storefront/src` is a pathspec relative to the process
+ * cwd, not the repo. Resolve the repo root explicitly so this works whether
+ * invoked from the repo root (CI, `node apps/storefront/scripts/…`) or from
+ * this package's own directory (`pnpm --filter … colour-audit`, which pnpm
+ * runs with cwd = apps/storefront) — without this, the pathspec silently
+ * resolves to a non-existent path from the latter and the ratchet no-ops.
+ */
+const repoRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+  encoding: 'utf8',
+}).trim();
+
+const files = execFileSync('git', ['ls-files', 'apps/storefront/src'], {
+  encoding: 'utf8',
+  cwd: repoRoot,
+})
   .split('\n')
   .filter((f) => /\.(ts|tsx|css)$/.test(f))
   .filter((f) => !EXEMPT.some((e) => f.endsWith(e)))
@@ -38,7 +54,7 @@ let paisley = 0;
 let classes = 0;
 
 for (const file of files) {
-  const src = readFileSync(file, 'utf8');
+  const src = readFileSync(join(repoRoot, file), 'utf8');
   for (const m of src.matchAll(/#[0-9a-fA-F]{6}\b/g)) {
     const v = m[0].toLowerCase();
     if (!ALLOWED.has(v)) hex.add(v);

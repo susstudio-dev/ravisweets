@@ -26,7 +26,7 @@ describe('contrastRatio', () => {
   });
 
   it('is 1:1 for a colour against itself', () => {
-    expect(contrastRatio('#5E2757', '#5E2757')).toBeCloseTo(1, 5);
+    expect(contrastRatio('#336699', '#336699')).toBeCloseTo(1, 5);
   });
 
   it('is symmetric', () => {
@@ -69,12 +69,12 @@ describe('mix', () => {
 });
 
 describe('hue', () => {
-  it('reads the anjeer accent as fig-purple', () => {
-    expect(hue('#5E2757')).toBeCloseTo(308, 0);
+  it('reads a magenta-purple swatch correctly', () => {
+    expect(hue('#7A2E52')).toBeCloseTo(332, 0);
   });
 
-  it('reads the pista field as yellow-green', () => {
-    expect(hue('#C9D99C')).toBeCloseTo(76, 0);
+  it('reads a yellow-green swatch correctly', () => {
+    expect(hue('#A8C060')).toBeCloseTo(75, 0);
   });
 });
 
@@ -88,7 +88,7 @@ describe('hueClearance', () => {
     expect(hueClearance('#FF0D45', '#FF2D0D')).toBeLessThan(40);
   });
 
-  it('clears Cadbury purple from the anjeer accent by at least 40 degrees', () => {
-    expect(hueClearance('#5E2757', '#3F1B7A')).toBeGreaterThanOrEqual(40);
+  it('measures clearance between two arbitrary hues', () => {
+    expect(hueClearance('#7A2E52', '#1F7A3F')).toBeCloseTo(169, 0);
   });
 });

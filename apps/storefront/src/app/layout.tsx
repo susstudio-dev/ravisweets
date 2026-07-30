@@ -23,8 +23,8 @@ import './globals.css';
  * never weight (globals.css sets font-synthesis:none to enforce it).
  *
  * Chosen over higher-contrast alternatives because its strokes survive on the
- * pista field — a hairline serif would disappear on #C9D99C, and the field is
- * the identity.
+ * marigold field — a hairline serif would disappear on #E8A13C, and the field
+ * is the identity.
  */
 const youngSerif = Young_Serif({
   subsets: ['latin'],
