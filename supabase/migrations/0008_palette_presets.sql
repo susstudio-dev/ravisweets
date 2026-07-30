@@ -1,8 +1,8 @@
 -- ─── 0008 — Fresh palette presets ───────────────────────────────────
 -- Seeds three additional theme_presets so the brand can compare and swap
 -- between palettes from /admin/themes without a redeploy. The new
--- "Pista & Rose" preset becomes the active palette on the storefront,
--- the older "Saffron & Cardamom" + "Brass & Ghee" stay as switchable
+-- "Rose & Cream" preset becomes the active palette on the storefront,
+-- the older "Saffron & Cardamom" + "Dusk & Lamplight" stay as switchable
 -- options, and a darker "Midnight Saffron" preset gives a contemplative
 -- evening look for late-festival promos.
 --
@@ -15,22 +15,22 @@ update public.theme_presets set active = false where active;
 insert into public.theme_presets (id, name, active, palette, hero, banner_text)
 values
   (
-    'pista-rose',
-    'Pista & Rose — kalakand cream',
+    'rose-cream',
+    'Rose & Cream — the house palette',
     true,
     jsonb_build_object(
-      'base', '#f4efde',
-      'accent', '#a8345d',
-      'glow', '#c9d99c',
-      'ink', '#1f1820',
+      'base', '#FAF5E9',
+      'accent', '#A8345D',
+      'glow', '#E8A13C',
+      'ink', '#2E2118',
       'grainOpacity', 0.05
     ),
     jsonb_build_object(
-      'eyebrow', 'Khammam · est. 1985',
-      'headline', 'Slow-cooked sweets, packed with rose and pistachio.',
-      'body', 'Kalakand, Badam ki Jali, Qubani ka Meetha — the Hyderabadi sweet shop, plated the slow way.',
-      'ctaLabel', 'Shop the kitchen',
-      'ctaHref', '/shop',
+      'eyebrow', 'Khammam · Telangana',
+      'headline', 'The sweetness of Telangana, slow-cooked in Khammam.',
+      'body', 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
+      'ctaLabel', 'Shop Hyderabadi specials',
+      'ctaHref', '/category/hyderabadi-specials',
       'imageUrl', 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png'
     ),
     null
@@ -57,22 +57,22 @@ values
     'Free festival shipping above ₹1499'
   ),
   (
-    'brass-ghee',
-    'Brass & Ghee — heritage warm',
+    'dusk-lamplight',
+    'Dusk & Lamplight — the shop after sunset',
     false,
     jsonb_build_object(
-      'base', '#fbf3df',
-      'accent', '#a8501f',
-      'glow', '#e9b249',
-      'ink', '#1f0c02',
-      'grainOpacity', 0.05
+      'base', '#3A1F31',
+      'accent', '#E8A13C',
+      'glow', '#7C2344',
+      'ink', '#F6EAD8',
+      'grainOpacity', 0.07
     ),
     jsonb_build_object(
-      'eyebrow', 'Heritage line',
-      'headline', 'Forty years of slow sweetness, in a brass tin.',
-      'body', 'The recipes our founder Srinivasa Rao started with in 1985 — unchanged, hand-pressed, hand-packed.',
-      'ctaLabel', 'Shop signature box',
-      'ctaHref', '/category/hyderabadi-specials',
+      'eyebrow', 'Evening counter',
+      'headline', 'The counter glows until the last box is tied.',
+      'body', 'Premium hampers, corporate runs, and drop-night exclusives — packed under the lamplight in Khammam.',
+      'ctaLabel', 'Shop gift hampers',
+      'ctaHref', '/category/gift-hampers',
       'imageUrl', 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png'
     ),
     null
