@@ -30,7 +30,7 @@ interface Persona {
   image: string;
   /**
    * Opts this card's whole subtree into the dark dusk register. Every token
-   * class inside then resolves to gunmetal ground / cream ink / pista accent
+   * class inside then resolves to plum ground / cream ink / marigold accent
    * on its own — which is why no card below carries a colour value.
    */
   register?: 'dusk';
@@ -38,12 +38,20 @@ interface Persona {
   panel: string;
   /** Eyebrow tone, chosen per card so it stays legible on that card's ground. */
   eyebrowTone: string;
+  /**
+   * Body-copy tone, chosen per card for the same reason. Most cards use the
+   * derived `text-text-muted`, which `applyPalette` guarantees passes AA
+   * against `--color-surface` — but the diwali card's ground is `bg-field`,
+   * the saturated marigold panel, not a derived surface, so muted text on it
+   * measures 3.02:1 and fails. That card overrides to full-strength ink.
+   */
+  bodyTone: string;
 }
 
 /**
  * Three flat panels, differentiated by register and token rather than by baked
- * colour: the pista field, the dusk register, and the elevated surface. Each
- * one re-themes with the palette; none of them can drift from it.
+ * colour: the marigold field, the dusk register, and the elevated surface.
+ * Each one re-themes with the palette; none of them can drift from it.
  */
 const PERSONAS: Persona[] = [
   {
@@ -55,8 +63,10 @@ const PERSONAS: Persona[] = [
     image:
       'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
     panel: 'bg-field',
-    // Anjeer deep on the pista field — the pairing the field was drawn for.
-    eyebrowTone: 'text-field-deep',
+    // Ink on the marigold field — 7.12:1. field-deep measured 4.40:1 here,
+    // just under AA, so this card can't use the deep-rose text the others do.
+    eyebrowTone: 'text-theme-ink',
+    bodyTone: 'text-theme-ink',
   },
   {
     slug: 'weddings',
@@ -69,6 +79,7 @@ const PERSONAS: Persona[] = [
     panel: 'bg-surface',
     // Inside dusk this is marigold on plum.
     eyebrowTone: 'text-theme-accent',
+    bodyTone: 'text-text-muted',
   },
   {
     slug: 'corporate',
@@ -79,6 +90,7 @@ const PERSONAS: Persona[] = [
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
     panel: 'bg-surface-elevated',
     eyebrowTone: 'text-theme-accent',
+    bodyTone: 'text-text-muted',
   },
 ];
 
@@ -148,10 +160,10 @@ export function GiftingGuide() {
                 {p.eyebrow}
               </p>
               <h3 className="font-display text-display-md">{p.title}</h3>
-              <p className="text-text-muted max-w-sm text-sm leading-relaxed">{p.body}</p>
+              <p className={cn('max-w-sm text-sm leading-relaxed', p.bodyTone)}>{p.body}</p>
               {/*
                * Accent chip. `--theme-base` is always the ground `--theme-accent`
-               * was picked to sit on, in either register — cream on anjeer here,
+               * was picked to sit on, in either register — cream on rose here,
                * marigold on plum inside the dusk card — so one class pair is
                * contrast-correct on all three panels.
                */}

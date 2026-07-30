@@ -215,8 +215,8 @@ export default function AboutPage() {
       {/* CTA */}
       {/*
         Same dusk panel as the corporate CTA on the home page — dark ground,
-        cream ink and pista accent all inherited from data-register, with the
-        gold blur orb deleted.
+        cream ink and marigold accent all inherited from data-register, with
+        the gold blur orb deleted.
       */}
       <section className="container-site pb-20">
         <Reveal>

@@ -30,17 +30,17 @@ describe('contrastRatio', () => {
   });
 
   it('is symmetric', () => {
-    expect(contrastRatio('#221E1A', '#F1F0E2')).toBeCloseTo(contrastRatio('#F1F0E2', '#221E1A'), 5);
+    expect(contrastRatio('#2E2118', '#FAF5E9')).toBeCloseTo(contrastRatio('#FAF5E9', '#2E2118'), 5);
   });
 
   it('matches the spec ratio for ink on base', () => {
-    expect(contrastRatio('#221E1A', '#F1F0E2')).toBeCloseTo(14.43, 1);
+    expect(contrastRatio('#2E2118', '#FAF5E9')).toBeCloseTo(14.33, 1);
   });
 });
 
 describe('isLightSurface', () => {
   it('classifies the light register base as light', () => {
-    expect(isLightSurface('#F1F0E2')).toBe(true);
+    expect(isLightSurface('#FAF5E9')).toBe(true);
   });
 
   it('classifies the dusk plum base as dark', () => {

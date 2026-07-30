@@ -26,7 +26,7 @@ import type { FlavourPalette } from './palette';
  * How far an elevated surface moves away from the ground.
  *
  * Tuned so the derivation reproduces the spec's authored values: light
- * #F1F0E2 -> ~#FAF9F0, dusk #3A1F31 -> ~#4A2A3F. Dark surfaces need a much
+ * #FAF5E9 -> ~#FFFDF6, dusk #3A1F31 -> ~#4A2A3F. Dark surfaces need a much
  * smaller delta to read as raised, which is why the two constants differ.
  */
 const LIFT_LIGHT = 0.57;

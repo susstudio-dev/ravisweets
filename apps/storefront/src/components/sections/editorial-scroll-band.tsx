@@ -81,7 +81,7 @@ const FRAMES: Frame[] = [
 ];
 
 /**
- * Flat panel per frame, alternating the anjeer field with the raised plum
+ * Flat panel per frame, alternating the rose panel with the raised plum
  * of the dusk register. Both are dark grounds, so one cream ink stays legible
  * on every frame and the strip still has rhythm without a single gradient.
  */

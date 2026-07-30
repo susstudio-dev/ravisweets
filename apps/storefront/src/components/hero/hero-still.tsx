@@ -61,7 +61,12 @@ export function HeroStill() {
     <section
       ref={ref}
       aria-label="Hero"
-      className="bg-field text-theme-ink relative isolate overflow-hidden"
+      // A 25% marigold wash over cream, not the saturated field: at full
+      // strength #E8A13C fails AA for the muted body copy and accent link
+      // this section carries. At /25 (measured wash ≈ #F6E0BE) text-muted
+      // lands at 5.15:1 and the accent link at 4.93:1 — both clear AA while
+      // the section still reads as marigold-warm.
+      className="bg-field/25 text-theme-ink relative isolate overflow-hidden"
     >
       <div className="container-site relative pb-12 pt-14 md:pb-16 md:pt-20">
         <div className="grid items-center gap-12 md:grid-cols-[1.05fr_0.95fr] md:gap-10">
@@ -137,7 +142,7 @@ export function HeroStill() {
                     className="origin-[32%_26%] scale-[1.4] object-cover"
                   />
                 </div>
-                {/* Silver hairline drawn on the cut, so the stroke stays 1px at any plate size. */}
+                {/* Brass hairline drawn on the cut, so the stroke stays 1px at any plate size. */}
                 <svg
                   viewBox="0 0 100 100"
                   preserveAspectRatio="none"
@@ -164,7 +169,7 @@ export function HeroStill() {
           </Reveal>
         </div>
 
-        {/* Silver hairline, closed by a single katli diamond. */}
+        {/* Brass hairline, closed by a single katli diamond. */}
         <div aria-hidden="true" className="mt-14 flex items-center gap-3 md:mt-20">
           <span className="bg-varak-rule h-px flex-1" />
           <span className="bg-varak-rule h-2 w-2 rotate-45" />

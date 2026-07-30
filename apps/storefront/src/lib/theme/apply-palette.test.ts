@@ -68,8 +68,8 @@ describe('polarity', () => {
 
   it('lands close to the authored light surfaceElevated', () => {
     const vars = applyPalette(LIGHT);
-    // Derivation should reproduce the spec's authored #FAF9F0 within tolerance.
-    expect(contrastRatio(vars['--color-surface-elevated'], '#FAF9F0')).toBeLessThan(1.06);
+    // Derivation should reproduce the spec's authored #FFFDF6 within tolerance.
+    expect(contrastRatio(vars['--color-surface-elevated'], '#FFFDF6')).toBeLessThan(1.06);
   });
 
   it('lands close to the authored dusk surfaceElevated', () => {

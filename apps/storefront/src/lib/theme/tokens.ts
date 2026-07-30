@@ -9,19 +9,23 @@
  * zero Tailwind-class usages across the entire tree, so nothing consumed them
  * except by hand-copying hex. Gold is deleted deliberately — see palette.ts.
  */
-import { ROSE_CREAM, DUSK_TOKENS, LIGHT, PRODUCT_PALETTES } from './palette';
+import { ROSE_CREAM, LIGHT } from './palette';
 
 export type { FlavourPalette } from './palette';
 export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palette';
 
-/** Projected into Tailwind. Semantic names only — no numeric brand ramp. */
+/**
+ * Projected into Tailwind. Semantic names only — no numeric brand ramp.
+ *
+ * `cream`, `anjeer`, `pista` and `gunmetal` were dropped here: zero Tailwind
+ * class usages across the tree. Register colour is read through the
+ * register-aware `--theme-*` / `--color-*` custom properties (see
+ * globals.css and tailwind.config.ts's `theme-*` / `field` / `field-deep`
+ * bindings) instead. Do not re-add without checking usage first.
+ */
 export const rawPalette = {
-  cream: ROSE_CREAM.base,
   ink: ROSE_CREAM.ink,
-  anjeer: { DEFAULT: ROSE_CREAM.accent, deep: ROSE_CREAM.accentDeep },
-  pista: { DEFAULT: ROSE_CREAM.field, deep: PRODUCT_PALETTES.kesar.glow }, // mirrors kesar's warm glow for deep field
   varak: { DEFAULT: ROSE_CREAM.varak, rule: ROSE_CREAM.varakRule },
-  gunmetal: { DEFAULT: DUSK_TOKENS.base, elevated: DUSK_TOKENS.surfaceElevated },
   neutral: {
     50: '#FAFAF9',
     100: '#F5F5F4',
@@ -50,13 +54,13 @@ export const radii = {
 
 /**
  * The `lifted` shadow drops the white inner bevel the old scale carried —
- * it read as plastic on the pista field and inverted wrongly on the dark
+ * it read as plastic on the marigold field and inverted wrongly on the dark
  * dusk register.
  */
 export const elevation = {
   flat: 'none',
-  soft: '0 1px 2px rgb(34 30 26 / 0.04), 0 2px 8px rgb(34 30 26 / 0.06)',
-  lifted: '0 2px 4px rgb(34 30 26 / 0.06), 0 8px 24px rgb(34 30 26 / 0.10)',
+  soft: '0 1px 2px rgb(46 33 24 / 0.04), 0 2px 8px rgb(46 33 24 / 0.06)',
+  lifted: '0 2px 4px rgb(46 33 24 / 0.06), 0 8px 24px rgb(46 33 24 / 0.10)',
 } as const;
 
 export const motion = {

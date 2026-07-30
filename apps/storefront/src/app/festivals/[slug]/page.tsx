@@ -54,7 +54,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
     // 2026-05-06: festival palettes retuned to harmonise with the site-wide
-    // Pista & Rose direction. Bases stay in a continuous cream family so the
+    // Rose & Cream direction. Bases stay in a continuous cream family so the
     // header / megamenu don't feel like a different website per festival.
     // Accents vary per festival to keep each page visually distinct.
     theme: {

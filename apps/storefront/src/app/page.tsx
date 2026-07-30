@@ -82,14 +82,21 @@ const CATEGORIES = [
  * the tiles differ in tone, not in hue family, so the grid reads as one set.
  * Each tone carries its own ink so contrast never depends on luck.
  *
- * Muting is done with `opacity-*` on the element, not a `text-token/70` alpha
- * modifier: Tailwind 3.4 emits NO rule for an alpha modifier on a colour
- * declared as a bare `var(--x)`, so `text-theme-ink/65` and friends are dead
- * classes in this config. Verified by running the Tailwind CLI over these
- * exact class strings.
+ * Muting used to be done with `opacity-*` on the element, not a
+ * `text-token/70` alpha modifier: Tailwind 3.4 emits NO rule for an alpha
+ * modifier on a colour declared as a bare `var(--x)` (true of `field-deep`),
+ * so `text-field-deep/70` and friends are dead classes in this config.
+ * Verified by running the Tailwind CLI over these exact class strings.
+ *
+ * The field tile no longer uses that opacity dimming: `text-field-deep` at
+ * `opacity-70` on the saturated `bg-field` ground composited to ~2.8:1,
+ * well under AA. The fix is `text-theme-ink` at full strength (7.12:1 on
+ * `bg-field`) with the opacity modifier dropped from the blurb — the
+ * smaller change than washing the ground, since the ground stays the rich
+ * unwashed marigold the tile grid was designed around.
  */
 const TILE_TONES = [
-  { panel: 'bg-field', ink: 'text-field-deep', cta: 'text-field-deep' },
+  { panel: 'bg-field', ink: 'text-theme-ink', cta: 'text-theme-ink' },
   { panel: 'bg-surface-elevated', ink: 'text-theme-ink', cta: 'text-theme-accent' },
   {
     panel: 'bg-theme-accent',
@@ -205,7 +212,7 @@ export default function HomePage() {
                 </div>
                 <div className="relative max-w-[60%]">
                   <h3 className={cn('font-display text-xl md:text-2xl', tone.ink)}>{cat.title}</h3>
-                  <p className={cn('mt-1 text-xs opacity-70', tone.ink)}>{cat.blurb}</p>
+                  <p className={cn('mt-1 text-xs', tone.ink)}>{cat.blurb}</p>
                 </div>
                 <div
                   className={cn(

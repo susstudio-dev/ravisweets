@@ -40,9 +40,17 @@
     --color-varak-rule: #9c7c45;
 
     /*
-     * Alpha border, so it is polarity-agnostic: 12% of whatever the current ink
-     * is, over whatever the current surface is. This is the one semantic token
-     * NOT derived in applyPalette, because it needs no polarity branch.
+     * Alpha border: 12% ink over transparent. This is the one semantic token
+     * NOT derived in applyPalette, because it needs no polarity branch — but
+     * that also means it does NOT "float" and re-resolve per register on its
+     * own. A custom property's var() references substitute using the cascade
+     * at the element where that property is *declared*, not where it's later
+     * consumed — so a --color-border declared only here freezes to light
+     * --theme-ink the moment this is computed, and stays frozen wherever it's
+     * inherited, including inside [data-register='dusk']. That's why the dusk
+     * block below carries its own --color-border declaration, re-pointed at
+     * dusk ink: without it, borders drawn inside dusk subtrees silently used
+     * light-register ink at ~12% instead of dusk ink.
      */
     --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
 
@@ -83,6 +91,9 @@
     --color-field-deep: #7c2344;
     --color-varak: #d9c6a8;
     --color-varak-rule: #d9c6a8;
+
+    /* Re-pointed at dusk ink — see the long comment on the :root declaration. */
+    --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
 
     background-color: var(--theme-base);
     color: var(--theme-ink);

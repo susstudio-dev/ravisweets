@@ -35,11 +35,13 @@ import { cn } from '@/lib/cn';
  *    strokes at 0.22px when the mark was placed at 12px, i.e. as grey mush. A
  *    filled silhouette is what survives at 12px, which is the size the mark is
  *    used at as a list bullet.
- *  - The inner diamond is an incised hairline VOID (evenodd), a nod to dusk
- *    silver inlay, where the pattern is cut into the ground rather than laid on
- *    top. It is ~3 units wide, so it resolves at 32px and 48px and closes up
- *    into the solid below ~16px. The mark therefore degrades to a clean solid
- *    lozenge at bullet size instead of breaking up.
+ *  - The inner diamond is an incised hairline VOID (evenodd), a nod to
+ *    Bidriware — the Bidar metal-inlay craft, where silver is beaten into a
+ *    cut groove in blackened alloy — so here too the pattern is cut into the
+ *    ground rather than laid on top. It is ~3 units wide, so it resolves at
+ *    32px and 48px and closes up into the solid below ~16px. The mark
+ *    therefore degrades to a clean solid lozenge at bullet size instead of
+ *    breaking up.
  *  - Colour is currentColor throughout, defaulting to the theme accent, so the
  *    mark re-themes with the register (including the dark dusk subtree) with
  *    no per-call-site change.
