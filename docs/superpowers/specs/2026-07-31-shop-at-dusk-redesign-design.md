@@ -18,9 +18,12 @@ The Anjeer & Pista palette (fig-purple + pistachio-green) shipped on
 `feat/storefront-anjeer-pista-foundation` and was reviewed by the brand owner
 against the running app. **The owner rejected the colour direction and chose to
 return to the pre-redesign rose-on-cream identity.** The owner was shown the
-hue-collision finding (rose sits ~31° from Bombay Sweet Shop's wine) and
-reaffirmed the choice; it is recorded in §14 as an accepted risk, not an
-accident.
+hue-collision finding (rose `#A8345D` sits 3° from Bombay Sweet Shop's wine
+hue) and reaffirmed the choice; it is recorded in §14 as an accepted risk, not
+an accident. The `palette.test.ts` hue-clearance suite is re-authored
+accordingly: clearance is still asserted against Cadbury purple, and the BSS
+proximity is pinned as a documented, owner-accepted exception rather than
+waived silently.
 
 Everything else the redesign built is kept: the single-source-of-truth token
 architecture, the derived semantic layer, the register mechanism, the contrast
@@ -464,7 +467,7 @@ successor branch), demo-able at its gate.
 
 | Risk | Mitigation |
 |---|---|
-| Rose ≈ Bombay Sweet Shop wine (~31° hue) | Owner's informed decision, recorded in §1. Differentiation carried by the shop-at-dusk identity, marigold register and motifs — not hue alone. |
+| Rose ≈ Bombay Sweet Shop wine (3° hue distance) | Owner's informed decision, recorded in §1. Differentiation carried by the shop-at-dusk identity, marigold register and motifs — not hue alone. |
 | Illustrated scene reads cheap | Built in isolation; owner checkpoint gates phase 2. Fallback: static dusk gradient + type-led hero, which the scene degrades to under reduced-motion anyway. |
 | Scroll-zoom jank on low-end phones | Mobile gets no scroll-zoom; scene simplifies; compositor-only properties; measured gate. |
 | Homepage removes sections admin CMS may reference | Verified already (§4): the hero is the only storefront `site_content` consumer and is retained; the promo strip reads the `promotions` table and mounts in `layout.tsx`. No admin feed is severed. |
