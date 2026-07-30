@@ -842,12 +842,12 @@ function sweetBitesGroup(): Product[] {
 
 function dryFruitsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: ravi('2025/08/GULKAND.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.', theme_palette: GULKAND },
+    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: ravi('2025/08/ANJEER.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.', theme_palette: GULKAND },
     { slug: 'badam-almonds', title: 'Badam — Whole Almonds', image: ravi('2025/08/BADAM.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 160000, description: 'Whole California almonds, hand-sorted and sealed the same week. Zero broken pieces, no chaff.', bestseller: true },
     { slug: 'cranberry', title: 'Cranberry', image: ravi('2025/08/CRANBERRY.webp'), variantPaiseSmall: 25000, variantPaiseLarge: 200000, description: 'Sweet-tart dried cranberries — perfect on a granola plate or stirred into your morning yogurt.', theme_palette: GULKAND },
     { slug: 'kaju-cashew', title: 'Kaju — Whole Cashews', image: ravi('2025/08/WhatsApp-Image-2023-08-11-at-4.46.50-PM-400x400.jpeg'), variantPaiseSmall: 25500, variantPaiseLarge: 180000, description: 'Premium W240 cashews — whole, plump, no splits. Sealed in nitrogen pouches for a six-month shelf life.', bestseller: true },
-    { slug: 'pista-whole', title: 'Pista — Whole Pistachios', image: ravi('2025/08/BADAM.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'Iranian pistachios with a generous shell-split. Snack-grade, crunch-grade, gift-grade.' },
-    { slug: 'salted-pista', title: 'Salted Pista', image: ravi('2025/08/SALTED-BADAM.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'The same Iranian pistachios, dry-roasted and lightly salted. Travel-tin packaging.' },
+    { slug: 'pista-whole', title: 'Pista — Whole Pistachios', image: ravi('2025/08/PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'Iranian pistachios with a generous shell-split. Snack-grade, crunch-grade, gift-grade.' },
+    { slug: 'salted-pista', title: 'Salted Pista', image: ravi('2025/08/SALTED-PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'The same Iranian pistachios, dry-roasted and lightly salted. Travel-tin packaging.' },
     { slug: 'walnuts', title: 'Walnuts — Akhrot', image: ravi('2025/08/WALNUT.webp'), variantPaiseSmall: 41300, variantPaiseLarge: 330000, description: 'Light-amber walnut halves from the Kashmir trade — lower bitterness, higher omega-3.' },
   ];
   return items.map((s) =>
