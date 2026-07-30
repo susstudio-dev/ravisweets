@@ -9,7 +9,7 @@
  * zero Tailwind-class usages across the entire tree, so nothing consumed them
  * except by hand-copying hex. Gold is deleted deliberately — see palette.ts.
  */
-import { ROSE_CREAM, DUSK_TOKENS, LIGHT } from './palette';
+import { ROSE_CREAM, DUSK_TOKENS, LIGHT, PRODUCT_PALETTES } from './palette';
 
 export type { FlavourPalette } from './palette';
 export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palette';
@@ -18,10 +18,10 @@ export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palett
 export const rawPalette = {
   cream: ROSE_CREAM.base,
   ink: ROSE_CREAM.ink,
-  rose: { DEFAULT: ROSE_CREAM.accent, deep: ROSE_CREAM.accentDeep },
-  marigold: { DEFAULT: ROSE_CREAM.field, deep: '#DCC372' },
+  anjeer: { DEFAULT: ROSE_CREAM.accent, deep: ROSE_CREAM.accentDeep },
+  pista: { DEFAULT: ROSE_CREAM.field, deep: PRODUCT_PALETTES.kesar.glow }, // mirrors kesar's warm glow for deep field
   varak: { DEFAULT: ROSE_CREAM.varak, rule: ROSE_CREAM.varakRule },
-  plum: { DEFAULT: DUSK_TOKENS.base, elevated: DUSK_TOKENS.surfaceElevated },
+  gunmetal: { DEFAULT: DUSK_TOKENS.base, elevated: DUSK_TOKENS.surfaceElevated },
   neutral: {
     50: '#FAFAF9',
     100: '#F5F5F4',
