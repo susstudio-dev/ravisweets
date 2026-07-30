@@ -51,7 +51,7 @@ export const radii = {
 /**
  * The `lifted` shadow drops the white inner bevel the old scale carried —
  * it read as plastic on the pista field and inverted wrongly on the dark
- * Bidri register.
+ * dusk register.
  */
 export const elevation = {
   flat: 'none',

@@ -81,8 +81,8 @@ const FRAMES: Frame[] = [
 ];
 
 /**
- * Flat panel per frame, alternating the anjeer field with the raised gunmetal
- * of the Bidri register. Both are dark grounds, so one cream ink stays legible
+ * Flat panel per frame, alternating the anjeer field with the raised plum
+ * of the dusk register. Both are dark grounds, so one cream ink stays legible
  * on every frame and the strip still has rhythm without a single gradient.
  */
 function panelSurface(i: number): string {
