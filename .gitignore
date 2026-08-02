@@ -42,3 +42,4 @@ package-lock.json
 
 # brainstorming companion artifacts
 .superpowers/
+.next-dev/
