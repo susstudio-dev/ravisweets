@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "prepare-export:disable": "node scripts/prepare-export.mjs disable",
     "prepare-export:restore": "node scripts/prepare-export.mjs restore",
     "link-check": "node scripts/link-check.mjs",

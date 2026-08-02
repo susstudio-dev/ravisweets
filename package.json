@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "pnpm --filter @ravisweets/storefront dev",
-    "build": "pnpm -r build",
+    "build": "pnpm --filter @ravisweets/storefront run build:cloudflare",
+    "build:all": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,css}\"",

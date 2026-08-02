@@ -121,18 +121,25 @@ Two ways to deploy; **Option A is recommended** (mirrors the existing GH Pages w
 | Setting | Value |
 |---------|-------|
 | Framework preset | None |
-| Build command | `pnpm --filter @ravisweets/storefront prepare-export:disable && pnpm --filter @ravisweets/storefront build` |
+| Build command | `pnpm run build` (the default — see note) |
 | Build output directory | `apps/storefront/out` |
 | Root directory | `/` (repo root — pnpm workspace) |
+| Deploy command (Workers projects only) | `npx wrangler deploy` (uses `wrangler.jsonc`) |
 
-Environment variables (Production):
+> **The default `pnpm run build` now works out of the box.** The repo-root
+> `build` script builds only the storefront as a static export (via
+> `apps/storefront/scripts/build-cloudflare.mjs`) — it sets `BUILD_TARGET`
+> itself, disables the `@modal` intercept route, and skips the Medusa backend
+> (whose `medusa build` would otherwise fail the run). So you do **not** need to
+> customise the build command or set `BUILD_TARGET` — just point the output
+> directory at `apps/storefront/out`.
 
-| Name | Value |
-|------|-------|
-| `BUILD_TARGET` | `cloudflare` |
-| `NEXT_PUBLIC_SITE_URL` | `https://<project>.pages.dev` or the custom domain |
-| `NODE_VERSION` | `20` |
-| `NEXT_PUBLIC_INDEXING_ENABLED` | set to `true` only at launch |
+Environment variables (Production) — all optional:
+
+| Name | Value | Effect if unset |
+|------|-------|-----------------|
+| `NEXT_PUBLIC_SITE_URL` | `https://<project>.pages.dev` or custom domain | On Pages, auto-filled from `CF_PAGES_URL`; otherwise falls back to the GitHub Pages URL |
+| `NEXT_PUBLIC_INDEXING_ENABLED` | `true` only at launch | robots.txt stays `Disallow: /` |
 
 pnpm 9.15.9 is picked up automatically from the `packageManager` field in the root `package.json`. Do **not** set `PAGES_BASE_PATH` — Cloudflare serves at the domain root.
 
