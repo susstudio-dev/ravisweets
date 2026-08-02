@@ -71,7 +71,7 @@ export function FestivalNextBand() {
           <Reveal delay={0.1}>
             <h2
               id="festival-next-heading"
-              className="font-display text-display-md md:text-display-lg mt-3 leading-[1.02]"
+              className="font-display text-display-md mt-3 leading-[1.02]"
             >
               {next.title} is coming.
             </h2>

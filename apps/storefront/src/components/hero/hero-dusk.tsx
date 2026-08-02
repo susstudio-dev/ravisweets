@@ -76,7 +76,7 @@ export function HeroDusk() {
       ref={ref}
       aria-label="Hero"
       data-register="dusk"
-      className="bg-theme-base text-theme-ink relative isolate -mt-[84px] h-[100svh] min-h-[620px] overflow-hidden"
+      className="bg-theme-base text-theme-ink relative isolate -mt-16 h-[100svh] min-h-[600px] overflow-hidden"
     >
       <motion.div
         aria-hidden="true"
@@ -112,7 +112,7 @@ export function HeroDusk() {
           <h1
             key={heroHeadline}
             aria-label={heroHeadline}
-            className="font-display text-display-xl text-theme-ink mt-6"
+            className="font-display text-display-lg text-theme-ink mt-6"
           >
             {words.map((u, i) =>
               /^\s+$/.test(u) ? (
@@ -131,7 +131,9 @@ export function HeroDusk() {
           </h1>
 
           <Reveal delay={0.25}>
-            <p className="text-text-muted mt-6 max-w-[46ch] text-lg leading-relaxed">{heroBody}</p>
+            <p className="text-text-muted mt-5 max-w-[46ch] text-base leading-relaxed md:text-lg">
+              {heroBody}
+            </p>
           </Reveal>
 
           <Reveal delay={0.4}>

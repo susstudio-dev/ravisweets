@@ -1,15 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown, Menu, Search, ShoppingBag, Sparkles, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Paisley } from '@/components/brand/paisley';
-
-const RAVI_LOGO_URL =
-  'https://ravisweets.com/wp-content/uploads/2025/09/cropped-WhatsApp_Image_2025-09-04_at_5.28.12_PM-removebg-preview-1-1.png';
+import { BrandLogo } from '@/components/brand/logo';
 import { ScrollProgress } from '@/components/motion/scroll-progress';
 import { SearchOverlay } from '@/components/search/search-overlay';
 import { UserMenu } from '@/components/auth/user-menu';
@@ -170,56 +167,26 @@ export function Header() {
         )}
       </AnimatePresence>
 
-      {/* Main header bar — transparent overlay at the top of the page,
-          condensing into a centered floating glass pill once scrolled. Over
-          the homepage hero the at-top bar borrows the dusk register so the
-          nav reads in cream over the scene. */}
+      {/* Main header bar — a quiet, compact strip. Transparent at the top of
+          the page (borrowing the dusk register over the homepage hero so the
+          nav reads in cream), settling into a frosted full-width bar with a
+          bottom hairline once scrolled. */}
       <motion.div
         {...(overScene && !scrolled ? { 'data-register': 'dusk' } : {})}
-        animate={{ height: scrolled ? 56 : 84 }}
+        animate={{ height: scrolled ? 56 : 64 }}
         transition={{ duration: DURATION.base, ease: EASE.standard }}
         style={scrolled ? { backdropFilter: 'blur(16px) saturate(150%)' } : undefined}
         className={cn(
-          'relative transition-[background-color,border-color,border-radius,margin,max-width,box-shadow] duration-300',
+          'relative border-b transition-[background-color,border-color] duration-300',
           scrolled
-            ? 'shadow-lifted mx-3 mt-3 max-w-[1120px] rounded-full border border-[color:var(--color-border)] bg-[color:color-mix(in_oklab,var(--theme-base)_82%,transparent)] px-2 sm:mx-auto'
+            ? 'border-[color:var(--color-border)] bg-[color:color-mix(in_oklab,var(--theme-base)_85%,transparent)]'
             : 'border-transparent bg-transparent',
         )}
       >
         <div className="container-site flex h-full items-center justify-between gap-6">
-          {/* Brand logo — official Ravi Sweets mark, scales on scroll */}
-          <Link href="/" className="group flex items-center gap-3" aria-label="Ravi Sweets — home">
-            <motion.div
-              animate={{
-                width: scrolled ? 44 : 64,
-                height: scrolled ? 44 : 64,
-              }}
-              transition={{ duration: DURATION.base, ease: EASE.standard }}
-              className="relative shrink-0"
-            >
-              <Image
-                src={RAVI_LOGO_URL}
-                alt="Ravi Sweets"
-                fill
-                priority
-                sizes="64px"
-                className="object-contain drop-shadow-[0_2px_8px_color-mix(in_oklab,var(--theme-ink)_18%,transparent)]"
-              />
-            </motion.div>
-            <AnimatePresence>
-              {!scrolled && (
-                <motion.span
-                  key="sub-mark"
-                  initial={reduced ? { opacity: 0 } : { opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={reduced ? { opacity: 0 } : { opacity: 0, x: -6 }}
-                  transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                  className="text-theme-ink/55 hidden text-[10px] font-semibold uppercase tracking-[0.32em] sm:block"
-                >
-                  Khammam · est. 1985
-                </motion.span>
-              )}
-            </AnimatePresence>
+          {/* Brand lockup — drawn in code (the hotlinked PNG's host is dead) */}
+          <Link href="/" aria-label="Ravi Sweets — home" className="shrink-0">
+            <BrandLogo compact={scrolled} />
           </Link>
 
           {/* Primary nav — refined typography, animated underline */}
@@ -262,7 +229,7 @@ export function Header() {
               onClick={() => setMobileOpen((v) => !v)}
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="bg-theme-accent shadow-soft hover:shadow-lifted ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 lg:hidden"
+              className="bg-theme-accent shadow-soft hover:shadow-lifted ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-all hover:-translate-y-0.5 lg:hidden"
             >
               {mobileOpen ? (
                 <X className="h-5 w-5" aria-hidden="true" />

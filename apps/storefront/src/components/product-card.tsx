@@ -26,6 +26,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
   const reduced = useReducedMotion();
   const { add } = useCart();
   const [added, setAdded] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
   const [, startTransition] = useTransition();
 
   if (!primaryImage || !primaryVariant) return null;
@@ -60,13 +61,30 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
               style={{ backgroundColor: theme_palette.base }}
               aria-hidden="true"
             />
-            <Image
-              src={primaryImage.url}
-              alt={primaryImage.alt}
-              fill
-              sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            />
+            {imgFailed ? (
+              /* The image host answers 402 (suspended hosting) — fall back to
+                 the flavour panel with the katli mark so the grid never shows
+                 a broken-image icon. */
+              <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                <span
+                  className="block h-14 w-14 rotate-45 rounded-[6px]"
+                  style={{
+                    backgroundColor: theme_palette.accent,
+                    boxShadow: `inset 0 0 0 3px ${theme_palette.base}`,
+                    opacity: 0.55,
+                  }}
+                />
+              </div>
+            ) : (
+              <Image
+                src={primaryImage.url}
+                alt={primaryImage.alt}
+                fill
+                sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                onError={() => setImgFailed(true)}
+              />
+            )}
             {/* Tag ribbons. Sale takes priority on the LEFT column when active —
                 a "20% OFF" pill is the most-attention-grabbing badge a user
                 can see, so it belongs above bestseller / new. */}

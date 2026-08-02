@@ -71,7 +71,7 @@ export function StoryNightBand() {
           </p>
           <h2
             id="story-heading"
-            className="font-display text-display-md md:text-display-lg mt-3 leading-[1.05]"
+            className="font-display text-display-md mt-3 leading-[1.05]"
           >
             Forty years of slow sweetness.
           </h2>

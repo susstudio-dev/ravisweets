@@ -60,7 +60,7 @@ export default function HomePage() {
             </p>
             <h2
               id="bestsellers-top-heading"
-              className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.05]"
+              className="font-display text-display-md text-theme-ink mt-2 leading-[1.05]"
             >
               Today&rsquo;s bestsellers
             </h2>
@@ -94,7 +94,7 @@ export default function HomePage() {
             </p>
             <h2
               id="trust-heading"
-              className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.05]"
+              className="font-display text-display-md text-theme-ink mt-3 leading-[1.05]"
             >
               No preservatives, ever.
             </h2>
@@ -138,7 +138,7 @@ export default function HomePage() {
                   <Paisley size="sm" />
                   For HR &amp; Admin teams
                 </p>
-                <h2 className="font-display text-display-md md:text-display-lg mt-3">
+                <h2 className="font-display text-display-md mt-3">
                   Corporate gifting, done the Hyderabadi way.
                 </h2>
                 <p className="mt-3 text-sm opacity-85 md:text-base">
