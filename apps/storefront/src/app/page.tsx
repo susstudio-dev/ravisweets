@@ -5,7 +5,7 @@ import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { HeroStill } from '@/components/hero/hero-still';
+import { HeroDusk } from '@/components/hero/hero-dusk';
 import { SweetEssencePanel } from '@/components/sections/sweet-essence-panel';
 import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { HeritageStrip } from '@/components/sections/heritage-strip';
@@ -131,7 +131,7 @@ export default function HomePage() {
 
   return (
     <>
-      <HeroStill />
+      <HeroDusk />
 
       {/* Today's bestsellers — quick-buy */}
       <section aria-labelledby="bestsellers-top-heading" className="container-site pt-10 md:pt-14">

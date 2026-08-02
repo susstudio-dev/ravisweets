@@ -171,6 +171,457 @@
     mix-blend-mode: screen;
   }
 
+  /*
+   * ─── THE SHOP AT DUSK ─────────────────────────────────────────────────
+   * Hero scene (components/hero/shop-scene.tsx). Every colour is derived
+   * from the dusk register's tokens via color-mix — zero hex literals, so
+   * the scene re-themes with admin presets and costs the colour ratchet
+   * nothing. All looping animations move only transform/opacity; glows
+   * that "breathe" do so by fading a pre-painted overlay, never by
+   * animating box-shadow. The global prefers-reduced-motion rule freezes
+   * every one of these automatically.
+   */
+  .ss-stage {
+    --ss-plaster: color-mix(in oklab, var(--theme-ink) 88%, var(--theme-accent));
+    --ss-plaster-shade: color-mix(in oklab, var(--theme-ink) 68%, var(--theme-base));
+    --ss-board: color-mix(in oklab, var(--theme-base) 68%, black);
+    --ss-amber-hi: color-mix(in oklab, var(--theme-accent) 52%, white);
+    --ss-amber-glow: color-mix(in oklab, var(--theme-accent) 55%, transparent);
+    --ss-night: color-mix(in oklab, var(--theme-base) 78%, black);
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .ss-sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      var(--ss-night) 0%,
+      var(--theme-base) 42%,
+      color-mix(in oklab, var(--theme-base) 55%, var(--theme-glow)) 68%,
+      color-mix(in oklab, var(--theme-glow) 52%, var(--theme-accent)) 88%,
+      color-mix(in oklab, var(--theme-accent) 42%, var(--theme-glow)) 100%
+    );
+  }
+  .ss-horizon {
+    position: absolute;
+    left: 50%;
+    bottom: -12%;
+    width: 130%;
+    height: 55%;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      ellipse 60% 55% at 50% 100%,
+      color-mix(in oklab, var(--theme-accent) 30%, transparent) 0%,
+      transparent 70%
+    );
+  }
+  .ss-ground {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 9%;
+    background: linear-gradient(180deg, transparent, var(--ss-night) 80%);
+  }
+
+  .ss-star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--theme-ink) 85%, transparent);
+    animation: ssTwinkle 3.2s ease-in-out infinite;
+  }
+  .ss-star:nth-child(3n) {
+    animation-duration: 4.4s;
+    animation-delay: 0.9s;
+  }
+  .ss-star:nth-child(3n + 1) {
+    animation-duration: 5.1s;
+    animation-delay: 1.7s;
+    width: 2px;
+    height: 2px;
+  }
+  @keyframes ssTwinkle {
+    0%,
+    100% {
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 0.15;
+    }
+  }
+
+  /* ── the shopfront ── */
+  .ss-shop {
+    position: absolute;
+    bottom: 4%;
+    left: 50%;
+    width: min(78vw, 330px);
+    transform: translateX(-50%);
+    animation: ssRise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s backwards;
+  }
+  @media (min-width: 768px) {
+    .ss-shop {
+      left: auto;
+      right: clamp(2rem, 9vw, 9rem);
+      transform: none;
+      width: clamp(320px, 34vw, 470px);
+    }
+  }
+  @keyframes ssRise {
+    from {
+      opacity: 0;
+      transform: translate(var(--ss-rise-x, -50%), 26px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(var(--ss-rise-x, -50%), 0);
+    }
+  }
+  @media (min-width: 768px) {
+    .ss-shop {
+      --ss-rise-x: 0;
+    }
+  }
+
+  .ss-body {
+    position: relative;
+    height: clamp(150px, 15vw, 210px);
+    background: linear-gradient(180deg, var(--ss-plaster), var(--ss-plaster-shade) 160%);
+    border-radius: 8px 8px 0 0;
+  }
+  .ss-sign {
+    position: absolute;
+    top: calc(-1 * clamp(2.1rem, 2.6vw, 2.8rem));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    width: max-content;
+    padding: 0.35rem 1.1rem;
+    text-align: center;
+    background: var(--ss-board);
+    border-radius: 6px;
+    box-shadow: 0 10px 24px -10px color-mix(in oklab, black 55%, transparent);
+    animation: ssSignDrop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.75s backwards;
+  }
+  @keyframes ssSignDrop {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -10px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .ss-awning {
+    position: absolute;
+    top: 8%;
+    left: -4%;
+    right: -4%;
+    height: 21%;
+    z-index: 3;
+    transform-origin: top center;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--theme-glow) 0 11%,
+      var(--ss-plaster) 11% 22%
+    );
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 8px 14px -8px color-mix(in oklab, black 45%, transparent);
+    animation: ssUnroll 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.3) 0.5s backwards;
+  }
+  .ss-awning::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -26%;
+    height: 52%;
+    background: radial-gradient(
+      circle at 5.5% 0,
+      transparent 54%,
+      var(--ss-plaster) 55%
+    );
+    background-size: 11% 100%;
+  }
+  @keyframes ssUnroll {
+    from {
+      transform: scaleY(0.1);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  .ss-garland {
+    position: absolute;
+    top: 33%;
+    left: 1%;
+    right: 1%;
+    height: 10%;
+    z-index: 4;
+    animation: ssSignDrop 0.5s ease-out 1s backwards;
+  }
+  .ss-mg {
+    position: absolute;
+    width: 7.5%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--ss-amber-hi), var(--theme-accent) 70%);
+    animation: ssSway 3.4s ease-in-out infinite;
+  }
+  .ss-mg:nth-child(even) {
+    animation-duration: 4.2s;
+    animation-delay: 1.1s;
+  }
+  @keyframes ssSway {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(14%);
+    }
+  }
+
+  .ss-windows {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 46%;
+    display: flex;
+    gap: 6%;
+    height: 34%;
+  }
+  .ss-win {
+    position: relative;
+    flex: 1;
+    border-radius: 5px;
+    background: linear-gradient(180deg, var(--ss-amber-hi), var(--theme-accent) 115%);
+    box-shadow:
+      inset 0 0 0 3px color-mix(in oklab, var(--ss-plaster-shade) 80%, black),
+      0 0 26px 4px var(--ss-amber-glow);
+    animation: ssWinOn 0.8s ease-out backwards;
+  }
+  .ss-win:nth-child(1) {
+    animation-delay: 1.05s;
+  }
+  .ss-win:nth-child(2) {
+    animation-delay: 1.3s;
+  }
+  .ss-win:nth-child(3) {
+    animation-delay: 1.55s;
+  }
+  @keyframes ssWinOn {
+    0% {
+      opacity: 0;
+    }
+    55% {
+      opacity: 0.4;
+    }
+    70% {
+      opacity: 1;
+    }
+    82% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  /* the breathe: a pre-painted brighter pane whose opacity drifts */
+  .ss-win::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at 50% 30%,
+      color-mix(in oklab, white 45%, transparent),
+      transparent 70%
+    );
+    animation: ssBreathe 4.6s ease-in-out infinite;
+  }
+  .ss-win:nth-child(2)::before {
+    animation-delay: 1.4s;
+  }
+  .ss-win:nth-child(3)::before {
+    animation-delay: 2.6s;
+  }
+  @keyframes ssBreathe {
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    50% {
+      opacity: 0.75;
+    }
+  }
+  .ss-shelf {
+    position: absolute;
+    left: 9%;
+    right: 9%;
+    height: 5%;
+    min-height: 3px;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--ss-board) 70%, var(--theme-accent));
+  }
+  .ss-sweet {
+    position: absolute;
+    width: 14%;
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--theme-glow) 75%, var(--theme-accent));
+  }
+  .ss-sweet--round {
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--theme-accent) 75%, var(--theme-glow));
+  }
+  .ss-sweet--diamond {
+    transform: rotate(45deg);
+    background: color-mix(in oklab, var(--ss-plaster) 70%, var(--theme-accent));
+  }
+
+  .ss-door {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 17%;
+    height: 40%;
+    z-index: 2;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--ss-amber-hi) 85%, white),
+      var(--theme-accent) 120%
+    );
+    box-shadow:
+      inset 0 0 0 3px var(--ss-board),
+      0 0 30px 6px var(--ss-amber-glow);
+  }
+  .ss-doorglow {
+    position: absolute;
+    bottom: -4%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 12%;
+    background: radial-gradient(ellipse 50% 100% at 50% 0%, var(--ss-amber-glow), transparent 75%);
+    animation: ssBreathe 5.2s ease-in-out 0.8s infinite;
+  }
+
+  /* ── atmosphere ── */
+  .ss-steam {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: color-mix(in srgb, white 80%, transparent);
+    filter: blur(5px);
+    opacity: 0;
+    animation: ssSteam 5s ease-out infinite;
+  }
+  .ss-steam:nth-child(2) {
+    animation-duration: 5.8s;
+    animation-delay: 1.6s;
+  }
+  .ss-steam:nth-child(3) {
+    animation-duration: 6.6s;
+    animation-delay: 3.1s;
+  }
+  @keyframes ssSteam {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.7);
+    }
+    22% {
+      opacity: 0.65;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-84px) scale(1.7) translateX(8px);
+    }
+  }
+
+  .ss-firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ss-amber-hi);
+    box-shadow: 0 0 8px 2px var(--ss-amber-glow);
+    animation:
+      ssDrift 14s ease-in-out infinite,
+      ssTwinkle 2.3s ease-in-out infinite;
+  }
+  .ss-firefly:nth-child(2) {
+    animation-duration: 18s, 3.1s;
+    animation-delay: 4s, 0.8s;
+  }
+  @keyframes ssDrift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-34px, -22px);
+    }
+    55% {
+      transform: translate(18px, -44px);
+    }
+    80% {
+      transform: translate(30px, -10px);
+    }
+  }
+
+  .ss-petal {
+    position: absolute;
+    width: 9px;
+    height: 14px;
+    border-radius: 50% 50% 50% 0;
+    background: color-mix(in oklab, var(--theme-glow) 60%, var(--theme-ink));
+    opacity: 0;
+    animation: ssPetal 11s linear infinite;
+  }
+  .ss-petal:nth-child(2) {
+    animation-duration: 17s;
+    animation-delay: 6s;
+  }
+  @keyframes ssPetal {
+    0% {
+      opacity: 0;
+      transform: translate(0, -20px) rotate(10deg);
+    }
+    8% {
+      opacity: 0.7;
+    }
+    88% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-70px, 78vh) rotate(320deg);
+    }
+  }
+
+  /* CTA picks up the window-glow on hover — lamplight as affordance. */
+  .ss-cta-glow:hover {
+    box-shadow: 0 0 30px -2px color-mix(in oklab, var(--theme-accent) 55%, transparent);
+  }
+
+  @media (max-width: 767px) {
+    .ss-firefly,
+    .ss-petal,
+    .ss-star--far {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .grain-overlay {
       display: none;
