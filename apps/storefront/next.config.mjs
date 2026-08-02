@@ -11,6 +11,9 @@ const repoBasePath = process.env.PAGES_BASE_PATH ?? '';
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Opt-in build-dir override so `next dev` (NEXT_DIST_DIR=.next-dev) and
+  // concurrent `next build` runs never fight over the same .next directory.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   transpilePackages: ['@ravisweets/shared', '@ravisweets/ui'],
 
   // Static export for GH Pages / Cloudflare Pages. next dev / default build unchanged.
