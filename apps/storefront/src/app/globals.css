@@ -92,6 +92,12 @@
     --color-varak: #d9c6a8;
     --color-varak-rule: #d9c6a8;
 
+    /* Raw anchors for scene-local lightening (.ss-soft) — same values as the
+       register's own base/glow, so a subtree can mix from them without a
+       circular var() reference. */
+    --dusk-base-raw: #3a1f31;
+    --dusk-glow-raw: #7c2344;
+
     /* Re-pointed at dusk ink — see the long comment on the :root declaration. */
     --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
 
@@ -201,6 +207,29 @@
     overflow: hidden;
     pointer-events: none;
     contain: layout paint style;
+  }
+
+  /*
+   * Softer twilight: applied to the hero's scene wrapper only. The whole
+   * scene derives from these two tokens, so lifting them lightens the sky,
+   * horizon and shop coherently; the text layer outside the wrapper keeps
+   * the register's full-contrast tokens.
+   */
+  .ss-soft {
+    --theme-base: color-mix(in oklab, var(--dusk-base-raw) 78%, white);
+    --theme-glow: color-mix(in oklab, var(--dusk-glow-raw) 70%, white);
+  }
+  /* Depth where the words live: a quiet plum scrim over the left third so
+     the lighter sky never costs the headline its contrast. */
+  .ss-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--dusk-base-raw) 62%, transparent) 0%,
+      color-mix(in oklab, var(--dusk-base-raw) 30%, transparent) 38%,
+      transparent 62%
+    );
   }
   .ss-sky {
     position: absolute;

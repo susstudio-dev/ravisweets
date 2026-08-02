@@ -94,6 +94,7 @@ export function ShopScene() {
         />
       ))}
       <div className="ss-horizon" />
+      <div className="ss-scrim" />
 
       <div className="ss-shop">
         <div className="ss-sign">

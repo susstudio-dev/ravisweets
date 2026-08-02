@@ -80,7 +80,7 @@ export function HeroDusk() {
     >
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="ss-soft pointer-events-none absolute inset-0"
         style={
           walkIn && !reduced
             ? { scale: sceneScale, y: sceneY, willChange: 'transform' }
