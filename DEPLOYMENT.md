@@ -85,36 +85,12 @@ supabase secrets set "ORDER_FROM_EMAIL=Ravi Sweets <orders@yourdomain.com>"  # o
 
 ---
 
-## Part 2 — Cloudflare Pages
+## Part 2 — Cloudflare Pages (the only deploy path)
 
-Two ways to deploy; **Option A is recommended** (mirrors the existing GH Pages workflow, keeps CI in one place).
-
-### Option A — GitHub Actions (workflow already in repo)
-
-[.github/workflows/deploy-cloudflare.yml](.github/workflows/deploy-cloudflare.yml) builds the static export and pushes it with wrangler on every push to `master`/`main`.
-
-**One-time setup:**
-
-1. **Create the Pages project** (either):
-   - Dashboard: **Workers & Pages → Create → Pages → Upload assets**, name it `ravisweets` (you can cancel after the project exists), or
-   - CLI: `npx wrangler pages project create ravisweets --production-branch=master`
-2. **API token**: Cloudflare dashboard → **My Profile → API Tokens → Create Token → Custom token** with permission **Account · Cloudflare Pages · Edit**.
-3. **Account ID**: shown on the dashboard's Workers & Pages overview (right sidebar).
-4. GitHub repo → **Settings → Secrets and variables → Actions**:
-
-| Kind | Name | Value |
-|------|------|-------|
-| Secret | `CLOUDFLARE_API_TOKEN` | token from step 2 |
-| Secret | `CLOUDFLARE_ACCOUNT_ID` | account ID from step 3 |
-| Variable (optional) | `CLOUDFLARE_PAGES_PROJECT` | defaults to `ravisweets` |
-| Variable (optional) | `NEXT_PUBLIC_SITE_URL` | defaults to `https://ravisweets.pages.dev`; set to the custom domain when you add one |
-| Variable (later) | `NEXT_PUBLIC_INDEXING_ENABLED` | leave unset until launch (see §2.3) |
-
-5. Push to `master` (or run the workflow manually from the Actions tab).
-
-> The old GitHub Pages workflow (`deploy.yml`) still fires on the same pushes. Keep it during the transition if you want, then delete it once Cloudflare is canonical.
-
-### Option B — Cloudflare Git integration (build runs on Cloudflare)
+Cloudflare builds and deploys the site itself, straight from GitHub — no GitHub
+Actions and no GitHub secrets. The old GitHub Pages workflow and the
+GitHub-Actions Cloudflare workflow have been **removed**; the only workflow left
+is `ci.yml`, which runs lint/test/build checks and never deploys.
 
 **Workers & Pages → Create → Pages → Connect to Git**, pick the repo, then:
 
@@ -157,6 +133,42 @@ Pages project → **Custom domains** → add `ravisweets.com` (or subdomain). Th
 
 ---
 
+## Part 2.5 — Where credentials live (and what's safe in git)
+
+The site is static + Supabase-from-the-browser, so there are only two kinds of
+value, and the rule is simple: **public config can live in git; every real
+secret lives outside git — and outside Cloudflare too.**
+
+### Safe to commit (already in `apps/storefront/.env.production`)
+
+- `NEXT_PUBLIC_SUPABASE_URL` — the project URL. Public.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — the **anon / publishable** key. Public by
+  design: it ships in the browser bundle no matter what, and it cannot bypass
+  Row-Level Security. RLS is the security boundary, not this key.
+- `NEXT_PUBLIC_*` feature flags and `NEXT_PUBLIC_SITE_URL`. Public.
+
+Anything named `NEXT_PUBLIC_` is **baked into the public JavaScript at build
+time**, so never put a secret behind that prefix — and never expect a secret to
+be "hidden" in a Cloudflare build variable. A static export has no server on
+Cloudflare, so there is nowhere on Cloudflare for a secret to hide.
+
+### Never in git, never in `.env.production`, never in Cloudflare
+
+| Secret | Where it belongs |
+|--------|------------------|
+| **Database password** / `postgresql://…` connection string | Your password manager only. For migrations, pass it via an env var at run time (`PGPASSWORD=…`) or use the Supabase CLI — never write it to a tracked file. |
+| **`service_role` key** (bypasses RLS) | Supabase only — Edge Functions read it via `supabase secrets set`. Never in the client or the repo. |
+| **Resend / MSG91 / (later) Razorpay·Stripe secret keys** | Supabase Edge Function secrets, or the payment provider's server side. Never in the static site. |
+
+`.env.local` (your local dev copy) is gitignored and also holds only the public
+anon key — keep it that way.
+
+> The database password was shared in chat during setup — **rotate it** in
+> Supabase → **Settings → Database → Reset database password**, and pick one
+> without a `"` character (it breaks connection-string quoting).
+
+---
+
 ## Part 3 — Verify the deploy
 
 1. `https://<site>/` renders; product card click → `/product/<slug>/` full page.
@@ -173,4 +185,5 @@ Pages project → **Custom domains** → add `ravisweets.com` (or subdomain). Th
 - [ ] Custom SMTP in Supabase before real OTP volume.
 - [ ] MSG91 + DLT → enable phone provider → `NEXT_PUBLIC_PHONE_OTP_ENABLED=true`.
 - [ ] Launch flip: custom domain + `NEXT_PUBLIC_SITE_URL` + `NEXT_PUBLIC_INDEXING_ENABLED=true`.
-- [ ] Retire `.github/workflows/deploy.yml` (GH Pages) once Cloudflare is canonical.
+- [x] GitHub Pages + GitHub-Actions Cloudflare workflows removed — Cloudflare Git integration is the only deploy path.
+- [ ] In GitHub → **Settings → Pages**, set Source to **None** (or leave it; the last GH Pages build stays crawl-blocked and goes stale). Optionally disconnect the stale **Vercel** integration in the Vercel dashboard.
