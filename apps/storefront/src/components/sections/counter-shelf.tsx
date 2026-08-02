@@ -39,7 +39,7 @@ const COUNTERS = [
 
 function SweetRow({ shapes }: { shapes: readonly ('diamond' | 'round' | 'square')[] }) {
   return (
-    <div aria-hidden="true" className="relative h-9">
+    <div aria-hidden="true" className="relative h-6">
       {shapes.map((shape, i) => (
         <span
           key={i}
@@ -50,7 +50,7 @@ function SweetRow({ shapes }: { shapes: readonly ('diamond' | 'round' | 'square'
                 ? 'ss-sweet ss-sweet--round'
                 : 'ss-sweet'
           }
-          style={{ left: `${8 + i * 24}%`, top: '15%', width: '9%' }}
+          style={{ left: `${10 + i * 22}%`, top: '22%', width: '5%' }}
         />
       ))}
       {/* the counter's brass rail */}
@@ -66,8 +66,8 @@ export function CounterShelf() {
       data-register="dusk"
       className="bg-theme-base text-theme-ink relative overflow-hidden"
     >
-      <div className="container-site py-16 md:py-24">
-        <Reveal className="mb-10 max-w-2xl">
+      <div className="container-site py-14 md:py-20">
+        <Reveal className="mb-8 max-w-2xl">
           <p className="text-theme-accent text-xs font-semibold uppercase tracking-[0.28em]">
             Step inside
           </p>
@@ -84,7 +84,7 @@ export function CounterShelf() {
             <Link
               key={c.href}
               href={c.href}
-              className="group bg-surface-elevated relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-[color:var(--color-border)] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_38px_-6px_color-mix(in_oklab,var(--theme-accent)_45%,transparent)]"
+              className="group bg-surface-elevated relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-[color:var(--color-border)] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_26px_-6px_color-mix(in_oklab,var(--theme-accent)_32%,transparent)]"
             >
               {/* lamplight tube along the top of the case */}
               <span
@@ -104,8 +104,8 @@ export function CounterShelf() {
                 }}
               />
 
-              <p className="font-indic text-theme-accent text-2xl leading-none">{c.telugu}</p>
-              <h3 className="font-display text-2xl">{c.title}</h3>
+              <p className="font-indic text-theme-accent text-lg leading-none">{c.telugu}</p>
+              <h3 className="font-display text-xl">{c.title}</h3>
               <SweetRow shapes={c.sweets} />
               <p className="text-text-muted text-sm leading-relaxed">{c.blurb}</p>
               <span className="text-theme-accent mt-auto inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">

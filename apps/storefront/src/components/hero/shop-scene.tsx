@@ -50,6 +50,7 @@ const STARS: ReadonlyArray<{ left: string; top: string; far?: boolean }> = [
 function WindowPane({ variant }: { variant: 0 | 1 | 2 }) {
   return (
     <div className="ss-win">
+      <span className="ss-sill" />
       <div className="ss-shelf" style={{ top: '30%' }} />
       <div className="ss-shelf" style={{ top: '62%' }} />
       {variant === 0 && (
@@ -117,6 +118,7 @@ export function ShopScene() {
             <WindowPane variant={2} />
           </div>
           <div className="ss-door" />
+          <div className="ss-doorstep" />
         </div>
         <div className="ss-doorglow" />
 
