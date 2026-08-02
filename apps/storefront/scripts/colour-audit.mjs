@@ -7,7 +7,7 @@
  *
  * Update the MAX_* values only DOWNWARD, and say why in the commit message.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
@@ -54,7 +54,11 @@ let paisley = 0;
 let classes = 0;
 
 for (const file of files) {
-  const src = readFileSync(join(repoRoot, file), 'utf8');
+  // `git ls-files` lists tracked paths even when deleted from the working
+  // tree (deleted-but-unstaged); scan what actually exists on disk.
+  const abs = join(repoRoot, file);
+  if (!existsSync(abs)) continue;
+  const src = readFileSync(abs, 'utf8');
   for (const m of src.matchAll(/#[0-9a-fA-F]{6}\b/g)) {
     const v = m[0].toLowerCase();
     if (!ALLOWED.has(v)) hex.add(v);
