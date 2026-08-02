@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown, Menu, Search, ShoppingBag, Sparkles, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Paisley } from '@/components/brand/paisley';
 
@@ -90,6 +91,11 @@ export function Header() {
   const { lineCount } = useCart();
   const { active: theme } = useActiveTheme();
   const reduced = useReducedMotion();
+  const pathname = usePathname();
+  // The homepage hero pulls up underneath the header, so at the top of that
+  // page the bar floats transparent over the dusk scene and borrows the dusk
+  // register for cream type. Everywhere else it stays in the light register.
+  const overScene = pathname === '/';
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -164,21 +170,20 @@ export function Header() {
         )}
       </AnimatePresence>
 
-      {/* Main header bar — height + bg shift on scroll */}
+      {/* Main header bar — transparent overlay at the top of the page,
+          condensing into a centered floating glass pill once scrolled. Over
+          the homepage hero the at-top bar borrows the dusk register so the
+          nav reads in cream over the scene. */}
       <motion.div
-        animate={{
-          height: scrolled ? 60 : 84,
-          backgroundColor: scrolled
-            ? 'color-mix(in oklab, var(--theme-base) 88%, transparent)'
-            : 'color-mix(in oklab, var(--theme-base) 60%, transparent)',
-        }}
+        {...(overScene && !scrolled ? { 'data-register': 'dusk' } : {})}
+        animate={{ height: scrolled ? 56 : 84 }}
         transition={{ duration: DURATION.base, ease: EASE.standard }}
-        style={{ backdropFilter: 'blur(14px) saturate(140%)' }}
+        style={scrolled ? { backdropFilter: 'blur(16px) saturate(150%)' } : undefined}
         className={cn(
-          'relative border-b transition-shadow duration-300',
+          'relative transition-[background-color,border-color,border-radius,margin,max-width,box-shadow] duration-300',
           scrolled
-            ? 'border-theme-ink/10 shadow-[0_1px_0_color-mix(in_oklab,var(--theme-accent)_20%,transparent)]'
-            : 'border-transparent shadow-none',
+            ? 'shadow-lifted mx-3 mt-3 max-w-[1120px] rounded-full border border-[color:var(--color-border)] bg-[color:color-mix(in_oklab,var(--theme-base)_82%,transparent)] px-2 sm:mx-auto'
+            : 'border-transparent bg-transparent',
         )}
       >
         <div className="container-site flex h-full items-center justify-between gap-6">
