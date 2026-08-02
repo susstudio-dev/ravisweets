@@ -128,11 +128,12 @@ export async function submitReview(input: {
     }
   }
 
-  // Auto-approve if verified + rating>=4 + body looks clean. Otherwise pending.
-  const cleanBody = input.body.toLowerCase();
-  const flagged = ['fuck', 'shit', 'spam', 'scam', 'crap'].some((w) => cleanBody.includes(w));
-  const autoApprove = !!orderId && input.rating >= 4 && !flagged;
-  const status: ReviewStatus = flagged ? 'flagged' : autoApprove ? 'approved' : 'pending';
+  // Every review lands as `pending` and is released by admin moderation.
+  // RLS enforces status='pending' on insert, so status is never client-trusted
+  // (a self-approving client insert is rejected by the DB). The old
+  // auto-approve heuristic and profanity list were client-side only and
+  // trivially bypassable — moderation is the real gate.
+  const status: ReviewStatus = 'pending';
 
   const { error } = await supa.from('reviews').insert({
     product_id: input.productId,

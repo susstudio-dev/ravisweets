@@ -46,6 +46,34 @@ const STATUS_HEADLINE: Record<RequestBody['kind'], string> = {
   cancelled: 'Cancelled — refund queued.',
 };
 
+const KINDS: RequestBody['kind'][] = ['placed', 'packed', 'shipped', 'delivered', 'cancelled'];
+
+const STAFF_ROLES = ['founder', 'admin', 'ops', 'marketing', 'accountant'];
+
+// HTML-entity-encode a value before it is interpolated into the email template.
+// Order/address/customer fields come from client-written JSONB (address_snapshot,
+// lines) and must never be trusted as markup.
+function esc(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// A tracking link must be an http(s) URL — anything else (javascript:, data:,
+// an attribute-breakout string) is dropped rather than rendered in the href.
+function safeHttpUrl(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  try {
+    const u = new URL(raw);
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function inr(paise: number): string {
   return `₹${Math.round(paise / 100).toLocaleString('en-IN')}`;
 }
@@ -66,8 +94,8 @@ function template(args: {
       (l) => `
       <tr>
         <td style="padding:8px 0;border-bottom:1px solid #ecd9a8;color:#1f0c02;">
-          <div style="font-weight:600;">${l.productTitle}</div>
-          <div style="font-size:12px;color:#1f0c02aa;">${l.variantTitle} · × ${l.quantity}</div>
+          <div style="font-weight:600;">${esc(l.productTitle)}</div>
+          <div style="font-size:12px;color:#1f0c02aa;">${esc(l.variantTitle)} · × ${esc(l.quantity)}</div>
         </td>
         <td style="padding:8px 0;border-bottom:1px solid #ecd9a8;text-align:right;font-family:'SF Mono',Menlo,monospace;color:#1f0c02;">
           ${inr(l.lineTotal)}
@@ -94,7 +122,7 @@ function template(args: {
         ${STATUS_HEADLINE[args.kind]}
       </h1>
       <p style="margin:0 0 20px;color:#1f0c02cc;line-height:1.55;">
-        Hi ${args.customerName.split(' ')[0]}, here's a summary.
+        Hi ${esc(args.customerName.split(' ')[0])}, here's a summary.
       </p>
       <table style="width:100%;border-collapse:collapse;">
         <tbody>${linesHtml}</tbody>
@@ -112,13 +140,13 @@ function template(args: {
       </div>
       ${
         args.trackingUrl
-          ? `<a href="${args.trackingUrl}" style="display:block;margin-top:20px;padding:12px 20px;background:#1f0c02;color:#fbf3df;text-align:center;text-decoration:none;border-radius:999px;font-weight:600;font-size:14px;">Track your order →</a>`
+          ? `<a href="${esc(args.trackingUrl)}" style="display:block;margin-top:20px;padding:12px 20px;background:#1f0c02;color:#fbf3df;text-align:center;text-decoration:none;border-radius:999px;font-weight:600;font-size:14px;">Track your order →</a>`
           : ''
       }
       <p style="font-size:11px;color:#1f0c02aa;margin:24px 0 0;line-height:1.6;">
         Shipping to:<br/>
-        ${args.address.line1}${args.address.line2 ? ', ' + args.address.line2 : ''}<br/>
-        ${args.address.city}, ${args.address.state} ${args.address.pincode}
+        ${esc(args.address.line1)}${args.address.line2 ? ', ' + esc(args.address.line2) : ''}<br/>
+        ${esc(args.address.city)}, ${esc(args.address.state)} ${esc(args.address.pincode)}
       </p>
     </div>
     <p style="font-size:11px;color:#1f0c02aa;text-align:center;margin:20px 0 0;line-height:1.6;">
@@ -135,16 +163,32 @@ serve(async (req: Request) => {
   }
   try {
     const body = (await req.json()) as RequestBody;
-    if (!body.orderId || !body.kind) {
-      return new Response(JSON.stringify({ error: 'orderId + kind required' }), { status: 400 });
+    if (!body.orderId || !body.kind || !KINDS.includes(body.kind)) {
+      return new Response(JSON.stringify({ error: 'orderId + valid kind required' }), { status: 400 });
     }
     const supaUrl = Deno.env.get('SUPABASE_URL');
     const supaKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
     const resendKey = Deno.env.get('RESEND_API_KEY');
     const fromEmail = Deno.env.get('ORDER_FROM_EMAIL') ?? 'Ravi Sweets <orders@ravisweets.com>';
-    if (!supaUrl || !supaKey || !resendKey) {
+    if (!supaUrl || !supaKey || !anonKey || !resendKey) {
       return new Response(JSON.stringify({ error: 'env not configured' }), { status: 500 });
     }
+
+    // Authorize the caller. The public anon key satisfies verify_jwt but is
+    // NOT authorization, so we verify the caller's own JWT and only proceed if
+    // they own the order or hold a staff role. Reject anonymous identities.
+    const auth = req.headers.get('Authorization') ?? '';
+    const callerSupa = createClient(supaUrl, anonKey, {
+      global: { headers: { Authorization: auth } },
+    });
+    const { data: callerData, error: whoErr } = await callerSupa.auth.getUser();
+    const caller = callerData?.user;
+    if (whoErr || !caller || caller.is_anonymous) {
+      return new Response(JSON.stringify({ error: 'not authorized' }), { status: 401 });
+    }
+    const callerRole = (caller.app_metadata as { role?: string } | undefined)?.role ?? '';
+    const isStaff = STAFF_ROLES.includes(callerRole);
 
     const supa = createClient(supaUrl, supaKey);
     const { data: order, error } = await supa
@@ -154,6 +198,10 @@ serve(async (req: Request) => {
       .maybeSingle();
     if (error || !order) {
       return new Response(JSON.stringify({ error: 'order not found' }), { status: 404 });
+    }
+    // Only the order's own customer or a staff member may trigger its emails.
+    if (!isStaff && order.customer_id !== caller.id) {
+      return new Response(JSON.stringify({ error: 'not authorized' }), { status: 403 });
     }
     const address = order.address_snapshot as {
       name: string;
@@ -187,7 +235,7 @@ serve(async (req: Request) => {
       shipping: order.shipping,
       total: order.total,
       address,
-      trackingUrl: body.trackingUrl,
+      trackingUrl: safeHttpUrl(body.trackingUrl),
     });
 
     const r = await fetch('https://api.resend.com/emails', {
@@ -204,15 +252,16 @@ serve(async (req: Request) => {
       }),
     });
     if (!r.ok) {
-      const txt = await r.text();
-      return new Response(JSON.stringify({ error: 'resend failed', detail: txt }), { status: 502 });
+      console.error('resend failed', r.status, await r.text());
+      return new Response(JSON.stringify({ error: 'send failed' }), { status: 502 });
     }
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500 });
+    console.error('send-order-email error', e);
+    return new Response(JSON.stringify({ error: 'internal error' }), { status: 500 });
   }
 });
 

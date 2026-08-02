@@ -6,6 +6,7 @@ import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { Parallax } from '@/components/motion/parallax';
 import { Grain } from '@/components/brand/grain';
+import { jsonLdHtml } from '@/lib/seo/json-ld';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://susstudio-dev.github.io/ravisweets';
@@ -229,7 +230,7 @@ export default function StoresPage() {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCAL_BUSINESS_JSONLD) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(LOCAL_BUSINESS_JSONLD) }}
       />
       {/* Hero */}
       <section

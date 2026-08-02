@@ -27,13 +27,13 @@ const POLICIES: Record<Slug, Policy> = {
         body: [
           'Name, phone, email, shipping and billing address — required to fulfil your order.',
           'Order history — retained so you can re-order and so we can offer warranty-style support if a box is damaged in transit.',
-          'Analytics (page views, basic device info) via PostHog, with session replay sensitive inputs masked. We honour your cookie rejection.',
+          'Only essential, first-party cookies needed to keep you signed in and hold your cart. We do not run third-party analytics or advertising trackers; if that ever changes, we will ask for your consent first.',
         ],
       },
       {
         heading: 'What we don’t',
         body: [
-          'We never store card numbers, CVV, UPI PINs, or netbanking credentials. Payment is handled end-to-end by Razorpay (India) and Stripe (international).',
+          'We never store card numbers, CVV, UPI PINs, or netbanking credentials. When online payments go live, they will be processed by a PCI-DSS-compliant payment gateway and card data will never touch our servers.',
           'We don’t sell your data. We don’t share it with brands for retargeting. The only third parties that see order data are the payment gateway, the shipping courier, and our transactional email service.',
         ],
       },
@@ -42,7 +42,7 @@ const POLICIES: Record<Slug, Policy> = {
         body: [
           'Request a copy of your data at privacy@ravisweets.com.',
           'Ask us to delete your account and we anonymise your orders (we retain statutory records for the period required by Indian law).',
-          'Reject analytics cookies via the banner — we stop loading PostHog and any marketing pixels for that session.',
+          'Because we run no non-essential trackers, there is nothing extra to opt out of today. If we introduce analytics, you will be able to reject it before it loads.',
         ],
       },
     ],

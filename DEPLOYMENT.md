@@ -32,6 +32,7 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 4 | `supabase/migrations/0003_product_sale_pricing.sql` | |
 | 5 | `supabase/migrations/0004_nutrition_festival_storage.sql` | One-shot: storage policies lack drop-guards. Creates the `product-images` bucket |
 | 6 | `supabase/SETUP_ALL.sql` | Consolidates 0005–0009; idempotent, safe to re-run. Creates the `review-photos` bucket |
+| 7 | `supabase/migrations/0010_security_hardening.sql` | Security-audit follow-up: pins review inserts to `pending`, scopes promotions/enquiry writes, constrains the review-photos bucket. Idempotent |
 
 Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, and friends (23 tables total).
 

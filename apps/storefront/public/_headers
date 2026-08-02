@@ -1,0 +1,14 @@
+# Cloudflare Pages security headers. Next copies public/ into the static
+# export (out/), and Cloudflare Pages applies out/_headers at the edge.
+# (GitHub Pages ignores this file — it just serves it as a harmless asset.)
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()
+  # A Next.js static export injects inline bootstrap scripts and inline styles
+  # and has no server to mint per-request nonces, so script-src/style-src must
+  # allow 'unsafe-inline'. The CSP still adds real value: it locks base-uri,
+  # object-src, frame-ancestors, form-action, and pins connect/img/font origins.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://ravisweets.com; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'

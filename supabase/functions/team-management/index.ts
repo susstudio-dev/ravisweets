@@ -72,6 +72,11 @@ serve(async (req: Request) => {
   if (callerRole !== 'founder' && callerRole !== 'admin') {
     return err('forbidden — founder or admin only', 403);
   }
+  const isFounder = callerRole === 'founder';
+  // Only a founder may grant, change, or revoke the privileged roles. An admin
+  // manages ops/marketing/accountant only — it cannot mint or remove founders
+  // or other admins, matching the documented "except managing other admins".
+  const PRIVILEGED = ['founder', 'admin'];
 
   const admin = createClient(supaUrl, serviceKey);
 
@@ -83,13 +88,16 @@ serve(async (req: Request) => {
     switch (body.action) {
       case 'invite': {
         if (!body.email || !STAFF_ROLES.includes(body.role)) return err('email + role required');
+        if (PRIVILEGED.includes(body.role) && !isFounder) {
+          return err('forbidden — only a founder may grant founder/admin', 403);
+        }
         // Create auth user, auto-confirmed so they can sign in immediately.
         const { data: created, error: createErr } = await admin.auth.admin.createUser({
           email: body.email,
           email_confirm: true,
           app_metadata: { role: body.role },
         });
-        if (createErr || !created.user) return err(`createUser: ${createErr?.message}`, 500);
+        if (createErr || !created.user) { console.error('createUser', createErr?.message); return err('could not create user', 500); }
 
         // Send a password-reset link so they can set their own password.
         await admin.auth.admin.generateLink({
@@ -114,23 +122,39 @@ serve(async (req: Request) => {
 
       case 'update-role': {
         if (!body.userId || !STAFF_ROLES.includes(body.role)) return err('userId + role required');
+        // An admin may not touch a user who is (or is becoming) founder/admin.
+        const { data: target } = await admin.auth.admin.getUserById(body.userId);
+        const targetRole = (target.user?.app_metadata as { role?: string } | undefined)?.role ?? '';
+        if ((PRIVILEGED.includes(body.role) || PRIVILEGED.includes(targetRole)) && !isFounder) {
+          return err('forbidden — only a founder may manage founder/admin roles', 403);
+        }
         const { error } = await admin.auth.admin.updateUserById(body.userId, {
           app_metadata: { role: body.role },
         });
-        if (error) return err(`updateUser: ${error.message}`, 500);
+        if (error) { console.error('updateUser', error.message); return err('could not update user', 500); }
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
       case 'revoke': {
         if (!body.userId) return err('userId required');
+        const { data: target } = await admin.auth.admin.getUserById(body.userId);
+        const targetRole = (target.user?.app_metadata as { role?: string } | undefined)?.role ?? '';
+        const targetEmail = target.user?.email ?? '';
+        if (PRIVILEGED.includes(targetRole) && !isFounder) {
+          return err('forbidden — only a founder may revoke a founder/admin', 403);
+        }
         const { error } = await admin.auth.admin.updateUserById(body.userId, {
           app_metadata: { role: 'customer' },
         });
-        if (error) return err(`updateUser: ${error.message}`, 500);
-        await admin
-          .from('team_invitations')
-          .update({ revoked_at: new Date().toISOString() })
-          .eq('email', (await admin.auth.admin.getUserById(body.userId)).data.user?.email ?? '');
+        if (error) { console.error('updateUser', error.message); return err('could not update user', 500); }
+        // Match the invitation by the resolved email only — never fall back to
+        // an empty string, which would revoke every emailless invitation row.
+        if (targetEmail) {
+          await admin
+            .from('team_invitations')
+            .update({ revoked_at: new Date().toISOString() })
+            .eq('email', targetEmail);
+        }
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       }
 
@@ -138,7 +162,7 @@ serve(async (req: Request) => {
         // Returns all users whose app_metadata.role is one of the staff roles.
         // Pagination at 200 — should be plenty for a kitchen of <50.
         const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-        if (error) return err(`listUsers: ${error.message}`, 500);
+        if (error) { console.error('listUsers', error.message); return err('could not list users', 500); }
         const users = (data.users as AdminUser[])
           .filter((u) => STAFF_ROLES.includes((u.app_metadata?.role ?? '') as StaffRole))
           .map((u) => ({
@@ -158,7 +182,8 @@ serve(async (req: Request) => {
         return err('unknown action');
     }
   } catch (e) {
-    return err(`internal: ${String(e)}`, 500);
+    console.error('team-management error', e);
+    return err('internal error', 500);
   }
 });
 

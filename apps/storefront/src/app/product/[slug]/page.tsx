@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Leaf, Package, Snowflake } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { FlavourScope } from '@/lib/theme/theme-provider';
+import { jsonLdHtml } from '@/lib/seo/json-ld';
 import { CompositionPanel } from '@/components/product/composition-panel';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductReviews } from '@/components/product/product-reviews';
@@ -241,7 +242,7 @@ export default async function ProductPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
     </FlavourScope>
   );
