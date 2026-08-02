@@ -1,0 +1,13 @@
+// Cloudflare Workers config — serves the storefront's static export.
+// Used when the Cloudflare project is a Workers project (the default when
+// importing a Git repo in the current dashboard). Build first with
+// BUILD_TARGET=cloudflare (see DEPLOYMENT.md §2), then `npx wrangler deploy`.
+// Pages projects ignore this file and use the dashboard's output directory.
+{
+  "name": "ravisweets",
+  "compatibility_date": "2026-08-02",
+  "assets": {
+    "directory": "./apps/storefront/out",
+    "not_found_handling": "404-page"
+  }
+}
