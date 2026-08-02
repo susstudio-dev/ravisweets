@@ -84,6 +84,7 @@ export function ShopScene() {
   return (
     <div className="ss-stage" aria-hidden="true">
       <div className="ss-sky" />
+      <div className="ss-moon" />
       {STARS.map((s, i) => (
         <span
           key={i}

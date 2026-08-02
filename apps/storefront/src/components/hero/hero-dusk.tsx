@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { TextKinetic } from '@/components/motion/text-kinetic';
 import { Reveal } from '@/components/motion/reveal';
 import { Grain } from '@/components/brand/grain';
 import { ShopScene } from '@/components/hero/shop-scene';
@@ -12,14 +11,17 @@ import { useSiteContent } from '@/lib/supabase/site-content-context';
 import { useActiveTheme } from '@/lib/theme/active-theme-context';
 
 /**
- * The hero: a full-bleed Shop at Dusk scene with the headline overlaid.
+ * The hero: a full-viewport Shop at Dusk scene with the headline overlaid.
  *
  * The section opts into the dusk register, so every token inside is the dark
  * palette — cream ink on plum sky, marigold CTAs — with zero component-level
- * colour. Scrolling scales the whole scene gently toward the door (the
- * "walk in"): one scroll-linked transform, desktop only, disabled under
- * reduced motion. The DB-driven text contract is identical to the previous
- * hero: 8 fields, same `??` precedence, headline re-animates on admin edit.
+ * colour. It pulls up under the transparent header (negative top margin), so
+ * the scene owns the whole first viewport. Scrolling scales the scene gently
+ * toward the door (the "walk in"): one scroll-linked transform, pointer-fine
+ * desktop only, gated at render time on reduced motion. The headline's
+ * word-stagger is pure CSS (`.ss-word`), so the LCP element paints before
+ * hydration. The DB-driven text contract is identical to the previous hero:
+ * 8 fields, same `??` precedence, headline re-animates on admin edit via key.
  */
 
 const FOUNDED = '1985';
@@ -46,17 +48,17 @@ export function HeroDusk() {
   const secondaryCtaLabel = hero?.secondaryCtaLabel ?? 'Corporate gifting';
   const secondaryCtaHref = hero?.secondaryCtaHref ?? '/corporate';
 
-  // The walk-in only runs where it can be smooth and wanted: pointer-fine
-  // desktop, no reduced-motion. Mobile gets the simplified static composition.
+  // Walk-in eligibility: pointer-fine desktop. The reduced-motion gate is
+  // applied at render time below (never latched in state), so an OS toggle
+  // mid-session takes effect immediately.
   const [walkIn, setWalkIn] = useState(false);
   useEffect(() => {
-    if (reduced) return;
     const mql = window.matchMedia('(min-width: 768px) and (pointer: fine)');
     const update = () => setWalkIn(mql.matches);
     update();
     mql.addEventListener('change', update);
     return () => mql.removeEventListener('change', update);
-  }, [reduced]);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -67,23 +69,29 @@ export function HeroDusk() {
   const sceneScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
   const sceneY = useTransform(scrollYProgress, [0, 1], [0, 46]);
 
+  const words = heroHeadline.split(/(\s+)/);
+
   return (
     <section
       ref={ref}
       aria-label="Hero"
       data-register="dusk"
-      className="bg-theme-base text-theme-ink relative isolate overflow-hidden"
+      className="bg-theme-base text-theme-ink relative isolate -mt-[84px] h-[100svh] min-h-[620px] overflow-hidden"
     >
       <motion.div
         aria-hidden="true"
-        className="absolute inset-0"
-        style={walkIn ? { scale: sceneScale, y: sceneY } : undefined}
+        className="pointer-events-none absolute inset-0"
+        style={
+          walkIn && !reduced
+            ? { scale: sceneScale, y: sceneY, willChange: 'transform' }
+            : undefined
+        }
       >
         <ShopScene />
       </motion.div>
 
-      <div className="container-site relative z-10 flex min-h-[92svh] flex-col justify-center pb-[46svh] pt-16 md:pb-24 md:pt-24">
-        <div className="max-w-[620px]">
+      <div className="container-site relative z-10 flex h-full flex-col justify-center pb-[42svh] pt-24 md:pb-24 md:pt-28">
+        <div className="max-w-[620px] md:max-w-[min(620px,52%)]">
           <Reveal>
             <p className="text-theme-accent flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span className="font-indic text-xl leading-none">{heroEyebrowIndic}</span>
@@ -98,14 +106,29 @@ export function HeroDusk() {
             </p>
           </Reveal>
 
-          <TextKinetic
+          {/* CSS word-stagger, not JS: the headline is the LCP element and
+              must paint (and start rising) before hydration. Keyed on the
+              headline so admin edits re-run the entrance. */}
+          <h1
             key={heroHeadline}
-            as="h1"
-            text={heroHeadline}
-            split="word"
-            gap={50}
+            aria-label={heroHeadline}
             className="font-display text-display-xl text-theme-ink mt-6"
-          />
+          >
+            {words.map((u, i) =>
+              /^\s+$/.test(u) ? (
+                <span key={i}>{u}</span>
+              ) : (
+                <span
+                  key={i}
+                  aria-hidden="true"
+                  className="ss-word"
+                  style={{ animationDelay: `${0.2 + i * 0.045}s` }}
+                >
+                  {u}
+                </span>
+              ),
+            )}
+          </h1>
 
           <Reveal delay={0.25}>
             <p className="text-text-muted mt-6 max-w-[46ch] text-lg leading-relaxed">{heroBody}</p>
