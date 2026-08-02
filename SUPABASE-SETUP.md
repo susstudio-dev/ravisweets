@@ -1,5 +1,7 @@
 # Supabase setup runbook — Ravi Sweets
 
+> **⚠ Out of date:** the project referenced below (`soriromiepeoacibhpex`) has been **deleted**. To provision a fresh Supabase project and deploy to Cloudflare Pages, follow **[DEPLOYMENT.md](DEPLOYMENT.md)** — it has the correct migration order (this doc predates migrations 0002–0009). The sections below are kept for feature-wiring reference (§5) and the MSG91 phone-OTP walkthrough (§3).
+
 Your Supabase project is provisioned at **https://soriromiepeoacibhpex.supabase.co**. Credentials are already saved in `.env.local` (gitignored). Follow this once to land schema + create your admin user.
 
 ## 1 · Run the schema migration (no CLI needed)

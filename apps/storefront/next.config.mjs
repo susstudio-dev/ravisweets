@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 
-const isGitHubPages = process.env.BUILD_TARGET === 'github-pages';
+// Static-export targets: 'github-pages' (repo-subpath hosting) and
+// 'cloudflare' (Cloudflare Pages, served at the domain root). Any other
+// value (or unset) keeps the normal server build for next dev / next start.
+const isStaticExport = ['github-pages', 'cloudflare'].includes(
+  process.env.BUILD_TARGET ?? '',
+);
 const repoBasePath = process.env.PAGES_BASE_PATH ?? '';
 
 const nextConfig = {
@@ -8,8 +13,8 @@ const nextConfig = {
   poweredByHeader: false,
   transpilePackages: ['@ravisweets/shared', '@ravisweets/ui'],
 
-  // GitHub Pages = static export. next dev / vercel / default build are unchanged.
-  ...(isGitHubPages
+  // Static export for GH Pages / Cloudflare Pages. next dev / default build unchanged.
+  ...(isStaticExport
     ? {
         output: 'export',
         // basePath / assetPrefix apply when the site lives under a repo-scoped subpath

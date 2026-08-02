@@ -7,6 +7,9 @@ import { Reveal } from '@/components/motion/reveal';
 import { Parallax } from '@/components/motion/parallax';
 import { Grain } from '@/components/brand/grain';
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://susstudio-dev.github.io/ravisweets';
+
 export const metadata: Metadata = {
   title: 'Visit us · Sweet shop in Khammam & Hyderabad',
   description:
@@ -107,10 +110,10 @@ const LOCAL_BUSINESS_JSONLD = {
   '@graph': [
     {
       '@type': 'BakeryShop',
-      '@id': 'https://susstudio-dev.github.io/ravisweets/#brand',
+      '@id': `${SITE_URL}/#brand`,
       name: 'Ravi Sweets',
       alternateName: ['Ravi Sweets Khammam', 'Ravi Sweets Hyderabad'],
-      url: 'https://susstudio-dev.github.io/ravisweets/',
+      url: `${SITE_URL}/`,
       telephone: '+91-93988-59978',
       email: 'ravisweetshyd@gmail.com',
       foundingDate: '1985',
@@ -123,9 +126,9 @@ const LOCAL_BUSINESS_JSONLD = {
     },
     {
       '@type': 'BakeryShop',
-      '@id': 'https://susstudio-dev.github.io/ravisweets/stores#khammam-flagship',
+      '@id': `${SITE_URL}/stores#khammam-flagship`,
       name: 'Ravi Sweets — Khammam Flagship',
-      url: 'https://susstudio-dev.github.io/ravisweets/stores',
+      url: `${SITE_URL}/stores`,
       telephone: '+91-93988-59978',
       address: {
         '@type': 'PostalAddress',
@@ -153,9 +156,9 @@ const LOCAL_BUSINESS_JSONLD = {
     },
     {
       '@type': 'BakeryShop',
-      '@id': 'https://susstudio-dev.github.io/ravisweets/stores#kondapur',
+      '@id': `${SITE_URL}/stores#kondapur`,
       name: 'Ravi Sweets — Kondapur (Hyderabad)',
-      url: 'https://susstudio-dev.github.io/ravisweets/stores',
+      url: `${SITE_URL}/stores`,
       telephone: '+91-93988-59978',
       address: {
         '@type': 'PostalAddress',
