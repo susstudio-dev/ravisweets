@@ -40,6 +40,18 @@ interface SessionContextValue {
 
 const STAFF_ROLES: readonly string[] = ['founder', 'admin', 'ops', 'marketing', 'accountant'];
 
+/**
+ * A configured-but-unreachable backend (deleted project, outage, offline
+ * device) must degrade exactly like an unconfigured one: the storefront keeps
+ * rendering and browsing works without a session. Warn once, not per retry.
+ */
+let warnedUnreachable = false;
+function warnBackendUnreachable(context: string, error: unknown) {
+  if (warnedUnreachable) return;
+  warnedUnreachable = true;
+  console.warn(`[supabase] ${context} failed — backend unreachable; continuing without a session.`, error);
+}
+
 const SessionContext = createContext<SessionContextValue | null>(null);
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
@@ -77,9 +89,14 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   const ensureAnonymous = useCallback(async () => {
     const supa = await getSupabase();
     if (!supa) return;
-    const { data } = await supa.auth.getSession();
-    if (data.session) return;
-    await supa.auth.signInAnonymously();
+    try {
+      const { data } = await supa.auth.getSession();
+      if (data.session) return;
+      const { error } = await supa.auth.signInAnonymously();
+      if (error) throw error;
+    } catch (e) {
+      warnBackendUnreachable('anonymous sign-in', e);
+    }
   }, []);
 
   // Anonymous-then-claim: on first render with no session, sign in anonymously.
@@ -97,13 +114,19 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     if (!SUPABASE_CONFIGURED) return;
     const u = session?.user;
     if (!u || u.is_anonymous) return;
-    void ensureCustomerProfile();
+    void Promise.resolve(ensureCustomerProfile()).catch((e) => {
+      warnBackendUnreachable('customer profile upsert', e);
+    });
   }, [session?.user?.id, session?.user?.is_anonymous]);
 
   const signOut = useCallback(async () => {
     const supa = await getSupabase();
     if (!supa) return;
-    await supa.auth.signOut();
+    try {
+      await supa.auth.signOut();
+    } catch (e) {
+      warnBackendUnreachable('sign-out', e);
+    }
   }, []);
 
   const user = session?.user ?? null;
