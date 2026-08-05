@@ -30,11 +30,25 @@ All 87 product image URLs are constructed by `ravi()` at `packages/shared/src/ca
 
 ### 2.2 The logo was never in the repository
 
-`git log --all --diff-filter=A` over all image extensions returns a single asset: `apps/storefront/public/brand/paisley.svg`. The header mark is drawn in code (`apps/storefront/src/components/brand/logo.tsx`) as a katli diamond plus a Young Serif wordmark, and its own doc comment records that it exists because the previous hotlinked WordPress PNG went dead. The only change in its git history is `Khammam · est. 1985` → `Est. 1983`.
+`git log --all --diff-filter=A` over all image extensions returns a single asset: `apps/storefront/public/brand/paisley.svg`. No logo *file* was ever committed — the real logo was always **hotlinked** from WordPress.
 
-A Wayback Machine capture of the original mark survives at
+The exact URL is recoverable from history. Commit `652e4fd` (2026-08-02) removed this constant from `apps/storefront/src/components/header.tsx`:
+
+```
+RAVI_LOGO_URL =
+  'https://ravisweets.com/wp-content/uploads/2025/09/
+   cropped-WhatsApp_Image_2025-09-04_at_5.28.12_PM-removebg-preview-1-1.png'
+```
+
+and replaced it with the code-drawn katli lockup now in `brand/logo.tsx`. That commit's message states the reason: *"ravisweets.com (the old WordPress host every image hotlinks) now answers HTTP 402 — hosting suspended."*
+
+The filename identifies the provenance: a WhatsApp image sent 2025-09-04 at 17:28, background-removed via remove.bg, then set as the WordPress Site Logo (hence the `cropped-` prefix). The master artwork is therefore most likely in the owner's WhatsApp history or photo library around that date.
+
+**It is not recoverable from the Wayback Machine.** Only 42 assets from ravisweets.com are archived, all from 2020–2021; no 2025 upload was ever captured. What *is* archived is the earlier mark:
 `https://web.archive.org/web/20211012135955if_/https://ravisweets.com/wp-content/uploads/2021/09/Logo-2-300x150.png`
-— Surya's sun-chariot in gold/orange with a red script wordmark (apt: *Ravi* = sun). 300×150 raster. 41 other assets from the 2021 site are also archived and may serve as fallback product imagery.
+— Surya's sun-chariot in gold/orange with a red script wordmark (apt: *Ravi* = sun), 300×150 raster. The other 41 assets are 2021-era product shots usable only as a last-resort fallback.
+
+**Highest-value recovery path:** HTTP 402 means suspended, not deleted, and the domain has since been repointed to Cloudflare rather than the WordPress files being removed. If the old hosting account or any backup export is recoverable, the logo and all 87 product images return together, collapsing most of §6.5. This should be checked before any tracing or re-shooting work is commissioned.
 
 `--color-brand: #A81B1B` is documented as a placeholder pending the logo file in **three** places — `apps/storefront/src/app/globals.css:51-57`, `apps/storefront/src/lib/theme/palette.ts:118-130`, `apps/storefront/src/app/layout.tsx:102-104` — and `apps/storefront/src/lib/theme/globals-sync.test.ts` pins two of them together. They must change in lockstep.
 
@@ -327,7 +341,11 @@ Steps 1–3 deliver visible value before the largest step begins.
 ## 9 · Inputs still needed
 
 1. **Product photography.** The supplied link (`photos.google.com/u/2/albums`) is an authenticated account index and cannot be reached programmatically. Needs a local folder path or an export. Filenames approximating product names reduce manual matching. Does not block any code work — the library is built so photos drop in without a code change.
-2. **Logo artwork.** Vector (`.ai`/`.svg`/`.eps`) ships as-is; a high-resolution raster is traced to vector. Absent both, the 300×150 Wayback capture is traced, at reduced fidelity.
+2. **Logo artwork.** In descending order of preference:
+   1. The old WordPress hosting account or a backup export — returns the logo *and* all 87 product images at once (§2.2). Check this first.
+   2. The WhatsApp original from 2025-09-04 17:28, or the same image in the owner's photo library.
+   3. Any vector source (`.ai`/`.svg`/`.eps`) held by whoever designed the mark — ships as-is.
+   4. Last resort: trace the 300×150 Wayback capture of the 2021 sun-chariot, at reduced fidelity and a visibly older design.
 3. **Business facts** for the content sweep: current store addresses, phone, WhatsApp, hours, FSSAI and GST numbers, social links.
 
 ---
