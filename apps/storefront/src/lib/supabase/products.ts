@@ -1,7 +1,7 @@
 'use client';
 
 import { getSupabase } from './client';
-import type { CategorySlug, DietaryTag } from '@ravisweets/shared';
+import type { CategorySlug, DietaryTag, ProductImage } from '@ravisweets/shared';
 import { PRODUCT_PALETTES } from '@/lib/theme/palette';
 
 export async function upsertVariantPrice(
@@ -97,6 +97,7 @@ export async function upsertProductDietaryTags(
  * and return its public URL. Filename is namespaced under the product id
  * so re-uploads for the same product land in the same folder.
  */
+/** @deprecated new uploads go through lib/media/assets.ts — kept only for backwards compat. */
 export async function uploadProductImage(
   productId: string,
   file: File,
@@ -116,6 +117,7 @@ export async function uploadProductImage(
   return { ok: true, url: data.publicUrl };
 }
 
+/** @deprecated new uploads go through lib/media/assets.ts — kept only for backwards compat. */
 export async function upsertProductPrimaryImage(
   productId: string,
   url: string,
@@ -137,6 +139,27 @@ export async function upsertProductPrimaryImage(
   const { error } = await supa.from('products').update({ images: next }).eq('id', productId);
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
+}
+
+/**
+ * Replace a product's full ordered image array in one write. Uses
+ * `.select('id')` so a zero-row update is detectable: `matched: false` means
+ * the product has no row in the DB yet (apply migration 0014_seed_products.sql)
+ * and NOTHING was saved — callers must not show a "Saved ✓" in that case.
+ */
+export async function updateProductImages(
+  productId: string,
+  images: ProductImage[],
+): Promise<{ ok: boolean; matched: boolean; reason?: string }> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, matched: false, reason: 'supabase-not-configured' };
+  const { data, error } = await supa
+    .from('products')
+    .update({ images })
+    .eq('id', productId)
+    .select('id');
+  if (error) return { ok: false, matched: false, reason: error.message };
+  return { ok: true, matched: (data?.length ?? 0) > 0 };
 }
 
 export async function upsertProductBuilderEligible(
@@ -166,6 +189,9 @@ export interface CreateProductInput {
   unit_mode: 'weight' | 'quantity';
   primary_image_url: string;
   primary_image_alt: string;
+  /** Intrinsic dimensions from the media-library asset; defaults to 1400. */
+  primary_image_width?: number;
+  primary_image_height?: number;
   /** First variant — admin can add more from the existing edit drawer afterwards. */
   variant: {
     id: string;
@@ -197,8 +223,8 @@ export async function createProduct(
       {
         url: input.primary_image_url,
         alt: input.primary_image_alt,
-        width: 1400,
-        height: 1400,
+        width: input.primary_image_width ?? 1400,
+        height: input.primary_image_height ?? 1400,
       },
     ],
     region_availability: ['in'],

@@ -2,24 +2,31 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { ArrowRight, Plus, Save, Search, X } from 'lucide-react';
-import { CATALOGUE, type CategorySlug, type DietaryTag, type Product } from '@ravisweets/shared';
+import { ArrowDown, ArrowRight, ArrowUp, ImagePlus, Plus, Save, Search, X } from 'lucide-react';
 import {
+  CATALOGUE,
+  type CategorySlug,
+  type DietaryTag,
+  type Product,
+  type ProductImage,
+} from '@ravisweets/shared';
+import {
+  updateProductImages,
   upsertProductBuilderEligible,
   upsertProductCategory,
   upsertProductDescription,
   upsertProductDietaryTags,
   upsertProductFlags,
   upsertProductNutrition,
-  upsertProductPrimaryImage,
   upsertProductSale,
   upsertProductShelfLifeDays,
   upsertProductUnitMode,
-  uploadProductImage,
   upsertVariantPrice,
   upsertVariantStock,
   upsertVariantTitle,
 } from '@/lib/supabase/products';
+import { MediaPickerDialog } from '@/components/admin/media-picker';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
   { value: 'hyderabadi-specials', label: 'Hyderabadi specials' },
@@ -214,9 +221,13 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   );
   const [saleLabel, setSaleLabel] = useState<string>(product.sale_label ?? '');
 
-  const primaryImage = product.images[0];
-  const [imageUrl, setImageUrl] = useState(primaryImage?.url ?? '');
-  const [imageAlt, setImageAlt] = useState(primaryImage?.alt ?? product.title);
+  // Ordered gallery — every entry comes from the shared media library and the
+  // whole array persists in one updateProductImages write on Save.
+  const [images, setImages] = useState<ProductImage[]>(product.images.map((im) => ({ ...im })));
+  const [pickerOpen, setPickerOpen] = useState(false);
+  // True when the last save matched zero DB rows: the product exists only in
+  // the bundled CATALOGUE, so the image write saved nothing (needs 0014 seed).
+  const [notSeeded, setNotSeeded] = useState(false);
   const [variants, setVariants] = useState(
     product.variants.map((v) => ({
       id: v.id,
@@ -233,6 +244,18 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     setDietaryTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
   }
 
+  function moveImage(i: number, delta: -1 | 1) {
+    setImages((prev) => {
+      const j = i + delta;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      const swap = next[i]!;
+      next[i] = next[j]!;
+      next[j] = swap;
+      return next;
+    });
+  }
+
   async function save() {
     if (!configured) {
       window.alert('Supabase not configured — saves require backend.');
@@ -240,6 +263,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     }
     setBusy(true);
     setSaved(false);
+    setNotSeeded(false);
 
     // Update flags
     if (
@@ -362,20 +386,26 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       );
     }
 
-    if (imageUrl !== (primaryImage?.url ?? '') || imageAlt !== (primaryImage?.alt ?? '')) {
-      if (imageUrl.trim()) {
-        const r = await upsertProductPrimaryImage(product.id, imageUrl, imageAlt);
-        if (!r.ok) {
-          window.alert(`Image save failed: ${r.reason}`);
-          setBusy(false);
-          return;
-        }
+    // Persist the full ordered gallery in one write. A zero-row match means
+    // the product has no DB row yet — say so instead of a false "Saved ✓".
+    let imagesMatched = true;
+    const imagesChanged = JSON.stringify(images) !== JSON.stringify(product.images);
+    if (imagesChanged) {
+      const r = await updateProductImages(product.id, images);
+      if (!r.ok) {
+        window.alert(`Image save failed: ${r.reason}`);
+        setBusy(false);
+        return;
+      }
+      imagesMatched = r.matched;
+      setNotSeeded(!r.matched);
+      if (r.matched) {
         await logAdminAction(
-          'update-primary-image',
+          'update-images',
           'product',
           product.id,
-          { url: primaryImage?.url, alt: primaryImage?.alt },
-          { url: imageUrl, alt: imageAlt },
+          { images: product.images },
+          { images },
         );
       }
     }
@@ -490,8 +520,10 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     }
 
     setBusy(false);
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2200);
+    if (imagesMatched) {
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2200);
+    }
   }
 
   return (
@@ -581,48 +613,80 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         })}
       </div>
 
-      {/* Primary image — upload file OR paste URL */}
+      {/* Photos — ordered gallery, every entry from the shared media library */}
       <h3 className="text-theme-ink/55 mt-6 text-[11px] font-semibold uppercase tracking-wider">
-        Primary image
+        Photos
       </h3>
-      <div className="mt-2 grid gap-2">
-        <ImageUpload
-          productId={product.id}
-          currentUrl={imageUrl}
-          onUploaded={(url) => setImageUrl(url)}
-        />
-        <label className="flex flex-col gap-1">
-          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            …or paste a URL
-          </span>
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://ravisweets.com/wp-content/uploads/..."
-            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-xs focus-visible:outline-none focus-visible:ring-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            Alt text (accessibility)
-          </span>
-          <input
-            type="text"
-            value={imageAlt}
-            onChange={(e) => setImageAlt(e.target.value)}
-            placeholder={`${product.title} — photographed at the Khammam kitchen`}
-            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
-          />
-        </label>
-        {imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageUrl}
-            alt={imageAlt}
-            className="bg-theme-glow/15 mt-1 h-28 w-28 rounded-lg border border-[color:var(--color-border)] object-contain p-2"
-          />
+      <div className="mt-2 flex flex-col gap-2">
+        {images.length === 0 && (
+          <p className="text-theme-ink/55 text-[11px]">
+            No photos yet — add one from the library below.
+          </p>
         )}
+        {images.map((im, i) => (
+          <div
+            key={`${im.url}-${i}`}
+            className="bg-surface flex items-center gap-2 rounded-lg border border-[color:var(--color-border)] p-2"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={im.url}
+              alt={im.alt}
+              className="h-14 w-14 shrink-0 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1"
+            />
+            <label className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
+                Alt text
+              </span>
+              <input
+                type="text"
+                value={im.alt}
+                onChange={(e) => {
+                  const next = [...images];
+                  next[i] = { ...next[i]!, alt: e.target.value };
+                  setImages(next);
+                }}
+                placeholder={`${product.title} — photographed at the Khammam kitchen`}
+                className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
+              />
+            </label>
+            <div className="flex shrink-0 flex-col gap-1">
+              <button
+                type="button"
+                onClick={() => moveImage(i, -1)}
+                disabled={i === 0}
+                aria-label={`Move photo ${i + 1} up`}
+                className="text-theme-ink/55 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] p-1 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveImage(i, 1)}
+                disabled={i === images.length - 1}
+                aria-label={`Move photo ${i + 1} down`}
+                className="text-theme-ink/55 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] p-1 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setImages(images.filter((_, x) => x !== i))}
+              className="text-theme-ink/70 hover:border-theme-accent hover:text-theme-accent shrink-0 rounded-full border border-[color:var(--color-border)] px-3 py-1 text-[11px] font-semibold transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className="bg-theme-accent hover:shadow-soft inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)] transition-all"
+        >
+          <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
+          Add from library
+        </button>
       </div>
 
       {/* Nutrition — per 100g, all optional. Surfaces below ingredients on
@@ -918,6 +982,12 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         </label>
       </div>
 
+      {notSeeded && (
+        <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+          {"Saved nothing — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md)."}
+        </p>
+      )}
+
       <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-[color:var(--color-border)] pt-4">
         <button
           type="button"
@@ -942,6 +1012,23 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         <code> products </code> + <code>variants</code> tables and become visible on the storefront
         once Phase 3&rsquo;s build-time fetch + webhook rebuild is wired.
       </p>
+
+      <MediaPickerDialog
+        open={pickerOpen}
+        kind="product"
+        onClose={() => setPickerOpen(false)}
+        onSelect={(asset) =>
+          setImages((prev) => [
+            ...prev,
+            {
+              url: mediaPublicUrl(asset.storage_path)!,
+              alt: asset.alt || product.title,
+              width: asset.width ?? 1400,
+              height: asset.height ?? 1400,
+            },
+          ])
+        }
+      />
     </aside>
   );
 }
@@ -951,79 +1038,5 @@ function Tag({ children }: { children: React.ReactNode }) {
     <span className="bg-theme-glow/30 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
       {children}
     </span>
-  );
-}
-
-interface ImageUploadProps {
-  productId: string;
-  currentUrl: string;
-  onUploaded: (url: string) => void;
-}
-
-/**
- * File picker that uploads to Supabase Storage `product-images` and
- * surfaces the resulting public URL via `onUploaded`. The drawer's URL
- * input is the source of truth — this component just writes to it.
- */
-function ImageUpload({ productId, currentUrl, onUploaded }: ImageUploadProps) {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setError(null);
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File is larger than 5 MB. Compress and retry.');
-      return;
-    }
-    setBusy(true);
-    const r = await uploadProductImage(productId, file);
-    setBusy(false);
-    e.target.value = '';
-    if (!r.ok) {
-      setError(r.reason);
-      return;
-    }
-    onUploaded(r.url);
-  }
-
-  return (
-    <div className="bg-theme-glow/10 rounded-xl border border-dashed border-[color:var(--color-border)] p-3">
-      <div className="flex items-center gap-3">
-        {currentUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={currentUrl}
-            alt=""
-            className="h-16 w-16 shrink-0 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1"
-          />
-        ) : (
-          <div className="text-theme-ink/40 flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider">
-            no image
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            Upload product photo
-          </p>
-          <label className="bg-theme-accent hover:bg-theme-accent/85 mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)] transition-colors">
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml"
-              onChange={onFile}
-              disabled={busy}
-              className="sr-only"
-            />
-            {busy ? 'Uploading…' : 'Choose file'}
-          </label>
-          <p className="text-theme-ink/55 mt-1 text-[10px]">
-            PNG / JPG / WebP / AVIF / SVG · max 5 MB. Stored in Supabase Storage, served from the
-            public `product-images` bucket.
-          </p>
-        </div>
-      </div>
-      {error && <p className="mt-2 text-[11px] font-medium text-red-700">{error}</p>}
-    </div>
   );
 }
