@@ -1,10 +1,13 @@
 'use client';
 
 import { getSupabase } from './client';
+import type { PageMedia } from '../content/page-media';
 
 /**
  * site_content keys — one row per editable surface. Shapes are
- * loosely typed via the per-key interfaces below.
+ * loosely typed via the per-key interfaces below, except `page_media`
+ * which is Zod-validated in lib/content/page-media (reads must go
+ * through parsePageMedia, never trust the raw row).
  */
 export type SiteContentKey =
   | 'hero'
@@ -12,7 +15,10 @@ export type SiteContentKey =
   | 'editorial_band_heading'
   | 'footer'
   | 'home_trust'
-  | 'active_festival';
+  | 'active_festival'
+  | 'page_media';
+
+export type { PageMedia };
 
 /**
  * "Active festival" — admin-set in /admin/festivals. When `slug` is set
@@ -75,6 +81,7 @@ type ContentByKey = {
   footer: FooterContent;
   home_trust: HomeTrust;
   active_festival: ActiveFestival;
+  page_media: PageMedia;
 };
 
 export async function loadSiteContent<K extends SiteContentKey>(
