@@ -120,34 +120,9 @@ export function AdminLogin() {
           </button>
         </form>
 
-        <details className="bg-surface text-theme-ink/70 mt-6 rounded-lg border border-[color:var(--color-border)] p-3 text-[11px]">
-          <summary className="text-theme-ink cursor-pointer font-semibold">
-            Can&rsquo;t sign in? Quick checklist
-          </summary>
-          <ol className="mt-3 list-decimal space-y-2 pl-4">
-            <li>
-              In Supabase Dashboard → Authentication → Users, your admin user must exist with a
-              password set (not just an OTP/magic-link account).
-            </li>
-            <li>
-              That user&rsquo;s <code className="font-mono">app_metadata</code> must contain{' '}
-              <code className="font-mono">{'{ "role": "admin" }'}</code>. The storefront gates{' '}
-              <code className="font-mono">/admin/*</code> on this claim.
-            </li>
-            <li>
-              Email Confirmation must be done — either toggle <em>Auto Confirm User</em>
-              when creating, or click the link in the confirmation email.
-            </li>
-            <li>
-              SQL shortcut to set the role:
-              <pre className="bg-[color:var(--theme-ink)]/5 mt-1 overflow-x-auto rounded p-2 font-mono text-[10px]">
-                {`update auth.users
-set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'::jsonb
-where email = 'you@ravisweets.com';`}
-              </pre>
-            </li>
-          </ol>
-        </details>
+        <p className="text-theme-ink/70 mt-6 text-[11px]">
+          Staff access is granted by the founder from Admin → Team.
+        </p>
       </div>
     </section>
   );
