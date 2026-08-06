@@ -1,6 +1,6 @@
 # Media Library + Owner-Editable Photo Slots — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Every photo on the public site — home-page hero card, page imagery, and per-product images — becomes replaceable from `/admin` without a code change, modelled on furor-web (dancehyderabad.com) but re-expressed against Supabase under the static export.
 
@@ -73,7 +73,7 @@ DEPLOYMENT.md                                     MOD  apply table + new steps
 **Interfaces:**
 - Produces: table `public.media_assets` (columns exactly as below — Task 2's `MediaAsset` type mirrors it), bucket `media`, table `public.site_content_versions` (Task 5's versions lib reads it).
 
-- [ ] **Step 1: Write the migration** — content:
+- [x] **Step 1: Write the migration** — content:
 
 ```sql
 -- ─── 0013 · Media library: one bucket + asset registry + content versions ──
@@ -183,7 +183,7 @@ comment on table public.media_assets is
 commit;
 ```
 
-- [ ] **Step 2: Append to `apps/storefront/public/_headers`:**
+- [x] **Step 2: Append to `apps/storefront/public/_headers`:**
 
 ```
 /admin
@@ -195,11 +195,11 @@ commit;
   Cache-Control: no-store
 ```
 
-- [ ] **Step 3: Remove the SQL disclosure** in `admin-login.tsx` (the block at ~129–149 that prints role-granting SQL to any visitor). Replace the whole hint block with a single muted paragraph: `Staff access is granted by the founder from Admin → Team.` Keep the surrounding card layout.
+- [x] **Step 3: Remove the SQL disclosure** in `admin-login.tsx` (the block at ~129–149 that prints role-granting SQL to any visitor). Replace the whole hint block with a single muted paragraph: `Staff access is granted by the founder from Admin → Team.` Keep the surrounding card layout.
 
-- [ ] **Step 4: Verify** — `pnpm --filter @ravisweets/storefront typecheck` passes; visually re-read the SQL for idempotency (every create has an if-not-exists or drop-guard).
+- [x] **Step 4: Verify** — `pnpm --filter @ravisweets/storefront typecheck` passes; visually re-read the SQL for idempotency (every create has an if-not-exists or drop-guard).
 
-- [ ] **Step 5: Commit** — `git add supabase/migrations/0013_media_library.sql apps/storefront/public/_headers apps/storefront/src/components/admin/admin-login.tsx` → `feat(media): media bucket, asset registry, content versions + admin header/disclosure hardening`
+- [x] **Step 5: Commit** — `git add supabase/migrations/0013_media_library.sql apps/storefront/public/_headers apps/storefront/src/components/admin/admin-login.tsx` → `feat(media): media bucket, asset registry, content versions + admin header/disclosure hardening`
 
 ---
 
@@ -262,11 +262,11 @@ export function scanAssetUsage(args: {
 }): UsageHit[];
 ```
 
-- [ ] **Step 1: Write failing tests** — `page-media.test.ts`: `parsePageMedia(undefined)` and `parsePageMedia({garbage:1})` return `EMPTY_PAGE_MEDIA`-shaped object (all slots null, `festivals` `{}`); a valid partial `{about:{portrait:{assetId:'a',alt:'x'}}}` round-trips with other slots defaulted; `setSlot` returns new object without mutating input; `getSlot('festivals.diwali')` reads the record. `public-url.test.ts`: joins env URL + path; strips trailing slash; returns null when env missing (stub via `vi.stubEnv`). `usage.test.ts`: assetId in `pageMedia` yields the owner-language `where` string; product whose `images[0].url` contains the storagePath yields `Product — <title>`; no matches → `[]`.
-- [ ] **Step 2: Run tests, verify fail** — `pnpm --filter @ravisweets/storefront test` (new files fail to import).
-- [ ] **Step 3: Implement** the four modules per the interface block. `parsePageMedia` = `Schema.catch(EMPTY_PAGE_MEDIA).parse(raw)` or `safeParse` with fallback; slot access via explicit switch on the two-segment path (`festivals.` prefix special-cased) — no `eval`-style deep paths. `assets.ts` uses `getSupabase()` (null → `{ok:false, reason:'supabase-not-configured'}`); upload path `${kind}/${crypto.randomUUID()}.${ext}` with `cacheControl: '31536000'`, `contentType` from `prepareForUpload`; row insert `{storage_path, alt:'', kind, mime, bytes, width, height, created_by: user?.id ?? null}` returning the row.
-- [ ] **Step 4: Run tests + typecheck, verify pass.**
-- [ ] **Step 5: Commit** — the created/modified files → `feat(media): zod page-media schema, asset registry client, upload pipeline, usage scan`
+- [x] **Step 1: Write failing tests** — `page-media.test.ts`: `parsePageMedia(undefined)` and `parsePageMedia({garbage:1})` return `EMPTY_PAGE_MEDIA`-shaped object (all slots null, `festivals` `{}`); a valid partial `{about:{portrait:{assetId:'a',alt:'x'}}}` round-trips with other slots defaulted; `setSlot` returns new object without mutating input; `getSlot('festivals.diwali')` reads the record. `public-url.test.ts`: joins env URL + path; strips trailing slash; returns null when env missing (stub via `vi.stubEnv`). `usage.test.ts`: assetId in `pageMedia` yields the owner-language `where` string; product whose `images[0].url` contains the storagePath yields `Product — <title>`; no matches → `[]`.
+- [x] **Step 2: Run tests, verify fail** — `pnpm --filter @ravisweets/storefront test` (new files fail to import).
+- [x] **Step 3: Implement** the four modules per the interface block. `parsePageMedia` = `Schema.catch(EMPTY_PAGE_MEDIA).parse(raw)` or `safeParse` with fallback; slot access via explicit switch on the two-segment path (`festivals.` prefix special-cased) — no `eval`-style deep paths. `assets.ts` uses `getSupabase()` (null → `{ok:false, reason:'supabase-not-configured'}`); upload path `${kind}/${crypto.randomUUID()}.${ext}` with `cacheControl: '31536000'`, `contentType` from `prepareForUpload`; row insert `{storage_path, alt:'', kind, mime, bytes, width, height, created_by: user?.id ?? null}` returning the row.
+- [x] **Step 4: Run tests + typecheck, verify pass.**
+- [x] **Step 5: Commit** — the created/modified files → `feat(media): zod page-media schema, asset registry client, upload pipeline, usage scan`
 
 ---
 
@@ -289,9 +289,9 @@ export function useProductImagesOverride(productId: string): ProductImage[] | nu
 // context value additionally carries: pageMedia: PageMedia
 ```
 
-- [ ] **Step 1: Extend the provider.** On mount (alongside `loadAllSiteContent`): `parsePageMedia(all.page_media)` into state; `listMediaAssets()` into state; fetch `products` overlay via `getSupabase().from('products').select('id, images').eq('archived', false)` → `Record<string, ProductImage[]>` keeping only rows whose `images` is a non-empty array. Existing Realtime channel already refetches on any `site_content` change — extend the same handler to re-parse `page_media`. Add `media_assets` and `products` tables to the same postgres_changes subscription set (one channel, three listeners) and fold both fetches into the existing 60s poll. All fetches no-op silently when supabase is unconfigured (existing pattern).
-- [ ] **Step 2: Resolution.** `usePageMediaImage`: `getSlot(pageMedia, slot)` → if null or assetId missing from `byId` map → null; else `{url: mediaPublicUrl(asset.storage_path), alt: ref.alt || asset.alt, width, height}` (null url → null).
-- [ ] **Step 3: SlotImage** — `'use client'` component:
+- [x] **Step 1: Extend the provider.** On mount (alongside `loadAllSiteContent`): `parsePageMedia(all.page_media)` into state; `listMediaAssets()` into state; fetch `products` overlay via `getSupabase().from('products').select('id, images').eq('archived', false)` → `Record<string, ProductImage[]>` keeping only rows whose `images` is a non-empty array. Existing Realtime channel already refetches on any `site_content` change — extend the same handler to re-parse `page_media`. Add `media_assets` and `products` tables to the same postgres_changes subscription set (one channel, three listeners) and fold both fetches into the existing 60s poll. All fetches no-op silently when supabase is unconfigured (existing pattern).
+- [x] **Step 2: Resolution.** `usePageMediaImage`: `getSlot(pageMedia, slot)` → if null or assetId missing from `byId` map → null; else `{url: mediaPublicUrl(asset.storage_path), alt: ref.alt || asset.alt, width, height}` (null url → null).
+- [x] **Step 3: SlotImage** — `'use client'` component:
 
 ```tsx
 export function SlotImage({ slot, fallbackUrl, fallbackAlt, className, sizes, priority }: {
@@ -301,7 +301,7 @@ export function SlotImage({ slot, fallbackUrl, fallbackAlt, className, sizes, pr
 ```
 
 Resolution order: slot image → `fallbackUrl` if `isUsableImage(fallbackUrl)` → dashed-diamond placeholder (the exact `about/page.tsx` fallback markup: rotated bordered span in `--theme-accent`, centred in the frame). Renders `next/image` `fill` inside a relative wrapper `className`; `onError` drops to placeholder (furor's `Img` lesson). SSR renders the fallback (context defaults are empty), hydration swaps in the slot image — acceptable under §6.4 overlay-ahead-of-bake.
-- [ ] **Step 4: Typecheck + tests pass; commit** → `feat(media): realtime page-media + product-image overlay and public SlotImage`
+- [x] **Step 4: Typecheck + tests pass; commit** → `feat(media): realtime page-media + product-image overlay and public SlotImage`
 
 ---
 
@@ -310,7 +310,7 @@ Resolution order: slot image → `fallbackUrl` if `isUsableImage(fallbackUrl)` �
 **Files:**
 - Create: `apps/storefront/src/components/admin/media-picker.tsx`, `admin-media.tsx`
 - Create: `apps/storefront/src/app/(admin)/admin/media/page.tsx` (thin: `export default` renders `<AdminMedia />`)
-- Modify: `apps/storefront/src/components/admin/admin-shell.tsx` — add `{ label: 'Media', href: '/admin/media', icon: Image }` to the NAV array (lucide `Image` icon; appears in both desktop list and mobile drawer automatically since both render `NAV`).
+- Modify: `apps/storefront/src/components/admin/admin-shell.tsx` — add BOTH new entries here (Task 5 must not touch this file): `{ label: 'Photos', href: '/admin/photos', icon: Camera }` and `{ label: 'Media', href: '/admin/media', icon: Image }` in the NAV array, placed after `Content` (lucide icons; both desktop list and mobile drawer render `NAV`).
 
 **Interfaces:**
 - Consumes: Task 2 (`listMediaAssets`, `uploadMediaAsset`, `updateAssetAlt`, `deleteMediaAsset`, `scanAssetUsage`, `mediaPublicUrl`, `MediaKind`), Task 3 (`useMediaAssets`, context `pageMedia`).
@@ -324,10 +324,10 @@ export function MediaField(props: { label: string; hint?: string; kind?: MediaKi
   aspect?: 'square' | 'wide' | 'portrait' }): JSX.Element;
 ```
 
-- [ ] **Step 1: MediaPickerDialog.** Modal (fixed inset overlay, existing admin drawer styling conventions): searchable grid of assets (thumb via `mediaPublicUrl`, filename tail, kind chip), search input filters `storage_path + alt` case-insensitively, kind filter select (All + 7 kinds, defaulting to `props.kind`), an **Upload** drop-zone/button at the top (multi-file; sequential `uploadMediaAsset`; per-file progress text; newly uploaded asset is auto-selected when single). Selecting a tile calls `onSelect(asset)` and closes.
-- [ ] **Step 2: MediaField** — furor's ImageUploader shape, library-aware: grid `[160px preview | controls]`; aspect-correct preview of the resolved asset (via `useMediaAssets().byId`) with 'No image' empty state; buttons: **Choose from library** (opens dialog), **Replace** (same), **Clear** (sets `null`); alt-text input below (`Describes the photo for screen readers`), writing `{...value, alt}` and ALSO offering "save as library default" via `updateAssetAlt` when the asset's own alt is empty. Hint line under the label (default: `WebP/JPEG/PNG/AVIF · big photos are auto-shrunk on upload`).
-- [ ] **Step 3: AdminMedia screen.** Header (furor orientation pattern): title **Media**, one sentence: `Every photo on the site lives here. Upload once, use it anywhere from the Photos tab or a product.` Toolbar: upload button + drop-zone, search, kind filter. Grid of asset cards: thumb, path tail, dimensions/size caption, inline alt editor (`updateAssetAlt` on blur), **Where is this used?** disclosure computing `scanAssetUsage` against context `pageMedia` + overlay products, **Delete** disabled with tooltip listing usages when in use (furor delete-guard lesson), `window.confirm` when unused. Empty state: friendly card `No photos yet — drop images here. Phone photos are fine; they're shrunk automatically.`
-- [ ] **Step 4: Typecheck; manual smoke** (`pnpm --filter @ravisweets/storefront dev`, visit `/admin/media` — unconfigured Supabase shows the existing setup card, that's fine). Commit → `feat(admin): media library tab with picker dialog + reusable MediaField`
+- [x] **Step 1: MediaPickerDialog.** Modal (fixed inset overlay, existing admin drawer styling conventions): searchable grid of assets (thumb via `mediaPublicUrl`, filename tail, kind chip), search input filters `storage_path + alt` case-insensitively, kind filter select (All + 7 kinds, defaulting to `props.kind`), an **Upload** drop-zone/button at the top (multi-file; sequential `uploadMediaAsset`; per-file progress text; newly uploaded asset is auto-selected when single). Selecting a tile calls `onSelect(asset)` and closes.
+- [x] **Step 2: MediaField** — furor's ImageUploader shape, library-aware: grid `[160px preview | controls]`; aspect-correct preview of the resolved asset (via `useMediaAssets().byId`) with 'No image' empty state; buttons: **Choose from library** (opens dialog), **Replace** (same), **Clear** (sets `null`); alt-text input below (`Describes the photo for screen readers`), writing `{...value, alt}` and ALSO offering "save as library default" via `updateAssetAlt` when the asset's own alt is empty. Hint line under the label (default: `WebP/JPEG/PNG/AVIF · big photos are auto-shrunk on upload`).
+- [x] **Step 3: AdminMedia screen.** Header (furor orientation pattern): title **Media**, one sentence: `Every photo on the site lives here. Upload once, use it anywhere from the Photos tab or a product.` Toolbar: upload button + drop-zone, search, kind filter. Grid of asset cards: thumb, path tail, dimensions/size caption, inline alt editor (`updateAssetAlt` on blur), **Where is this used?** disclosure computing `scanAssetUsage` against context `pageMedia` + overlay products, **Delete** disabled with tooltip listing usages when in use (furor delete-guard lesson), `window.confirm` when unused. Empty state: friendly card `No photos yet — drop images here. Phone photos are fine; they're shrunk automatically.`
+- [x] **Step 4: Typecheck; manual smoke** (`pnpm --filter @ravisweets/storefront dev`, visit `/admin/media` — unconfigured Supabase shows the existing setup card, that's fine). Commit → `feat(admin): media library tab with picker dialog + reusable MediaField`
 
 ---
 
@@ -337,7 +337,7 @@ export function MediaField(props: { label: string; hint?: string; kind?: MediaKi
 - Create: `apps/storefront/src/components/admin/admin-photos.tsx`, `versions-panel.tsx`
 - Create: `apps/storefront/src/lib/supabase/versions.ts`
 - Create: `apps/storefront/src/app/(admin)/admin/photos/page.tsx`
-- Modify: `apps/storefront/src/components/admin/admin-shell.tsx` — add `{ label: 'Photos', href: '/admin/photos', icon: Camera }` directly before the Media entry.
+- (NAV entry for Photos is added by Task 4 together with Media — this task does not modify admin-shell.tsx.)
 
 **Interfaces:**
 - Consumes: `MediaField` (Task 4), `parsePageMedia/getSlot/setSlot/FESTIVAL_SLUGS` (Task 2), `saveSiteContent('page_media', …)` (existing), context `pageMedia` (Task 3).
@@ -354,9 +354,9 @@ export function VersionsPanel(props: { contentKey: 'page_media' | 'hero';
   onRestore: (data: unknown) => Promise<boolean> }): JSX.Element;
 ```
 
-- [ ] **Step 1: versions lib** — `listVersions` selects from `site_content_versions` `.eq('key', key).order('created_at', {ascending:false}).limit(limit ?? 30)`; unconfigured → `[]`.
-- [ ] **Step 2: VersionsPanel** — collapsed "History" disclosure listing versions (`local datetime · shortened author id`), each with **Restore** button guarded by `window.confirm('Restore this version? The current photos become a new history entry.')` → `onRestore(v.data)` → success message `Restored — live in a few seconds.` (restore flows through the caller's validated save, spec §6.7).
-- [ ] **Step 3: AdminPhotos.** Local state = context `pageMedia` copied on first load (dirty-tracking boolean; furor SaveBar shape). Sections in owner language, each a bordered fieldset with one orientation sentence:
+- [x] **Step 1: versions lib** — `listVersions` selects from `site_content_versions` `.eq('key', key).order('created_at', {ascending:false}).limit(limit ?? 30)`; unconfigured → `[]`.
+- [x] **Step 2: VersionsPanel** — collapsed "History" disclosure listing versions (`local datetime · shortened author id`), each with **Restore** button guarded by `window.confirm('Restore this version? The current photos become a new history entry.')` → `onRestore(v.data)` → success message `Restored — live in a few seconds.` (restore flows through the caller's validated save, spec §6.7).
+- [x] **Step 3: AdminPhotos.** Local state = context `pageMedia` copied on first load (dirty-tracking boolean; furor SaveBar shape). Sections in owner language, each a bordered fieldset with one orientation sentence:
   - **Home — festival card**: no field; muted pointer `The three little photos on the home-page card come from your bestseller products — edit them under Products.`
   - **About page**: `about.portrait` (label `Founder portrait`, hint `Top docket on the About page`), `about.kitchen` (label `Kitchen photo`, hint `Second docket, beside the process story`).
   - **Stores page**: `stores.storefront` (label `Shop front photo`).
@@ -364,7 +364,7 @@ export function VersionsPanel(props: { contentKey: 'page_media' | 'hero';
   - **Festival pages**: one `MediaField` per slug in `FESTIVAL_SLUGS` (label = slug title-cased, kind `festival`).
   - **Brand**: `brand.logo` (label `Logo`, hint `Header + hero seal. SVG or PNG with transparent background works best.`, kind `general`).
   Sticky bottom SaveBar: disabled `Saved` / enabled `Save changes` / `Saving…`; on save `saveSiteContent('page_media', media)` → `Saved ✓ — live on the site in a few seconds.`; error surfaces the reason inline. Below: `<VersionsPanel contentKey="page_media" onRestore={d => saveSiteContent('page_media', parsePageMedia(d)).then(r => r.ok)} />` — restores re-validate through the schema.
-- [ ] **Step 4: Typecheck + tests; commit** → `feat(admin): Photos tab — every page image slot editable, with history + restore`
+- [x] **Step 4: Typecheck + tests; commit** → `feat(admin): Photos tab — every page image slot editable, with history + restore`
 
 ---
 
@@ -386,10 +386,10 @@ export async function updateProductImages(productId: string, images: ProductImag
 // .update({images}).eq('id', productId).select('id') — matched=false when 0 rows returned.
 ```
 
-- [ ] **Step 1: `updateProductImages`** with `.select('id')` so a zero-row update is detectable (spec §2.3 "Saved ✓ theatre").
-- [ ] **Step 2: Drawer gallery editor** replacing `ImageUpload` + paste-URL + alt inputs (admin-products.tsx:~589-616, component at ~957-1029): ordered list of the product's images — each row: 56px thumb, alt input, ↑/↓ arrows (furor's arrow-reorder), Remove; footer buttons **Add from library** (`MediaPickerDialog` kind `product`; on select append `{url: mediaPublicUrl(asset.storage_path)!, alt: asset.alt || product.title, width: asset.width ?? 1400, height: asset.height ?? 1400}`). Save persists via `updateProductImages`; when `matched === false` show amber notice: `Saved nothing — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md).` — never a false "Saved ✓".
-- [ ] **Step 3: New-product page** — replace its inline uploader with `MediaField`-driven primary image (`value` mapped from local `ImageRef|null`; on create, resolve to `ProductImage` the same way). Remove the now-unused `uploadProductImage`/slug-folder path from the new-product flow (keep the function exported for backwards compat; mark `@deprecated new uploads go through lib/media/assets.ts`).
-- [ ] **Step 4: Typecheck + tests; commit** → `feat(admin): product photos come from the shared media library, with seed-state honesty`
+- [x] **Step 1: `updateProductImages`** with `.select('id')` so a zero-row update is detectable (spec §2.3 "Saved ✓ theatre").
+- [x] **Step 2: Drawer gallery editor** replacing `ImageUpload` + paste-URL + alt inputs (admin-products.tsx:~589-616, component at ~957-1029): ordered list of the product's images — each row: 56px thumb, alt input, ↑/↓ arrows (furor's arrow-reorder), Remove; footer buttons **Add from library** (`MediaPickerDialog` kind `product`; on select append `{url: mediaPublicUrl(asset.storage_path)!, alt: asset.alt || product.title, width: asset.width ?? 1400, height: asset.height ?? 1400}`). Save persists via `updateProductImages`; when `matched === false` show amber notice: `Saved nothing — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md).` — never a false "Saved ✓".
+- [x] **Step 3: New-product page** — replace its inline uploader with `MediaField`-driven primary image (`value` mapped from local `ImageRef|null`; on create, resolve to `ProductImage` the same way). Remove the now-unused `uploadProductImage`/slug-folder path from the new-product flow (keep the function exported for backwards compat; mark `@deprecated new uploads go through lib/media/assets.ts`).
+- [x] **Step 4: Typecheck + tests; commit** → `feat(admin): product photos come from the shared media library, with seed-state honesty`
 
 ---
 
@@ -406,10 +406,10 @@ export async function updateProductImages(productId: string, images: ProductImag
 
 **Interfaces:** Consumes Task 3 only (`SlotImage`, `usePageMediaImage`, `useProductImagesOverride`).
 
-- [ ] **Step 1:** Wire the four pages. Server components keep their metadata/layout; the plates become the client `SlotImage` leaf. Delete the now-dead `PORTRAIT/KITCHEN/STORE_IMAGE` consts only if unreferenced after the swap (keep as fallbackUrl strings otherwise).
-- [ ] **Step 2:** BrandLogo override + hero chips + product-card/gallery overlay. Keep every edit surgical — these files carry the parallel agent's WIP; do not reformat or restructure surrounding code.
-- [ ] **Step 3:** `pnpm --filter @ravisweets/storefront typecheck && pnpm --filter @ravisweets/storefront test`; then `ALLOW_NONCANONICAL_BUILD=true pnpm --filter @ravisweets/storefront run build:cloudflare` must complete (static export honors the new client leaves).
-- [ ] **Step 4: Commit** → `feat(storefront): page photo slots, owner logo override, hero-chip photos, product image overlay`
+- [x] **Step 1:** Wire the four pages. Server components keep their metadata/layout; the plates become the client `SlotImage` leaf. Delete the now-dead `PORTRAIT/KITCHEN/STORE_IMAGE` consts only if unreferenced after the swap (keep as fallbackUrl strings otherwise).
+- [x] **Step 2:** BrandLogo override + hero chips + product-card/gallery overlay. Keep every edit surgical — these files carry the parallel agent's WIP; do not reformat or restructure surrounding code.
+- [x] **Step 3:** `pnpm --filter @ravisweets/storefront typecheck && pnpm --filter @ravisweets/storefront test`; then `ALLOW_NONCANONICAL_BUILD=true pnpm --filter @ravisweets/storefront run build:cloudflare` must complete (static export honors the new client leaves).
+- [x] **Step 4: Commit** → `feat(storefront): page photo slots, owner logo override, hero-chip photos, product image overlay`
 
 ---
 
@@ -422,10 +422,10 @@ export async function updateProductImages(productId: string, images: ProductImag
 
 **Interfaces:** Consumes `CATALOGUE` from `packages/shared/src/catalogue/products.ts` (via tsx import). Produces `0014_seed_products.sql` that Task 6's `matched` honesty check depends on operationally.
 
-- [ ] **Step 1: Generator.** Imports `CATALOGUE`; emits one transaction: for each product an `insert into public.products (id, slug, title, description, category, subcategory, dietary_tags, ingredients, allergens, storage_instructions, shelf_life_days, images, region_availability, featured, bestseller, is_new, theme_palette, garnish, builder_eligible, rubric_passed_on, source_url) values (…) on conflict (id) do nothing;` and per variant `insert into public.variants (id, product_id, title, weight_grams, price_amount, price_currency, sku, stock_available) values (…) on conflict (id) do nothing;` — `price_amount` copied verbatim from `variant.price.amount` (same unit, no conversion); `is_new` ← `product.new`; jsonb via `$json$…$json$` dollar-quoted `::jsonb` literals; all text escaped by doubling single quotes; header comment records generation command, SKU/variant counts, and the **do-nothing-on-conflict** rationale (seeds must never clobber admin edits).
-- [ ] **Step 2: Run** `pnpm run generate:seed`; sanity-check output: product count matches `CATALOGUE.length`, file starts `begin;` ends `commit;`, spot-check one dollar-quoted images array parses as JSON.
-- [ ] **Step 3: Guard test** — add `scripts/` note: re-running regenerates deterministically (stable ordering by product id) so diffs are reviewable. Verify `node --import tsx` run is idempotent (run twice, `git diff --stat` empty).
-- [ ] **Step 4: Commit** → `feat(catalogue): generated product+variant seed (0014) — fills DB without clobbering edits`
+- [x] **Step 1: Generator.** Imports `CATALOGUE`; emits one transaction: for each product an `insert into public.products (id, slug, title, description, category, subcategory, dietary_tags, ingredients, allergens, storage_instructions, shelf_life_days, images, region_availability, featured, bestseller, is_new, theme_palette, garnish, builder_eligible, rubric_passed_on, source_url) values (…) on conflict (id) do nothing;` and per variant `insert into public.variants (id, product_id, title, weight_grams, price_amount, price_currency, sku, stock_available) values (…) on conflict (id) do nothing;` — `price_amount` copied verbatim from `variant.price.amount` (same unit, no conversion); `is_new` ← `product.new`; jsonb via `$json$…$json$` dollar-quoted `::jsonb` literals; all text escaped by doubling single quotes; header comment records generation command, SKU/variant counts, and the **do-nothing-on-conflict** rationale (seeds must never clobber admin edits).
+- [x] **Step 2: Run** `pnpm run generate:seed`; sanity-check output: product count matches `CATALOGUE.length`, file starts `begin;` ends `commit;`, spot-check one dollar-quoted images array parses as JSON.
+- [x] **Step 3: Guard test** — add `scripts/` note: re-running regenerates deterministically (stable ordering by product id) so diffs are reviewable. Verify `node --import tsx` run is idempotent (run twice, `git diff --stat` empty).
+- [x] **Step 4: Commit** → `feat(catalogue): generated product+variant seed (0014) — fills DB without clobbering edits`
 
 ---
 
@@ -435,17 +435,17 @@ export async function updateProductImages(productId: string, images: ProductImag
 - Modify: `DEPLOYMENT.md` — extend the §1.2 apply-order table with rows for `0011_batch_card_world.sql`, `0012_global_voice.sql`, `0013_media_library.sql`, `0014_seed_products.sql` (each: paste into the dashboard SQL editor, in order). Add a short **Media library** subsection: what the `media` bucket is, the 8 MB/MIME backstop, and that `/admin/photos` + `/admin/media` require 0013; product photo edits require 0014.
 - Modify: `docs/superpowers/plans/2026-08-06-media-library-and-photo-slots.md` — tick completed checkboxes.
 
-- [ ] **Step 1:** Write the doc changes. **Step 2:** Commit → `docs(deploy): media library + seed apply steps (0011–0014)`
+- [x] **Step 1:** Write the doc changes. **Step 2:** Commit → `docs(deploy): media library + seed apply steps (0011–0014)`
 
 ---
 
 ### Task 10: Full verification
 
-- [ ] `pnpm --filter @ravisweets/storefront typecheck` — clean.
-- [ ] `pnpm --filter @ravisweets/storefront test` — 115 baseline + new media/schema tests green.
-- [ ] `ALLOW_NONCANONICAL_BUILD=true pnpm --filter @ravisweets/storefront run build:cloudflare` — completes; `out/admin/media/index.html` and `out/admin/photos/index.html` exist; `out/_headers` contains the `/admin/*` block.
-- [ ] Dev-server smoke: `/admin/media`, `/admin/photos` render (setup card acceptable if Supabase env absent locally); `/about`, `/stores`, `/corporate`, `/festivals/diwali` render fallbacks unchanged.
-- [ ] Report honestly: what is live-verifiable locally vs what awaits the dashboard SQL paste (0013/0014) and owner uploads.
+- [x] `pnpm --filter @ravisweets/storefront typecheck` — clean.
+- [x] `pnpm --filter @ravisweets/storefront test` — 115 baseline + new media/schema tests green.
+- [x] `ALLOW_NONCANONICAL_BUILD=true pnpm --filter @ravisweets/storefront run build:cloudflare` — completes; `out/admin/media/index.html` and `out/admin/photos/index.html` exist; `out/_headers` contains the `/admin/*` block.
+- [x] Dev-server smoke: `/admin/media`, `/admin/photos` render (setup card acceptable if Supabase env absent locally); `/about`, `/stores`, `/corporate`, `/festivals/diwali` render fallbacks unchanged.
+- [x] Report honestly: what is live-verifiable locally vs what awaits the dashboard SQL paste (0013/0014) and owner uploads.
 
 ## Not in this plan (deferred, per spec sequence)
 
