@@ -1,25 +1,23 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import {
-  ArrowRight,
-  Calendar,
-  CheckCircle2,
-  FileText,
-  Handshake,
-  Mail,
-  Package,
-  PaintBucket,
-  Truck,
-  Users,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { CorporateEnquiry } from '@/components/corporate/corporate-enquiry';
-import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
+import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { Parallax } from '@/components/motion/parallax';
 import { Grain } from '@/components/brand/grain';
+
+/*
+ * CORPORATE, AS A TENDER DOCUMENT.
+ *
+ * The buyer here is an HR or admin team comparing vendors on capability and
+ * compliance, so the page reads as the paperwork they would file: a carbon
+ * capability sheet up top, a ruled rate card for the tiers, a numbered
+ * process spec, and a square-cut enquiry form. Every claim below (MOQ, CSV
+ * dispatch, GST/HSN/PO invoicing, printed proofs, 24-hour quotes) already
+ * existed on this page — only the presentation changed.
+ */
 
 export const metadata: Metadata = {
   title: 'Corporate gifting',
@@ -27,44 +25,40 @@ export const metadata: Metadata = {
     'Corporate Diwali runs, multi-address CSV delivery, GST-compliant invoices, logo printing — managed by a dedicated account manager.',
 };
 
-const HERO_IMAGE =
-  'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png';
-
-const TRUST_BADGES = [
-  { icon: FileText, label: 'GST invoicing' },
-  { icon: PaintBucket, label: 'Logo printing' },
-  { icon: Truck, label: 'Multi-address via CSV' },
-  { icon: Handshake, label: 'Dedicated account manager' },
+/** The capability sheet: what the corporate desk can be held to, as a record. */
+const CAPABILITIES: { label: string; value: string }[] = [
+  { label: 'MOQ', value: 'FROM 25 UNITS' },
+  { label: 'Dispatch', value: 'CSV MULTI-ADDRESS' },
+  { label: 'Tracking', value: 'PER-RECIPIENT' },
+  { label: 'Invoicing', value: 'GST · HSN · PO NO.' },
+  { label: 'Logo printing', value: 'PRINTED PROOF FIRST' },
+  { label: 'Quote', value: 'WITHIN 24 HOURS' },
+  { label: 'Account manager', value: 'DEDICATED' },
 ];
 
 const HOW_IT_WORKS = [
   {
     step: '01',
-    icon: Mail,
     title: 'Enquire',
     body: 'Tell us quantity, budget, delivery window. Our team responds within 24 hours with options.',
   },
   {
     step: '02',
-    icon: FileText,
     title: 'Quote',
     body: 'A formal quote lands with MOQ, tiered pricing, and a PO-ready breakdown. No surprises later.',
   },
   {
     step: '03',
-    icon: PaintBucket,
     title: 'Customise',
     body: 'Upload your logo, pick a ribbon colour, write a personalised message — we send a printed proof for approval.',
   },
   {
     step: '04',
-    icon: CheckCircle2,
     title: 'Approve',
     body: 'Sign-off in writing, we lock production. You receive a single GST-compliant invoice with your PO number.',
   },
   {
     step: '05',
-    icon: Truck,
     title: 'Deliver',
     body: 'One address or two hundred — a single CSV upload covers the lot. Per-recipient tracking links included.',
   },
@@ -76,7 +70,7 @@ const HAMPERS = [
     templateId: 'essence',
     tier: 'Starter',
     priceFrom: '₹899',
-    moq: '50 units',
+    moq: '50 UNITS',
     contents: 'Kaju Katli · Badam ki Jali · Pistachios · Brass diya',
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
   },
@@ -85,7 +79,7 @@ const HAMPERS = [
     templateId: 'premium',
     tier: 'Bestseller',
     priceFrom: '₹1,499',
-    moq: '50 units',
+    moq: '50 UNITS',
     contents: 'Qubani ka Meetha · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
   },
@@ -94,9 +88,30 @@ const HAMPERS = [
     templateId: 'grande',
     tier: 'Signature',
     priceFrom: '₹2,499',
-    moq: '25 units',
+    moq: '25 UNITS',
     contents: 'Full Hyderabadi spread · custom silk wrap · hand-painted brass box',
     image: 'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
+  },
+  // `as const` narrows templateId to the literal union, so the owner-photo
+  // slot path `corporate.${templateId}` typechecks against SlotPath.
+] as const;
+
+/** Contact facts for the enquiry column, as label/value rows with notes. */
+const CONTACT_ROWS: { label: string; value: string; note: string }[] = [
+  {
+    label: 'Dedicated contact',
+    value: 'corporate@ravisweets.com',
+    note: '+91 98765 43210 (WhatsApp) — one account manager, one phone number.',
+  },
+  {
+    label: 'Diwali cut-offs',
+    value: '6–8 WEEKS OUT',
+    note: 'Place orders by 6 weeks out for standard hampers, 8 weeks for bespoke.',
+  },
+  {
+    label: 'Sample pack',
+    value: 'ON REQUEST',
+    note: 'Tick “request a sample” below and we send a small box your way.',
   },
 ];
 
@@ -119,7 +134,7 @@ const FAQS = [
   },
   {
     q: 'Do you offer credit terms?',
-    a: 'Not in v1. Payment is upfront via bank transfer, Razorpay link, or corporate card. Credit terms (net-15 / net-30) are on the Phase 2 roadmap for qualified accounts.',
+    a: 'Not yet. Payment is upfront via bank transfer, Razorpay link, or corporate card. Credit terms (net-15 / net-30) are on the roadmap for qualified accounts.',
   },
   {
     q: 'Can I taste before I commit?',
@@ -130,168 +145,167 @@ const FAQS = [
 export default function CorporatePage() {
   return (
     <>
-      {/* Hero — warm cream with brass accents */}
+      {/* ── THE CAPABILITY SHEET ─────────────────────────────────────────
+          Carbon register: the corporate desk's carbon copy. Sells dispatch
+          capability and GST compliance, nothing else. */}
       <section
-        className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
-        style={{
-          background:
-            'radial-gradient(ellipse at 75% 35%, color-mix(in oklab, var(--theme-glow) 32%, transparent) 0%, transparent 65%), radial-gradient(ellipse at 8% 92%, color-mix(in oklab, var(--theme-accent) 10%, transparent) 0%, transparent 55%), var(--theme-base)',
-        }}
+        aria-labelledby="corporate-hero-heading"
+        data-register="carbon"
+        className="bg-theme-base text-theme-ink relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
       >
-        <div className="container-site relative grid gap-10 py-20 md:grid-cols-[1.1fr_1fr] md:items-center md:py-28">
-          <div>
-            <Reveal>
-              <p className="text-theme-accent flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
-                <Paisley size="sm" />
-                For HR &amp; Admin teams
-              </p>
-            </Reveal>
-            <Reveal delay={0.06}>
-              <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 leading-[1.02]">
-                Corporate gifting,{' '}
-                <span className="text-theme-accent italic">done the Hyderabadi way.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={0.14}>
-              <p className="text-theme-ink/75 mt-5 max-w-xl text-lg leading-relaxed">
-                MOQ-based pricing. Logo-printed packaging. Multi-address CSV delivery. GST-compliant
-                invoices. One account manager, one phone number, one box arriving exactly when it
-                should.
-              </p>
-            </Reveal>
-            <Reveal delay={0.22}>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <a
-                  href="#enquiry"
-                  className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
+        <div className="container-site section-y relative z-10">
+          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-12">
+            <div>
+              <Reveal>
+                <h1
+                  id="corporate-hero-heading"
+                  className="font-display text-display-lg text-balance"
                 >
-                  Request a quote
-                  <ArrowRight
-                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </a>
-                <Link
-                  href="/corporate/builder?t=premium"
-                  className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
-                >
-                  Build your own hamper
-                </Link>
+                  Two hundred addresses. One invoice.
+                </h1>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <p className="text-text-muted mt-5 max-w-[52ch] leading-relaxed md:text-lg">
+                  Corporate gifting for HR and admin teams: MOQ-based pricing, logo-printed
+                  packaging, multi-address delivery from a single CSV, GST-compliant invoices
+                  carrying your PO number — and one account manager, one phone number, one box
+                  arriving exactly when it should.
+                </p>
+              </Reveal>
+              <Reveal delay={0.16}>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <a href="#enquiry" className="stamp">
+                    Request a quote
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                  <Link href="/corporate/builder?t=premium" className="stamp stamp--ghost">
+                    Build your own hamper
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={0.12}>
+              <div className="docket">
+                <div className="border-b border-[color:var(--color-rule)] px-5 py-2.5">
+                  <h2 className="field-label">Capability sheet</h2>
+                </div>
+                <dl className="px-5 pb-2 pt-1">
+                  {CAPABILITIES.map((row) => (
+                    <div key={row.label} className="field-row">
+                      <dt className="field-label">{row.label}</dt>
+                      <dd className="field-value text-sm">{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            </Reveal>
-            <Reveal delay={0.3}>
-              <dl className="text-theme-ink/65 mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs">
-                {TRUST_BADGES.map((b) => (
-                  <div key={b.label} className="flex items-center gap-2">
-                    <b.icon className="text-theme-accent h-3.5 w-3.5" aria-hidden="true" />
-                    <span className="font-semibold uppercase tracking-wider">{b.label}</span>
-                  </div>
-                ))}
-              </dl>
             </Reveal>
           </div>
-
-          <Parallax offset={30}>
-            <div className="shadow-lifted relative aspect-[4/5] overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)]">
-              <Image
-                src={HERO_IMAGE}
-                alt="A premium Diwali hamper wrapped in silk with brass accents"
-                fill
-                priority
-                fetchPriority="high"
-                sizes="(min-width: 768px) 460px, 90vw"
-                className="object-cover"
-              />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 45%, transparent) 0%, transparent 55%)',
-                }}
-                aria-hidden="true"
-              />
-              <Grain />
-              <div className="absolute bottom-4 left-4">
-                <p className="text-theme-glow text-[11px] font-semibold uppercase tracking-[0.22em]">
-                  Pictured
-                </p>
-                <p className="font-display text-lg" style={{ color: 'var(--theme-base)' }}>
-                  Premium hamper, 2024 Diwali run
-                </p>
-              </div>
-              <div className="absolute right-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                Dev only
-              </div>
-            </div>
-          </Parallax>
         </div>
+        <Grain />
       </section>
 
-      {/* Hampers catalogue */}
-      <section aria-labelledby="catalogue-heading" id="catalogue" className="container-site py-20">
-        <Reveal className="mb-10">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Curated hampers
-          </p>
-          <h2
-            id="catalogue-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-          >
-            Three tiers, endlessly customisable.
-          </h2>
+      {/* ── THE RATE CARD ──────────────────────────────────────────────── */}
+      <section
+        aria-labelledby="catalogue-heading"
+        id="catalogue"
+        className="container-site section-y scroll-mt-24"
+      >
+        <Reveal>
+          <div className="docket-head">
+            <h2 id="catalogue-heading" className="font-display text-display-md">
+              Three tiers, endlessly customisable.
+            </h2>
+            <Link
+              href="/corporate/builder?t=premium"
+              className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+            >
+              Open the hamper builder <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
         </Reveal>
 
-        <Stagger gap={85} className="grid gap-5 md:grid-cols-3">
-          {HAMPERS.map((h) => (
-            <Link
-              key={h.title}
-              href={`/corporate/builder?t=${h.templateId}`}
-              className="bg-surface-elevated shadow-soft hover:shadow-lifted group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={h.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 33vw, 90vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 55%, transparent) 0%, transparent 50%)',
-                  }}
-                  aria-hidden="true"
-                />
-                <div className="bg-theme-accent absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                  {h.tier}
-                </div>
-              </div>
-              <div className="flex flex-1 flex-col gap-2 p-5">
-                <h3 className="font-display text-theme-ink text-xl">{h.title}</h3>
-                <p className="text-theme-ink/70 text-sm">{h.contents}</p>
-                <div className="mt-auto flex items-end justify-between pt-4 text-sm">
-                  <div>
-                    <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-                      From
-                    </p>
-                    <p className="font-display text-theme-accent text-2xl">{h.priceFrom}</p>
-                  </div>
-                  <p className="text-theme-ink/60">MOQ · {h.moq}</p>
-                </div>
-                <div className="text-theme-accent mt-3 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">
-                  Build from this template
-                  <ArrowRight className="h-3 w-3" aria-hidden="true" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </Stagger>
+        <Reveal delay={0.08}>
+          <div className="docket overflow-x-auto">
+            <table className="w-full min-w-[40rem] text-left">
+              <caption className="sr-only">
+                Hamper tiers with starting price and minimum order quantity
+              </caption>
+              <thead>
+                <tr className="border-b-2 border-[color:var(--color-rule)]">
+                  <th scope="col" className="px-4 py-3">
+                    <span className="field-label">Tier</span>
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <span className="field-label">Contents</span>
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right">
+                    <span className="field-label">From</span>
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right">
+                    <span className="field-label">MOQ</span>
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <span className="sr-only">Open in builder</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {HAMPERS.map((h) => (
+                  <tr
+                    key={h.templateId}
+                    className="border-b border-[color:var(--color-border)] last:border-b-0"
+                  >
+                    <td className="px-4 py-4 align-middle">
+                      <div className="flex items-center gap-3">
+                        {/*
+                          The tier thumb is an owner-editable slot. Fallback:
+                          the catalogue URL, which still points at the retired
+                          host — SlotImage decides at render so the dead URL
+                          is never requested and the specimen mark stands in.
+                          The [&_span] variant shrinks SlotImage's stock
+                          placeholder diamond to fit the 44px frame.
+                        */}
+                        <SlotImage
+                          slot={`corporate.${h.templateId}`}
+                          fallbackUrl={h.image}
+                          fallbackAlt=""
+                          sizes="44px"
+                          className="bg-theme-glow/20 h-11 w-11 shrink-0 overflow-hidden rounded-md [&_span]:h-6 [&_span]:w-6"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-display text-base font-semibold">{h.title}</p>
+                          <p className="field-label mt-0.5">{h.tier}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-text-muted px-4 py-4 align-middle text-[13px] leading-relaxed">
+                      {h.contents}
+                    </td>
+                    <td className="field-value whitespace-nowrap px-4 py-4 text-right align-middle text-sm font-bold">
+                      {h.priceFrom}
+                    </td>
+                    <td className="field-value whitespace-nowrap px-4 py-4 text-right align-middle text-sm">
+                      {h.moq}
+                    </td>
+                    <td className="px-4 py-4 text-right align-middle">
+                      <Link
+                        href={`/corporate/builder?t=${h.templateId}`}
+                        className="field-label text-theme-accent hover:text-theme-ink whitespace-nowrap transition-colors"
+                        aria-label={`Build from the ${h.title} template`}
+                      >
+                        Build →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
 
         <Reveal delay={0.15}>
-          <p className="text-theme-ink/70 mt-8 max-w-2xl text-sm">
+          <p className="text-text-muted mt-6 max-w-2xl text-sm">
             These are starting points — every corporate order is built around your needs. Price
             drops at 100+ units, 500+ units, and 1000+ units. Email us with your scale and
             we&rsquo;ll quote within 24 hours.
@@ -299,132 +313,91 @@ export default function CorporatePage() {
         </Reveal>
       </section>
 
-      <PaisleyDivider className="container-site" />
-
-      {/* How it works */}
-      <section aria-labelledby="how-heading" className="container-site py-20">
-        <Reveal className="mb-12">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            How it works
-          </p>
-          <h2
-            id="how-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-          >
-            Five steps from enquiry to delivery.
-          </h2>
+      {/* ── THE PROCESS SPEC ───────────────────────────────────────────── */}
+      <section aria-labelledby="how-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2 id="how-heading" className="font-display text-display-md">
+              Five steps from enquiry to delivery.
+            </h2>
+          </div>
         </Reveal>
 
-        <Stagger gap={80} className="grid gap-5 md:grid-cols-3 lg:grid-cols-5">
+        <Stagger gap={70} className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {HOW_IT_WORKS.map((s) => (
-            <div
-              key={s.step}
-              className="bg-surface-elevated flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-display text-theme-accent text-xs tracking-[0.22em]">
-                  {s.step}
-                </span>
-                <s.icon className="text-theme-accent h-4 w-4" aria-hidden="true" />
+            <div key={s.step} className="border-t border-[color:var(--color-rule)] pt-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-display text-base font-semibold">{s.title}</h3>
+                <span className="field-value text-text-muted text-xs">{s.step}</span>
               </div>
-              <h3 className="font-display text-theme-ink text-lg">{s.title}</h3>
-              <p className="text-theme-ink/70 text-sm leading-relaxed">{s.body}</p>
+              <p className="text-text-muted mt-2 text-[13px] leading-relaxed">{s.body}</p>
             </div>
           ))}
         </Stagger>
       </section>
 
-      {/* Enquiry */}
+      {/* ── THE ENQUIRY ────────────────────────────────────────────────── */}
       <section
         aria-labelledby="enquiry-heading"
         id="enquiry"
-        className="container-site grid gap-10 py-20 md:grid-cols-[1fr_1.2fr] md:gap-14"
+        className="container-site section-y scroll-mt-24"
       >
-        <div>
-          <Reveal>
-            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              Request a quote
-            </p>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2
-              id="enquiry-heading"
-              className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-            >
-              Tell us what you&rsquo;re planning.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.14}>
-            <p className="text-theme-ink/70 mt-5 md:text-lg">
-              Your account manager will respond within 24 hours (often sooner). Shorter lead times
-              for established customers and existing POs.
-            </p>
-          </Reveal>
-          <Reveal delay={0.22}>
-            <dl className="mt-8 flex flex-col gap-4 text-sm">
-              <div className="flex items-start gap-3">
-                <Users className="text-theme-accent mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                <div>
-                  <dt className="text-theme-ink font-semibold">Your dedicated contact</dt>
-                  <dd className="text-theme-ink/70">
-                    corporate@ravisweets.com · +91 98765 43210 (WhatsApp)
-                  </dd>
-                </div>
+        <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:gap-14">
+          <div>
+            <Reveal>
+              <div className="docket-head">
+                <h2 id="enquiry-heading" className="font-display text-display-md">
+                  Tell us what you&rsquo;re planning.
+                </h2>
               </div>
-              <div className="flex items-start gap-3">
-                <Calendar
-                  className="text-theme-accent mt-0.5 h-5 w-5 shrink-0"
-                  aria-hidden="true"
-                />
-                <div>
-                  <dt className="text-theme-ink font-semibold">Diwali cut-offs</dt>
-                  <dd className="text-theme-ink/70">
-                    Place orders by 6 weeks out for standard hampers, 8 weeks for bespoke.
-                  </dd>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Package className="text-theme-accent mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                <div>
-                  <dt className="text-theme-ink font-semibold">Sample pack</dt>
-                  <dd className="text-theme-ink/70">
-                    Tick &ldquo;request a sample&rdquo; below and we send a small box your way.
-                  </dd>
-                </div>
-              </div>
-            </dl>
-          </Reveal>
-        </div>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <p className="text-text-muted text-sm leading-relaxed md:text-base">
+                Your account manager will respond within 24 hours (often sooner). Shorter lead
+                times for established customers and existing POs.
+              </p>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <dl className="mt-6">
+                {CONTACT_ROWS.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex flex-col gap-1 border-b border-[color:var(--color-border)] py-3.5 last:border-b-0"
+                  >
+                    <div className="flex items-baseline justify-between gap-4">
+                      <dt className="field-label">{row.label}</dt>
+                      <dd className="field-value text-sm">{row.value}</dd>
+                    </div>
+                    <p className="text-text-muted max-w-[46ch] text-[13px] leading-relaxed">
+                      {row.note}
+                    </p>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
 
-        <Suspense fallback={<div className="bg-theme-ink/5 h-96 animate-pulse rounded-3xl" />}>
-          <CorporateEnquiry />
-        </Suspense>
+          <Suspense fallback={<div className="docket h-96 animate-pulse" />}>
+            <CorporateEnquiry />
+          </Suspense>
+        </div>
       </section>
 
-      <PaisleyDivider className="container-site" />
-
-      {/* FAQ */}
-      <section aria-labelledby="faq-heading" className="container-site py-20">
-        <Reveal className="mb-10">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Frequently asked
-          </p>
-          <h2
-            id="faq-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-          >
-            The practical stuff.
-          </h2>
+      {/* ── THE PRACTICAL STUFF ────────────────────────────────────────── */}
+      <section aria-labelledby="faq-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2 id="faq-heading" className="font-display text-display-md">
+              The practical stuff.
+            </h2>
+          </div>
         </Reveal>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {FAQS.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
-              <details className="bg-surface-elevated open:shadow-soft group rounded-2xl border border-[color:var(--color-border)] p-5">
-                <summary className="font-display text-theme-ink flex cursor-pointer items-start justify-between gap-4 text-base marker:hidden [&::-webkit-details-marker]:hidden">
+              <details className="docket group p-5">
+                <summary className="font-display text-theme-ink flex cursor-pointer list-none items-start justify-between gap-4 text-base font-semibold [&::-webkit-details-marker]:hidden">
                   {f.q}
                   <span
                     aria-hidden="true"
@@ -433,37 +406,33 @@ export default function CorporatePage() {
                     +
                   </span>
                 </summary>
-                <p className="text-theme-ink/75 mt-3 text-sm leading-relaxed">{f.a}</p>
+                <p className="text-text-muted mt-3 text-sm leading-relaxed">{f.a}</p>
               </details>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="container-site pb-20">
-        <Reveal>
-          <div className="bg-surface-elevated flex flex-col items-start justify-between gap-6 rounded-3xl border border-[color:var(--color-border)] p-8 md:flex-row md:items-center md:p-10">
+      {/* ── THE STAKEHOLDER COPY ───────────────────────────────────────── */}
+      <section aria-labelledby="catalogue-cta-heading" className="container-site section-y">
+        <Reveal direction="up" distance={16}>
+          <div
+            data-register="carbon"
+            className="bg-theme-base text-theme-ink flex flex-col items-start justify-between gap-6 rounded-lg p-7 md:flex-row md:items-center md:p-10"
+          >
             <div>
-              <p className="text-theme-accent text-xs font-semibold uppercase tracking-[0.22em]">
-                Download our catalogue
-              </p>
-              <h2 className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">
+              <h2 id="catalogue-cta-heading" className="font-display text-display-md">
                 Prefer to share with stakeholders?
               </h2>
-              <p className="text-theme-ink/70 mt-2 max-w-lg text-sm">
+              <p className="text-text-muted mt-3 max-w-lg text-sm leading-relaxed">
                 A PDF catalogue with all hampers, customisation options, pricing tiers, and our
-                kitchen process — five minutes of reading.
+                kitchen process — five minutes of reading. Request it through the enquiry form.
               </p>
             </div>
-            <Link
-              href="#enquiry"
-              className="bg-theme-ink hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <FileText className="h-4 w-4" aria-hidden="true" />
+            <a href="#enquiry" className="stamp md:shrink-0">
               Request the catalogue
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
+            </a>
           </div>
         </Reveal>
       </section>

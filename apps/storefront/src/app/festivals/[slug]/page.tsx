@@ -3,15 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Gift, Handshake, Users } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
+import { SlotImage } from '@/components/media/slot-image';
 import { ProductCard } from '@/components/product-card';
 import { FlavourScope } from '@/lib/theme/theme-provider';
-import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { TextKinetic } from '@/components/motion/text-kinetic';
-import { Grain } from '@/components/brand/grain';
-import { FestivalCountdown } from '@/components/festivals/festival-countdown';
-import { FestivalDecor } from '@/components/festivals/festival-decor';
 import {
   HamperARPreview,
   SAMPLE_HAMPER_GLB,
@@ -90,7 +86,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     title: 'Raksha Bandhan',
     telugu: 'రక్షా బంధన్',
     tagline: 'For the ones who remember the small promises.',
-    eyebrow: 'Brothers &amp; sisters · 2026',
+    eyebrow: 'Brothers & sisters · 2026',
     body: 'A hamper tied with a thread — the traditional signifier, done properly. Compact boxes for courier and weighted boxes for hand-delivery.',
     date: '2026-08-28T00:00:00+05:30',
     heroImage: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
@@ -128,7 +124,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     telugu: 'ఈద్',
     tagline: 'A platter worth the long day.',
     eyebrow: 'Eid al-Fitr · 2026',
-    body: 'The Deccan table shines brightest here. Double ka Meetha, Qubani, Badam ki Jali — Hyderabadi classics, plated the slow way in our Khammam kitchen.',
+    body: 'The Deccan table shines brightest here. Double ka Meetha, Qubani, Badam ki Jali — Hyderabadi classics, plated the slow way.',
     date: '2026-03-30T00:00:00+05:30',
     heroImage:
       'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
@@ -143,7 +139,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
       {
         icon: Gift,
         title: 'For family',
-        body: 'The full Hyderabadi spread in a single box — hand-shipped across Telangana.',
+        body: 'The full Hyderabadi spread in a single box — hand-shipped across India.',
         href: '/category/hyderabadi-specials',
       },
       {
@@ -442,6 +438,31 @@ export async function generateMetadata({
   return { title: `${f.title} — ${f.tagline}`, description: f.body };
 }
 
+/** Dispatch needs three clear days before the festival for the fresh range. */
+const ORDER_BY_LEAD_DAYS = 3;
+
+/*
+ * Date maths pinned to the ISO day and formatted in UTC, so the static export
+ * renders the same sheet regardless of the build machine's timezone. Festival
+ * dates themselves are untouched.
+ */
+function orderByDay(iso: string): string {
+  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - ORDER_BY_LEAD_DAYS);
+  return d.toISOString().slice(0, 10);
+}
+
+function formatSheetDate(iso: string): string {
+  return new Date(`${iso.slice(0, 10)}T12:00:00Z`)
+    .toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+    .toUpperCase();
+}
+
 export default async function FestivalPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const f = FESTIVALS[slug as FestivalSlug];
@@ -455,140 +476,114 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
     <FlavourScope palette={f.theme}>
       {/* SSR-seed the festival palette */}
 
-      {/* Hero — full-bleed, with per-festival animated SVG vector decoration
-          replacing the previous hero photograph. Diwali gets crackers + diyas
-          + marigolds, Holi gets pichkari + gulal, Eid gets crescent + lanterns,
-          etc. — each decoration tinted in the festival's accent + glow. */}
-      <section
-        className="relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
-        style={{
-          backgroundImage: `radial-gradient(900px 500px at 85% 15%, ${f.theme.glow}55 0%, transparent 65%), radial-gradient(700px 400px at 12% 80%, ${f.theme.accent}22 0%, transparent 60%), linear-gradient(165deg, ${f.theme.base} 0%, ${f.theme.base} 60%, ${f.theme.glow}33 100%)`,
-          color: f.theme.ink,
-        }}
-      >
-        <FestivalDecor
-          slug={slug as FestivalSlug}
-          accent={f.theme.accent}
-          glow={f.theme.glow}
-          ink={f.theme.ink}
-        />
-        <Grain />
+      {/* ── THE DISPATCH SHEET ────────────────────────────────────────────
+          The festival as the kitchen records it: the name, the script, and
+          the two dates that matter. The retired gradient hero, its decor
+          layer and the ticking countdown are replaced by the sheet itself —
+          ORDER BY is the festival date minus three clear dispatch days. */}
+      <section className="container-site section-y">
+        <Reveal>
+          <article className="docket overflow-hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
+            <div className="flex flex-col items-start gap-5 p-5 md:p-7">
+              <p className="font-indic text-theme-accent text-2xl leading-none">{f.telugu}</p>
 
-        <div className="container-site relative flex flex-col items-start gap-6 py-24 md:py-36">
-          <Reveal>
-            <p
-              className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]"
-              style={{ color: f.theme.accent }}
-            >
-              <Paisley size="sm" color={f.theme.accent} />
-              <span style={{ fontFamily: 'var(--font-indic)' }}>{f.telugu}</span>
-              <span aria-hidden="true" className="opacity-60">
-                ·
-              </span>
-              <span dangerouslySetInnerHTML={{ __html: f.eyebrow }} />
-            </p>
-          </Reveal>
+              <h1 className="font-display text-display-lg text-theme-ink max-w-2xl">
+                {f.title} — {f.tagline}
+              </h1>
 
-          <TextKinetic
-            as="h1"
-            text={`${f.title} — ${f.tagline}`}
-            split="word"
-            gap={60}
-            className="font-display text-display-lg md:text-display-xl max-w-4xl leading-[1.02]"
-          />
+              <dl className="w-full max-w-sm">
+                <div className="field-row">
+                  <dt className="field-label">Edition</dt>
+                  <dd className="field-value text-sm">{f.eyebrow}</dd>
+                </div>
+                <div className="field-row">
+                  <dt className="field-label">Festival</dt>
+                  <dd className="field-value text-sm">{formatSheetDate(f.date)}</dd>
+                </div>
+                <div className="field-row">
+                  <dt className="field-label">Order by</dt>
+                  <dd className="field-value text-sm font-bold">
+                    {formatSheetDate(orderByDay(f.date))}
+                  </dd>
+                </div>
+              </dl>
 
-          <Reveal delay={0.2}>
-            <p className="max-w-2xl text-lg leading-relaxed opacity-90">{f.body}</p>
-          </Reveal>
+              <p className="text-theme-ink/80 max-w-2xl leading-relaxed">{f.body}</p>
 
-          <FestivalCountdown target={f.date} accentColor={f.theme.accent} />
-
-          <Reveal delay={0.4}>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="#hampers"
-                className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                style={{ backgroundColor: f.theme.accent, color: f.theme.base }}
-              >
-                See the collection
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                  aria-hidden="true"
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Link href="#hampers" className="stamp">
+                  See the collection
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <Link href="/corporate#enquiry" className="stamp stamp--ghost">
+                  Corporate enquiry
+                </Link>
+                <HamperARPreview
+                  glb={SAMPLE_HAMPER_GLB}
+                  usdz={SAMPLE_HAMPER_USDZ}
+                  caption={`${f.title} hamper`}
+                  bg={f.theme.base}
                 />
-              </Link>
-              <Link
-                href="/corporate#enquiry"
-                className="inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors duration-300"
-                style={{ borderColor: `${f.theme.ink}40`, color: f.theme.ink }}
-              >
-                Corporate enquiry
-              </Link>
-              <HamperARPreview
-                glb={SAMPLE_HAMPER_GLB}
-                usdz={SAMPLE_HAMPER_USDZ}
-                caption={`${f.title} hamper`}
-                bg={f.theme.base}
-              />
+              </div>
             </div>
-          </Reveal>
 
-          <div className="absolute right-4 top-4 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-            Dev only
-          </div>
-        </div>
+            {/* THE PLATE. A flavour-wash slot, owner-editable from
+                /admin/photos; the catalogue URL is the fallback, and when it
+                is dead the dashed specimen mark renders instead and no
+                request or preload is ever emitted. The glow wash comes from
+                the FlavourScope vars, so bg-theme-glow/20 matches the old
+                inline `glow + 33` alpha. */}
+            <SlotImage
+              slot={`festivals.${slug}`}
+              fallbackUrl={f.heroImage}
+              fallbackAlt={`${f.title} box`}
+              sizes="(min-width: 768px) 420px, 100vw"
+              objectFit="contain"
+              className="bg-theme-glow/20 min-h-[240px] border-t border-[color:var(--color-border)] md:border-l md:border-t-0"
+            />
+          </article>
+        </Reveal>
       </section>
 
-      <PaisleyDivider className="container-site" />
-
-      {/* Gifting by audience */}
-      <section aria-labelledby="for-heading" className="container-site py-20">
-        <Reveal className="mb-10">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Who are you gifting?
-          </p>
-          <h2
-            id="for-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.05]"
-          >
-            A box for each kind of recipient.
-          </h2>
+      {/* Gifting by audience — docket cells, not lifted cards. */}
+      <section aria-labelledby="for-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2 id="for-heading" className="font-display text-display-md">
+              A box for each kind of recipient.
+            </h2>
+          </div>
         </Reveal>
 
-        <Stagger gap={80} className="grid gap-5 md:grid-cols-3">
+        <Stagger gap={80} className="grid gap-4 md:grid-cols-3">
           {f.gifteeFor.map((g) => (
             <Link
               key={g.title}
               href={g.href}
-              className="bg-surface-elevated hover:shadow-lifted group flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-6 transition-all duration-300 hover:-translate-y-1"
+              className="docket group flex h-full flex-col gap-3 p-5 transition-shadow duration-200 hover:shadow-lifted"
             >
-              <div className="bg-theme-glow/25 text-theme-accent flex h-10 w-10 items-center justify-center rounded-full">
-                <g.icon className="h-5 w-5" aria-hidden="true" />
+              <div className="flex items-center gap-2.5">
+                <g.icon className="text-theme-accent h-4 w-4 shrink-0" aria-hidden="true" />
+                <h3 className="font-display text-theme-ink text-lg leading-tight">{g.title}</h3>
               </div>
-              <h3 className="font-display text-theme-ink text-xl">{g.title}</h3>
               <p className="text-theme-ink/75 text-sm leading-relaxed">{g.body}</p>
-              <div className="text-theme-accent mt-auto inline-flex items-center gap-1 pt-2 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1">
+              <span className="text-theme-accent group-hover:text-theme-ink mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium transition-colors">
                 Explore
-                <ArrowRight className="h-3 w-3" aria-hidden="true" />
-              </div>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
             </Link>
           ))}
         </Stagger>
       </section>
 
-      {/* Curated products */}
-      <section aria-labelledby="hampers-heading" id="hampers" className="container-site py-20">
-        <Reveal className="mb-10">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            The {f.title} edit
-          </p>
-          <h2
-            id="hampers-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3 leading-[1.05]"
-          >
-            What our kitchen recommends this year.
-          </h2>
+      {/* Curated products — the grid itself is untouched. */}
+      <section aria-labelledby="hampers-heading" id="hampers" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2 id="hampers-heading" className="font-display text-display-md">
+              What our kitchen recommends this year.
+            </h2>
+          </div>
         </Reveal>
 
         <Stagger gap={80} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -598,39 +593,19 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
         </Stagger>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="container-site pb-20">
+      {/* Bottom CTA — the carbon register band, not an inline-ink slab. */}
+      <section className="container-site section-y">
         <Reveal>
-          <div
-            className="relative overflow-hidden rounded-3xl p-8 md:p-12"
-            style={{ backgroundColor: f.theme.ink, color: f.theme.base }}
-          >
-            <div
-              aria-hidden="true"
-              className="absolute -left-16 -top-20 h-64 w-64 rounded-full opacity-30 blur-3xl"
-              style={{ backgroundColor: f.theme.glow }}
-            />
-            <div className="relative flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
+          <div data-register="carbon" className="bg-theme-base text-theme-ink p-7 md:p-10">
+            <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <p
-                  className="text-xs font-semibold uppercase tracking-[0.22em]"
-                  style={{ color: f.theme.glow }}
-                >
-                  Priority list
-                </p>
-                <h2 className="font-display text-display-md md:text-display-lg mt-2">
-                  Be first in line.
-                </h2>
-                <p className="mt-2 text-sm opacity-85 md:text-base">
-                  The {f.title} collection opens to our priority list before anyone else. Leave your
-                  email and we&rsquo;ll ping you when it&rsquo;s live.
+                <h2 className="font-display text-display-md">Be first in line.</h2>
+                <p className="text-text-muted mt-3 text-sm leading-relaxed md:text-base">
+                  The {f.title} collection opens to our priority list before anyone else. Leave
+                  your email and we&rsquo;ll ping you when it&rsquo;s live.
                 </p>
               </div>
-              <Link
-                href="/corporate#enquiry"
-                className="inline-flex shrink-0 items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                style={{ backgroundColor: f.theme.glow, color: f.theme.ink }}
-              >
+              <Link href="/corporate#enquiry" className="stamp shrink-0">
                 Join the list
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
