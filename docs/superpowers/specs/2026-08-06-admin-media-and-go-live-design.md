@@ -48,7 +48,43 @@ The filename identifies the provenance: a WhatsApp image sent 2025-09-04 at 17:2
 `https://web.archive.org/web/20211012135955if_/https://ravisweets.com/wp-content/uploads/2021/09/Logo-2-300x150.png`
 — Surya's sun-chariot in gold/orange with a red script wordmark (apt: *Ravi* = sun), 300×150 raster. The other 41 assets are 2021-era product shots usable only as a last-resort fallback.
 
-**Highest-value recovery path:** HTTP 402 means suspended, not deleted, and the domain has since been repointed to Cloudflare rather than the WordPress files being removed. If the old hosting account or any backup export is recoverable, the logo and all 87 product images return together, collapsing most of §6.5. This should be checked before any tracing or re-shooting work is commissioned.
+**Still the highest-value recovery path for photography:** HTTP 402 means suspended, not deleted, and the domain was repointed to Cloudflare rather than the WordPress files being removed. If the old hosting account or any backup export is recoverable, all 87 product images return together, collapsing most of §6.5.
+
+### 2.2.1 The logo — RESOLVED 2026-08-07
+
+The owner supplied vector artwork at `assets/logo/Ravi Sweets Logo.pdf`, which supersedes every recovery path above.
+
+**Provenance is confirmed by content:** it depicts Surya's chariot — the sun god's *ratha* drawn by seven horses through cloudbanks against a rising sun, with the wordmark below. The same concept as the 2021 mark recovered from the Archive, considerably developed. The identity has been consistent throughout, so nothing about the earlier mark needs preserving.
+
+**Technical facts, read from the file:**
+
+| Property | Value |
+|---|---|
+| Format | PDF 1.4, single page, 613 KB |
+| Page | 500 × 500 pt |
+| Artwork bounds | 1.405 : 1 landscape — **not square**; the page carries ~9% slack above and ~20% below |
+| Content | 3,977 path operations (2,886 Bézier curves), 0 raster image XObjects |
+| Gradients | 5 shadings, 2 alpha masks |
+| Type | one embedded subset, `FAALAJ+SamarkanNormal` |
+
+**Exact palette, extracted from the content streams** (not eyedropped):
+
+| Role | Value |
+|---|---|
+| Wordmark red | `#FF0000` |
+| Sunburst ramp | `#FF0000` → `#FFD100` |
+| Sun disc gold | `#D3AA00` |
+| Chariot gold | `#CC7C0C` |
+| Chariot / horses | `#000000` |
+| Cloud greys | `#EDEDED`, `#DADADA` |
+
+Three consequences, each requiring work in §6.5:
+
+1. **The artwork has an opaque white background.** It is not transparent. Placed on the manila hero ground unmodified it shows a white rectangle. The background fill must be dropped during SVG conversion.
+2. **It is illegible below roughly 100 px.** Rendered at the header's 32 px the seven horses collapse into a smear and the wordmark is unreadable; 64 px is little better. Verified by rendering at the exact sizes the site uses. A **two-tier logo system is required** — see §6.5.
+3. **`#FF0000` cannot be `--color-brand`.** See §6.5.1.
+
+The `SamarkanNormal` wordmark must be converted to outlines during SVG conversion, so the site carries no dependency on a font it does not ship.
 
 `--color-brand: #A81B1B` is documented as a placeholder pending the logo file in **three** places — `apps/storefront/src/app/globals.css:51-57`, `apps/storefront/src/lib/theme/palette.ts:118-130`, `apps/storefront/src/app/layout.tsx:102-104` — and `apps/storefront/src/lib/theme/globals-sync.test.ts` pins two of them together. They must change in lockstep.
 
@@ -265,9 +301,29 @@ The admin's Publish control reports state honestly: saved, publishing, and live-
 
 ### 6.5 Brand and content sweep
 
-- Logo delivered as SVG, replacing the code-drawn mark in `logo.tsx`; favicon, apple-touch-icon and OG image generated from it.
-- The hero's placeholder dispatch seal (`hero-batch.tsx:239-261`, whose comment already anticipates this) becomes the real logo roundel.
-- `--color-brand` set from the logo's actual red, changed in lockstep across the three locations in §2.2 with `globals-sync.test.ts` updated.
+**A two-tier logo system**, because the full lockup does not survive small sizes (§2.2.1):
+
+- **Full lockup** — the chariot, sun and wordmark, converted from the PDF to SVG with the white background dropped and the `SamarkanNormal` wordmark reduced to outlines. Used at **≥160 px only**: hero seal, footer, about page, OG image.
+- **Compact mark** — a deliberately simplified device for **≤64 px**: the header, the favicon, and the apple-touch-icon. Derived from the sun disc and a reduced chariot silhouette, keeping the sunburst ramp; the seven horses do not survive reduction and must not be attempted. Paired with the wordmark set in type rather than as artwork.
+
+The existing code-drawn katli lockup in `brand/logo.tsx` is replaced by these two. The hero's placeholder dispatch seal (`hero-batch.tsx:239-261`, whose comment already anticipates this) takes the full lockup, since at ~104 px it sits near the legibility floor and should be sized up slightly.
+
+#### 6.5.1 The brand red
+
+The logo's wordmark is `#FF0000`. It **cannot** become `--color-brand`: at 3.30:1 on the manila hero ground and 4.00:1 on white it fails WCAG AA for text, and the repo already enforces Lighthouse accessibility ≥ 0.95 plus a `colour-audit` ratchet in CI.
+
+Logos are exempt from contrast requirements, so **the artwork keeps `#FF0000` exactly**. The UI token is a darkened value on the same hue:
+
+| Candidate | On manila | On white | |
+|---|---|---|---|
+| `#FF0000` — logo, as drawn | 3.30:1 | 4.00:1 | fails |
+| `#D50000` — lightest passing | 4.53:1 | 5.48:1 | passes, no margin |
+| **`#CC0000` — recommended** | **4.86:1** | **5.89:1** | passes with headroom |
+| `#A81B1B` — current placeholder | 6.11:1 | 7.40:1 | passes, but a visibly different hue |
+
+`#CC0000` is recommended: same hue as the mark, comfortably above the threshold rather than sitting on it. Whichever is chosen is changed in lockstep across the three locations in §2.2, with `globals-sync.test.ts` extended to pin all three rather than two.
+
+The secondary brand colours — the `#FF0000` → `#FFD100` sunburst ramp and the two golds — are currently absent from the site palette entirely and are available for accents.
 - Real photography ingested through the media library.
 - Business facts corrected throughout: founding year 1983 (D7), addresses, phone, WhatsApp, FSSAI, GST, hours, social links, map.
 - Policy copy, structured data, sitemap, robots and metadata reviewed against the live domain.
@@ -341,11 +397,7 @@ Steps 1–3 deliver visible value before the largest step begins.
 ## 9 · Inputs still needed
 
 1. **Product photography.** The supplied link (`photos.google.com/u/2/albums`) is an authenticated account index and cannot be reached programmatically. Needs a local folder path or an export. Filenames approximating product names reduce manual matching. Does not block any code work — the library is built so photos drop in without a code change.
-2. **Logo artwork.** In descending order of preference:
-   1. The old WordPress hosting account or a backup export — returns the logo *and* all 87 product images at once (§2.2). Check this first.
-   2. The WhatsApp original from 2025-09-04 17:28, or the same image in the owner's photo library.
-   3. Any vector source (`.ai`/`.svg`/`.eps`) held by whoever designed the mark — ships as-is.
-   4. Last resort: trace the 300×150 Wayback capture of the 2021 sun-chariot, at reduced fidelity and a visibly older design.
+2. ~~**Logo artwork.**~~ **Resolved 2026-08-07** — vector PDF supplied at `assets/logo/Ravi Sweets Logo.pdf`. See §2.2.1. One decision remains open: the `--color-brand` value (§6.5.1), recommended `#CC0000`.
 3. **Business facts** for the content sweep: current store addresses, phone, WhatsApp, hours, FSSAI and GST numbers, social links.
 
 ---
