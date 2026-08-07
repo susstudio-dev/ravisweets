@@ -150,6 +150,8 @@ Under `output: 'export'` the Furor design does not degrade — it fails to build
 | D6 | **Version snapshots with one-click restore.** | Owner-confirmed. One table plus a trigger; cheap insurance for a non-technical owner editing a live store. |
 | D7 | **Founding year is 1983.** | Owner-confirmed 2026-08-06. `PROPOSAL.md`, `GROWTH_PLAN.md` and `ADMIN_BLUEPRINT.md` say 1985 and are wrong. |
 | D8 | **Publishing runs through a Supabase Edge Function.** | A static export has nowhere to hide a Cloudflare deploy-hook secret. Matches the existing three-function pattern. |
+| D9 | **`--color-brand: #CC0000`; the logo artwork keeps `#FF0000`.** | Owner-decided 2026-08-07. Logos are exempt from contrast rules; UI text is not, and CI enforces it. §6.5.1. |
+| D10 | **Two-tier logo: full lockup ≥160px, compact mark ≤64px.** | Forced by measurement — the full mark is illegible at the header's 32px (§2.2.1). |
 
 ---
 
@@ -321,7 +323,7 @@ Logos are exempt from contrast requirements, so **the artwork keeps `#FF0000` ex
 | **`#CC0000` — recommended** | **4.86:1** | **5.89:1** | passes with headroom |
 | `#A81B1B` — current placeholder | 6.11:1 | 7.40:1 | passes, but a visibly different hue |
 
-`#CC0000` is recommended: same hue as the mark, comfortably above the threshold rather than sitting on it. Whichever is chosen is changed in lockstep across the three locations in §2.2, with `globals-sync.test.ts` extended to pin all three rather than two.
+**Decided 2026-08-07: `--color-brand: #CC0000`.** Same hue as the mark, comfortably above the threshold rather than sitting on it. Changed in lockstep across the three locations in §2.2, with `globals-sync.test.ts` extended to pin all three rather than two.
 
 The secondary brand colours — the `#FF0000` → `#FFD100` sunburst ramp and the two golds — are currently absent from the site palette entirely and are available for accents.
 - Real photography ingested through the media library.
@@ -365,16 +367,15 @@ A trigger snapshots the previous row on every `site_content` update, retaining t
 
 ## 7 · Sequence
 
-1. **Hero recomposition** (§4) — independent of everything else, immediately visible.
+1. **Hero recomposition + logo integration** (§4, §6.5 brand half, §6.5.1) — merged, because the hero's dispatch seal *is* the logo roundel and the red-discipline work in §4.2 depends on the `--color-brand` change. Independent of everything else and immediately visible.
 2. **Media foundation** (§5.1–5.5) — bucket, table, RLS, Zod schema, picker.
-3. **Logo and brand** (§6.5, brand half) — small, unblocks visual identity.
-4. **Products into the database** (§6.1) — the largest single step.
-5. **Wire every image slot** (§5.6) — needs 2 and 4.
-6. **Build bake and publish** (§6.2–6.4).
-7. **Content sweep and security fixes** (§6.5–6.6).
-8. **Version history** (§6.7).
+3. **Products into the database** (§6.1) — the largest single step.
+4. **Wire every image slot** (§5.6) — needs 2 and 3.
+5. **Build bake and publish** (§6.2–6.4).
+6. **Content sweep and security fixes** (§6.5 content half, §6.6).
+7. **Version history** (§6.7).
 
-Steps 1–3 deliver visible value before the largest step begins.
+Step 1 delivers the visible brand change before the larger structural work begins, and needs neither photography nor the media library.
 
 **On planning granularity:** this spec is deliberately one document because the parts share a dependency — the media foundation gates steps 3, 5 and 7, and D1 forces D2. The *implementation plans* should not be one document. Each numbered step above gets its own plan, written when its predecessors land, so that findings from step 4 can inform step 5 rather than being guessed at up front.
 
