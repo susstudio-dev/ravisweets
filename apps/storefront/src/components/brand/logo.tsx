@@ -5,63 +5,64 @@ import { usePageMediaImage } from '@/lib/supabase/site-content-context';
 /**
  * The brand lockup — self-hosted, zero external dependencies.
  *
- * The old header hotlinked a PNG from the retired WordPress host, which now
- * answers HTTP 402 for every asset; the mark was a broken-image icon on
- * every page. This lockup is drawn in code: the katli diamond (the product's
- * own 45° cut, same mark as the cursor and bullets) beside a Young Serif
- * wordmark. It inherits the current register's ink, so it is cream over the
- * dusk hero and warm charcoal on light pages with no extra props.
+ * THE REAL MARK, since 2026-08-10. The owner's logo is the mandir crest:
+ * Surya's chariot drawn by seven horses under a temple arch, over the
+ * wordmark on a red band. It replaces the code-drawn katli diamond that
+ * stood in after the retired WordPress host stopped serving the hotlinked
+ * original (HTTP 402), which had left a broken-image icon on every page.
+ *
+ * WHY THE BADGE IS PAIRED WITH TYPE rather than used alone. The crest carries
+ * its own wordmark, but it is portrait (527x569) and dense — measured at the
+ * sizes this site uses, "Ravi Sweets" inside it only resolves from about
+ * 48px, and the SINCE 1983 and tagline lines never do at header scale. Alone
+ * in a 64px header it would read as an unnamed seal. So the crest acts as the
+ * mark and the type carries the name, which is how a detailed badge normally
+ * behaves at small sizes. The "Est. 1983" line the old lockup carried is
+ * dropped: the crest already says SINCE 1983, and repeating it beside an
+ * illegible copy of itself is noise.
+ *
+ * WEBP, deliberately. The source is a JPEG on an opaque white field, which
+ * would show as a white rectangle on the manila ground; the shipped asset has
+ * its surround flood-filled to transparency. As PNG it was 183 KB because the
+ * arch gradients quantise badly — as WebP at q0.92 it is 30 KB for the same
+ * 400x432 pixels, and `images.unoptimized` means whatever is shipped is what
+ * every visitor downloads. Master files live in assets/logo/.
  *
  * OWNER OVERRIDE: when the `brand.logo` slot is set from /admin/photos, the
  * uploaded logo renders in the same box instead — a plain <img>, not
- * next/image, because the owner file is a tiny arbitrary-aspect asset and
- * the static export ships images unoptimised anyway. The code-drawn lockup
- * stays the SSR/fallback rendering.
+ * next/image, because the owner file is an arbitrary-aspect asset and the
+ * static export ships images unoptimised anyway.
  */
+
+/** Intrinsic size of public/brand/ravi-sweets-logo.webp — set to avoid CLS. */
+const LOGO_W = 400;
+const LOGO_H = 432;
 
 export function BrandLogo({ compact = false }: { compact?: boolean }) {
   const ownerLogo = usePageMediaImage('brand.logo');
+  const box = compact ? 'h-9 w-auto shrink-0' : 'h-10 w-auto shrink-0';
 
   if (ownerLogo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={ownerLogo.url}
-        alt="Ravi Sweets"
-        className={compact ? 'h-7 w-auto shrink-0' : 'h-8 w-auto shrink-0'}
-      />
+      <img src={ownerLogo.url} alt="Ravi Sweets" className={box} />
     );
   }
 
   return (
     <span className="flex items-center gap-2.5">
-      <svg
-        viewBox="0 0 32 32"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/ravi-sweets-logo.webp"
+        alt=""
         aria-hidden="true"
-        className={compact ? 'h-7 w-7 shrink-0' : 'h-8 w-8 shrink-0'}
-      >
-        <polygon
-          points="16,2.5 29.5,16 16,29.5 2.5,16"
-          fill="var(--theme-accent)"
-          stroke="var(--color-varak)"
-          strokeWidth="1.6"
-          strokeLinejoin="miter"
-        />
-        <polygon
-          points="16,9 23,16 16,23 9,16"
-          fill="none"
-          stroke="var(--theme-base)"
-          strokeWidth="1.1"
-          opacity="0.85"
-        />
-      </svg>
-      <span className="flex flex-col leading-none">
-        <span className="font-display text-theme-ink text-lg tracking-[0.02em]">Ravi Sweets</span>
-        {!compact && (
-          <span className="text-theme-ink/55 mt-1 hidden text-[9px] font-semibold uppercase tracking-[0.3em] sm:block">
-            Est. 1983
-          </span>
-        )}
+        width={LOGO_W}
+        height={LOGO_H}
+        className={box}
+        decoding="async"
+      />
+      <span className="font-display text-theme-ink text-lg leading-none tracking-[0.02em]">
+        Ravi Sweets
       </span>
     </span>
   );
