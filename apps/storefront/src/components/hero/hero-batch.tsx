@@ -16,10 +16,19 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  *
  * The system frames, the festival fills. On the docket ground, the hero is a
  * warm festival card being stamped for dispatch — an invitation, not an
- * invoice. The docket system survives as the stationery: ruled proof row,
- * typed values, square-cut edges. The full ledger the owner rejected twice is
- * compressed into three artifacts: the proof row, the red dispatch seal
+ * invoice. The docket system survives as the stationery: ruled fields, typed
+ * values, square-cut edges. The full ledger the owner rejected twice is
+ * compressed into three artifacts: the proof block, the red dispatch seal
  * (which carries today's date), and one ember live-row.
+ *
+ * LEFT COLUMN ORDER, and why. Eyebrow, headline, body, actions, deadline
+ * chip, proof block. It previously ran eyebrow, headline, DEADLINE, body,
+ * actions, PROOF ROW — six full-width text blocks on one margin rhythm, with
+ * the deadline and the proof row set identically (caps, tracking, .fb-tick)
+ * despite doing opposite jobs. Nothing after the headline held the eye. Now
+ * each element has one job and one form: the deadline is a boxed stamp beside
+ * the actions it should drive, and trust is a ruled three-cell block whose
+ * numerals give the column its second stop.
  *
  * CALENDAR-AWARE, NEVER A CAROUSEL. The festival slot resolves from the date
  * (Rakhi window now, Diwali later) — the hero knows what week it is without
@@ -33,9 +42,11 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * the ember pulse. Everything is transform/opacity and dies under
  * prefers-reduced-motion via the global block in globals.css.
  *
- * RED DISCIPLINE: kumkum red (--color-brand) is celebration/certification ink
- * — the ticker band and the seal, ~8% of the viewport. Blue keeps the
- * interactive monopoly. Ember stays live-state.
+ * RED DISCIPLINE: kumkum red (--color-brand, #CC0000 — the logo's own red
+ * darkened until it passes AA as ink) is celebration/certification ink. It
+ * appears EXACTLY ONCE in the left column, on the deadline chip, plus the
+ * seal on the card. Blue keeps the interactive monopoly. Ember stays
+ * live-state. If you are about to add a third red thing here, don't.
  *
  * The DB-driven text contract is preserved: same eight fields, same `??`
  * precedence (site_content → theme preset → code default).
@@ -118,14 +129,51 @@ export function HeroBatch() {
   const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/shop';
 
   /*
+   * SENTENCE BLOCKS, WORD STAGGER WITHIN.
+   *
+   * The headline is two sentences, and the previous cut let them wrap as one
+   * run of words — so at the container's measure it broke as "Made this /
+   * morning." and orphaned half a sentence onto its own line. Each sentence
+   * is now its own block, so a sentence can never be split from the one after
+   * it; inside a sentence the words still wrap like normal prose.
+   *
+   * Deliberately derived from the string rather than hardcoded, because the
+   * headline resolves from Supabase — whatever the owner types keeps this
+   * behaviour, including a single-sentence headline (one block, unchanged).
+   *
    * One span PER WORD, with the spaces as plain text nodes BETWEEN the spans.
-   * The first cut grouped words in twos and put the space inside each span;
+   * An earlier cut grouped words in twos and put the space inside each span;
    * inline-block trims its own trailing whitespace, which fused adjacent
    * groups on the same line ("make itlast"), and a multi-word inline-block
    * cannot wrap internally, which overflowed the whole page at 390px. Words
    * separated by real text-node spaces wrap like normal prose.
+   *
+   * The stagger counter runs ACROSS sentences, so the authored 0-480ms rise
+   * is unchanged — the blocks are a wrapping fix, not a new motion beat.
    */
-  const words = heroHeadline.split(/\s+/);
+  let staggerIndex = 0;
+  const headlineLines = (heroHeadline.match(/[^.!?]+[.!?]*/g) ?? [heroHeadline])
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .map((sentence) =>
+      sentence.split(/\s+/).map((word) => ({ word, delay: staggerIndex++ * 0.06 })),
+    );
+
+  /*
+   * THE PROOF BLOCK. Three ruled cells replacing the single tracked-out line
+   * that used to close this column — it was typographically identical to the
+   * festival deadline above it (same caps, same tracking, same .fb-tick), so
+   * the two read as a matched pair and each blunted the other.
+   *
+   * Numerals carry it, in the display face; the labels stay quiet. Not red:
+   * after this change the brand red appears exactly ONCE in the left column,
+   * on the deadline chip, which is the only thing here that is urgent.
+   */
+  const proof = [
+    { value: FOUNDED, label: 'family kitchen' },
+    { value: 'NIL', label: 'preservatives' },
+    { value: 'Same-day', label: 'dispatch' },
+  ];
 
   const cutouts = CATALOGUE.filter((p) => p.bestseller).slice(0, 3);
 
@@ -139,7 +187,13 @@ export function HeroBatch() {
         ("a little disturbing"). Red now enters the hero only as the seal and
         the festival line — ink, not a moving band.
       */}
-      <div className="container-site relative z-10 grid items-center gap-8 pb-10 pt-5 md:pb-14 md:pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14">
+      {/*
+        items-START, not items-center: the left column is taller than the
+        festival card at every width above the lg breakpoint, so centring
+        floated the card in its own dead space and pushed the proof block
+        down. Top-aligned, the two columns share a baseline at the eyebrow.
+      */}
+      <div className="container-site relative z-10 grid items-start gap-8 pb-10 pt-5 md:pb-14 md:pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14">
         {/* ── THE WORD ─────────────────────────────────────────────────── */}
         <div>
           <p className="flex flex-wrap items-baseline gap-x-2.5">
@@ -150,33 +204,26 @@ export function HeroBatch() {
             <span className="field-label">· EST {FOUNDED}</span>
           </p>
 
-          <h1 key={heroHeadline} className="font-display text-display-xl mt-3 text-balance">
-            {words.map((w, i) => (
-              <Fragment key={i}>
-                {i > 0 ? ' ' : null}
-                <span className="fb-word" style={{ animationDelay: `${i * 0.06}s` }}>
-                  {w}
-                </span>
-              </Fragment>
+          <h1 key={heroHeadline} className="font-display text-display-xl mt-3">
+            {headlineLines.map((line, li) => (
+              <span key={li} className="block text-balance">
+                {line.map(({ word, delay }, wi) => (
+                  <Fragment key={wi}>
+                    {wi > 0 ? ' ' : null}
+                    <span className="fb-word" style={{ animationDelay: `${delay}s` }}>
+                      {word}
+                    </span>
+                  </Fragment>
+                ))}
+              </span>
             ))}
           </h1>
 
-          {/* The festival line — celebration ink, typed. */}
-          <p
-            className="fb-tick field-value mt-3 text-sm font-bold"
-            style={{ color: 'var(--color-brand)' }}
-            suppressHydrationWarning
-          >
-            {fest.title.toUpperCase()} · ORDER BY {formatDocketDate(orderBy)} · DELIVERED ACROSS
-            INDIA
-          </p>
-
-          <p className="text-text-muted mt-3 max-w-[52ch] leading-relaxed">{heroBody}</p>
+          <p className="text-text-muted mt-4 max-w-[52ch] leading-relaxed">{heroBody}</p>
 
           {/*
-            CTAs come BEFORE the proof row — owner feedback: the actions were
-            landing below the fold. The proof line is trust garnish under
-            them, not a gate in front of them.
+            CTAs come BEFORE the proof — owner feedback: the actions were
+            landing below the fold.
           */}
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
             <Link href={primaryCtaHref} className="stamp">
@@ -187,10 +234,49 @@ export function HeroBatch() {
             </Link>
           </div>
 
-          {/* The proof row — the docket compressed to one ruled line. */}
-          <p className="fb-tick field-value mt-6 border-y border-[color:var(--color-rule)] py-2.5 text-xs tracking-[0.08em]">
-            FAMILY KITCHEN SINCE {FOUNDED} · NO PRESERVATIVES · SAME-DAY DISPATCH
-          </p>
+          {/*
+            THE DEADLINE CHIP. This ran full-width directly under the headline,
+            set in the same caps/tracking/.fb-tick as the proof row below it —
+            two lines doing opposite jobs (urgency, trust) in one typographic
+            register, so each blunted the other. It is the only urgent thing in
+            this column, so it now sits WITH the actions and is boxed like a
+            stamp rather than set like a caption. `border-current` keeps ink and
+            rule on a single declaration.
+
+            "Delivered across India" moved out: it is reach, not a deadline,
+            and the body copy above already says it.
+          */}
+          <div className="mt-4">
+            <p
+              className="fb-tick field-value inline-flex flex-wrap items-baseline gap-x-2 border border-current px-2.5 py-1.5 text-[11px] font-bold tracking-[0.08em]"
+              style={{ color: 'var(--color-brand)' }}
+              suppressHydrationWarning
+            >
+              <span>{fest.title.toUpperCase()}</span>
+              <span aria-hidden="true" className="opacity-40">
+                ·
+              </span>
+              <span>ORDER BY {formatDocketDate(orderBy)}</span>
+            </p>
+          </div>
+
+          {/* The proof block — the docket's field rows, given room to count. */}
+          <ul className="fb-tick mt-7 grid max-w-[27rem] grid-cols-3 border-y border-[color:var(--color-rule)]">
+            {proof.map((item, i) => (
+              <li
+                key={item.label}
+                className={cn(
+                  'py-3',
+                  i > 0 && 'border-l border-[color:var(--color-rule)] pl-4',
+                )}
+              >
+                <span className="font-display block text-xl leading-none md:text-2xl">
+                  {item.value}
+                </span>
+                <span className="field-label mt-1.5 block">{item.label}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* ── THE FESTIVAL CARD ────────────────────────────────────────── */}
