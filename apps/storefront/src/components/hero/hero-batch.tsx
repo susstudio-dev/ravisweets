@@ -204,7 +204,24 @@ export function HeroBatch() {
             <span className="field-label">· EST {FOUNDED}</span>
           </p>
 
-          <h1 key={heroHeadline} className="font-display text-display-xl mt-3">
+          {/*
+            The lg cap lowers text-display-xl's ceiling from 5rem to 4.4rem in
+            THIS column only. Measured: at 1440 the h1 has 650px and the first
+            sentence needs 721px at 5rem, so it broke as "Made this /
+            morning." — an orphan the owner called out. At 4.4rem it needs
+            634px and sits on one line, giving three lines with nothing
+            stranded. The clamp's lower half is untouched, so narrower
+            viewports keep their existing ramp rather than jumping to a fixed
+            size. The token itself is left alone: seven other headings use
+            text-display-xl at max-w-3xl/4xl, where it is not too big.
+
+            The second sentence still wraps to two lines by design — fitting it
+            on one would need 46px type, which is not a hero.
+          */}
+          <h1
+            key={heroHeadline}
+            className="font-display text-display-xl mt-3 lg:text-[clamp(2.75rem,2rem+3.4vw,4.4rem)] lg:leading-[0.98] lg:tracking-[-0.028em]"
+          >
             {headlineLines.map((line, li) => (
               <span key={li} className="block text-balance">
                 {line.map(({ word, delay }, wi) => (
