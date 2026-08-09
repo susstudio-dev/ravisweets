@@ -92,9 +92,9 @@ The `SamarkanNormal` wordmark must be converted to outlines during SVG conversio
 
 `apps/storefront/src/lib/supabase/products.ts` exports 18 functions and **every one is a write**. There is no `listProducts()` anywhere in the repo. The `products` and `variants` tables have never been seeded — no `insert into public.products` exists across `supabase/SETUP_ALL.sql` or any of the 13 migrations.
 
-Every storefront page instead renders from the hardcoded `CATALOGUE` array (`packages/shared/src/catalogue/products.ts:67`, **24 SKUs** carrying 87 image URLs between them), consumed by the home page, `/shop`, `/category/[slug]`, `/product/[slug]` (`generateStaticParams`, :26-28), `/search`, and `sitemap.ts`.
+Every storefront page instead renders from the hardcoded `CATALOGUE` array (`packages/shared/src/catalogue/products.ts:82`), consumed by the home page, `/shop`, `/category/[slug]`, `/product/[slug]` (`generateStaticParams`, :26-28), `/search`, and `sitemap.ts`.
 
-Note: `PROPOSAL.md` §4 claims "80+ products" and the revenue-path spec repeats it. Both are stale — the array holds 24. Treat 24 as the seeding scope and the 80+ figure as an aspiration.
+**It holds 83 products.** Count it by reading the file, not by grepping for `slug:` — the array is 25 literal product objects followed by seven spread generator calls at `:685-697` (`savouriesGroup()`, `sweetBitesGroup()`, `dryFruitsGroup()`, `picklesGroup()`, `powdersGroup()`, `healthySweetsGroup()`, `biscuitsGroup()`), which contribute the rest programmatically. A pattern match over the literals alone returns ~25 and is wrong by a factor of three. `supabase/migrations/0014_seed_products.sql` was generated from this array and seeds 83 products plus 165 variants, which is the authoritative figure; `PROPOSAL.md` §4's "80+ products" is therefore accurate, not stale.
 
 Consequence: a PostgREST `.update().eq()` against zero matching rows returns success, so `apps/storefront/src/components/admin/admin-products.tsx:492-494` displays "Saved ✓" for an edit that changed nothing. **The admin is currently theatre for products, pricing, stock and images.**
 
@@ -283,7 +283,7 @@ Every image on the public site becomes owner-editable: hero (including the festi
 
 ### 6.1 Products into the database
 
-Seed the 24 `CATALOGUE` SKUs into `products` and `variants`, then add the missing read path (`listProducts()` and friends) to `apps/storefront/src/lib/supabase/products.ts`.
+Seed the 83 `CATALOGUE` products (and their 165 variants) into `products` and `variants`, then add the missing read path (`listProducts()` and friends) to `apps/storefront/src/lib/supabase/products.ts`.
 
 ### 6.2 Build-time bake
 
