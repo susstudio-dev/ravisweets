@@ -60,11 +60,32 @@ const FOUNDED = '1983';
  * the live rows still carry the retired locality-led copy ("Khammam ·
  * Telangana", "The sweetness of Telangana…") until migration
  * 0012_global_voice.sql is run. The owner has explicitly rejected that copy
- * twice, so a DB value still naming the town falls through to the new
- * defaults rather than overriding them. Delete this once 0012 has run.
+ * twice, so it falls through to the new defaults rather than overriding them.
+ * Delete this whole block once 0012 has run.
+ *
+ * QUARANTINE THE ROW, NOT THE FIELD. This was a per-string test, which let a
+ * half-retired hero through: `headline` and the eyebrows matched and fell back
+ * to the global-voice defaults, but `primaryCtaLabel` / `primaryCtaHref` named
+ * no town, so they kept the live row's values. The hero then rendered the new
+ * headline above the old locality-led call to action — verified against the
+ * database, where the hero row still holds:
+ *
+ *     headline        "The sweetness of Telangana, slow-cooked in Khammam."
+ *     primaryCtaLabel "Shop Hyderabadi specials"
+ *     primaryCtaHref  "/category/hyderabadi-specials"
+ *
+ * Staleness is a property of the ROW — that row is the retired copy set — so
+ * one retired string now disqualifies every field in it and the hero speaks
+ * with one voice. Note the CTA target is a real category with five products
+ * and is NOT itself retired copy; it is dropped only because it belongs to a
+ * retired row, which is also why the pattern is deliberately not widened to
+ * "hyderabad" and must never be.
  */
-function quarantine(v: string | null | undefined): string | undefined {
-  return v && !/khammam|telangana|ఖమ్మం/i.test(v) ? v : undefined;
+const RETIRED_COPY = /khammam|telangana|ఖమ్మం/i;
+
+function live<T>(row: T | null | undefined): T | undefined {
+  if (row == null) return undefined;
+  return RETIRED_COPY.test(JSON.stringify(row)) ? undefined : row;
 }
 
 /** Mirrors the calendar in festival-next-band.tsx (shared module is phase 4b). */
@@ -112,21 +133,30 @@ export function HeroBatch() {
   const orderBy = new Date(`${fest.date}T00:00:00+05:30`);
   orderBy.setDate(orderBy.getDate() - ORDER_BY_LEAD_DAYS);
 
+  /*
+   * Each source is admitted or rejected WHOLE, so the two never interleave
+   * into a hero that half-quotes a retired row. Precedence is unchanged:
+   * site_content -> theme preset -> code default.
+   */
+  const db = live(hero);
+  const preset = live(theme?.hero);
+
   const heroEyebrowIndic =
-    quarantine(hero?.eyebrowIndic) ??
-    quarantine(theme?.hero.eyebrow?.split('·')[0]?.trim()) ??
-    'రవి స్వీట్స్';
-  const heroEyebrowEn = quarantine(hero?.eyebrowEn) ?? quarantine(theme?.hero.eyebrow) ?? 'Family kitchen';
+    db?.eyebrowIndic ?? preset?.eyebrow?.split('·')[0]?.trim() ?? 'రవి స్వీట్స్';
+  const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? 'Family kitchen';
   const heroHeadline =
-    quarantine(hero?.headline) ??
-    quarantine(theme?.hero.headline) ??
-    'Made this morning. Nothing added to make it last.';
+    db?.headline ?? preset?.headline ?? 'Made this morning. Nothing added to make it last.';
   const heroBody =
-    quarantine(hero?.body) ??
-    quarantine(theme?.hero.body) ??
+    db?.body ??
+    preset?.body ??
     `Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made by one family since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
-  const primaryCtaLabel = hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? "Shop today's batch";
-  const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/shop';
+  const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's batch";
+  /*
+   * Resolved from the SAME admitted source as the label above. Read
+   * independently these can desynchronise — one source's wording pointing at
+   * another's URL, which is worse than either on its own.
+   */
+  const primaryCtaHref = db?.primaryCtaHref ?? preset?.ctaHref ?? '/shop';
 
   /*
    * SENTENCE BLOCKS, WORD STAGGER WITHIN.
