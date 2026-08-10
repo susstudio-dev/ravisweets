@@ -1,22 +1,9 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Building2,
-  Calendar,
-  CheckCircle2,
-  Gift,
-  HelpCircle,
-  PaintBucket,
-  Send,
-  Truck,
-  User,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Send } from 'lucide-react';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Paisley } from '@/components/brand/paisley';
 import { submitEnquiry } from '@/lib/supabase/enquiries';
 import { useSession } from '@/lib/supabase/session-context';
 import { cn } from '@/lib/cn';
@@ -27,14 +14,38 @@ type State = 'idle' | 'pending' | 'success' | 'error';
 
 type StepId = 'occasion' | 'quantity' | 'delivery' | 'contact';
 const STEP_ORDER: StepId[] = ['occasion', 'quantity', 'delivery', 'contact'];
-const STEP_LABEL: Record<StepId, { num: string; title: string; icon: typeof Gift }> = {
-  occasion: { num: '1', title: 'Occasion', icon: Calendar },
-  quantity: { num: '2', title: 'Quantity & budget', icon: Gift },
-  delivery: { num: '3', title: 'Delivery & customisation', icon: Truck },
-  contact: { num: '4', title: 'Contact', icon: User },
+const STEP_LABEL: Record<StepId, { num: string; title: string }> = {
+  occasion: { num: '1', title: 'Occasion' },
+  quantity: { num: '2', title: 'Quantity & budget' },
+  delivery: { num: '3', title: 'Delivery & customisation' },
+  contact: { num: '4', title: 'Contact' },
 };
 
 type Occasion = 'diwali' | 'wedding' | 'corporate' | 'eid' | 'rakhi' | 'other';
+
+/*
+ * THE ENQUIRY FORM, AS A FORM.
+ *
+ * Square-cut docket, .field-label captions on every input, stamps for the
+ * step navigation. Inputs follow the system's input spec: surface ground,
+ * 1px border, 4px radius, accent focus ring. All submission behaviour —
+ * validation, autosave, localStorage mirror, Supabase write — is unchanged.
+ */
+
+/** The system input: docket-stock ground, hairline border, accent focus. */
+const INPUT_CLASS =
+  'bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-xl border border-[color:var(--color-border)] px-3.5 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2';
+
+/** Selectable option chips (occasion, tier, delivery mode): square-cut, no lift. */
+function optionClass(selected: boolean, extra?: string) {
+  return cn(
+    'min-h-[44px] rounded-md border text-left transition-colors',
+    selected
+      ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
+      : 'bg-surface text-theme-ink/85 hover:border-theme-accent border-[color:var(--color-border)]',
+    extra,
+  );
+}
 
 interface FormState {
   // Step 1
@@ -227,43 +238,56 @@ export function CorporateEnquiry() {
   }
 
   if (state === 'success' && refCode) {
+    /*
+     * The acknowledgment is a receipt, so it gets the perforated stub —
+     * the one other place besides the hero card the perf edge belongs.
+     */
     return (
       <motion.div
         initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
-        className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-10 text-center"
+        className="docket docket--perf p-6 md:p-8"
       >
-        <CheckCircle2 className="text-theme-accent mx-auto h-12 w-12" aria-hidden="true" />
-        <p className="text-theme-accent mt-3 text-[11px] font-semibold uppercase tracking-[0.18em]">
-          Enquiry received
-        </p>
-        <h2 className="font-display text-theme-ink mt-2 text-3xl">
-          Thank you, {form.name || 'there'}.
-        </h2>
-        <p className="text-theme-ink/75 mx-auto mt-3 max-w-xl">
-          Your reference code is{' '}
-          <span className="text-theme-accent font-mono font-semibold">{refCode}</span>. Our
-          corporate team will respond within one business day to {form.email}.
+        <h2 className="font-display text-2xl md:text-3xl">Thank you, {form.name || 'there'}.</h2>
+        <dl className="mt-5">
+          <div className="field-row">
+            <dt className="field-label">Status</dt>
+            <dd className="field-value text-sm font-bold">RECEIVED</dd>
+          </div>
+          <div className="field-row">
+            <dt className="field-label">Reference</dt>
+            <dd className="field-value text-sm font-bold">{refCode}</dd>
+          </div>
+          <div className="field-row">
+            <dt className="field-label">Reply to</dt>
+            <dd className="field-value text-sm">{form.email}</dd>
+          </div>
+          <div className="field-row">
+            <dt className="field-label">Response</dt>
+            <dd className="field-value text-sm">WITHIN 1 BUSINESS DAY</dd>
+          </div>
+        </dl>
+        <p className="text-text-muted mt-4 text-sm leading-relaxed">
+          Keep the reference handy for any follow-up.
         </p>
       </motion.div>
     );
   }
 
   return (
-    <div className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-6 md:p-10">
-      <div className="flex items-center gap-2">
-        <Paisley size="sm" />
-        <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.22em]">
-          Tell us what you&rsquo;re planning
+    <div className="docket p-5 md:p-7">
+      {/* Form head: the sheet's title strip, with the step count recorded. */}
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-[color:var(--color-rule)] pb-3">
+        <p className="field-label">Corporate enquiry</p>
+        <p className="field-value text-text-muted text-xs">
+          STEP {idx + 1} / {STEP_ORDER.length}
         </p>
       </div>
-      <h2 className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">
-        {STEP_LABEL[step].title}
-      </h2>
+      <h2 className="font-display mt-4 text-2xl md:text-3xl">{STEP_LABEL[step].title}</h2>
 
       {/* Stepper indicator */}
-      <ol className="mt-6 grid gap-2 md:grid-cols-4">
+      <ol className="mt-5 grid grid-cols-2 gap-x-3 sm:grid-cols-4">
         {STEP_ORDER.map((s, i) => {
           const meta = STEP_LABEL[s];
           const isCurrent = s === step;
@@ -276,23 +300,18 @@ export function CorporateEnquiry() {
                 disabled={i > idx}
                 aria-current={isCurrent ? 'step' : undefined}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors',
-                  isCurrent && 'bg-theme-accent text-[color:var(--theme-base)]',
-                  !isCurrent && i <= idx && 'bg-theme-glow/15 text-theme-ink',
-                  i > idx && 'text-theme-ink/40 cursor-not-allowed',
+                  'flex min-h-[44px] w-full items-center gap-1.5 border-b-2 px-1 py-2 text-left transition-colors',
+                  isCurrent ? 'border-theme-accent' : 'border-transparent',
+                  i > idx && 'cursor-not-allowed opacity-45',
                 )}
               >
-                <span
-                  className={cn(
-                    'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
-                    isCurrent && 'text-theme-accent bg-[color:var(--theme-base)]',
-                    !isCurrent && isDone && 'bg-theme-accent text-[color:var(--theme-base)]',
-                    !isCurrent && !isDone && 'border border-[color:var(--color-border)]',
-                  )}
-                >
-                  {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : meta.num}
+                <span className="field-value text-xs">{meta.num}.</span>
+                <span className={cn('field-label truncate', isCurrent && 'text-theme-ink')}>
+                  {meta.title}
                 </span>
-                <span className="truncate text-xs font-semibold">{meta.title}</span>
+                {isDone && (
+                  <Check className="text-theme-accent h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                )}
               </button>
             </li>
           );
@@ -311,7 +330,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-6"
             >
-              <p className="text-theme-ink/70 text-sm">
+              <p className="text-text-muted text-sm">
                 What&rsquo;s the occasion? Picking one helps us suggest the right hampers.
               </p>
               <div className="grid gap-3 sm:grid-cols-3">
@@ -321,12 +340,7 @@ export function CorporateEnquiry() {
                       key={o}
                       type="button"
                       onClick={() => update('occasion', o)}
-                      className={cn(
-                        'hover:shadow-soft rounded-xl border px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5',
-                        form.occasion === o
-                          ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
-                      )}
+                      className={optionClass(form.occasion === o, 'px-4 py-3')}
                     >
                       <p className="font-display text-base capitalize">
                         {o === 'rakhi' ? 'Raksha Bandhan' : o}
@@ -336,7 +350,9 @@ export function CorporateEnquiry() {
                 )}
               </div>
               {errors.occasion && (
-                <p className="text-xs font-medium text-[#c0392b]">{errors.occasion}</p>
+                <p role="alert" className="text-[11px] font-semibold text-red-700">
+                  {errors.occasion}
+                </p>
               )}
               <Field label="Event date (approximate is fine)" htmlFor="eventDate">
                 <input
@@ -344,7 +360,7 @@ export function CorporateEnquiry() {
                   type="date"
                   value={form.eventDate}
                   onChange={(e) => update('eventDate', e.target.value)}
-                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                  className={INPUT_CLASS}
                 />
               </Field>
             </motion.div>
@@ -359,7 +375,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-5"
             >
-              <p className="text-theme-ink/70 text-sm">
+              <p className="text-text-muted text-sm">
                 Roughly how many hampers, and what&rsquo;s your per-unit budget?
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -372,7 +388,7 @@ export function CorporateEnquiry() {
                     placeholder="e.g. 100"
                     value={form.quantity}
                     onChange={(e) => update('quantity', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
                 <Field label="Per-unit budget (₹)" htmlFor="budget">
@@ -383,7 +399,7 @@ export function CorporateEnquiry() {
                     placeholder="e.g. 1500"
                     value={form.budgetPerUnit}
                     onChange={(e) => update('budgetPerUnit', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
               </div>
@@ -394,12 +410,7 @@ export function CorporateEnquiry() {
                       key={t}
                       type="button"
                       onClick={() => update('hamperTier', t)}
-                      className={cn(
-                        'rounded-lg border px-3 py-2 text-sm transition-colors',
-                        form.hamperTier === t
-                          ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
-                      )}
+                      className={optionClass(form.hamperTier === t, 'px-3 py-2 text-sm')}
                     >
                       {t === 'custom' ? 'Custom build' : t.charAt(0).toUpperCase() + t.slice(1)}
                     </button>
@@ -407,11 +418,11 @@ export function CorporateEnquiry() {
                 </div>
               </Field>
               {form.fromBuilderSummary && (
-                <details className="bg-surface rounded-lg border border-[color:var(--color-border)] p-3 text-sm">
+                <details className="bg-surface rounded-md border border-[color:var(--color-border)] p-3 text-sm">
                   <summary className="text-theme-ink cursor-pointer font-semibold">
                     Loaded from builder
                   </summary>
-                  <pre className="text-theme-ink/70 mt-2 whitespace-pre-wrap text-xs">
+                  <pre className="text-text-muted mt-2 whitespace-pre-wrap text-xs">
                     {form.fromBuilderSummary}
                   </pre>
                 </details>
@@ -428,7 +439,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-5"
             >
-              <p className="text-theme-ink/70 text-sm">
+              <p className="text-text-muted text-sm">
                 How should we deliver, and would you like the box customised?
               </p>
               <Field label="Delivery">
@@ -438,17 +449,12 @@ export function CorporateEnquiry() {
                       key={m}
                       type="button"
                       onClick={() => update('deliveryMode', m)}
-                      className={cn(
-                        'rounded-lg border px-3 py-3 text-left text-sm transition-colors',
-                        form.deliveryMode === m
-                          ? 'border-theme-accent bg-theme-glow/20 text-theme-ink'
-                          : 'bg-surface text-theme-ink/85 border-[color:var(--color-border)]',
-                      )}
+                      className={optionClass(form.deliveryMode === m, 'px-3 py-3 text-sm')}
                     >
                       <span className="block font-semibold">
                         {m === 'single' ? 'Single address' : 'Multi-address (CSV)'}
                       </span>
-                      <span className="text-theme-ink/60 block text-xs">
+                      <span className="text-text-muted block text-xs">
                         {m === 'single'
                           ? 'One bulk delivery to your office'
                           : 'Per-recipient with tracking links'}
@@ -463,19 +469,18 @@ export function CorporateEnquiry() {
                   type="date"
                   value={form.deliveryDate}
                   onChange={(e) => update('deliveryDate', e.target.value)}
-                  className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                  className={INPUT_CLASS}
                 />
               </Field>
               <Field label="Customisation">
                 <div className="flex flex-col gap-3">
-                  <label className="flex items-center gap-2 text-sm">
+                  <label className="flex min-h-[44px] items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={form.logoPrint}
                       onChange={(e) => update('logoPrint', e.target.checked)}
-                      className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
+                      className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded-md"
                     />
-                    <PaintBucket className="text-theme-accent h-4 w-4" aria-hidden="true" />
                     Add our logo to the box
                   </label>
                   <Field label="Personalised note (max 240 chars)" htmlFor="personalNote">
@@ -485,7 +490,7 @@ export function CorporateEnquiry() {
                       maxLength={240}
                       onChange={(e) => update('personalNote', e.target.value)}
                       rows={3}
-                      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                      className={INPUT_CLASS}
                       placeholder="From all of us at Acme Pvt Ltd…"
                     />
                   </Field>
@@ -495,7 +500,7 @@ export function CorporateEnquiry() {
                       value={form.customisation}
                       onChange={(e) => update('customisation', e.target.value)}
                       rows={3}
-                      className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                      className={INPUT_CLASS}
                       placeholder="Dietary restrictions, special wrap, ribbon colour, etc."
                     />
                   </Field>
@@ -513,7 +518,7 @@ export function CorporateEnquiry() {
               transition={{ duration: DURATION.quick, ease: EASE.standard }}
               className="grid gap-4"
             >
-              <p className="text-theme-ink/70 text-sm">
+              <p className="text-text-muted text-sm">
                 Where should we send the quote? GSTIN is optional but unlocks GST-compliant
                 invoicing.
               </p>
@@ -524,7 +529,7 @@ export function CorporateEnquiry() {
                     type="text"
                     value={form.name}
                     onChange={(e) => update('name', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
                 <Field label="Company / business" htmlFor="company">
@@ -533,7 +538,7 @@ export function CorporateEnquiry() {
                     type="text"
                     value={form.company}
                     onChange={(e) => update('company', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
                 <Field label="Email" htmlFor="email" error={errors.email}>
@@ -542,7 +547,7 @@ export function CorporateEnquiry() {
                     type="email"
                     value={form.email}
                     onChange={(e) => update('email', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
                 <Field label="Phone" htmlFor="phone" error={errors.phone}>
@@ -553,7 +558,7 @@ export function CorporateEnquiry() {
                     placeholder="+91 90000 00000"
                     value={form.phone}
                     onChange={(e) => update('phone', e.target.value)}
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+                    className={INPUT_CLASS}
                   />
                 </Field>
                 <Field label="GSTIN (optional)" htmlFor="gstin" error={errors.gstin}>
@@ -563,16 +568,16 @@ export function CorporateEnquiry() {
                     value={form.gstin}
                     onChange={(e) => update('gstin', e.target.value.toUpperCase())}
                     placeholder="22ABCDE1234F1Z5"
-                    className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 font-mono text-sm uppercase focus-visible:outline-none focus-visible:ring-2"
+                    className={cn(INPUT_CLASS, 'font-mono uppercase')}
                   />
                 </Field>
               </div>
-              <label className="text-theme-ink/65 flex items-start gap-2 text-xs">
+              <label className="text-text-muted flex items-start gap-2 text-xs">
                 <input
                   type="checkbox"
                   checked={form.marketingConsent}
                   onChange={(e) => update('marketingConsent', e.target.checked)}
-                  className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded"
+                  className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent mt-0.5 h-4 w-4 rounded-md"
                 />
                 <span>
                   I&rsquo;d like occasional updates on seasonal hampers and corporate runs.
@@ -584,13 +589,10 @@ export function CorporateEnquiry() {
         </AnimatePresence>
       </div>
 
-      {/* Help row */}
-      <div className="text-theme-ink/65 mt-8 flex items-start gap-2 rounded-lg border border-dashed border-[color:var(--color-border)] p-3 text-xs">
-        <HelpCircle className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-        <span>
-          Your draft is saved automatically — refreshing won&rsquo;t lose your progress. MOQ is 25
-          hampers; lead time is 7–10 business days from confirmation.
-        </span>
+      {/* Help row: the pencilled note in the sheet's margin. */}
+      <div className="text-text-muted mt-8 rounded-md border border-dashed border-[color:var(--color-rule)] p-3 text-xs">
+        Your draft is saved automatically — refreshing won&rsquo;t lose your progress. MOQ is 25
+        hampers; lead time is 7–10 business days from confirmation.
       </div>
 
       {/* Step nav */}
@@ -599,29 +601,22 @@ export function CorporateEnquiry() {
           type="button"
           onClick={prevStep}
           disabled={idx === 0}
-          className="text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          className="stamp stamp--ghost disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
         </button>
         {!isLast ? (
-          <button
-            type="button"
-            onClick={nextStep}
-            className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-          >
+          <button type="button" onClick={nextStep} className="stamp">
             Continue
-            <ArrowRight
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-              aria-hidden="true"
-            />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         ) : (
           <button
             type="button"
             onClick={submit}
             disabled={state === 'pending'}
-            className="bg-theme-ink shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="stamp disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Send className="h-4 w-4" aria-hidden="true" />
             Send enquiry
@@ -645,17 +640,15 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={htmlFor}
-        className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider"
-      >
+      <label htmlFor={htmlFor} className="field-label">
         {label}
       </label>
       {children}
-      {error && <p className="text-xs font-medium text-[#c0392b]">{error}</p>}
+      {error && (
+        <p role="alert" className="text-[11px] font-semibold text-red-700">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
-
-// Building2 import keeps tree-shake stable for occasion icon if added later.
-void Building2;

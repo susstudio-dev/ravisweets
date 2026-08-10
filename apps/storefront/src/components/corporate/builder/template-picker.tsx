@@ -7,7 +7,6 @@ import { TEMPLATES, type TemplateId } from '@ravisweets/shared';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
-import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 
 interface TemplatePickerProps {
@@ -78,14 +77,8 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
 
   return (
     <>
-      {/* Animated hero strip — floating sweets + paisley accents above the cards */}
-      <BuilderHero />
-
       <fieldset className="mt-8">
-        <legend className="text-theme-ink/60 mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider">
-          <Sparkles className="text-theme-accent h-3.5 w-3.5" aria-hidden="true" />
-          Start from a template
-        </legend>
+        <legend className="field-label mb-4">Start from a template</legend>
         <Stagger gap={70} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {ORDER.map((id) => {
             const t = TEMPLATES[id];
@@ -98,15 +91,15 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                 onClick={() => handleClick(id)}
                 aria-pressed={active}
                 className={cn(
-                  'focus-visible:ring-theme-accent group relative flex flex-col gap-3 overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2',
+                  'docket focus-visible:ring-theme-accent group relative flex flex-col gap-3 overflow-hidden p-5 text-left transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2',
                   active
-                    ? 'border-theme-accent bg-theme-glow/15 shadow-soft'
-                    : 'bg-surface-elevated hover:border-theme-accent hover:shadow-lifted border-[color:var(--color-border)] hover:-translate-y-1',
+                    ? 'border-theme-accent ring-theme-accent/30 ring-2'
+                    : 'hover:border-theme-accent hover:shadow-lifted',
                 )}
               >
                 <div className="absolute right-3 top-3 z-10">
                   <span
-                    className="shadow-soft rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white"
+                    className="rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white"
                     style={{ backgroundColor: visual.accent }}
                   >
                     {visual.badge}
@@ -114,7 +107,7 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                 </div>
 
                 {active && (
-                  <span className="bg-theme-accent shadow-soft absolute right-3 top-9 z-10 flex h-7 w-7 items-center justify-center rounded-full text-[color:var(--theme-base)]">
+                  <span className="bg-theme-accent absolute right-3 top-9 z-10 flex h-7 w-7 items-center justify-center rounded-md text-[color:var(--theme-base)]">
                     <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                   </span>
                 )}
@@ -128,7 +121,7 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
 
                 <div className="flex items-center gap-2">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
                     style={{ backgroundColor: `${visual.accent}18`, color: visual.accent }}
                   >
                     <visual.icon className="h-4 w-4" aria-hidden="true" />
@@ -138,12 +131,14 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
 
                 <p className="text-theme-ink/70 text-xs leading-relaxed">{t.description}</p>
 
-                <p className="text-theme-ink/55 mt-auto flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
-                  <span className="font-display text-theme-ink text-base">{t.items.length}</span>
-                  items
-                  <span aria-hidden="true">·</span>
-                  <span className="font-display text-theme-ink text-base">{t.startingUnits}+</span>
-                  units
+                <p className="mt-auto flex items-baseline gap-1.5 border-t border-[color:var(--color-border)] pt-3">
+                  <span className="field-value text-theme-ink text-sm">{t.items.length}</span>
+                  <span className="field-label">items</span>
+                  <span className="text-theme-ink/40" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="field-value text-theme-ink text-sm">{t.startingUnits}+</span>
+                  <span className="field-label">units</span>
                 </p>
               </button>
             );
@@ -167,11 +162,11 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
             <button
               type="button"
               aria-label="Cancel"
-              className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+              className="bg-theme-ink/60 absolute inset-0"
               onClick={() => setPending(null)}
             />
             <motion.div
-              className="bg-surface shadow-lifted relative z-10 max-w-md rounded-3xl border border-[color:var(--color-border)] p-6"
+              className="docket shadow-lifted relative z-10 max-w-md p-6"
               initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
               animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
@@ -189,15 +184,11 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
                 <button
                   type="button"
                   onClick={() => setPending(null)}
-                  className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
+                  className="stamp stamp--ghost"
                 >
                   Keep current
                 </button>
-                <button
-                  type="button"
-                  onClick={confirm}
-                  className="bg-theme-accent shadow-soft hover:shadow-lifted rounded-full px-4 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-                >
+                <button type="button" onClick={confirm} className="stamp">
                   Replace
                 </button>
               </div>
@@ -206,72 +197,6 @@ export function TemplatePicker({ activeTemplateId, itemsDirty, onPick }: Templat
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-/** Decorative animated strip above the template grid — floating motifs. */
-function BuilderHero() {
-  const reduced = useReducedMotion();
-  return (
-    <Reveal>
-      <div className="from-theme-glow/25 via-surface-elevated to-theme-accent/10 relative h-32 overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-gradient-to-br md:h-40">
-        {/* Floating motif row */}
-        <div className="absolute inset-0 flex items-center justify-around px-6">
-          {['◉', '✦', '❋', '◇', '✦', '◉', '❋'].map((motif, i) => (
-            <motion.span
-              key={i}
-              aria-hidden="true"
-              className="font-display text-theme-accent/35 text-3xl md:text-4xl"
-              initial={reduced ? { opacity: 0.6 } : { y: 0, opacity: 0.4 }}
-              animate={
-                reduced
-                  ? { opacity: 0.6 }
-                  : {
-                      y: [0, -8, 0, -4, 0],
-                      opacity: [0.35, 0.7, 0.35, 0.55, 0.35],
-                    }
-              }
-              transition={
-                reduced
-                  ? {}
-                  : {
-                      duration: 4 + i * 0.4,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                      delay: i * 0.25,
-                    }
-              }
-            >
-              {motif}
-            </motion.span>
-          ))}
-        </div>
-
-        {/* Gradient sheen pass — slow shimmer */}
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent"
-          initial={{ x: 0 }}
-          animate={reduced ? {} : { x: ['0%', '300%'] }}
-          transition={reduced ? {} : { duration: 6, repeat: Infinity, ease: 'linear', delay: 1 }}
-          style={{ filter: 'blur(20px)' }}
-        />
-
-        <div className="relative z-10 flex h-full items-center justify-between px-6 md:px-8">
-          <div>
-            <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.22em]">
-              Step 1
-            </p>
-            <p className="font-display text-theme-ink mt-1 text-lg md:text-xl">
-              Pick the box that fits your story.
-            </p>
-          </div>
-          <span className="bg-theme-accent shadow-lifted hidden h-12 w-12 items-center justify-center rounded-full text-[color:var(--theme-base)] md:flex">
-            <Gift className="h-5 w-5" aria-hidden="true" />
-          </span>
-        </div>
-      </div>
-    </Reveal>
   );
 }
 
@@ -287,8 +212,8 @@ function TemplateVisual({
 }) {
   return (
     <div
-      className="relative flex h-28 w-full items-center justify-center overflow-hidden rounded-xl"
-      style={{ background: `linear-gradient(135deg, ${glow}55 0%, ${accent}10 100%)` }}
+      className="relative flex h-28 w-full items-center justify-center overflow-hidden rounded-md"
+      style={{ backgroundColor: `${glow}33` }}
     >
       <svg
         viewBox="0 0 160 100"

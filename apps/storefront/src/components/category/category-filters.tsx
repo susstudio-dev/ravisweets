@@ -62,8 +62,8 @@ export function CategoryFilters({
 
   return (
     <aside className="md:sticky md:top-20 md:self-start" aria-label="Filters">
-      <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="docket p-5">
+        <div className="docket-head">
           <h2 className="font-display text-theme-ink text-lg">Refine</h2>
           {hasFilters && (
             <Link
@@ -76,10 +76,8 @@ export function CategoryFilters({
           )}
         </div>
 
-        <fieldset className="mb-5">
-          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
-            Dietary
-          </legend>
+        <fieldset className="mb-5 border-b border-[color:var(--color-border)] pb-5">
+          <legend className="field-label mb-2">Dietary</legend>
           <div className="flex flex-wrap gap-2">
             {DIETARY_OPTIONS.map((opt) => {
               const active = activeDietary.includes(opt.value);
@@ -90,10 +88,10 @@ export function CategoryFilters({
                   onClick={() => toggleDiet(opt.value)}
                   aria-pressed={active}
                   className={cn(
-                    'focus-visible:ring-theme-accent rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
+                    'focus-visible:ring-theme-accent min-h-[36px] rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2',
                     active
                       ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                      : 'bg-surface text-theme-ink/80 hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
+                      : 'bg-surface text-theme-ink/80 hover:border-theme-accent hover:text-theme-ink border-[color:var(--color-border)]',
                   )}
                 >
                   {opt.label}
@@ -103,31 +101,27 @@ export function CategoryFilters({
           </div>
         </fieldset>
 
-        <fieldset className="mb-5">
-          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
-            Availability
-          </legend>
-          <label className="text-theme-ink/85 flex items-center gap-2 text-sm">
+        <fieldset className="mb-5 border-b border-[color:var(--color-border)] pb-5">
+          <legend className="field-label mb-2">Availability</legend>
+          <label className="text-theme-ink/85 flex min-h-[36px] items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => updateParam('stock', e.target.checked ? 'in' : undefined)}
-              className="text-theme-accent focus:ring-theme-accent h-4 w-4 rounded border-[color:var(--color-border)]"
+              className="text-theme-accent focus:ring-theme-accent h-4 w-4 rounded-md border-[color:var(--color-border)]"
             />
             In stock only
           </label>
         </fieldset>
 
         <fieldset>
-          <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
-            Sort by
-          </legend>
+          <legend className="field-label mb-2">Sort by</legend>
           <select
             value={activeSort}
             onChange={(e) =>
               updateParam('sort', e.target.value === 'featured' ? undefined : e.target.value)
             }
-            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+            className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { MousePointer2 } from 'lucide-react';
 
-import { ROSE_CREAM } from '@/lib/theme/palette';
+import { DOCKET } from '@/lib/theme/palette';
+import { cn } from '@/lib/cn';
 
 /**
  * Katli Cursor — turn your mouse pointer into the signature katli cut.
@@ -28,10 +29,10 @@ const STORAGE_KEY = 'ravi.cursor.v1';
  * Marigold field with a brass edge and score line — the lamplight colours,
  * legible over both the cream ground and the dusk plum one.
  */
-const KATLI_FIELD = ROSE_CREAM.field;
-const KATLI_EDGE = ROSE_CREAM.varak;
-const KATLI_SCORE = ROSE_CREAM.varakRule;
-const KATLI_SHADOW = ROSE_CREAM.ink;
+const KATLI_FIELD = DOCKET.field;
+const KATLI_EDGE = DOCKET.varak;
+const KATLI_SCORE = DOCKET.varakRule;
+const KATLI_SHADOW = DOCKET.ink;
 
 /** The cut itself, single-sourced so the cursor and the on-screen mark agree. */
 const KATLI_EDGE_POINTS = '16,3.5 28.5,16 16,28.5 3.5,16';
@@ -134,33 +135,35 @@ export function SweetCursor() {
   if (isTouch) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2 print:hidden">
+    /*
+     * The control joins the contact slip's corner cluster rather than forming
+     * a second floating stack of its own.
+     *
+     * The sweet cursor is a binding brand commitment and it stays. Its BUTTON
+     * was the problem: a 56px labelled pill with a pulsing halo at z-40, sat
+     * directly on top of the contact pills at z-30, and read to a first-time
+     * visitor as a developer toggle left in the build. Now it is a quiet
+     * square in the same docket grammar as everything else — discoverable on
+     * hover, invisible until wanted, and out of the way of the shop.
+     */
+    <div className="fixed bottom-4 right-[8.5rem] z-30 hidden print:hidden lg:block">
       <button
         type="button"
         onClick={() => setEnabled((v) => !v)}
         aria-pressed={enabled}
-        aria-label={
-          enabled ? 'Turn off the katli cursor' : 'Turn your pointer into a kaju katli'
-        }
+        aria-label={enabled ? 'Turn off the katli cursor' : 'Turn your pointer into a kaju katli'}
         title="Katli cursor — make your pointer a kaju katli"
-        className="shadow-lifted focus-visible:ring-varak group relative inline-flex h-14 items-center gap-2 overflow-hidden rounded-full bg-theme-accent pl-2 pr-4 text-[color:var(--theme-base)] ring-2 ring-varak/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-varak/80 focus-visible:outline-none focus-visible:ring-4"
-      >
-        {/* Soft pulsing halo so the button reads 'interactive' even on first paint */}
-        {!enabled && (
-          <span
-            aria-hidden="true"
-            className="bg-field/30 absolute inset-0 animate-ping rounded-full"
-            style={{ animationDuration: '2.6s' }}
-          />
+        className={cn(
+          'docket group relative flex h-11 w-11 items-center justify-center transition-colors',
+          enabled ? 'text-theme-accent' : 'text-text-muted hover:text-theme-ink',
         )}
-        <span className="shadow-soft bg-theme-base text-theme-accent relative flex h-10 w-10 items-center justify-center rounded-full">
-          {enabled ? (
-            <KatliMark className="block h-7 w-7" />
-          ) : (
-            <MousePointer2 className="h-5 w-5 -rotate-12" aria-hidden="true" />
-          )}
-        </span>
-        <span className="font-display relative text-xs uppercase tracking-[0.18em]">
+      >
+        {enabled ? (
+          <KatliMark className="block h-6 w-6" />
+        ) : (
+          <MousePointer2 className="h-4 w-4 -rotate-12" aria-hidden="true" />
+        )}
+        <span className="field-label bg-theme-ink pointer-events-none absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap px-2 py-1 text-[color:var(--theme-base)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 lg:block">
           Katli cursor
         </span>
       </button>

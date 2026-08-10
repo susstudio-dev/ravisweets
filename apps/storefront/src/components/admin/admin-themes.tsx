@@ -5,27 +5,36 @@ import { CheckCircle2, Pencil, Power, Sparkles, X } from 'lucide-react';
 import { activateTheme, listThemes, upsertTheme, type ThemePreset } from '@/lib/supabase/themes';
 import { logAdminAction } from '@/lib/supabase/orders';
 import { useSession } from '@/lib/supabase/session-context';
+import { pendingPhoto } from '@/lib/images';
 
+/*
+ * Shown only when Supabase is unreachable. Keep the first entry in step with
+ * the active row seeded by supabase/migrations/0011_batch_card_world.sql —
+ * if these drift, the admin previews a palette the storefront never renders.
+ *
+ * Every `imageUrl` here is intentionally empty. The retired presets pointed at
+ * ravisweets.com/wp-content/..., which 404s on every file since the WordPress
+ * site was taken down.
+ */
 const FALLBACK_PRESETS: ThemePreset[] = [
   {
-    id: 'rose-cream',
-    name: 'Rose & Cream — the house palette',
+    id: 'batch-card',
+    name: 'The Batch Card — the house palette',
     active: true,
     palette: {
-      base: '#FAF5E9',
-      accent: '#A8345D',
-      glow: '#E8A13C',
-      ink: '#2E2118',
-      grainOpacity: 0.05,
+      base: '#E9EAE4',
+      accent: '#2046C8',
+      glow: '#EBC77E',
+      ink: '#161C24',
+      grainOpacity: 0.04,
     },
     hero: {
       eyebrow: 'Khammam · Telangana',
       headline: 'The sweetness of Telangana, slow-cooked in Khammam.',
       body: 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
-      ctaLabel: 'Shop Hyderabadi specials',
+      ctaLabel: "Shop today's batch",
       ctaHref: '/category/hyderabadi-specials',
-      imageUrl:
-        'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+      imageUrl: '',
     },
     bannerText: null,
   },
@@ -47,7 +56,7 @@ const FALLBACK_PRESETS: ThemePreset[] = [
       ctaLabel: 'Shop festival hampers',
       ctaHref: '/category/festival-specials',
       imageUrl:
-        'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+        pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png'),
     },
     bannerText: 'Free festival shipping above ₹1499',
   },
@@ -68,7 +77,7 @@ const FALLBACK_PRESETS: ThemePreset[] = [
       body: 'Premium hampers, corporate runs, and drop-night exclusives — packed under the lamplight in Khammam.',
       ctaLabel: 'Shop gift hampers',
       ctaHref: '/category/gift-hampers',
-      imageUrl: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+      imageUrl: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
     },
     bannerText: null,
   },
@@ -90,7 +99,7 @@ const FALLBACK_PRESETS: ThemePreset[] = [
       ctaLabel: 'Shop tonight',
       ctaHref: '/category/sweets',
       imageUrl:
-        'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
+        pendingPhoto('2025/09/boondi_laddu-removebg-preview.png'),
     },
     bannerText: 'Same-day pickup · Khammam + Hyderabad',
   },

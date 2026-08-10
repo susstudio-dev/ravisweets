@@ -1,39 +1,40 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Clock, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
-import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
+import { ArrowRight, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
-import { Parallax } from '@/components/motion/parallax';
-import { Grain } from '@/components/brand/grain';
 import { jsonLdHtml } from '@/lib/seo/json-ld';
+import { pendingPhoto } from '@/lib/images';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://susstudio-dev.github.io/ravisweets';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ravisweets.com';
 
+/*
+ * THIS is the page that carries local intent now.
+ *
+ * The homepage title moved off "Best Sweet Shop in Khammam" to national and
+ * diaspora commerce intent; local search lands here instead, on the page that
+ * can actually answer it — addresses, hours, and the LocalBusiness @graph
+ * below. Locality is not weakened by the repositioning, it is relocated to
+ * where it converts.
+ *
+ * `keywords` deleted for the same reason as in layout.tsx: no ranking value
+ * since 2009.
+ */
 export const metadata: Metadata = {
-  title: 'Visit us · Sweet shop in Khammam & Hyderabad',
+  // The root layout appends "| Ravi Sweets", so the brand is not repeated here.
+  title: 'Sweet Shop in Khammam & Hyderabad (Kondapur)',
+  // Was 181 characters. The locality terms that carry the local-pack intent —
+  // Khammam, Kondapur, Hyderabad — all survive inside the 155-char cut.
   description:
-    'Best sweet shop in Khammam since 1985. Visit our two Khammam stores or our Hyderabad (Kondapur) branch. Authentic Telangana sweets, Hyderabadi specials, namkeens, and gift hampers. Same-day fresh, FSSAI certified.',
-  keywords: [
-    'sweet shop Khammam',
-    'best sweets Khammam',
-    'sweet shop near me Khammam',
-    'mithai Khammam',
-    'Ravi Sweets Khammam',
-    'sweet shop Kondapur',
-    'sweet shop Hyderabad',
-    'Telangana sweets',
-    'Hyderabadi sweets online',
-    'Andhra sweets online',
-  ],
+    'Visit Ravi Sweets — two counters in Khammam and one in Kondapur, Hyderabad. Telangana sweets and namkeens, made fresh daily since 1983.',
   alternates: {
     canonical: '/stores',
   },
   openGraph: {
-    title: 'Ravi Sweets · Khammam since 1985 + Hyderabad branch',
+    title: 'Ravi Sweets · Khammam since 1983 + Hyderabad branch',
     description:
-      'Two Khammam stores plus a Kondapur (Hyderabad) branch. Authentic Telangana sweets, fresh daily, FSSAI certified.',
+      'Two Khammam stores plus a Kondapur (Hyderabad) branch. Authentic Telangana sweets, fresh daily since 1983.',
     locale: 'en_IN',
   },
 };
@@ -54,7 +55,7 @@ interface Store {
 const STORES: Store[] = [
   {
     name: 'Ravi Sweets · Khammam Flagship',
-    tagline: 'Where it began — same kitchen since 1985.',
+    tagline: 'Where it began — same kitchen since 1983.',
     address: 'Door No 10-1-25, Near Mamillagudem, Beside Over Bridge',
     city: 'Khammam',
     state: 'Telangana',
@@ -65,25 +66,29 @@ const STORES: Store[] = [
     ],
     phone: '+91 93988 59978',
     mapsQuery: 'Ravi+Sweets+Mamillagudem+Khammam',
-    since: 1985,
+    since: 1983,
   },
-  {
-    name: 'Ravi Sweets · Khammam (Second branch)',
-    tagline: 'Our second Khammam counter — same recipes, closer to you.',
-    // NOTE: address pending confirmation from owner — share Google Maps link
-    // returned empty when WebFetched; placeholder until you update with the
-    // exact street address.
-    address: 'Khammam — second branch (address to be confirmed)',
-    city: 'Khammam',
-    state: 'Telangana',
-    pincode: '507001',
-    hours: [
-      { days: 'Mon — Sat', time: '9:30 am — 9:30 pm' },
-      { days: 'Sunday', time: '10:00 am — 9:00 pm' },
-    ],
-    phone: '+91 93988 59978',
-    mapsQuery: 'Ravi+Sweets+Khammam',
-  },
+  /*
+   * TODO(owner): second Khammam branch. The exact street address is still
+   * unconfirmed (the shared Google Maps link returned empty when WebFetched),
+   * and a customer-facing location docket must not read "address to be
+   * confirmed" — so the entry is commented out rather than shown as a
+   * placeholder. Reinstate once the street address lands.
+   */
+  // {
+  //   name: 'Ravi Sweets · Khammam (Second branch)',
+  //   tagline: 'Our second Khammam counter — same recipes, closer to you.',
+  //   address: 'Khammam — second branch (address to be confirmed)',
+  //   city: 'Khammam',
+  //   state: 'Telangana',
+  //   pincode: '507001',
+  //   hours: [
+  //     { days: 'Mon — Sat', time: '9:30 am — 9:30 pm' },
+  //     { days: 'Sunday', time: '10:00 am — 9:00 pm' },
+  //   ],
+  //   phone: '+91 93988 59978',
+  //   mapsQuery: 'Ravi+Sweets+Khammam',
+  // },
   {
     name: 'Ravi Sweets · Kondapur',
     tagline: 'Our Hyderabad branch — closer to the city, same recipes.',
@@ -117,11 +122,11 @@ const LOCAL_BUSINESS_JSONLD = {
       url: `${SITE_URL}/`,
       telephone: '+91-93988-59978',
       email: 'ravisweetshyd@gmail.com',
-      foundingDate: '1985',
+      foundingDate: '1983',
       sameAs: [
         'https://ravisweets.com',
         'https://ravisweets.in',
-        'https://instagram.com/ravi__sweets',
+        'https://www.instagram.com/ravi__sweets/',
       ],
       areaServed: { '@type': 'Country', name: 'India' },
     },
@@ -214,15 +219,21 @@ const CONTACT = [
     icon: Instagram,
     label: 'Instagram',
     value: '@ravi__sweets',
-    href: 'https://instagram.com/ravi__sweets',
+    href: 'https://www.instagram.com/ravi__sweets/',
     note: 'Kitchen stories and seasonal runs',
   },
 ];
 
+/*
+ * The FALLBACK for the owner-editable shop-front slot (SlotImage): the
+ * admin-assigned photo renders first, then this catalogue URL — which still
+ * points at the retired WordPress host, so SlotImage's render-time gate
+ * (lib/images.ts) drops it to the dashed specimen plate without ever issuing
+ * a request or a preload. When the shoot lands and the URL goes
+ * root-relative, the photograph returns with no component change.
+ */
 const STORE_IMAGE =
-  'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png';
-const STORE_BACKDROP =
-  'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 65%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 28%, var(--theme-base)) 50%, var(--theme-base) 90%)';
+  pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png');
 
 export default function StoresPage() {
   return (
@@ -232,156 +243,125 @@ export default function StoresPage() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(LOCAL_BUSINESS_JSONLD) }}
       />
-      {/* Hero */}
-      <section
-        className="relative overflow-hidden border-b border-[color:var(--color-border)]"
-        style={{
-          background:
-            'radial-gradient(ellipse at 70% 40%, color-mix(in oklab, var(--theme-glow) 30%, transparent) 0%, transparent 65%), var(--theme-base)',
-        }}
-      >
-        <div className="container-site grid gap-10 py-16 md:grid-cols-[1.1fr_1fr] md:items-center md:py-24">
+      {/* Hero — the kitchen's own location sheet, not a lookbook spread. */}
+      <section className="border-b border-[color:var(--color-border)]">
+        <div className="container-site section-y grid gap-10 md:grid-cols-[1.1fr_1fr] md:items-center">
           <div>
             <Reveal>
-              <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-                <Paisley size="sm" />
-                Visit us
-              </p>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 leading-[1.02]">
+              <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl leading-[1.02]">
                 Come taste what we mean.
               </h1>
             </Reveal>
-            <Reveal delay={0.14}>
+            <Reveal delay={0.1}>
               <p className="text-theme-ink/75 mt-6 max-w-xl text-lg leading-relaxed">
                 Three counters, one kitchen. The original Khammam shop has been near Mamillagudem
-                since 1985, with a second Khammam branch nearby. The Hyderabad branch sits in
+                since 1983, with a second Khammam branch nearby. The Hyderabad branch sits in
                 Kondapur, stocked from the same kitchen each morning. Walk in, or call ahead to
                 reserve a seasonal hamper.
               </p>
             </Reveal>
           </div>
-          <Parallax offset={30}>
-            <div
-              className="shadow-lifted relative aspect-[4/5] overflow-hidden rounded-[2rem] p-12 ring-1 ring-[color:var(--color-border)]"
-              style={{ background: STORE_BACKDROP }}
-            >
-              <Image
-                src={STORE_IMAGE}
-                alt="Hand-packed Diwali hamper assortment from the Khammam kitchen"
-                fill
-                priority
-                fetchPriority="high"
+          <Reveal delay={0.15}>
+            <div className="docket overflow-hidden">
+              <SlotImage
+                slot="stores.storefront"
+                fallbackUrl={STORE_IMAGE}
+                fallbackAlt="Hand-packed Diwali hamper assortment from the Khammam kitchen"
                 sizes="(min-width: 768px) 460px, 90vw"
-                className="object-contain drop-shadow-[0_30px_40px_rgba(60,30,5,0.22)]"
+                objectFit="contain"
+                className="bg-theme-glow/20 aspect-[4/3] border-b border-[color:var(--color-border)]"
               />
-              <Grain />
-              <div className="text-theme-ink/55 pointer-events-none absolute bottom-5 left-5 text-[10px] font-semibold uppercase tracking-[0.22em]">
-                Khammam · Telangana · Since 1985
-              </div>
+              <dl className="p-5">
+                <div className="field-row">
+                  <dt className="field-label">Kitchen</dt>
+                  <dd className="field-value text-theme-ink text-sm">KHAMMAM · TELANGANA</dd>
+                </div>
+                <div className="field-row">
+                  <dt className="field-label">Est.</dt>
+                  <dd className="field-value text-theme-ink text-sm font-bold">1983</dd>
+                </div>
+                <div className="field-row">
+                  <dt className="field-label">Counters</dt>
+                  <dd className="field-value text-theme-ink text-sm">3</dd>
+                </div>
+              </dl>
             </div>
-          </Parallax>
+          </Reveal>
         </div>
       </section>
 
-      <PaisleyDivider className="container-site" />
-
-      {/* Stores */}
-      <section aria-labelledby="stores-heading" className="container-site py-16">
-        <Reveal className="mb-8">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Where to find us
-          </p>
-          <h2
-            id="stores-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-          >
-            Three counters, one kitchen.
-          </h2>
+      {/* Stores — each counter as a location docket. */}
+      <section aria-labelledby="stores-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2
+              id="stores-heading"
+              className="font-display text-display-md text-theme-ink"
+            >
+              Three counters, one kitchen.
+            </h2>
+          </div>
         </Reveal>
 
         <div className="flex flex-col gap-6">
           {STORES.map((s) => (
             <Reveal key={s.name}>
-              <article className="bg-surface-elevated shadow-soft grid gap-8 rounded-3xl border border-[color:var(--color-border)] p-6 md:grid-cols-[1fr_1.2fr] md:gap-12 md:p-10">
+              <article className="docket grid gap-8 p-5 md:grid-cols-[1fr_1.2fr] md:gap-12 md:p-7">
                 <div>
-                  <h3 className="font-display text-theme-ink text-2xl md:text-3xl">{s.name}</h3>
-                  <p className="text-theme-ink/65 mt-2 text-sm italic">{s.tagline}</p>
-                  {s.since && (
-                    <p className="border-theme-accent/30 bg-theme-glow/10 text-theme-accent mt-2 inline-block rounded-full border px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em]">
-                      Since {s.since}
-                    </p>
-                  )}
-                  <dl className="mt-6 flex flex-col gap-4 text-sm">
-                    <div className="flex items-start gap-3">
-                      <MapPin
-                        className="text-theme-accent mt-0.5 h-5 w-5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <div>
-                        <dt className="sr-only">Address</dt>
-                        <dd className="text-theme-ink/85">
-                          {s.address}
-                          <br />
-                          {s.city}, {s.state} {s.pincode}
-                        </dd>
-                      </div>
+                  <div className="docket-head">
+                    <div>
+                      <h3 className="font-display text-heading text-theme-ink">{s.name}</h3>
+                      <p className="text-text-muted mt-1 text-sm">{s.tagline}</p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Clock
-                        className="text-theme-accent mt-0.5 h-5 w-5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <div>
-                        <dt className="sr-only">Hours</dt>
-                        <dd>
-                          <ul className="text-theme-ink/85 space-y-1">
-                            {s.hours.map((h) => (
-                              <li key={h.days} className="flex gap-4">
-                                <span className="text-theme-ink/60 w-24">{h.days}</span>
-                                <span>{h.time}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </dd>
-                      </div>
+                    {s.since && (
+                      <p className="flex items-baseline gap-2">
+                        <span className="field-label">Est.</span>
+                        <span className="field-value text-theme-ink text-sm font-bold">
+                          {s.since}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                  <dl>
+                    <div className="field-row">
+                      <dt className="field-label">Address</dt>
+                      <dd className="field-value text-theme-ink max-w-[32ch] text-right text-sm">
+                        {s.address}
+                        <br />
+                        {s.city}, {s.state} {s.pincode}
+                      </dd>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Phone
-                        className="text-theme-accent mt-0.5 h-5 w-5 shrink-0"
-                        aria-hidden="true"
-                      />
-                      <div>
-                        <dt className="sr-only">Phone</dt>
-                        <dd>
-                          <a
-                            href={`tel:${s.phone.replace(/\s/g, '')}`}
-                            className="text-theme-ink/85 hover:text-theme-accent"
-                          >
-                            {s.phone}
-                          </a>
-                        </dd>
+                    {s.hours.map((h) => (
+                      <div key={h.days} className="field-row">
+                        <dt className="field-label">{h.days}</dt>
+                        <dd className="field-value text-theme-ink text-sm">{h.time}</dd>
                       </div>
+                    ))}
+                    <div className="field-row">
+                      <dt className="field-label">Phone</dt>
+                      <dd className="field-value text-sm">
+                        <a
+                          href={`tel:${s.phone.replace(/\s/g, '')}`}
+                          className="text-theme-ink hover:text-theme-accent transition-colors"
+                        >
+                          {s.phone}
+                        </a>
+                      </dd>
                     </div>
                   </dl>
-                  <div className="mt-8 flex flex-wrap gap-3">
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
                     <Link
                       href={`https://www.google.com/maps/search/?api=1&query=${s.mapsQuery}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
+                      className="stamp stamp--ghost"
                     >
-                      Open in Maps
-                      <ArrowRight
-                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                        aria-hidden="true"
-                      />
+                      Get directions
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                     <a
                       href={`tel:${s.phone.replace(/\s/g, '')}`}
-                      className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors"
+                      className="text-theme-ink hover:text-theme-accent inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-colors"
                     >
                       <Phone className="h-4 w-4" aria-hidden="true" />
                       Call the shop
@@ -389,9 +369,9 @@ export default function StoresPage() {
                   </div>
                 </div>
 
-                {/* Map placeholder */}
+                {/* Map placeholder — an empty grid square on the sheet, not a live embed yet. */}
                 <div
-                  className="bg-[color:var(--theme-glow)]/10 relative flex min-h-[18rem] flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[color:var(--color-border)]"
+                  className="bg-theme-glow/10 relative flex min-h-[18rem] flex-col items-center justify-center overflow-hidden rounded-lg border border-dashed border-[color:var(--color-border)]"
                   aria-hidden="true"
                 >
                   <div
@@ -403,7 +383,7 @@ export default function StoresPage() {
                   />
                   <MapPin className="text-theme-accent relative h-10 w-10" />
                   <p className="font-display text-theme-ink relative mt-2 text-lg">{s.city}</p>
-                  <p className="text-theme-ink/60 relative text-xs font-semibold uppercase tracking-wider">
+                  <p className="text-text-muted relative mt-1 text-xs">
                     Interactive map coming soon
                   </p>
                 </div>
@@ -414,37 +394,34 @@ export default function StoresPage() {
       </section>
 
       {/* Contact */}
-      <section aria-labelledby="contact-heading" className="container-site py-16">
-        <Reveal className="mb-8">
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Reach out
-          </p>
-          <h2
-            id="contact-heading"
-            className="font-display text-display-md text-theme-ink md:text-display-lg mt-3"
-          >
-            Four ways to get in touch.
-          </h2>
+      <section aria-labelledby="contact-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <h2
+              id="contact-heading"
+              className="font-display text-display-md text-theme-ink"
+            >
+              Four ways to get in touch.
+            </h2>
+          </div>
         </Reveal>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CONTACT.map((c) => (
-            <Reveal key={c.label}>
+            <Reveal key={c.label} className="h-full">
               <a
                 href={c.href}
                 target={c.href.startsWith('http') ? '_blank' : undefined}
                 rel={c.href.startsWith('http') ? 'noreferrer' : undefined}
-                className="bg-surface-elevated hover:shadow-lifted group flex h-full flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-5 transition-all duration-300 hover:-translate-y-0.5"
+                className="docket flex h-full flex-col gap-3 p-5 transition-shadow duration-200 hover:shadow-lifted"
               >
-                <div className="bg-theme-glow/25 text-theme-accent flex h-10 w-10 items-center justify-center rounded-full">
+                {/* Manila is a ground for ink — the glyph stays ink, never accent. */}
+                <div className="bg-theme-glow/25 text-theme-ink flex h-10 w-10 items-center justify-center rounded-md">
                   <c.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-                  {c.label}
-                </p>
-                <p className="font-display text-theme-ink text-base">{c.value}</p>
-                <p className="text-theme-ink/60 text-xs">{c.note}</p>
+                <p className="field-label">{c.label}</p>
+                <p className="field-value text-theme-ink text-sm">{c.value}</p>
+                <p className="text-text-muted text-xs">{c.note}</p>
               </a>
             </Reveal>
           ))}
@@ -452,14 +429,11 @@ export default function StoresPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="container-site pb-20">
+      <section className="container-site section-y-tight">
         <Reveal>
-          <div className="bg-surface-elevated flex flex-col items-start justify-between gap-5 rounded-3xl border border-[color:var(--color-border)] p-8 md:flex-row md:items-center md:p-10">
+          <div className="docket flex flex-col items-start justify-between gap-5 p-6 md:flex-row md:items-center md:p-8">
             <div>
-              <p className="text-theme-accent text-xs font-semibold uppercase tracking-[0.22em]">
-                Before you visit
-              </p>
-              <h2 className="font-display text-theme-ink mt-2 text-2xl md:text-3xl">
+              <h2 className="font-display text-display-md text-theme-ink">
                 Seasonal items sell fast.
               </h2>
               <p className="text-theme-ink/70 mt-2 max-w-lg text-sm">
@@ -471,11 +445,10 @@ export default function StoresPage() {
               href="https://wa.me/919398859978"
               target="_blank"
               rel="noreferrer"
-              className="bg-theme-ink hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
+              className="stamp shrink-0"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               Reserve via WhatsApp
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>
         </Reveal>

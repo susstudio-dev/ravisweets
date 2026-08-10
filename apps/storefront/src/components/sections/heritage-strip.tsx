@@ -3,9 +3,10 @@ import { Reveal } from '@/components/motion/reveal';
 import { Parallax } from '@/components/motion/parallax';
 import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
+import { pendingPhoto } from '@/lib/images';
 
 const PORTRAIT =
-  'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png';
+  pendingPhoto('2025/09/anjjeer_katli-removebg-preview.png');
 const PORTRAIT_BACKDROP =
   'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 60%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 25%, var(--theme-base)) 50%, var(--theme-base) 90%)';
 

@@ -1,18 +1,19 @@
 /**
  * Ravi Sweets design tokens.
  *
- * Colour now lives in ./palette.ts — the single source of truth. This file
- * keeps the non-colour scales (radii, elevation, motion, grain) and re-exports
- * colour so existing importers do not all have to change at once.
+ * Colour lives in ./palette.ts — the single source of truth. This file keeps
+ * the non-colour scales (radii, elevation, motion, grain) and re-exports
+ * colour so importers have one place to reach for.
  *
- * The old `rawPalette.brand.*` / `.saffron` / `.rose` scales are GONE. They had
- * zero Tailwind-class usages across the entire tree, so nothing consumed them
- * except by hand-copying hex. Gold is deleted deliberately — see palette.ts.
+ * The world is The Batch Card: the kitchen's own paperwork as the interface.
+ * That has consequences beyond colour, and they are encoded below — radii are
+ * near-square because a docket is a docket, and elevation is nearly flat
+ * because paper on a counter does not float.
  */
-import { ROSE_CREAM, LIGHT } from './palette';
+import { DOCKET, LIGHT } from './palette';
 
 export type { FlavourPalette } from './palette';
-export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palette';
+export { DOCKET, CARBON_TOKENS, LIGHT, CARBON, EMBER, PRODUCT_PALETTES } from './palette';
 
 /**
  * Projected into Tailwind. Semantic names only — no numeric brand ramp.
@@ -24,43 +25,61 @@ export { ROSE_CREAM, DUSK_TOKENS, LIGHT, DUSK, PRODUCT_PALETTES } from './palett
  * bindings) instead. Do not re-add without checking usage first.
  */
 export const rawPalette = {
-  ink: ROSE_CREAM.ink,
-  varak: { DEFAULT: ROSE_CREAM.varak, rule: ROSE_CREAM.varakRule },
+  ink: DOCKET.ink,
+  varak: { DEFAULT: DOCKET.varak, rule: DOCKET.varakRule },
+  /*
+   * Cool slate, not warm stone. The docket ground is faintly green-grey; a
+   * warm neutral ramp beside it reads as two different papers.
+   */
   neutral: {
-    50: '#FAFAF9',
-    100: '#F5F5F4',
-    200: '#E7E5E4',
-    300: '#D6D3D1',
-    400: '#A8A29E',
-    500: '#78716C',
-    600: '#57534E',
-    700: '#44403C',
-    800: '#292524',
-    900: '#1C1917',
+    50: '#F7F8F6',
+    100: '#EEF0EC',
+    200: '#DDE0DC',
+    300: '#C3C9C6',
+    400: '#98A0A3',
+    500: '#6B737B',
+    600: '#565F68',
+    700: '#3F4750',
+    800: '#2A323A',
+    900: '#161C24',
   },
-  semantic: { success: '#2F7A3C', warn: '#8A6A1E', danger: '#9B2F1C' },
+  semantic: { success: '#1F6238', warn: '#6B5A0E', danger: '#A81B52' },
 } as const;
 
+/**
+ * Paper is square-cut. A docket has a guillotined edge; a gummed label has
+ * about 2mm of radius and nothing on a counter has 24px of it.
+ *
+ * This scale is deliberately compressed rather than renamed, so the ~200
+ * existing `rounded-2xl` / `rounded-3xl` call sites across the tree resolve
+ * to the new world without being individually rewritten. `pill` survives for
+ * genuine chips only — a rubber stamp is rectangular, so reach for it rarely.
+ */
+/*
+ * Softened from the original guillotine cut (0-8px) on owner feedback,
+ * 2026-08-03: "give some border radius to the sweet cards, don't keep
+ * everything very sharp." Still paper, never a pill — but friendly paper.
+ */
 export const radii = {
-  sm: '0.25rem',
-  md: '0.5rem',
-  lg: '0.75rem',
-  xl: '1rem',
-  '2xl': '1.5rem',
-  '3xl': '2rem',
+  sm: '3px',
+  md: '6px',
+  lg: '8px',
+  xl: '10px',
+  '2xl': '14px',
+  '3xl': '18px',
   pill: '9999px',
   circle: '50%',
 } as const;
 
 /**
- * The `lifted` shadow drops the white inner bevel the old scale carried —
- * it read as plastic on the marigold field and inverted wrongly on the dark
- * dusk register.
+ * Paper on a counter does not float. Elevation is a sheet resting on another
+ * sheet: a hard 1px contact edge, then a short shadow. The old scale's 24px
+ * blur read as a floating card, which is the arrangement this world refuses.
  */
 export const elevation = {
   flat: 'none',
-  soft: '0 1px 2px rgb(46 33 24 / 0.04), 0 2px 8px rgb(46 33 24 / 0.06)',
-  lifted: '0 2px 4px rgb(46 33 24 / 0.06), 0 8px 24px rgb(46 33 24 / 0.10)',
+  soft: '0 1px 0 rgb(22 28 36 / 0.06), 0 1px 2px rgb(22 28 36 / 0.07)',
+  lifted: '0 1px 0 rgb(22 28 36 / 0.09), 0 4px 10px rgb(22 28 36 / 0.10)',
 } as const;
 
 export const motion = {

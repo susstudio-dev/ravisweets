@@ -27,7 +27,7 @@ const STARS = [
 
 const BEATS = [
   {
-    year: '1985',
+    year: '1983',
     title: 'One counter in Khammam',
     body: 'Srinivasa Rao opens a small shop and refuses, from the first batch, to hurry anything.',
   },

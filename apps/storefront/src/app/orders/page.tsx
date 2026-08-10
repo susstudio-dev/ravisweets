@@ -3,15 +3,20 @@ import { Suspense } from 'react';
 import { OrderDetail } from '@/components/orders/order-detail';
 
 export const metadata: Metadata = {
-  title: 'Order details',
-  robots: { index: false, follow: false },
+  title: 'Order details and tracking',
+  description:
+    'Track a Ravi Sweets order — dispatch status, delivery estimate and the full contents of your box.',
+  // The `?id=` parameter identifies one customer's order and must never become
+  // its own indexable URL, so the canonical is the bare path.
+  alternates: { canonical: '/orders' },
+  robots: { index: false, follow: true },
 };
 
 function OrderFallback() {
   return (
     <section className="container-site py-20">
-      <div className="h-8 w-64 animate-pulse rounded bg-theme-ink/10" />
-      <div className="mt-6 h-48 animate-pulse rounded-2xl bg-theme-ink/5" />
+      <div className="h-8 w-64 animate-pulse rounded-md bg-theme-ink/10" />
+      <div className="mt-6 h-48 animate-pulse rounded-lg bg-theme-ink/5" />
     </section>
   );
 }

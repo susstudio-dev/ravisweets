@@ -5,8 +5,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowLeft, Check } from 'lucide-react';
 import type { CategorySlug, DietaryTag } from '@ravisweets/shared';
-import { createProduct, uploadProductImage } from '@/lib/supabase/products';
+import type { ImageRef } from '@/lib/content/page-media';
+import { createProduct } from '@/lib/supabase/products';
 import { logAdminAction } from '@/lib/supabase/orders';
+import { MediaField } from '@/components/admin/media-picker';
+import { mediaPublicUrl } from '@/lib/media/public-url';
+import { useMediaAssets } from '@/lib/supabase/site-content-context';
 
 const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
   { value: 'hyderabadi-specials', label: 'Hyderabadi specials' },
@@ -62,11 +66,10 @@ export function AdminProductsNew() {
   const [variantSku, setVariantSku] = useState('');
   const [variantStock, setVariantStock] = useState(40);
 
-  // Image
-  const [imageUrl, setImageUrl] = useState('');
-  const [imageAlt, setImageAlt] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [uploadErr, setUploadErr] = useState<string | null>(null);
+  // Primary image — a media-library ref, resolved to a ProductImage on create.
+  const [imageRef, setImageRef] = useState<ImageRef>(null);
+  const { byId } = useMediaAssets();
+  const asset = imageRef ? (byId.get(imageRef.assetId) ?? null) : null;
 
   // Submit
   const [busy, setBusy] = useState(false);
@@ -86,35 +89,12 @@ export function AdminProductsNew() {
     return `RS-${baseTitle || 'NEW'}-${Math.round(variantWeight)}`;
   }
 
-  // We need to upload before create so we don't have a half-created
-  // product without an image. The bucket is keyed by product id, but for
-  // a not-yet-created product we use the slug as a placeholder folder.
-  async function onUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadErr(null);
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadErr('Larger than 5 MB. Compress and retry.');
-      return;
-    }
-    setUploading(true);
-    const folder = effectiveSlug() || 'unsorted';
-    const r = await uploadProductImage(folder, file);
-    setUploading(false);
-    e.target.value = '';
-    if (!r.ok) {
-      setUploadErr(r.reason);
-      return;
-    }
-    setImageUrl(r.url);
-    if (!imageAlt) setImageAlt(`${title || 'Product'} — photographed at the Khammam kitchen`);
-  }
-
   function valid(): string | null {
     if (!title.trim()) return 'Title is required.';
     if (!effectiveSlug()) return 'Slug is required (auto-generated from title).';
     if (!description.trim()) return 'Description is required — at least one paragraph.';
-    if (!imageUrl.trim()) return 'Upload or paste a primary image URL.';
+    if (!imageRef) return 'Choose a primary photo from the media library.';
+    if (!asset) return 'That photo is no longer in the library — choose another.';
     if (variantPriceRupees <= 0) return 'Variant price must be greater than 0.';
     if (variantStock < 0) return 'Stock cannot be negative.';
     return null;
@@ -125,6 +105,13 @@ export function AdminProductsNew() {
     const v = valid();
     if (v) {
       setError(v);
+      return;
+    }
+    // Resolve the library ref to a concrete ProductImage — same shape the
+    // product drawer's gallery editor appends.
+    const imageAssetUrl = asset ? mediaPublicUrl(asset.storage_path) : null;
+    if (!asset || !imageAssetUrl) {
+      setError('Photo could not be resolved — is Supabase configured?');
       return;
     }
     setError(null);
@@ -142,8 +129,11 @@ export function AdminProductsNew() {
       storage_instructions: storage.trim(),
       builder_eligible: builderEligible,
       unit_mode: unitMode,
-      primary_image_url: imageUrl,
-      primary_image_alt: imageAlt || `${title} — photographed at the Khammam kitchen`,
+      primary_image_url: imageAssetUrl,
+      primary_image_alt:
+        imageRef?.alt || asset.alt || `${title.trim()} — photographed at the Khammam kitchen`,
+      primary_image_width: asset.width ?? 1400,
+      primary_image_height: asset.height ?? 1400,
       variant: {
         id: variantId,
         title: variantTitle.trim(),
@@ -279,62 +269,15 @@ export function AdminProductsNew() {
           </div>
         </Section>
 
-        {/* Image */}
+        {/* Image — from the shared media library */}
         <Section title="Primary image" required>
-          <div className="bg-theme-glow/10 rounded-xl border border-dashed border-[color:var(--color-border)] p-3">
-            <div className="flex items-center gap-3">
-              {imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={imageUrl}
-                  alt=""
-                  className="h-20 w-20 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1.5"
-                />
-              ) : (
-                <div className="text-theme-ink/40 flex h-20 w-20 items-center justify-center rounded-lg border border-[color:var(--color-border)] bg-white text-[10px] font-semibold uppercase tracking-wider">
-                  no image
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <label className="bg-theme-accent inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold text-[color:var(--theme-base)]">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml"
-                    onChange={onUploadFile}
-                    disabled={uploading}
-                    className="sr-only"
-                  />
-                  {uploading ? 'Uploading…' : 'Upload from device'}
-                </label>
-                <p className="text-theme-ink/55 mt-1 text-[10px]">
-                  PNG / JPG / WebP / AVIF / SVG · max 5 MB
-                </p>
-                {uploadErr && (
-                  <p className="mt-1 text-[11px] font-medium text-red-700">{uploadErr}</p>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
-            <Field label="…or paste URL">
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://ravisweets.com/wp-content/uploads/..."
-                className={inputCls + ' font-mono text-xs'}
-              />
-            </Field>
-            <Field label="Alt text (accessibility)">
-              <input
-                type="text"
-                value={imageAlt}
-                onChange={(e) => setImageAlt(e.target.value)}
-                placeholder={`${title || 'Product'} — photographed at the Khammam kitchen`}
-                className={inputCls}
-              />
-            </Field>
-          </div>
+          <MediaField
+            label="Primary photo"
+            hint="Pick from the media library — new uploads land there and are auto-shrunk."
+            kind="product"
+            value={imageRef}
+            onChange={setImageRef}
+          />
         </Section>
 
         {/* First variant */}

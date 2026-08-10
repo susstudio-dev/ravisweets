@@ -1,24 +1,27 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { HamperBuilder } from '@/components/corporate/builder/hamper-builder';
-import { Paisley } from '@/components/brand/paisley';
 
 export const metadata: Metadata = {
-  title: 'Build your hamper',
+  title: 'Build your corporate hamper',
   description:
-    'Compose a corporate hamper from templates or scratch. Tier-aware pricing, logo-print option, share via URL, hand off to enquiry.',
-  robots: { index: false, follow: false },
+    'Compose a corporate hamper from templates or from scratch — tier-aware pricing, logo printing, shareable by URL.',
+  /*
+   * The builder is reached as `/corporate/builder?t=premium|essence|grande`,
+   * which was the entirety of the crawl's "URL: Parameters" finding. The
+   * template is a starting state, not a distinct page, so all three collapse
+   * onto one parameter-free canonical.
+   */
+  alternates: { canonical: '/corporate/builder' },
+  robots: { index: false, follow: true },
 };
 
 function BuilderFallback() {
   return (
-    <section className="container-site py-12 md:py-16">
-      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-theme-accent">
-        <Paisley size="sm" />
-        Hamper builder
-      </p>
-      <div className="mt-3 h-12 w-96 max-w-full animate-pulse rounded bg-theme-ink/10" />
-      <div className="mt-10 h-64 animate-pulse rounded-2xl bg-theme-ink/5" />
+    <section className="container-site section-y-tight">
+      <p className="field-label">Hamper builder</p>
+      <div className="bg-theme-ink/10 mt-3 h-12 w-96 max-w-full animate-pulse rounded-lg" />
+      <div className="bg-theme-ink/5 mt-10 h-64 animate-pulse rounded-lg" />
     </section>
   );
 }

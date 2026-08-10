@@ -1,3 +1,4 @@
+import { pendingPhoto } from '@/lib/images';
 /**
  * Metadata for the home page's Signature Moment image.
  * The image is curated against both the storefront imagery rubric AND the
@@ -10,7 +11,7 @@
  */
 export const SIGNATURE_MOMENT = {
   image: {
-    url: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+    url: pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     alt: 'Badam-pista kalakand — slow-set with pistachio dust, photographed at the Khammam kitchen',
     subject: 'Badam-Pista Kalakand — macro',
     dominant_palette: ['#fff4e3', '#c0592b', '#f29f5a', '#3a1e0c'],

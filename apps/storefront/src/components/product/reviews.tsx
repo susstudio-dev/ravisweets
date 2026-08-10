@@ -1,39 +1,39 @@
 import { Star } from 'lucide-react';
 import { getReviewsForProduct, getReviewSummary, type Review } from '@ravisweets/shared';
-import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
+import { isUsableImage } from '@/lib/images';
 
 interface ProductReviewsProps {
   productSlug: string;
 }
 
+/**
+ * Reviews as ruled entries on the sheet — a ledger of what people said, not a
+ * grid of floating cards. Recorded values (rating, date) go in the typed face.
+ */
 export function ProductReviews({ productSlug }: ProductReviewsProps) {
   const reviews = getReviewsForProduct(productSlug);
   const summary = getReviewSummary(productSlug);
   if (reviews.length === 0) return null;
 
   return (
-    <section aria-labelledby="reviews-heading" className="container-site py-12 md:py-16">
-      <Reveal className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            From people who&rsquo;ve received it
-          </p>
+    <section aria-labelledby="reviews-heading" className="container-site section-y">
+      <Reveal>
+        <div className="docket-head">
           <h2
             id="reviews-heading"
-            className="font-display text-display-md text-theme-ink mt-3 leading-[1.02]"
+            className="font-display text-display-md text-theme-ink leading-[1.02]"
           >
             What customers say.
           </h2>
+          <Summary count={summary.count} avg={summary.avg} />
         </div>
-        <Summary count={summary.count} avg={summary.avg} />
       </Reveal>
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="max-w-3xl divide-y divide-[color:var(--color-border)]">
         {reviews.map((r, i) => (
           <Reveal key={r.id} delay={0.04 + i * 0.04}>
-            <ReviewCard review={r} />
+            <ReviewEntry review={r} />
           </Reveal>
         ))}
       </div>
@@ -43,26 +43,27 @@ export function ProductReviews({ productSlug }: ProductReviewsProps) {
 
 function Summary({ count, avg }: { count: number; avg: number }) {
   return (
-    <div className="bg-surface-elevated flex items-center gap-3 rounded-full border border-[color:var(--color-border)] px-4 py-2">
+    <div className="flex items-center gap-3">
       <Stars value={avg} />
-      <span className="text-theme-ink text-sm font-semibold">{avg.toFixed(1)}</span>
-      <span className="text-theme-ink/55 text-xs">({count} reviews)</span>
+      <span className="field-value text-theme-ink text-sm font-bold">{avg.toFixed(1)}</span>
+      <span className="field-value text-theme-ink/55 text-xs">({count} reviews)</span>
     </div>
   );
 }
 
-function ReviewCard({ review }: { review: Review }) {
+function ReviewEntry({ review }: { review: Review }) {
   const date = new Date(review.date).toLocaleDateString('en-IN', {
     month: 'short',
     year: 'numeric',
   });
-  const photos = review.photos ?? [];
+  // Decided at render — a dead photo URL never becomes a request.
+  const photos = (review.photos ?? []).filter((p) => isUsableImage(p));
   return (
-    <article className="bg-surface-elevated shadow-soft hover:shadow-lifted flex h-full flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-6 transition-all duration-300 hover:-translate-y-0.5">
+    <article className="flex flex-col gap-3 py-5">
       <div className="flex items-center justify-between">
         <Stars value={review.rating} />
         {review.verified && (
-          <span className="bg-theme-glow/25 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+          <span className="bg-theme-glow/25 text-theme-accent rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em]">
             Verified
           </span>
         )}
@@ -74,7 +75,7 @@ function ReviewCard({ review }: { review: Review }) {
           {photos.slice(0, 4).map((p, i) => (
             <li
               key={i}
-              className="bg-theme-glow/10 aspect-square overflow-hidden rounded-lg border border-[color:var(--color-border)]"
+              className="bg-theme-glow/10 aspect-square overflow-hidden rounded-md border border-[color:var(--color-border)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -86,11 +87,11 @@ function ReviewCard({ review }: { review: Review }) {
           ))}
         </ul>
       )}
-      <p className="text-theme-ink/55 mt-auto text-xs">
+      <p className="text-theme-ink/55 text-xs">
         {review.author}
         {review.city && ` · ${review.city}`}
         {' · '}
-        {date}
+        <span className="field-value">{date}</span>
       </p>
     </article>
   );

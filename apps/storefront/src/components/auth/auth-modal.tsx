@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { Mail, Phone, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Paisley } from '@/components/brand/paisley';
 import { getSupabase, SUPABASE_CONFIGURED } from '@/lib/supabase/client';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -182,7 +181,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+            className="bg-theme-ink/50 absolute inset-0 focus-visible:outline-none"
           />
           <motion.div
             initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 20 }}
@@ -192,23 +191,19 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
               duration: reduced ? DURATION.fast : DURATION.slow,
               ease: EASE.emphasised,
             }}
-            className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-md overflow-hidden rounded-3xl ring-1 ring-[color:var(--color-border)]"
+            className="docket shadow-lifted relative z-10 w-full max-w-md overflow-hidden"
           >
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="bg-theme-glow/15 text-theme-ink/60 hover:bg-theme-glow/30 focus-visible:ring-theme-accent absolute right-4 top-4 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2"
+              className="text-theme-ink/60 hover:text-theme-ink focus-visible:ring-theme-accent absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
 
             <div className="p-6 md:p-8">
-              <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-                <Paisley size="sm" />
-                Sign in or sign up
-              </p>
-              <h2 id="auth-title" className="font-display text-theme-ink mt-2 text-2xl">
+              <h2 id="auth-title" className="font-display text-theme-ink pr-10 text-2xl">
                 {stage === 'verify-otp'
                   ? 'Check your email.'
                   : stage === 'success'
@@ -237,13 +232,11 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
               {/* Tabs */}
               {stage === 'enter-id' && (
                 <>
-                  <p className="text-theme-ink/55 mt-5 text-[11px] font-semibold uppercase tracking-[0.18em]">
-                    Choose how to sign in
-                  </p>
+                  <p className="field-label mt-5">Choose how to sign in</p>
                   <div
                     role="tablist"
                     aria-label="Sign-in method"
-                    className="bg-theme-glow/15 mt-2 flex gap-1 rounded-full border border-[color:var(--color-border)] p-1 text-xs font-semibold"
+                    className="mt-2 flex border-b border-[color:var(--color-rule)]"
                   >
                     <TabButton current={tab} value="password" onClick={() => setTab('password')}>
                       Email + password
@@ -288,7 +281,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                       placeholder="you@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
+                      className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
                     />
                   </Field>
                 )}
@@ -308,7 +301,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                         placeholder="you@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
+                        className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
                       />
                     </Field>
                     <Field label="Password">
@@ -319,7 +312,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
+                        className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
                       />
                     </Field>
                   </>
@@ -341,7 +334,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                       placeholder="98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\s/g, ''))}
-                      className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
+                      className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-10 py-3 text-sm focus-visible:outline-none focus-visible:ring-2"
                     />
                   </Field>
                 )}
@@ -365,13 +358,13 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                       placeholder="123456"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      className="bg-surface text-theme-ink placeholder:text-theme-ink/30 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-4 py-3 text-center font-mono text-lg tracking-[0.35em] focus-visible:outline-none focus-visible:ring-2"
+                      className="bg-surface text-theme-ink placeholder:text-theme-ink/30 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-4 py-3 text-center font-mono text-lg tracking-[0.35em] focus-visible:outline-none focus-visible:ring-2"
                     />
                   </Field>
                 )}
 
                 {error && (
-                  <p className="text-xs font-medium text-[#c0392b]" role="alert">
+                  <p className="text-xs font-semibold text-red-700" role="alert">
                     {error}
                   </p>
                 )}
@@ -383,7 +376,7 @@ export function AuthModal({ open, onClose, onSuccess }: AuthModalProps) {
                     (stage === 'enter-id' && tab === 'email-otp' && !email) ||
                     (stage === 'verify-otp' && otp.length !== 6)
                   }
-                  className="bg-theme-accent shadow-soft hover:shadow-lifted inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="stamp w-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {busy
                     ? 'Working…'
@@ -464,10 +457,10 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`flex-1 rounded-full px-3 py-1.5 transition-colors ${
+      className={`field-label -mb-px flex-1 border-b-2 px-2 py-3 text-center transition-colors ${
         active
-          ? 'text-theme-ink shadow-soft bg-[color:var(--theme-base)]'
-          : 'text-theme-ink/60 hover:text-theme-ink'
+          ? 'border-theme-accent text-theme-accent'
+          : 'border-transparent text-theme-ink/60 hover:text-theme-ink'
       }`}
     >
       {children}
@@ -478,9 +471,7 @@ function TabButton({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
-        {label}
-      </span>
+      <span className="field-label">{label}</span>
       <span className="relative block">{children}</span>
     </label>
   );

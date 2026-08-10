@@ -43,3 +43,6 @@ package-lock.json
 # brainstorming companion artifacts
 .superpowers/
 .next-dev/
+
+# Playwright MCP screenshot/snapshot scratch output
+.playwright-mcp/

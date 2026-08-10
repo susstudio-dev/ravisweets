@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Reveal } from '@/components/motion/reveal';
 import { Parallax } from '@/components/motion/parallax';
 import { Paisley } from '@/components/brand/paisley';
+import { pendingPhoto } from '@/lib/images';
 
 const CRAFT_BACKDROP =
   'radial-gradient(ellipse at 35% 35%, color-mix(in oklab, var(--theme-glow) 60%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 22%, var(--theme-base)) 50%, var(--theme-base) 90%)';
@@ -13,7 +14,7 @@ const CRAFTS = [
     step: '01',
     caption:
       'Almonds and pistachios roasted in small trays over low heat — the difference between "good" and "oil-slick" is five seconds of patience.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/badam_katli-removebg-preview.png'),
   },
   {
     key: 'slow-cook',
@@ -21,7 +22,7 @@ const CRAFTS = [
     step: '02',
     caption:
       'Kova reduced over four hours in a copper pan, with nothing added but full-fat milk and the slow caramel that comes with patience.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/chitti_kova-removebg-preview.png',
+    image: pendingPhoto('2025/09/chitti_kova-removebg-preview.png'),
   },
   {
     key: 'finish',
@@ -29,7 +30,7 @@ const CRAFTS = [
     step: '03',
     caption:
       'Hand-cut diamonds, silver leaf laid by hand, ribbon tied last. Every box leaves the kitchen checked by two pairs of eyes.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
   },
 ];
 

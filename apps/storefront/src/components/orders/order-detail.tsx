@@ -8,11 +8,19 @@ import { motion } from 'motion/react';
 import { formatMoney } from '@ravisweets/shared';
 import { getOrder } from '@/lib/orders/store';
 import type { Order, OrderStatus } from '@/lib/orders/types';
-import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
+import { isUsableImage } from '@/lib/images';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+
+/**
+ * THE RECEIPT.
+ *
+ * The order confirmation is the torn-off copy of the docket: order number,
+ * placed date, line items and totals as ruled rows on a `.docket--perf` — one
+ * of the two surfaces the perf edge is reserved for (the other is the hero).
+ */
 
 const STATUS_STEPS: OrderStatus[] = ['placed', 'packed', 'shipped', 'delivered'];
 
@@ -30,6 +38,12 @@ const STATUS_ICON: Record<Exclude<OrderStatus, 'cancelled'>, typeof Check> = {
   shipped: Truck,
   delivered: Sparkles,
 };
+
+function formatPlacedDate(ts: number): string {
+  return new Date(ts)
+    .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    .toUpperCase();
+}
 
 export function OrderDetail({ orderId }: { orderId: string }) {
   const [order, setOrder] = useState<Order | null | 'loading'>('loading');
@@ -56,15 +70,15 @@ export function OrderDetail({ orderId }: { orderId: string }) {
   if (!order) {
     return (
       <section className="container-site flex min-h-[60vh] flex-col items-start gap-5 py-20">
-        <Paisley size="lg" />
+        <span
+          className="block h-10 w-10 rotate-45 border-2 border-dashed border-[color:var(--color-varak-rule)] opacity-50"
+          aria-hidden="true"
+        />
         <h1 className="font-display text-display-md text-theme-ink">Order not found.</h1>
         <p className="text-theme-ink/70 max-w-lg">
           This order isn&rsquo;t on this device. If you placed it elsewhere, sign in to see it.
         </p>
-        <Link
-          href="/account"
-          className="bg-theme-accent inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
-        >
+        <Link href="/account" className="stamp">
           Your orders
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
@@ -77,11 +91,11 @@ export function OrderDetail({ orderId }: { orderId: string }) {
   return (
     <section className="container-site grid gap-10 py-12 md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-16">
       <div>
-        {/* Success banner */}
+        {/* Confirmation strip */}
         <Reveal>
-          <div className="bg-theme-glow/20 text-theme-ink flex items-center gap-3 rounded-full px-4 py-2 text-sm">
+          <div className="docket flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-sm">
             <Check className="text-theme-accent h-4 w-4" aria-hidden="true" />
-            <span className="font-semibold">Order placed.</span>
+            <span className="text-theme-ink font-semibold">Order placed.</span>
             <span className="text-theme-ink/70">
               A confirmation is on its way to {order.address.email}.
             </span>
@@ -89,19 +103,13 @@ export function OrderDetail({ orderId }: { orderId: string }) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <p className="text-theme-accent mt-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Order {order.number}
-          </p>
-        </Reveal>
-        <Reveal delay={0.14}>
-          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-8 leading-[1.02]">
             Thank you. We&rsquo;re on it.
           </h1>
         </Reveal>
 
-        {/* Status timeline */}
-        <ol className="mt-10 grid gap-4 sm:grid-cols-4">
+        {/* Status record */}
+        <ol className="mt-10 grid gap-2 sm:grid-cols-4">
           {STATUS_STEPS.map((s, i) => {
             const Icon = STATUS_ICON[s as keyof typeof STATUS_ICON];
             const reached = i <= currentIndex;
@@ -109,7 +117,7 @@ export function OrderDetail({ orderId }: { orderId: string }) {
               <li
                 key={s}
                 className={cn(
-                  'rounded-2xl border p-4 transition-colors',
+                  'rounded-md border p-4 transition-colors',
                   reached
                     ? 'border-theme-accent bg-theme-glow/10'
                     : 'border-dashed border-[color:var(--color-border)] opacity-60',
@@ -124,38 +132,60 @@ export function OrderDetail({ orderId }: { orderId: string }) {
                     delay: i * 0.06,
                   }}
                   className={cn(
-                    'flex h-9 w-9 items-center justify-center rounded-full',
+                    'flex h-9 w-9 items-center justify-center rounded-md',
                     reached
                       ? 'bg-theme-accent text-[color:var(--theme-base)]'
-                      : 'bg-[color:var(--color-border)]/40 text-theme-ink/50',
+                      : 'bg-theme-ink/10 text-theme-ink/50',
                   )}
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </motion.div>
-                <p className="text-theme-ink/80 mt-2 text-xs font-semibold uppercase tracking-wider">
-                  {STATUS_LABEL[s]}
-                </p>
+                <p className="field-label mt-2">{STATUS_LABEL[s]}</p>
               </li>
             );
           })}
         </ol>
 
-        {/* Line items */}
-        <div className="bg-surface-elevated mt-10 rounded-2xl border border-[color:var(--color-border)] p-5">
-          <h2 className="font-display text-theme-ink text-lg">Items</h2>
-          <ul className="mt-4 flex flex-col divide-y divide-[color:var(--color-border)]">
+        {/* THE RECEIPT — the perf edge belongs on order receipts (Perf-Edge Rule). */}
+        <div className="docket docket--perf mt-10 p-5 md:p-7">
+          <div className="docket-head">
+            <h2 className="font-display text-theme-ink text-lg">Order receipt</h2>
+            <span className="field-value text-xs">{order.number}</span>
+          </div>
+          <dl>
+            <div className="field-row">
+              <dt className="field-label">Order no.</dt>
+              <dd className="field-value text-sm">{order.number}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Placed</dt>
+              <dd className="field-value text-sm">{formatPlacedDate(order.placedAt)}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Status</dt>
+              <dd className="field-value text-sm">{STATUS_LABEL[order.status].toUpperCase()}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Payment</dt>
+              <dd className="field-value text-sm">
+                {order.payment.method.toUpperCase()} · {order.payment.reference}
+              </dd>
+            </div>
+          </dl>
+
+          <h3 className="field-label mt-6">Items</h3>
+          <ul className="mt-1">
             {order.lines.map((l) => (
-              <li key={`${l.productId}-${l.variantId}`} className="flex gap-4 py-4">
-                {l.imageUrl && (
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                    <Image src={l.imageUrl} alt="" fill sizes="64px" className="object-cover" />
-                  </div>
-                )}
-                <div className="flex flex-1 items-start justify-between gap-3">
-                  <div>
+              <li
+                key={`${l.productId}-${l.variantId}`}
+                className="field-row items-center text-sm"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <OrderLineThumb imageUrl={l.imageUrl} />
+                  <div className="min-w-0">
                     <Link
                       href={`/product/${l.productSlug}`}
-                      className="font-display text-theme-ink hover:text-theme-accent text-base"
+                      className="text-theme-ink hover:text-theme-accent font-medium transition-colors"
                     >
                       {l.productTitle}
                     </Link>
@@ -163,83 +193,112 @@ export function OrderDetail({ orderId }: { orderId: string }) {
                       {l.variantTitle} · × {l.quantity}
                     </p>
                   </div>
-                  <span className="text-theme-ink font-semibold tabular-nums">
-                    {formatMoney(l.lineTotal)}
-                  </span>
                 </div>
+                <span className="field-value text-theme-ink shrink-0 text-sm">
+                  {formatMoney(l.lineTotal)}
+                </span>
               </li>
             ))}
           </ul>
+
+          <dl className="mt-4 border-t border-[color:var(--color-rule)] pt-1">
+            <div className="field-row">
+              <dt className="field-label">Subtotal</dt>
+              <dd className="field-value text-sm">{formatMoney(order.subtotal)}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Shipping</dt>
+              <dd className="field-value text-sm">{formatMoney(order.shipping)}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label text-theme-ink">Total</dt>
+              <dd className="field-value text-theme-ink text-lg font-bold">
+                {formatMoney(order.total)}
+              </dd>
+            </div>
+          </dl>
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/"
-            className="border-theme-ink/25 text-theme-ink hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors"
-          >
+          <Link href="/" className="stamp stamp--ghost">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back to home
           </Link>
-          <Link
-            href="/account"
-            className="bg-theme-accent hover:shadow-lifted inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-          >
+          <Link href="/account" className="stamp">
             Your orders
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
       </div>
 
-      {/* Right: address + payment + total */}
+      {/* Right: dispatch address as ruled rows */}
       <aside aria-label="Order details">
-        <div className="flex flex-col gap-4">
-          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
-              Shipping to
-            </h3>
-            <p className="text-theme-ink/85 mt-2 text-sm leading-relaxed">
-              {order.address.name}
-              <br />
-              {order.address.line1}
-              {order.address.line2 ? `, ${order.address.line2}` : ''}
-              <br />
-              {order.address.city}, {order.address.state} {order.address.pincode}
-              <br />
-              {order.address.phone}
-            </p>
+        <div className="docket p-5">
+          <div className="docket-head">
+            <h3 className="font-display text-theme-ink text-base">Dispatch to</h3>
           </div>
-          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
-              Payment
-            </h3>
-            <p className="text-theme-ink/85 mt-2 text-sm">
-              {order.payment.method.toUpperCase()} · ref{' '}
-              <span className="font-mono text-xs">{order.payment.reference}</span>
-            </p>
-          </div>
-          <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-            <h3 className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
-              Totals
-            </h3>
-            <dl className="mt-2 space-y-1 text-sm">
-              <div className="flex items-center justify-between">
-                <dt className="text-theme-ink/70">Subtotal</dt>
-                <dd className="text-theme-ink tabular-nums">{formatMoney(order.subtotal)}</dd>
-              </div>
-              <div className="flex items-center justify-between">
-                <dt className="text-theme-ink/70">Shipping</dt>
-                <dd className="text-theme-ink tabular-nums">{formatMoney(order.shipping)}</dd>
-              </div>
-              <div className="flex items-center justify-between border-t border-[color:var(--color-border)] pt-2">
-                <dt className="text-theme-ink font-semibold">Total</dt>
-                <dd className="font-display text-theme-accent text-xl tabular-nums">
-                  {formatMoney(order.total)}
-                </dd>
-              </div>
-            </dl>
-          </div>
+          <dl>
+            <div className="field-row">
+              <dt className="field-label">Name</dt>
+              <dd className="field-value text-right text-sm">{order.address.name}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Address</dt>
+              <dd className="field-value text-right text-sm">
+                {order.address.line1}
+                {order.address.line2 ? `, ${order.address.line2}` : ''}
+              </dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">City</dt>
+              <dd className="field-value text-right text-sm">
+                {order.address.city}, {order.address.state}
+              </dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Pincode</dt>
+              <dd className="field-value text-right text-sm">{order.address.pincode}</dd>
+            </div>
+            <div className="field-row">
+              <dt className="field-label">Phone</dt>
+              <dd className="field-value text-right text-sm">{order.address.phone}</dd>
+            </div>
+          </dl>
         </div>
       </aside>
     </section>
+  );
+}
+
+/**
+ * Line-item plate on the receipt. Decided at render (lib/images.ts) so a dead
+ * catalogue URL never becomes a request; the fallback is the dashed specimen
+ * plate on a manila wash.
+ */
+function OrderLineThumb({ imageUrl }: { imageUrl?: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!imageUrl || failed || !isUsableImage(imageUrl)) {
+    return (
+      <span
+        className="bg-theme-glow/20 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[color:var(--color-border)]"
+        aria-hidden="true"
+      >
+        <span className="block h-5 w-5 rotate-45 border-2 border-dashed border-[color:var(--color-varak-rule)] opacity-50" />
+      </span>
+    );
+  }
+
+  return (
+    <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-md border border-[color:var(--color-border)]">
+      <Image
+        src={imageUrl}
+        alt=""
+        fill
+        sizes="48px"
+        className="object-cover"
+        onError={() => setFailed(true)}
+      />
+    </span>
   );
 }

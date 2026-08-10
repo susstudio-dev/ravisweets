@@ -35,6 +35,7 @@ const nextConfig = {
             { protocol: 'https', hostname: 'res.cloudinary.com' },
             { protocol: 'https', hostname: 'images.unsplash.com' },
             { protocol: 'https', hostname: 'ravisweets.com' },
+            { protocol: 'https', hostname: '*.supabase.co' },
           ],
         },
       }
@@ -45,6 +46,7 @@ const nextConfig = {
             { protocol: 'https', hostname: 'res.cloudinary.com' },
             { protocol: 'https', hostname: 'images.unsplash.com' },
             { protocol: 'https', hostname: 'ravisweets.com' },
+            { protocol: 'https', hostname: '*.supabase.co' },
           ],
         },
       }),

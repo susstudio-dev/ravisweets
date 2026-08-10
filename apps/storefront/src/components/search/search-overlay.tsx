@@ -7,7 +7,6 @@ import { Search as SearchIcon, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { searchProducts } from '@/lib/search/score';
-import { Paisley } from '@/components/brand/paisley';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
@@ -115,7 +114,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             type="button"
             aria-label="Close search"
             onClick={onClose}
-            className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+            className="absolute inset-0 bg-black/55 focus-visible:outline-none"
           />
           <motion.div
             ref={panelRef}
@@ -126,7 +125,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
               duration: reduced ? DURATION.fast : DURATION.slow,
               ease: EASE.emphasised,
             }}
-            className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)]"
+            className="docket shadow-lifted relative z-10 w-full max-w-2xl overflow-hidden"
           >
             <h2 id="search-overlay-title" className="sr-only">
               Search the catalogue
@@ -143,14 +142,14 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                 autoComplete="off"
                 enterKeyHint="search"
               />
-              <kbd className="bg-surface text-theme-ink/50 hidden rounded border border-[color:var(--color-border)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider sm:inline-block">
+              <kbd className="bg-surface text-theme-ink/50 hidden rounded-md border border-[color:var(--color-border)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider sm:inline-block">
                 Esc
               </kbd>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -159,23 +158,24 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <div className="max-h-[60vh] overflow-y-auto px-3 py-3" role="listbox">
               {!hasQuery ? (
                 <div className="px-2 py-3">
-                  <p className="text-theme-ink/55 px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em]">
-                    Try
-                  </p>
+                  <p className="field-label px-2 pb-2">Try</p>
                   <div className="flex flex-wrap gap-2 px-2">
                     {SUGGESTIONS.map((s) => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setQ(s)}
-                        className="bg-surface text-theme-ink/80 hover:border-theme-accent rounded-full border border-[color:var(--color-border)] px-3 py-1 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5"
+                        className="bg-surface text-theme-ink/80 hover:border-theme-accent rounded-md border border-[color:var(--color-border)] px-3 py-1.5 text-xs font-medium transition-colors duration-200"
                       >
                         {s}
                       </button>
                     ))}
                   </div>
                   <div className="text-theme-ink/55 mt-5 flex items-center gap-2 px-2 text-xs">
-                    <Paisley size="sm" />
+                    <span
+                      className="bg-varak-rule inline-block h-2 w-2 shrink-0 rotate-45"
+                      aria-hidden="true"
+                    />
                     <span>
                       Match titles, ingredients, dietary tags. Press Enter to open the full search.
                     </span>
@@ -188,14 +188,17 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
               ) : (
                 <ul className="flex flex-col">
                   {results.map((p, i) => (
-                    <li key={p.id}>
+                    <li
+                      key={p.id}
+                      className="border-b border-[color:var(--color-border)] last:border-b-0"
+                    >
                       <button
                         type="button"
                         role="option"
                         aria-selected={i === active}
                         onMouseEnter={() => setActive(i)}
                         onClick={() => goto(p.slug)}
-                        className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
+                        className={`flex w-full items-baseline justify-between gap-4 rounded-md px-3 py-3 text-left transition-colors ${
                           i === active
                             ? 'bg-theme-glow/25 text-theme-ink'
                             : 'text-theme-ink/80 hover:bg-theme-glow/15'
@@ -209,7 +212,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                             {p.shelf_life_days}d shelf
                           </span>
                         </span>
-                        <span className="font-display text-theme-accent text-sm">
+                        <span className="field-value text-theme-ink text-sm">
                           {p.variants[0] ? `₹${p.variants[0].price.amount}` : '—'}
                         </span>
                       </button>

@@ -64,20 +64,20 @@ export function CouponInput() {
   }
 
   return (
-    <div className="rounded-2xl border border-[color:var(--color-border)] bg-surface-elevated p-4">
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-accent">
+    <div className="docket p-4">
+      <p className="field-label flex items-center gap-2">
         <Tag className="h-3.5 w-3.5" aria-hidden="true" />
         Coupon code
-      </div>
+      </p>
       {suggestedChips.length > 0 && applied.length === 0 && (
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          <span className="text-[10px] font-medium text-theme-ink/55">Try:</span>
+        <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
+          <span className="text-theme-ink/55 text-[10px] font-medium">Try:</span>
           {suggestedChips.map((c) => (
             <button
               key={c.code}
               type="button"
               onClick={() => tryApply(c.code)}
-              className="rounded-full border border-[color:var(--color-border)] bg-surface px-2.5 py-0.5 text-[10px] font-semibold text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent"
+              className="field-value text-theme-ink/80 rounded-md border border-[color:var(--color-border)] bg-surface px-2.5 py-1 text-[11px] transition-colors hover:border-theme-accent hover:text-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
             >
               {c.code}
             </button>
@@ -100,36 +100,41 @@ export function CouponInput() {
             setError(null);
           }}
           placeholder="Enter code"
-          className="flex-1 rounded-full border border-[color:var(--color-border)] bg-surface px-4 py-2 font-mono text-sm uppercase text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
+          aria-label="Coupon code"
+          className="font-mono min-w-0 flex-1 rounded-md border border-[color:var(--color-border)] bg-surface px-3.5 py-2 text-sm uppercase text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent/30"
         />
         <button
           type="submit"
           disabled={!code.trim()}
-          className="rounded-full bg-theme-accent px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className="stamp disabled:cursor-not-allowed disabled:opacity-50"
         >
           Apply
         </button>
       </form>
-      {error && <p className="mt-2 text-xs font-medium text-[#c0392b]">{error}</p>}
+      {error && (
+        <p className="mt-2 text-xs font-semibold text-red-700" role="alert">
+          {error}
+        </p>
+      )}
 
       {applied.length > 0 && (
         <ul className="mt-3 flex flex-col gap-1.5">
           {applied.map((a) => (
             <li
               key={a.coupon.code}
-              className="flex items-center justify-between gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-sm"
+              className="flex items-center justify-between gap-2 rounded-md border border-[#1F6238]/30 bg-[#1F6238]/5 px-3 py-2 text-sm"
             >
               <div className="flex flex-col">
-                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                <span className="field-value text-xs font-bold uppercase text-[#1F6238]">
                   {a.coupon.code}
                 </span>
-                <span className="text-[11px] text-theme-ink/65">{a.message}</span>
+                <span className="text-theme-ink/65 text-[11px]">{a.message}</span>
               </div>
               <button
                 type="button"
                 onClick={() => remove(a.coupon.code)}
                 aria-label={`Remove ${a.coupon.code}`}
-                className="rounded-full p-1 text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink"
+                className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>

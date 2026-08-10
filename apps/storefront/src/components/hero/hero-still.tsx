@@ -10,6 +10,7 @@ import { Grain } from '@/components/brand/grain';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 import { useSiteContent } from '@/lib/supabase/site-content-context';
 import { useActiveTheme } from '@/lib/theme/active-theme-context';
+import { pendingPhoto } from '@/lib/images';
 
 /**
  * Placeholder art. There is no production photography yet, so the slot is
@@ -19,12 +20,12 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * When the real frame lands, only this URL and the caption change.
  */
 const HERO_IMAGE =
-  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
+  pendingPhoto('2025/09/kaju_katli-removebg-preview.png');
 
 /** The katli cut: the 45-degree diamond kaju katli is actually cut into. */
 const KATLI_CLIP = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
 
-const FOUNDED = '1985';
+const FOUNDED = '1983';
 
 const SHOT_BRIEF = 'Kaju katli, macro, raking light — silver leaf needs a specular highlight.';
 

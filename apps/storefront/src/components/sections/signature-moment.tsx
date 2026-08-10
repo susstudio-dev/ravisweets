@@ -117,13 +117,6 @@ export function SignatureMoment() {
         <span className="bg-varak h-2 w-2 rotate-45" />
       </div>
 
-      {/* Dev-only watermark */}
-      <div
-        className="bg-surface-elevated text-text-muted absolute right-4 top-4 rounded-full border border-[color:var(--color-border)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
-        aria-label="Placeholder image — dev only"
-      >
-        Dev only
-      </div>
     </section>
   );
 }

@@ -48,27 +48,35 @@ const config: Config = {
         lifted: elevation.lifted,
       },
       fontFamily: {
-        display: ['var(--font-display)', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
         body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        // Recorded values only — batch numbers, dates, weights, prices.
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
         indic: ['var(--font-indic)', 'var(--font-body)', 'sans-serif'],
       },
       fontSize: {
-        // Fluid scale via clamp(): min, fluid, max
+        /*
+         * Fluid scale via clamp(). Tracking is tighter than the retired serif
+         * scale carried: Archivo is a grotesque and sets loose by default at
+         * display sizes, and a stamped form head is compact by nature.
+         */
         'display-xl': [
-          'clamp(2.75rem, 2rem + 3.2vw, 4.75rem)',
-          { lineHeight: '1.04', letterSpacing: '-0.02em' },
+          'clamp(2.75rem, 2rem + 3.4vw, 5rem)',
+          { lineHeight: '0.98', letterSpacing: '-0.028em' },
         ],
         'display-lg': [
           'clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem)',
-          { lineHeight: '1.08', letterSpacing: '-0.018em' },
+          { lineHeight: '1.02', letterSpacing: '-0.024em' },
         ],
         'display-md': [
           'clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem)',
-          { lineHeight: '1.15', letterSpacing: '-0.012em' },
+          { lineHeight: '1.1', letterSpacing: '-0.018em' },
         ],
-        heading: ['clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem)', { lineHeight: '1.3' }],
+        heading: ['clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem)', { lineHeight: '1.25' }],
         body: ['1rem', { lineHeight: '1.6' }],
         caption: ['0.8125rem', { lineHeight: '1.45', letterSpacing: '0.01em' }],
+        // The pre-printed caption on a form.
+        label: ['0.6875rem', { lineHeight: '1.2', letterSpacing: '0.14em' }],
       },
       backgroundImage: {
         grain: "url('/textures/grain.svg')",

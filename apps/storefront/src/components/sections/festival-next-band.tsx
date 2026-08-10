@@ -4,13 +4,17 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
-import { FestivalCountdown } from '@/components/festivals/festival-countdown';
 
 /**
- * Festival next — a dusk-register band that always sells the urgent thing:
- * whichever festival is coming up soonest, with a live countdown under a
- * marigold garland. Dates mirror the calendar on /festivals; when that page
- * is rebuilt in phase 4b both will read one shared module.
+ * Festival next — a carbon-register band that always sells the urgent thing:
+ * whichever festival is coming up soonest. Dates mirror the calendar on
+ * /festivals; when that page is rebuilt in phase 4b both will read one shared
+ * module.
+ *
+ * The live countdown was removed with the retired world. A ticking
+ * seconds digit re-rendered this section once per second forever, and it is
+ * flash-sale theatre: a kitchen records an order-by date, it does not run a
+ * clock. The urgency now comes from the deadline itself.
  */
 
 const FESTIVALS = [
@@ -23,8 +27,14 @@ const FESTIVALS = [
   { slug: 'ugadi', title: 'Ugadi', telugu: 'ఉగాది', date: '2027-03-19' },
 ] as const;
 
-/** Garland across the band's top edge — the scene's marigold atoms. */
-const GARLAND = [2, 10, 18, 26, 34, 42, 50, 58, 66, 74, 82, 90, 97];
+/** Dispatch needs three clear days before the festival for the fresh range. */
+const ORDER_BY_LEAD_DAYS = 3;
+
+function formatBandDate(iso: string): string {
+  return new Date(`${iso}T00:00:00+05:30`)
+    .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    .toUpperCase();
+}
 
 export function FestivalNextBand() {
   const next = useMemo(() => {
@@ -35,57 +45,61 @@ export function FestivalNextBand() {
     );
   }, []);
 
+  const orderBy = useMemo(() => {
+    if (!next) return '';
+    const d = new Date(`${next.date}T00:00:00+05:30`);
+    d.setDate(d.getDate() - ORDER_BY_LEAD_DAYS);
+    return d.toISOString().slice(0, 10);
+  }, [next]);
+
   if (!next) return null;
 
   return (
     <section
       aria-labelledby="festival-next-heading"
-      data-register="dusk"
+      data-register="carbon"
       className="bg-theme-base text-theme-ink relative overflow-hidden"
     >
-      {/* marigold garland strung along the top */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-8">
-        {GARLAND.map((left, i) => (
-          <span
-            key={left}
-            className="ss-mg"
-            style={{
-              left: `${left}%`,
-              top: `${i % 2 === 0 ? 10 : 42}%`,
-              width: 'clamp(10px, 1.2vw, 16px)',
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="container-site relative flex flex-col gap-8 py-16 md:flex-row md:items-end md:justify-between md:py-24">
+      {/*
+        The marigold garland is gone. It was 13 spans of `ss-mg`, a class that
+        belonged to the retired shop-at-dusk scene and no longer exists in any
+        stylesheet — so it rendered as empty DOM. `ss-cta-glow` on the CTA was
+        dead in the same way. Both are removed rather than restyled: a garland
+        is festival decoration, and this world states the festival as a record.
+      */}
+      <div className="container-site relative flex flex-col gap-8 section-y md:flex-row md:items-end md:justify-between">
         <div>
           <Reveal>
-            <p className="text-theme-accent flex items-baseline gap-3 text-xs font-semibold uppercase tracking-[0.28em]">
-              <span className="font-indic text-xl normal-case leading-none tracking-normal">
+            <p className="flex items-baseline gap-3">
+              <span className="font-indic text-theme-accent text-xl leading-none">
                 {next.telugu}
               </span>
-              Next at the counter
+              <span className="field-label">Next at the counter</span>
             </p>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2
-              id="festival-next-heading"
-              className="font-display text-display-md mt-3 leading-[1.02]"
-            >
+            <h2 id="festival-next-heading" className="font-display text-display-md mt-3">
               {next.title} is coming.
             </h2>
           </Reveal>
+          {/* The date as a field row — a kitchen records a deadline, it does
+              not run a flash-sale clock. */}
           <Reveal delay={0.2}>
-            <FestivalCountdown target={`${next.date}T00:00:00+05:30`} accentColor="var(--theme-accent)" />
+            <dl className="mt-5 max-w-sm">
+              <div className="field-row">
+                <dt className="field-label">Festival</dt>
+                <dd className="field-value text-sm">{formatBandDate(next.date)}</dd>
+              </div>
+              <div className="field-row">
+                <dt className="field-label">Order by</dt>
+                <dd className="field-value text-sm font-bold">{formatBandDate(orderBy)}</dd>
+              </div>
+            </dl>
           </Reveal>
         </div>
 
         <Reveal delay={0.25}>
-          <Link
-            href={`/festivals/${next.slug}`}
-            className="bg-theme-accent ss-cta-glow inline-flex items-center gap-2 rounded-sm px-7 py-3.5 text-sm font-medium tracking-wide text-[color:var(--theme-base)] transition-[opacity,box-shadow] duration-300 hover:opacity-95"
-          >
+          <Link href={`/festivals/${next.slug}`} className="stamp">
             Pre-order the {next.title} box
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>

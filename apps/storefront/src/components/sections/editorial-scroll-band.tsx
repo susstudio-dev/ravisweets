@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { Grain } from '@/components/brand/grain';
 import { Reveal } from '@/components/motion/reveal';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { pendingPhoto } from '@/lib/images';
 
 interface Frame {
   key: string;
@@ -33,7 +34,7 @@ const FRAMES: Frame[] = [
     eyebrow: '01 · The pan',
     title: 'Kova, reduced for hours.',
     body: 'Full-fat milk over a low flame, stirred clockwise until it gives up its caramel. The Chitti Kova in our gift boxes still starts here — never a shortcut, never a thickener.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/chitti_kova-removebg-preview.png',
+    image: pendingPhoto('2025/09/chitti_kova-removebg-preview.png'),
     alt: 'Slabs of fresh Chitti Kova still warm from the pan',
     shopHref: '/category/sweets',
     shopLabel: 'Shop sweets',
@@ -43,7 +44,7 @@ const FRAMES: Frame[] = [
     eyebrow: '02 · The soak',
     title: 'Some things take overnight.',
     body: 'Anjeer, badam, kaju — laid down in their own bowls the evening before, so the Anjeer Katli the next morning slices clean and the cashew gives up its sweetness.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/anjjeer_katli-removebg-preview.png'),
     alt: 'Anjeer Katli pieces with whole figs and almonds visible at the edge',
     shopHref: '/category/dry-fruits',
     shopLabel: 'Shop dry-fruit sweets',
@@ -53,7 +54,7 @@ const FRAMES: Frame[] = [
     eyebrow: '03 · The finish',
     title: 'Silver leaf, placed by breath.',
     body: 'The last act on a tray of Kaju Katli is varak — edible silver leaf, lifted with two pairs of tweezers in a quiet hour. It catches the light differently every box.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
     alt: 'Premium Kaju Katli diamonds finished with edible silver leaf',
     shopHref: '/product/kaju-katli',
     shopLabel: 'Shop Kaju Katli',
@@ -63,7 +64,7 @@ const FRAMES: Frame[] = [
     eyebrow: '04 · The fry',
     title: 'Boondi, one bowl at a time.',
     body: 'Saffron pearls dropped through a brass jhara into hot ghee — a single ladleful, never a vat. The Boondi Laddu we tie up in the afternoon starts as 200,000 of these.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
+    image: pendingPhoto('2025/09/boondi_laddu-removebg-preview.png'),
     alt: 'Boondi Laddu spheres, saffron pearls visible across the surface',
     shopHref: '/product/motichoor-ladoo',
     shopLabel: 'Shop ladoos',
@@ -73,7 +74,7 @@ const FRAMES: Frame[] = [
     eyebrow: '05 · The pack',
     title: 'Boxed the morning they ship.',
     body: 'From the Khammam counter or the Kondapur branch, every hamper leaves with a date stamp and a katli-cut tag — sealed by hand, two pairs of eyes before the lid closes.',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/besan_laddu-removebg-preview.png',
+    image: pendingPhoto('2025/09/besan_laddu-removebg-preview.png'),
     alt: 'Soft Besan Laddu rounds laid out for the gift box',
     shopHref: '/category/gift-hampers',
     shopLabel: 'Shop gift hampers',

@@ -24,7 +24,7 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * 8 fields, same `??` precedence, headline re-animates on admin edit via key.
  */
 
-const FOUNDED = '1985';
+const FOUNDED = '1983';
 
 export function HeroDusk() {
   const ref = useRef<HTMLElement>(null);

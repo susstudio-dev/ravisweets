@@ -1,9 +1,7 @@
 'use client';
 
-import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { DURATION, EASE } from '@/lib/motion/constants';
 
 export type BuilderStep = 'template' | 'compose' | 'customise' | 'review';
 
@@ -23,14 +21,16 @@ interface BuilderStepperProps {
   visited: Set<BuilderStep>;
 }
 
+/**
+ * Numbered docket-head strips: each step is a ruled section head on the form,
+ * the current one underlined in the stamp accent. No pills, no floating card —
+ * the stepper is part of the paperwork.
+ */
 export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps) {
   const idx = STEP_ORDER.indexOf(current);
   return (
-    <nav
-      aria-label="Builder steps"
-      className="bg-surface-elevated mt-8 rounded-2xl border border-[color:var(--color-border)] p-3"
-    >
-      <ol className="grid gap-2 md:grid-cols-4">
+    <nav aria-label="Builder steps" className="mt-8">
+      <ol className="grid grid-cols-2 gap-x-6 gap-y-2 md:grid-cols-4">
         {STEP_ORDER.map((step, i) => {
           const meta = STEP_LABEL[step];
           const isCurrent = i === idx;
@@ -38,63 +38,41 @@ export function BuilderStepper({ current, onJump, visited }: BuilderStepperProps
           const isVisited = visited.has(step);
           const enabled = isVisited || i <= idx;
           return (
-            <li key={step} className="relative">
+            <li key={step}>
               <button
                 type="button"
                 onClick={() => enabled && onJump(step)}
                 disabled={!enabled}
                 aria-current={isCurrent ? 'step' : undefined}
                 className={cn(
-                  'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200',
-                  isCurrent && 'bg-theme-accent shadow-soft text-[color:var(--theme-base)]',
-                  !isCurrent && enabled && 'hover:bg-theme-glow/15',
-                  !enabled && 'cursor-not-allowed opacity-55',
+                  'flex w-full items-baseline gap-2.5 border-b-2 px-1 pb-2.5 pt-2 text-left transition-colors duration-200',
+                  isCurrent ? 'border-theme-accent' : 'border-[color:var(--color-rule)]',
+                  enabled && !isCurrent && 'hover:border-theme-accent/60',
+                  !enabled && 'cursor-not-allowed opacity-50',
                 )}
               >
                 <span
                   className={cn(
-                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                    isCurrent && 'text-theme-accent bg-[color:var(--theme-base)]',
-                    !isCurrent && isDone && 'bg-theme-accent text-[color:var(--theme-base)]',
-                    !isCurrent &&
-                      !isDone &&
-                      'bg-surface text-theme-ink/70 border border-[color:var(--color-border)]',
+                    'field-value text-sm',
+                    isCurrent ? 'text-theme-accent font-bold' : 'text-text-muted',
                   )}
                 >
                   {isDone ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : meta.num}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span
-                    className={cn(
-                      'block text-[10px] font-semibold uppercase tracking-[0.18em]',
-                      isCurrent ? 'text-[color:var(--theme-base)]/80' : 'text-theme-ink/55',
-                    )}
-                  >
+                  <span className={cn('field-label block', isCurrent && 'text-theme-accent')}>
                     Step {meta.num}
                   </span>
-                  <span
-                    className={cn(
-                      'font-display block truncate text-sm',
-                      isCurrent ? 'text-[color:var(--theme-base)]' : 'text-theme-ink',
-                    )}
-                  >
+                  <span className="font-display text-theme-ink block truncate text-sm">
                     {meta.title}
                   </span>
                 </span>
-                {isCurrent && (
-                  <motion.span
-                    layoutId="stepper-active"
-                    aria-hidden="true"
-                    className="ring-theme-accent absolute inset-0 rounded-xl ring-2"
-                    transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
-                  />
-                )}
               </button>
             </li>
           );
         })}
       </ol>
-      <p className="text-theme-ink/65 mt-2 px-1 text-xs">{STEP_LABEL[current].sub}</p>
+      <p className="text-text-muted mt-2 px-1 text-xs">{STEP_LABEL[current].sub}</p>
     </nav>
   );
 }

@@ -1,7 +1,25 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import type { ProductImage } from '@ravisweets/shared';
 import { getSupabase } from '@/lib/supabase/client';
+import {
+  EMPTY_PAGE_MEDIA,
+  getSlot,
+  parsePageMedia,
+  type PageMedia,
+  type SlotPath,
+} from '@/lib/content/page-media';
+import { listMediaAssets, type MediaAsset } from '@/lib/media/assets';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 import { loadAllSiteContent } from './site-content';
 import type {
   ActiveFestival,
@@ -19,6 +37,13 @@ interface SiteContentValue {
   footer: FooterContent | null;
   homeTrust: HomeTrust | null;
   activeFestival: ActiveFestival | null;
+  /** Owner-assigned page photo slots — parsed (never raw) page_media row. */
+  pageMedia: PageMedia;
+  /** media_assets registry, newest first. Empty when Supabase is unconfigured. */
+  mediaAssets: MediaAsset[];
+  /** products.images overlay keyed by product id — only rows with photos. */
+  productImages: Record<string, ProductImage[]>;
+  refreshMediaAssets: () => void;
   loading: boolean;
 }
 
@@ -29,24 +54,47 @@ const Ctx = createContext<SiteContentValue>({
   footer: null,
   homeTrust: null,
   activeFestival: null,
+  pageMedia: EMPTY_PAGE_MEDIA,
+  mediaAssets: [],
+  productImages: {},
+  refreshMediaAssets: () => {},
   loading: true,
 });
+
+type ContentState = Omit<
+  SiteContentValue,
+  'mediaAssets' | 'productImages' | 'refreshMediaAssets'
+>;
 
 /**
  * Loads all site_content rows on mount + subscribes to changes.
  * Storefront sections call useSiteContent() to render admin-edited copy
  * with the bundled defaults as fallback.
+ *
+ * Also carries the media overlay (spec §6.4): the parsed `page_media` row,
+ * the media_assets registry, and a products.images overlay — all refreshed
+ * by Realtime + the same 60s poll, so a photo swapped in /admin reaches
+ * live browsers in seconds with no rebuild. Everything degrades to empty
+ * defaults when Supabase is unconfigured (SSR and plain static builds).
  */
 export function SiteContentProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<SiteContentValue>({
+  const [state, setState] = useState<ContentState>({
     hero: null,
     signatureMoment: null,
     editorialBandHeading: null,
     footer: null,
     homeTrust: null,
     activeFestival: null,
+    pageMedia: EMPTY_PAGE_MEDIA,
     loading: true,
   });
+  const [mediaAssets, setMediaAssets] = useState<MediaAsset[]>([]);
+  const [productImages, setProductImages] = useState<Record<string, ProductImage[]>>({});
+
+  /** Stable refetch for admin surfaces (e.g. after an upload). */
+  const refreshMediaAssets = useCallback(() => {
+    void listMediaAssets().then(setMediaAssets);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,10 +108,38 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         footer: all.footer ?? null,
         homeTrust: all.home_trust ?? null,
         activeFestival: all.active_festival ?? null,
+        // Re-parsed on every refetch — the raw row is never trusted.
+        pageMedia: parsePageMedia(all.page_media),
         loading: false,
       });
     }
-    void refresh();
+    async function refreshAssets() {
+      const assets = await listMediaAssets();
+      if (cancelled) return;
+      setMediaAssets(assets);
+    }
+    async function refreshProductImages() {
+      const supa = await getSupabase();
+      if (!supa) return;
+      const { data, error } = await supa
+        .from('products')
+        .select('id, images')
+        .eq('archived', false);
+      if (cancelled || error || !data) return;
+      const overlay: Record<string, ProductImage[]> = {};
+      for (const row of data as { id: string; images: unknown }[]) {
+        if (Array.isArray(row.images) && row.images.length > 0) {
+          overlay[row.id] = row.images as ProductImage[];
+        }
+      }
+      setProductImages(overlay);
+    }
+    function refreshAll() {
+      void refresh();
+      void refreshAssets();
+      void refreshProductImages();
+    }
+    refreshAll();
 
     let unsub: (() => void) | null = null;
     void (async () => {
@@ -76,13 +152,23 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           { event: '*', schema: 'public', table: 'site_content' },
           () => void refresh(),
         )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'media_assets' },
+          () => void refreshAssets(),
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'products' },
+          () => void refreshProductImages(),
+        )
         .subscribe();
       unsub = () => {
         void supa.removeChannel(channel);
       };
     })();
 
-    const poll = setInterval(() => void refresh(), 60_000);
+    const poll = setInterval(refreshAll, 60_000);
 
     return () => {
       cancelled = true;
@@ -91,10 +177,70 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo(() => state, [state]);
+  const value = useMemo(
+    () => ({ ...state, mediaAssets, productImages, refreshMediaAssets }),
+    [state, mediaAssets, productImages, refreshMediaAssets],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useSiteContent() {
   return useContext(Ctx);
+}
+
+/** A page slot resolved through the media_assets registry to a renderable URL. */
+export interface ResolvedSlotImage {
+  url: string;
+  alt: string;
+  width: number | null;
+  height: number | null;
+}
+
+/**
+ * Resolve a page photo slot: slot ref → registry asset → public URL.
+ * Null when the slot is unset, the asset is gone, or Supabase env is absent
+ * — callers fall back to their bundled default.
+ */
+export function usePageMediaImage(slot: SlotPath): ResolvedSlotImage | null {
+  const { pageMedia, mediaAssets } = useContext(Ctx);
+  return useMemo(() => {
+    const ref = getSlot(pageMedia, slot);
+    if (!ref) return null;
+    const asset = mediaAssets.find((a) => a.id === ref.assetId);
+    if (!asset) return null;
+    const url = mediaPublicUrl(asset.storage_path);
+    if (!url) return null;
+    return {
+      url,
+      alt: ref.alt || asset.alt,
+      width: asset.width,
+      height: asset.height,
+    };
+  }, [pageMedia, mediaAssets, slot]);
+}
+
+/** The media library, with an id index and a manual refetch for admin flows. */
+export function useMediaAssets(): {
+  assets: MediaAsset[];
+  byId: Map<string, MediaAsset>;
+  refresh: () => void;
+} {
+  const { mediaAssets, refreshMediaAssets } = useContext(Ctx);
+  const byId = useMemo(
+    () => new Map(mediaAssets.map((a) => [a.id, a] as const)),
+    [mediaAssets],
+  );
+  return useMemo(
+    () => ({ assets: mediaAssets, byId, refresh: refreshMediaAssets }),
+    [mediaAssets, byId, refreshMediaAssets],
+  );
+}
+
+/**
+ * DB-edited images for a product, or null when there's no overlay row —
+ * callers keep the static catalogue images in that case.
+ */
+export function useProductImagesOverride(productId: string): ProductImage[] | null {
+  const { productImages } = useContext(Ctx);
+  return productImages[productId] ?? null;
 }

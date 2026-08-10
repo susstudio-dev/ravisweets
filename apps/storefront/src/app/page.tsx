@@ -1,42 +1,61 @@
 import Link from 'next/link';
-import { ArrowRight, Award, Leaf, Truck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
+import { ProductGrid } from '@/components/product-grid';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { HeroDusk } from '@/components/hero/hero-dusk';
-import { CounterShelf } from '@/components/sections/counter-shelf';
+import { HeroBatch } from '@/components/hero/hero-batch';
+import type { Metadata } from 'next';
 import { FestivalNextBand } from '@/components/sections/festival-next-band';
-import { StoryNightBand } from '@/components/sections/story-night-band';
-import { Paisley } from '@/components/brand/paisley';
 
 /*
- * The walk-in homepage (spec §4). One story, seven beats:
- * hero (approach the shop) → counters (step inside) → bestsellers (what
- * people take home) → festival next → trust signage → the story back
- * outside → corporate CTA. The previous composition's thirteen competing
- * sections (flavour-atlas, signature-moment, press marquee, editorial
- * bands including the "Inside the kitchen" horizontal scroll, heritage/
- * craft strips, gifting guide, festival tease, six-tile category grid)
- * are removed from the page, not from the repo — the counters and the
- * dusk bands do their jobs inside the single narrative.
+ * Title and description are inherited from the root layout — this IS the page
+ * that layout's `title.default` was written for. Only the canonical is stated
+ * here: putting `alternates` in the layout instead would make every page that
+ * did not override it canonicalise to the homepage, which is worse than the
+ * missing-canonical finding it would be trying to fix.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
+/*
+ * The homepage, in the Batch Card world. One story, five beats:
+ * the card (what was made today) → the counter (what people take home) →
+ * the kitchen rule (why it keeps for four days and not four months) →
+ * festival next → corporate dispatch.
+ *
+ * The retired composition's decorative bands (counter-shelf, story-night,
+ * the paisley eyebrows, the three icon-circle trust cards) are removed from
+ * the page, not from the repo. The trust claims they carried are now stated
+ * as what they actually are: a specification.
  */
 
-const TRUST = [
+/**
+ * The kitchen rule, as a spec table rather than three cards with icon circles.
+ * Every one of these is a claim PRODUCT.md can substantiate.
+ */
+const SPEC: { label: string; value: string; note: string }[] = [
   {
-    icon: Leaf,
-    title: 'No preservatives',
-    body: 'Small-batch, slow-cooked, and made fresh every day in our FSSAI-certified kitchen.',
+    label: 'Preservatives',
+    value: 'NIL',
+    note: 'Nothing added to extend shelf life. The short window is the proof, not a limitation.',
   },
   {
-    icon: Truck,
-    title: 'Delivered across India',
-    body: 'Temperature-controlled dispatch with chilled-safe packaging. Global shipping — coming soon.',
+    label: 'Shelf life',
+    value: '4–7 DAYS',
+    note: 'Fresh khoya and mawa sweets. The shipping range is the shelf-stable line — barfis, laddoos, mysore pak.',
   },
   {
-    icon: Award,
-    title: 'Telangana heritage',
-    body: 'Recipes from the Deccan sweet tradition, made in our Khammam kitchen.',
+    label: 'Kitchen',
+    value: 'KHAMMAM',
+    note: 'One kitchen, the same family, since 1983. Three counters you can walk into.',
+  },
+  {
+    label: 'Dispatch',
+    value: 'SAME DAY',
+    note: 'Made in the morning, dispatched the same day, temperature-controlled across India.',
   },
 ];
 
@@ -45,121 +64,105 @@ export default function HomePage() {
 
   return (
     <>
-      <HeroDusk />
+      <HeroBatch />
 
-      {/* Inside: the display counters */}
-      <CounterShelf />
-
-      {/* What people take home */}
-      <section aria-labelledby="bestsellers-top-heading" className="container-site pt-14 md:pt-20">
-        <Reveal className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              What people take home
-            </p>
-            <h2
-              id="bestsellers-top-heading"
-              className="font-display text-display-md text-theme-ink mt-2 leading-[1.05]"
-            >
-              Today&rsquo;s bestsellers
-            </h2>
-          </div>
-          <Link
-            href="/shop"
-            className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1 text-sm font-medium transition-colors"
-          >
-            Shop all 80+ products <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </Reveal>
-        <Stagger gap={50} className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {bestsellers.map((p) => (
-            <ProductCard key={p.id} product={p} quickAdd />
-          ))}
-        </Stagger>
-      </section>
-
-      {/* Festival next — the urgent thing */}
-      <div className="pt-14 md:pt-20">
-        <FestivalNextBand />
-      </div>
-
-      {/* Trust signage */}
-      <section aria-labelledby="trust-heading" className="container-site py-14 md:py-20">
-        <Reveal className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              The kitchen rule
-            </p>
-            <h2
-              id="trust-heading"
-              className="font-display text-display-md text-theme-ink mt-3 leading-[1.05]"
-            >
-              No preservatives, ever.
-            </h2>
-          </div>
-          <Link
-            href="/about"
-            className="text-theme-ink hover:text-theme-accent hidden items-center gap-1 text-sm font-medium transition-colors sm:inline-flex"
-          >
-            Read our story <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </Reveal>
-        <Stagger gap={70} className="grid gap-5 md:grid-cols-3">
-          {TRUST.map((item) => (
-            <div
-              key={item.title}
-              className="bg-surface-elevated flex flex-col gap-3 rounded-2xl border border-[color:var(--color-border)] p-6"
-            >
-              <div className="bg-theme-accent flex h-11 w-11 items-center justify-center rounded-full text-[color:var(--theme-base)]">
-                <item.icon className="h-5 w-5" aria-hidden="true" />
-              </div>
-              <h3 className="font-display text-theme-ink text-lg">{item.title}</h3>
-              <p className="text-theme-ink/75 text-sm leading-relaxed">{item.body}</p>
+      {/* ── THE COUNTER ─────────────────────────────────────────────── */}
+      <section aria-labelledby="bestsellers-heading" className="container-site section-y">
+        <Reveal>
+          {/*
+            No eyebrow above the heading. `.field-label` earns its place when
+            it is the printed caption of a real label:value pair — BATCH NO. /
+            KH-0208-026. Used as a kicker over a heading it is the category's
+            decorative eyebrow wearing this world's costume, and the heading
+            carries itself without one.
+          */}
+          <div className="docket-head">
+            <div>
+              <h2 id="bestsellers-heading" className="font-display text-display-md">
+                Today&rsquo;s bestsellers
+              </h2>
             </div>
-          ))}
+            <Link
+              href="/shop"
+              className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+            >
+              Shop the catalogue <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
+        <Stagger gap={40}>
+          <ProductGrid>
+            {bestsellers.map((p) => (
+              <ProductCard key={p.id} product={p} quickAdd />
+            ))}
+          </ProductGrid>
         </Stagger>
       </section>
 
-      {/* Back outside — the story under the stars */}
-      <StoryNightBand />
-
-      {/* Corporate CTA */}
-      <section className="container-site py-20">
-        <Reveal direction="up" distance={20}>
-          <div
-            data-register="dusk"
-            className="bg-theme-base text-theme-ink overflow-hidden rounded-3xl p-8 md:p-12"
-          >
-            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-              <div className="max-w-2xl">
-                <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-                  <Paisley size="sm" />
-                  For HR &amp; Admin teams
-                </p>
-                <h2 className="font-display text-display-md mt-3">
-                  Corporate gifting, done the Hyderabadi way.
-                </h2>
-                <p className="mt-3 text-sm opacity-85 md:text-base">
-                  Build a custom hamper in two minutes, or start from one of our three templates.
-                  MOQ-based pricing, logo-printed packaging, multi-address delivery, GST-compliant
-                  invoices. One dedicated account manager for your Diwali run.
+      {/* ── THE KITCHEN RULE ────────────────────────────────────────── */}
+      <section aria-labelledby="spec-heading" className="container-site section-y">
+        <Reveal>
+          <div className="docket-head">
+            <div>
+              <h2 id="spec-heading" className="font-display text-display-md">
+                No preservatives, ever.
+              </h2>
+            </div>
+            <Link
+              href="/about"
+              className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+            >
+              Read our story <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
+        <Stagger gap={60}>
+          <dl className="grid gap-x-10 md:grid-cols-2">
+            {SPEC.map((row) => (
+              <div
+                key={row.label}
+                className="flex flex-col gap-1 border-b border-[color:var(--color-border)] py-4"
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="field-label">{row.label}</dt>
+                  <dd className="field-value text-theme-ink text-sm font-bold">{row.value}</dd>
+                </div>
+                <p className="text-text-muted max-w-[52ch] text-[13px] leading-relaxed">
+                  {row.note}
                 </p>
               </div>
-              <div className="flex flex-col gap-2 md:shrink-0">
-                <Link
-                  href="/corporate/builder?t=premium"
-                  className="bg-theme-accent inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
-                >
+            ))}
+          </dl>
+        </Stagger>
+      </section>
+
+      {/* ── FESTIVAL NEXT ───────────────────────────────────────────── */}
+      <FestivalNextBand />
+
+      {/* ── CORPORATE DISPATCH ──────────────────────────────────────── */}
+      <section className="container-site section-y">
+        <Reveal direction="up" distance={16}>
+          <div data-register="carbon" className="bg-theme-base text-theme-ink p-7 md:p-10">
+            <div className="flex flex-col items-start gap-7 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <h2 className="font-display text-display-md">
+                  Corporate gifting, dispatched to every address on your list.
+                </h2>
+                <p className="text-text-muted mt-4 text-sm leading-relaxed md:text-base">
+                  Build a hamper in two minutes or start from a template. MOQ pricing,
+                  logo-printed packaging, multi-address dispatch, GST-compliant invoices, and one
+                  account manager for your Diwali run.
+                </p>
+              </div>
+              <div className="flex flex-col items-start gap-3 md:shrink-0">
+                <Link href="/corporate/builder?t=premium" className="stamp">
                   Build a hamper
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
                   href="/corporate#enquiry"
-                  className="hover:text-theme-accent text-center text-xs font-semibold uppercase tracking-wider opacity-70 transition-all hover:opacity-100"
+                  className="field-label hover:text-theme-accent transition-colors"
                 >
-                  Or request a quote directly
+                  Or request a quote →
                 </Link>
               </div>
             </div>

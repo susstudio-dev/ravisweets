@@ -33,8 +33,22 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 5 | `supabase/migrations/0004_nutrition_festival_storage.sql` | One-shot: storage policies lack drop-guards. Creates the `product-images` bucket |
 | 6 | `supabase/SETUP_ALL.sql` | Consolidates 0005–0009; idempotent, safe to re-run. Creates the `review-photos` bucket |
 | 7 | `supabase/migrations/0010_security_hardening.sql` | Security-audit follow-up: pins review inserts to `pending`, scopes promotions/enquiry writes, constrains the review-photos bucket. Idempotent |
+| 8 | `supabase/migrations/0011_batch_card_world.sql` | Activates the `batch-card` theme preset and blanks dead `ravisweets.com` hero image URLs. Idempotent |
+| 9 | `supabase/migrations/0012_global_voice.sql` | Hero copy rewrite in `site_content` + `theme_presets` (removes Khammam-era voice). Idempotent |
+| 10 | `supabase/migrations/0013_media_library.sql` | **Media library**: creates the `media` bucket, `media_assets` registry, and `site_content_versions` + snapshot trigger. `/admin/photos` and `/admin/media` need this. Idempotent |
+| 11 | `supabase/migrations/0014_seed_products.sql` | Seeds 83 products + 165 variants from the bundled catalogue. Every insert is `on conflict do nothing`, so re-running never overwrites admin edits. Product photo edits in `/admin/products` need this |
 
-Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, and friends (23 tables total).
+Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, and friends (25 tables total).
+
+#### The media library (0013 + 0014)
+
+One public bucket, `media`, holds every owner-managed photo (8 MB / image-MIME caps are a server-side backstop — the admin client downsizes uploads to ≤2400px WebP before they leave the browser). The `media_assets` table carries alt text, kind, and dimensions; `site_content.page_media` references assets **by id**. In the admin:
+
+- **Photos** tab → assign a photo to any page slot (About, Stores, Corporate tiers, each Festival, Brand logo). Saves are live on the public site within seconds via Realtime — no rebuild. History + one-click restore included.
+- **Media** tab → upload/search/manage the library itself (alt text, usage, guarded delete).
+- **Products** → each product's image gallery pulls from the same library. These edits only take effect once `0014_seed_products.sql` has been applied (the admin tells you honestly when a product isn't in the database yet).
+
+The legacy `product-images` bucket is superseded: new uploads all go to `media/`.
 
 ### 1.3 Auth settings (dashboard → Authentication)
 

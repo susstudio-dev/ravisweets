@@ -9,6 +9,7 @@ import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { Reveal } from '@/components/motion/reveal';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { pendingPhoto } from '@/lib/images';
 
 /**
  * Hero still — Premium Kaju Katli, photographed at the Khammam kitchen
@@ -17,7 +18,7 @@ import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
  * it reads as an editorial still-life rather than a product cutout.
  */
 const ESSENCE_IMAGE =
-  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
+  pendingPhoto('2025/09/kaju_katli-removebg-preview.png');
 const ESSENCE_BACKDROP =
   'radial-gradient(ellipse at 35% 40%, color-mix(in oklab, var(--theme-glow) 65%, var(--theme-base)) 0%, color-mix(in oklab, var(--theme-glow) 28%, var(--theme-base)) 50%, var(--theme-base) 85%)';
 

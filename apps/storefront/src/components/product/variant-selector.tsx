@@ -49,20 +49,24 @@ export function VariantSelector({ product }: VariantSelectorProps) {
               if (eff.salePrice !== null) {
                 return (
                   <>
-                    <span className="font-display text-theme-accent text-4xl">
+                    <span className="field-value text-theme-accent text-3xl font-bold">
                       {formatMoney({ amount: eff.salePrice, currency: 'INR' })}
                     </span>
-                    <span className="font-display text-theme-ink/40 text-xl line-through">
+                    <span className="field-value text-theme-ink/40 text-lg line-through">
                       {formatMoney(active.price)}
                     </span>
-                    <span className="rounded-full bg-red-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                    {/* Sale is live state — the one job ember has. */}
+                    <span
+                      className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[color:var(--theme-base)]"
+                      style={{ backgroundColor: 'var(--color-ember)' }}
+                    >
                       {eff.label ?? (eff.percentOff ? `${eff.percentOff}% off` : 'Sale')}
                     </span>
                   </>
                 );
               }
               return (
-                <span className="font-display text-theme-accent text-4xl">
+                <span className="field-value text-theme-accent text-3xl font-bold">
                   {formatMoney(active.price)}
                 </span>
               );
@@ -71,12 +75,10 @@ export function VariantSelector({ product }: VariantSelectorProps) {
         </AnimatePresence>
       </div>
 
-      {/* Variant chips (hidden if only one) */}
+      {/* Variant chips (hidden if only one) — square-cut, filled when selected. */}
       {product.variants.length > 1 && (
         <div>
-          <p className="text-theme-ink/60 text-xs font-semibold uppercase tracking-wider">
-            {product.unit_mode === 'quantity' ? 'Pack' : 'Size'}
-          </p>
+          <p className="field-label">{product.unit_mode === 'quantity' ? 'Pack' : 'Size'}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.variants.map((v) => {
               const selected = v.id === active.id;
@@ -87,14 +89,14 @@ export function VariantSelector({ product }: VariantSelectorProps) {
                   onClick={() => setActiveId(v.id)}
                   aria-pressed={selected}
                   className={cn(
-                    'focus-visible:ring-theme-accent inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2',
+                    'focus-visible:ring-theme-accent inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                     selected
-                      ? 'border-theme-accent bg-theme-accent shadow-soft text-[color:var(--theme-base)]'
-                      : 'bg-surface-elevated text-theme-ink hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
+                      ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
+                      : 'bg-surface-elevated text-theme-ink hover:border-theme-accent hover:text-theme-accent border-[color:var(--color-border)]',
                   )}
                 >
                   <span>{v.title}</span>
-                  <span className={cn('text-xs', selected ? 'opacity-80' : 'opacity-60')}>
+                  <span className={cn('field-value text-xs', selected ? 'opacity-80' : 'opacity-60')}>
                     {formatMoney(v.price)}
                   </span>
                 </button>
@@ -111,11 +113,12 @@ export function VariantSelector({ product }: VariantSelectorProps) {
         ) : lowStock ? (
           <span className="font-semibold text-amber-800">Only {active.stock_available} left</span>
         ) : (
-          <span className="text-theme-ink/70">In stock · ships today</span>
+          /* Dispatch state is live state — the live mark's job. */
+          <span className="live-mark">In stock · ships today</span>
         )}
         <span className="text-theme-ink/60">·</span>
         <span className="text-theme-ink/70">
-          SKU <span className="font-mono text-xs">{active.sku}</span>
+          SKU <span className="field-value text-xs">{active.sku}</span>
         </span>
       </div>
 

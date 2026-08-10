@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Calendar } from 'lucide-react';
-import { Paisley, PaisleyDivider } from '@/components/brand/paisley';
+import { ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 
 export const metadata: Metadata = {
-  title: 'Festival editions',
+  title: 'Festival Sweet Boxes & Gift Hampers',
   description:
-    'Curated boxes for every Indian festival — Diwali, Raksha Bandhan, Eid, Holi, Pongal, Sankranti, Ugadi, Onam, Ganesh Chaturthi, Christmas — slow-cooked in our Khammam kitchen.',
+    'Curated boxes for Diwali, Raksha Bandhan, Eid, Holi, Pongal, Sankranti, Ugadi and Onam — made the morning they ship.',
+  alternates: { canonical: '/festivals' },
 };
 
 interface FestivalRow {
@@ -117,9 +117,28 @@ const FESTIVALS: FestivalRow[] = [
   },
 ];
 
-function dayString(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+/** Dispatch needs three clear days before the festival for the fresh range. */
+const ORDER_BY_LEAD_DAYS = 3;
+
+/*
+ * Date maths pinned to the ISO day and formatted in UTC, so the static export
+ * renders the same sheet regardless of the build machine's timezone.
+ */
+function orderByDay(iso: string): string {
+  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - ORDER_BY_LEAD_DAYS);
+  return d.toISOString().slice(0, 10);
+}
+
+function formatSheetDate(iso: string): string {
+  return new Date(`${iso.slice(0, 10)}T12:00:00Z`)
+    .toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+    .toUpperCase();
 }
 
 function compareDate(a: FestivalRow, b: FestivalRow): number {
@@ -134,20 +153,14 @@ export default function FestivalsIndexPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="container-site py-16 md:py-24">
+      {/* Hero — no kicker, no paisley: the heading carries itself. */}
+      <section className="container-site section-y">
         <Reveal>
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Festival editions
-          </p>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 max-w-4xl leading-[1.02]">
-            A year of festivals, <span className="text-theme-accent italic">one kitchen.</span>
+          <h1 className="font-display text-display-lg md:text-display-xl text-theme-ink max-w-4xl">
+            A year of festivals, one kitchen.
           </h1>
         </Reveal>
-        <Reveal delay={0.14}>
+        <Reveal delay={0.1}>
           <p className="text-theme-ink/75 mt-6 max-w-2xl text-lg leading-relaxed">
             Ten festivals, ten boxes. From the Pongal clay pot in January to the Christmas Eve tin
             in December — every edition is curated, slow-cooked, and shipped from our Khammam
@@ -156,24 +169,21 @@ export default function FestivalsIndexPage() {
         </Reveal>
       </section>
 
-      <PaisleyDivider className="container-site" />
-
       {/* Upcoming */}
       {upcoming.length > 0 && (
-        <section aria-labelledby="upcoming-heading" className="container-site py-14">
-          <Reveal className="mb-8 flex items-end justify-between gap-4">
-            <h2
-              id="upcoming-heading"
-              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
-            >
-              Upcoming editions
-            </h2>
-            <p className="text-theme-ink/55 hidden text-xs font-semibold uppercase tracking-wider md:block">
-              Reserve early — priority list opens 6 weeks ahead
-            </p>
+        <section aria-labelledby="upcoming-heading" className="container-site section-y-tight">
+          <Reveal>
+            <div className="docket-head">
+              <h2 id="upcoming-heading" className="font-display text-display-md">
+                Upcoming editions
+              </h2>
+              <p className="text-text-muted text-[13px]">
+                Reserve early — priority list opens 6 weeks ahead
+              </p>
+            </div>
           </Reveal>
 
-          <Stagger gap={70} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger gap={70} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {upcoming.map((f) => (
               <FestivalCard key={f.slug} f={f} />
             ))}
@@ -183,21 +193,22 @@ export default function FestivalsIndexPage() {
 
       {/* Past — kept for archive */}
       {past.length > 0 && (
-        <section aria-labelledby="past-heading" className="container-site py-14">
-          <Reveal className="mb-8">
-            <h2
-              id="past-heading"
-              className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.05]"
-            >
-              Recent editions
-            </h2>
-            <p className="text-theme-ink/65 mt-2 text-sm">
-              These pages remain live so corporate accounts can reorder from past festival hampers,
-              or browse for next year.
-            </p>
+        <section aria-labelledby="past-heading" className="container-site section-y-tight">
+          <Reveal>
+            <div className="docket-head">
+              <div>
+                <h2 id="past-heading" className="font-display text-display-md">
+                  Recent editions
+                </h2>
+                <p className="text-text-muted mt-2 max-w-2xl text-sm">
+                  These pages remain live so corporate accounts can reorder from past festival
+                  hampers, or browse for next year.
+                </p>
+              </div>
+            </div>
           </Reveal>
 
-          <Stagger gap={70} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger gap={70} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {past.map((f) => (
               <FestivalCard key={f.slug} f={f} />
             ))}
@@ -208,48 +219,42 @@ export default function FestivalsIndexPage() {
   );
 }
 
+/**
+ * A festival as a small dispatch sheet: name, script, the two dates that
+ * matter, and the blurb. The ground never moves — the festival's ink shows
+ * only in the stamped Telugu mark, the same docket filed in a different ink.
+ * ORDER BY is the festival date minus three clear dispatch days.
+ */
 function FestivalCard({ f }: { f: FestivalRow }) {
   return (
     <Link
       href={`/festivals/${f.slug}`}
-      className="hover:shadow-lifted group relative flex min-h-[16rem] flex-col justify-between overflow-hidden rounded-2xl p-6 ring-1 ring-[color:var(--color-border)] transition-all duration-300 hover:-translate-y-0.5"
-      style={{ backgroundColor: f.palette.base, color: f.palette.ink }}
+      className="docket group flex h-full flex-col p-5 transition-shadow duration-200 hover:shadow-lifted"
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background: `radial-gradient(ellipse at 80% 20%, ${f.palette.accent}33 0%, transparent 60%)`,
-        }}
-        aria-hidden="true"
-      />
-      <div className="relative">
-        <p
-          className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em]"
-          style={{ color: f.palette.accent }}
-        >
-          <Calendar className="h-3 w-3" aria-hidden="true" />
-          {f.monthLabel} · {dayString(f.date)}
-        </p>
-        <h3 className="font-display mt-3 text-2xl leading-tight">{f.title}</h3>
-        <p
-          className="mt-1 text-base"
-          style={{ fontFamily: 'var(--font-indic)', color: f.palette.accent }}
-        >
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="font-display text-theme-ink text-xl leading-tight">{f.title}</h3>
+        <span className="font-indic text-base leading-none" style={{ color: f.palette.accent }}>
           {f.telugu}
-        </p>
+        </span>
       </div>
-      <div className="relative">
-        <p className="text-sm leading-relaxed" style={{ color: f.palette.ink, opacity: 0.85 }}>
-          {f.blurb}
-        </p>
-        <div
-          className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider transition-transform duration-300 group-hover:translate-x-1"
-          style={{ color: f.palette.accent }}
-        >
-          See the box
-          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+
+      <dl className="mt-4">
+        <div className="field-row">
+          <dt className="field-label">Festival</dt>
+          <dd className="field-value text-sm">{formatSheetDate(f.date)}</dd>
         </div>
-      </div>
+        <div className="field-row">
+          <dt className="field-label">Order by</dt>
+          <dd className="field-value text-sm font-bold">{formatSheetDate(orderByDay(f.date))}</dd>
+        </div>
+      </dl>
+
+      <p className="text-text-muted mt-3 text-[13px] leading-relaxed">{f.blurb}</p>
+
+      <span className="text-theme-accent group-hover:text-theme-ink mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium transition-colors">
+        See the box
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </span>
     </Link>
   );
 }

@@ -3,14 +3,13 @@
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight, X } from 'lucide-react';
 import type { Product } from '@ravisweets/shared';
 import { VariantSelector } from '@/components/product/variant-selector';
-import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
-import { Garnish } from '@/components/motion/garnish';
 import { TextKinetic } from '@/components/motion/text-kinetic';
+import { isUsableImage } from '@/lib/images';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
@@ -23,6 +22,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
   const reduced = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const [imgFailed, setImgFailed] = useState(false);
 
   const close = useCallback(() => {
     router.back();
@@ -69,6 +69,10 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
   const primaryImage = product.images[0];
   if (!primaryImage) return null;
 
+  // Decided at render (see lib/images.ts) — a dead catalogue URL never
+  // becomes a request or a `priority` preload.
+  const imageUsable = isUsableImage(primaryImage.url) && !imgFailed;
+
   return (
     <AnimatePresence>
       <motion.div
@@ -87,10 +91,10 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
           type="button"
           aria-label="Close quick view"
           onClick={close}
-          className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+          className="bg-theme-ink/60 absolute inset-0 focus-visible:outline-none"
         />
 
-        {/* Panel */}
+        {/* Panel — a docket sheet lifted off the counter. */}
         <motion.div
           ref={panelRef}
           layoutId={reduced ? undefined : `qv-panel-${product.slug}`}
@@ -98,7 +102,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
           animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 20 }}
           transition={{ duration: reduced ? DURATION.fast : DURATION.slow, ease: EASE.emphasised }}
-          className="bg-surface shadow-lifted relative z-10 grid w-full max-w-5xl overflow-hidden rounded-[2rem] ring-1 ring-[color:var(--color-border)] md:grid-cols-[1.05fr_1fr]"
+          className="bg-surface-elevated shadow-lifted relative z-10 grid w-full max-w-5xl overflow-hidden rounded-lg border border-[color:var(--color-border)] md:grid-cols-[1.05fr_1fr]"
           style={{ maxHeight: 'calc(100vh - 4rem)' }}
         >
           {/* Close button */}
@@ -107,55 +111,45 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
             type="button"
             onClick={close}
             aria-label="Close"
-            className="focus-visible:ring-theme-accent absolute right-4 top-4 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2"
+            className="bg-theme-ink focus-visible:ring-theme-accent hover:bg-theme-ink/80 absolute right-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-md text-[color:var(--theme-base)] transition-colors focus-visible:outline-none focus-visible:ring-2"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
 
-          {/* Image — shared-element morph from the listing card */}
+          {/* The plate — shared-element morph from the listing card. The
+              flavour wash grounds it whether or not a photograph exists. */}
           <motion.div
             layoutId={reduced ? undefined : `product-image-${product.slug}`}
             className="relative aspect-square md:aspect-auto md:min-h-[28rem]"
+            style={{ backgroundColor: product.theme_palette.glow + '33' }}
           >
-            <Image
-              src={primaryImage.url}
-              alt={primaryImage.alt}
-              fill
-              priority
-              sizes="(min-width: 1024px) 520px, (min-width: 640px) 50vw, 95vw"
-              className="object-cover"
-            />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to top, color-mix(in oklab, var(--theme-ink) 40%, transparent) 0%, transparent 50%)',
-              }}
-              aria-hidden="true"
-            />
+            {imageUsable ? (
+              <Image
+                src={primaryImage.url}
+                alt={primaryImage.alt}
+                fill
+                priority
+                sizes="(min-width: 1024px) 520px, (min-width: 640px) 50vw, 95vw"
+                className="object-cover"
+                onError={() => setImgFailed(true)}
+              />
+            ) : (
+              /* The in-world fallback: the dashed specimen plate. */
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                aria-hidden="true"
+              >
+                <span
+                  className="block h-16 w-16 rotate-45 border-2 border-dashed"
+                  style={{ borderColor: product.theme_palette.accent, opacity: 0.4 }}
+                />
+              </div>
+            )}
             <Grain />
-            {!reduced && <Garnish mark={product.garnish} seed={`qv-${product.id}`} count={10} />}
-            <div
-              className="text-theme-glow pointer-events-none absolute left-4 top-4 opacity-80"
-              aria-hidden="true"
-            >
-              <Paisley size="md" rotate={20} />
-            </div>
-            <div
-              className="absolute bottom-4 right-4 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur"
-              aria-label="Placeholder image — dev only"
-            >
-              Dev only
-            </div>
           </motion.div>
 
           {/* Info */}
           <div className="flex flex-col gap-5 overflow-y-auto p-6 md:p-8">
-            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              Quick view
-            </p>
-
             <TextKinetic
               as="h2"
               text={product.title}
@@ -185,33 +179,28 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               <VariantSelector product={product} />
             </motion.div>
 
+            {/* The record: ruled label/value rows, values in the typed face. */}
             <motion.dl
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: DURATION.slow, delay: 0.34, ease: EASE.emphasised }}
-              className="grid grid-cols-3 gap-3 border-t border-[color:var(--color-border)] pt-5 text-sm"
+              className="border-t border-[color:var(--color-border)] pt-2"
             >
-              <div>
-                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
-                  Shelf life
-                </dt>
-                <dd className="font-display text-theme-ink mt-1 text-base">
-                  {product.shelf_life_days}d
+              <div className="field-row">
+                <dt className="field-label">Shelf life</dt>
+                <dd className="field-value text-theme-ink text-sm font-bold">
+                  {product.shelf_life_days} DAYS
                 </dd>
               </div>
-              <div>
-                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
-                  Weight
-                </dt>
-                <dd className="font-display text-theme-ink mt-1 text-base">
-                  {product.variants[0]?.weight_grams}g
+              <div className="field-row">
+                <dt className="field-label">Weight</dt>
+                <dd className="field-value text-theme-ink text-sm font-bold">
+                  {product.variants[0]?.weight_grams} G
                 </dd>
               </div>
-              <div>
-                <dt className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
-                  From
-                </dt>
-                <dd className="font-display text-theme-ink mt-1 text-base">Khammam</dd>
+              <div className="field-row">
+                <dt className="field-label">Kitchen</dt>
+                <dd className="field-value text-theme-ink text-sm font-bold">KHAMMAM</dd>
               </div>
             </motion.dl>
 
@@ -229,7 +218,7 @@ export function QuickViewModal({ product }: QuickViewModalProps) {
               */}
               <a
                 href={`/product/${product.slug}`}
-                className="text-theme-ink/80 hover:text-theme-accent group inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+                className="text-theme-ink/80 hover:text-theme-accent group inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline underline-offset-4 transition-colors"
               >
                 View full details
                 <ArrowRight

@@ -10,7 +10,7 @@ import {
   type HamperItem,
   type RibbonColor,
 } from '@ravisweets/shared';
-import { Paisley } from '@/components/brand/paisley';
+import { isUsableImage } from '@/lib/images';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
@@ -51,22 +51,20 @@ export function HamperCanvas({
   const isDarkBox = box === 'lacquered-brass';
 
   return (
-    <section
-      aria-labelledby="canvas-heading"
-      className="bg-surface-elevated flex flex-col gap-4 rounded-2xl border border-[color:var(--color-border)] p-5"
-    >
-      <div className="flex items-center justify-between">
+    <section aria-labelledby="canvas-heading" className="docket flex flex-col gap-4 p-5">
+      <div className="docket-head mb-0">
         <h2 id="canvas-heading" className="font-display text-theme-ink text-lg">
           Your hamper
         </h2>
-        <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-          {items.length}/30 item types
-        </span>
+        <p className="flex items-baseline gap-1.5">
+          <span className="field-value text-theme-ink text-sm">{items.length}/30</span>
+          <span className="field-label">item types</span>
+        </p>
       </div>
 
       {/* Stylised box preview */}
       <div
-        className="shadow-soft relative min-h-[18rem] overflow-hidden rounded-2xl p-6"
+        className="shadow-soft relative min-h-[18rem] overflow-hidden rounded-lg p-6"
         style={{ backgroundColor: boxColour.bg, border: `2px solid ${boxColour.border}` }}
       >
         {/* Ribbon stripe down the centre of the box */}
@@ -77,7 +75,7 @@ export function HamperCanvas({
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
+          className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-md px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]"
           style={{
             backgroundColor: isDarkBox ? '#fdf6ec' : '#2a1505',
             color: isDarkBox ? '#2a1505' : '#fdf6ec',
@@ -86,8 +84,7 @@ export function HamperCanvas({
           Ravi Sweets
         </div>
         {logoPrint && (
-          <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-            <Paisley size="sm" color="#f2c66f" />
+          <div className="absolute right-3 top-3 rounded-md bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
             Your logo
           </div>
         )}
@@ -126,25 +123,40 @@ export function HamperCanvas({
                     animate={{ opacity: 1, scale: 1 }}
                     exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.7 }}
                     transition={{ duration: DURATION.quick, ease: EASE.emphasised }}
-                    className="group relative flex w-36 flex-col gap-1 rounded-xl p-2"
+                    className="group relative flex w-36 flex-col gap-1 rounded-lg p-2"
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.85)',
                       border: `1px solid ${stockShort ? '#c0392b' : boxColour.border}`,
                     }}
                   >
-                    <div className="relative aspect-square overflow-hidden rounded-lg">
-                      <Image
-                        src={img.url}
-                        alt={img.alt}
-                        fill
-                        sizes="144px"
-                        className="object-cover"
-                      />
+                    <div
+                      className="relative aspect-square overflow-hidden rounded-md"
+                      style={{ backgroundColor: product.theme_palette.glow + '33' }}
+                    >
+                      {isUsableImage(img.url) ? (
+                        <Image
+                          src={img.url}
+                          alt={img.alt}
+                          fill
+                          sizes="144px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="absolute inset-0 flex items-center justify-center"
+                          aria-hidden="true"
+                        >
+                          <span
+                            className="block h-8 w-8 rotate-45 border-2 border-dashed"
+                            style={{ borderColor: product.theme_palette.accent, opacity: 0.4 }}
+                          />
+                        </div>
+                      )}
                       <button
                         type="button"
                         aria-label={`Remove ${product.title}`}
                         onClick={() => onRemove(it.lineId)}
-                        className="absolute right-1 top-1 rounded-full bg-black/55 p-1 text-white opacity-0 backdrop-blur transition-opacity duration-200 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white group-hover:opacity-100"
+                        className="absolute right-1 top-1 rounded-md bg-black/55 p-1 text-white opacity-0 transition-opacity duration-200 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white group-hover:opacity-100"
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
                       </button>
@@ -158,7 +170,7 @@ export function HamperCanvas({
                         aria-label={`Variant for ${product.title}`}
                         value={it.variantId}
                         onChange={(e) => onSwapVariant(it.lineId, e.target.value)}
-                        className="bg-surface text-theme-ink focus-visible:ring-theme-accent w-full rounded border border-[color:var(--color-border)] px-1.5 py-0.5 text-[10px] font-medium focus-visible:outline-none focus-visible:ring-2"
+                        className="bg-surface text-theme-ink focus-visible:ring-theme-accent w-full rounded-md border border-[color:var(--color-border)] px-1.5 py-0.5 text-[10px] font-medium focus-visible:outline-none focus-visible:ring-2"
                       >
                         {product.variants.map((v) => (
                           <option key={v.id} value={v.id}>
@@ -169,23 +181,23 @@ export function HamperCanvas({
                     ) : (
                       <p className="text-theme-ink/55 text-[10px]">{variant.title}</p>
                     )}
-                    <div className="bg-surface mt-1 inline-flex items-center justify-between rounded-full border border-[color:var(--color-border)]">
+                    <div className="bg-surface mt-1 inline-flex items-center justify-between rounded-md border border-[color:var(--color-border)]">
                       <button
                         type="button"
                         onClick={() => onUpdateQty(it.lineId, it.qtyPerHamper - 1)}
                         aria-label={`Decrease ${product.title}`}
-                        className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                        className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
                       >
                         <Minus className="h-3 w-3" aria-hidden="true" />
                       </button>
-                      <span className="text-theme-ink min-w-6 text-center text-[11px] font-semibold tabular-nums">
+                      <span className="field-value text-theme-ink min-w-6 text-center text-[11px] font-bold">
                         × {it.qtyPerHamper}
                       </span>
                       <button
                         type="button"
                         onClick={() => onUpdateQty(it.lineId, it.qtyPerHamper + 1)}
                         aria-label={`Increase ${product.title}`}
-                        className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                        className="text-theme-ink/60 hover:bg-theme-glow/20 hover:text-theme-ink focus-visible:ring-theme-accent rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2"
                       >
                         <Plus className="h-3 w-3" aria-hidden="true" />
                       </button>
@@ -205,7 +217,7 @@ export function HamperCanvas({
         {/* Message preview */}
         {message && (
           <div
-            className="font-display relative mt-6 rounded-lg p-3 text-center text-sm italic"
+            className="font-display relative mt-6 rounded-md p-3 text-center text-sm italic"
             style={{
               backgroundColor: isDarkBox ? 'rgba(253,246,236,0.9)' : 'rgba(42,21,5,0.05)',
               color: isDarkBox ? '#2a1505' : '#3a1e0c',
@@ -218,15 +230,15 @@ export function HamperCanvas({
         {/* Finish label */}
         <p
           className={cn(
-            'relative mt-4 text-center text-[10px] font-semibold uppercase tracking-[0.22em]',
-            isDarkBox ? 'text-[#fdf6ec]/70' : 'text-theme-ink/50',
+            'field-label relative mt-4 text-center',
+            isDarkBox && 'text-[#fdf6ec]/70',
           )}
         >
           Finish · {boxColour.label}
         </p>
 
         {/* Dev-only */}
-        <div className="absolute bottom-2 left-2 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur">
+        <div className="absolute bottom-2 left-2 rounded-md bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white">
           Dev preview
         </div>
       </div>

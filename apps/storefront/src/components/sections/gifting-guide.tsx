@@ -5,6 +5,7 @@ import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { Parallax } from '@/components/motion/parallax';
 import { cn } from '@/lib/cn';
+import { pendingPhoto } from '@/lib/images';
 
 /**
  * The katli cut — a 45-degree diamond, the shape kaju katli is actually cut
@@ -61,7 +62,7 @@ const PERSONAS: Persona[] = [
     body: 'Silk-wrapped hampers, silver-leaf tags, and a signature katli seal. Priority list opens in September.',
     href: '/festivals/diwali',
     image:
-      'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+      pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png'),
     panel: 'bg-field',
     // Ink on the marigold field — 7.12:1. field-deep measured 4.40:1 here,
     // just under AA, so this card can't use the deep-rose text the others do.
@@ -74,7 +75,7 @@ const PERSONAS: Persona[] = [
     title: 'Weddings',
     body: 'Custom trousseau boxes, bulk sangeet favours, and personalised name-cards. Minimum 50 units.',
     href: '/corporate#enquiry',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/badam_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/badam_katli-removebg-preview.png'),
     register: 'dusk',
     panel: 'bg-surface',
     // Inside dusk this is marigold on plum.
@@ -87,7 +88,7 @@ const PERSONAS: Persona[] = [
     title: 'Corporate',
     body: 'Logo-printed packaging, multi-address CSV dispatch, GST-compliant invoices. One account manager per order.',
     href: '/corporate',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
+    image: pendingPhoto('2025/09/cashew_mithai-removebg-preview.png'),
     panel: 'bg-surface-elevated',
     eyebrowTone: 'text-theme-accent',
     bodyTone: 'text-text-muted',

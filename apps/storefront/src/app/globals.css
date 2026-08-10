@@ -4,102 +4,130 @@
 
 @layer base {
   /*
-   * ROSE & CREAM. These :root values are first-paint defaults only — every
-   * one of them is overwritten at runtime by applyPalette() (see
-   * src/lib/theme/apply-palette.ts). Keep them byte-identical to
-   * ROSE_CREAM in src/lib/theme/palette.ts.
+   * THE DOCKET. These :root values are first-paint defaults only — every one
+   * of them is overwritten at runtime by applyPalette() (see
+   * src/lib/theme/apply-palette.ts). Keep them byte-identical to DOCKET in
+   * src/lib/theme/palette.ts.
    */
   :root {
-    --theme-base: #faf5e9;
-    --theme-accent: #a8345d;
-    --theme-glow: #e8a13c;
-    --theme-ink: #2e2118;
-    --theme-grain-opacity: 0.05;
+    --theme-base: #e9eae4;
+    --theme-accent: #2046c8;
+    --theme-glow: #ebc77e;
+    --theme-ink: #161c24;
+    --theme-grain-opacity: 0.04;
 
-    --color-surface: #faf5e9;
-    --color-surface-elevated: #fffdf6;
-    --color-text-primary: #2e2118;
-    --color-text-muted: #6b5a48;
-    --color-accent: #a8345d;
-    --color-ring: #a8345d;
+    --color-surface: #e9eae4;
+    --color-surface-elevated: #f6f7f3;
+    --color-text-primary: #161c24;
+    --color-text-muted: #565f68;
+    --color-accent: #2046c8;
+    --color-ring: #2046c8;
 
     /* Channel twins so Tailwind opacity modifiers work (see tailwind.config.ts). */
-    --theme-base-rgb: 250 245 233;
-    --theme-accent-rgb: 168 52 93;
-    --theme-glow-rgb: 232 161 60;
-    --theme-ink-rgb: 46 33 24;
-    --color-surface-rgb: 250 245 233;
-    --color-surface-elevated-rgb: 255 253 246;
-    --color-text-primary-rgb: 46 33 24;
-    --color-text-muted-rgb: 107 90 72;
-    --color-accent-rgb: 168 52 93;
+    --theme-base-rgb: 233 234 228;
+    --theme-accent-rgb: 32 70 200;
+    --theme-glow-rgb: 235 199 126;
+    --theme-ink-rgb: 22 28 36;
+    --color-surface-rgb: 233 234 228;
+    --color-surface-elevated-rgb: 246 247 243;
+    --color-text-primary-rgb: 22 28 36;
+    --color-text-muted-rgb: 86 95 104;
+    --color-accent-rgb: 32 70 200;
 
     /* Non-authored brand constants. */
-    --color-field-deep: #7c2344;
-    --color-varak: #b08d57;
-    --color-varak-rule: #9c7c45;
+    --color-field-deep: #16328f;
+    --color-varak: #8a9099;
+    --color-varak-rule: #6b737b;
 
     /*
-     * Alpha border: 12% ink over transparent. This is the one semantic token
+     * EMBER — live state only: "made today", "dispatching now". Never a
+     * decorative accent. It is not part of the authored register set
+     * precisely so an admin theme change cannot spread it.
+     */
+    --color-ember: #e2571f;
+    --color-ember-rgb: 226 87 31;
+
+    /*
+     * BRAND RED — kumkum ink. Celebration and certification: the dispatch
+     * seal, the ticker ground, festival line-work, sale stamps. Owner-directed
+     * ("use the logo red here and there"). DERIVED from the logo supplied
+     * 2026-08-07: the mark's wordmark is pure #FF0000, which fails AA as ink
+     * (3.30:1 on manila, 4.00:1 under white). The artwork keeps #FF0000; this
+     * token darkens on the same hue to #CC0000 — 4.86:1 on the docket ground,
+     * 5.89:1 under white. Change it HERE and in palette.ts BRAND_RED,
+     * nowhere else.
+     *
+     * Discipline: red is INK or a narrow band, never a background flood; blue
+     * keeps the interactive monopoly; ember keeps live state. Red and ember
+     * sit 17deg apart in hue but two value tiers apart — do not merge them,
+     * and never use red as ink on the carbon register (1.97:1, illegible);
+     * on carbon it may only be a ground under white text.
+     */
+    --color-brand: #cc0000;
+    --color-brand-rgb: 204 0 0;
+
+    /*
+     * Alpha border: 14% ink over transparent. This is the one semantic token
      * NOT derived in applyPalette, because it needs no polarity branch — but
      * that also means it does NOT "float" and re-resolve per register on its
      * own. A custom property's var() references substitute using the cascade
      * at the element where that property is *declared*, not where it's later
      * consumed — so a --color-border declared only here freezes to light
      * --theme-ink the moment this is computed, and stays frozen wherever it's
-     * inherited, including inside [data-register='dusk']. That's why the dusk
-     * block below carries its own --color-border declaration, re-pointed at
-     * dusk ink: without it, borders drawn inside dusk subtrees silently used
-     * light-register ink at ~12% instead of dusk ink.
+     * inherited, including inside [data-register='carbon']. That's why the
+     * carbon block below carries its own --color-border declaration.
      */
-    --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
+    --color-border: color-mix(in oklab, var(--theme-ink) 14%, transparent);
+    /* The ruled line on a form — heavier than a border, always horizontal. */
+    --color-rule: color-mix(in oklab, var(--theme-ink) 26%, transparent);
 
-    --font-display: 'Young Serif', Georgia, serif;
-    --font-body: 'Anek Latin', system-ui, sans-serif;
+    --font-display: 'Archivo', system-ui, sans-serif;
+    --font-body: 'Archivo', system-ui, sans-serif;
+    --font-mono: 'Courier Prime', ui-monospace, monospace;
     --font-indic: 'Anek Telugu', var(--font-body);
   }
 
   /*
-   * DUSK REGISTER. Any subtree opts in with data-register="dusk" and
+   * THE CARBON COPY. Any subtree opts in with data-register="carbon" and
    * re-themes with zero component changes, because custom properties resolve
-   * to the nearest declaring ancestor. Values match DUSK_TOKENS in palette.ts.
+   * to the nearest declaring ancestor. Values match CARBON_TOKENS in
+   * palette.ts.
+   *
+   * `dusk` is accepted as a legacy alias so markup from the retired world
+   * keeps working during migration. Remove it once no component emits it.
    */
+  [data-register='carbon'],
   [data-register='dusk'] {
-    --theme-base: #3a1f31;
-    --theme-accent: #e8a13c;
-    --theme-glow: #7c2344;
-    --theme-ink: #f6ead8;
-    --theme-grain-opacity: 0.07;
+    --theme-base: #232a2e;
+    --theme-accent: #e9eae4;
+    --theme-glow: #16328f;
+    --theme-ink: #e8ebe6;
+    --theme-grain-opacity: 0.06;
 
-    --color-surface: #3a1f31;
-    --color-surface-elevated: #4a2a3f;
-    --color-text-primary: #f6ead8;
-    --color-text-muted: #cbb3a6;
-    --color-accent: #e8a13c;
-    --color-ring: #e8a13c;
+    --color-surface: #232a2e;
+    --color-surface-elevated: #2e373c;
+    --color-text-primary: #e8ebe6;
+    --color-text-muted: #a3adb3;
+    --color-accent: #e9eae4;
+    --color-ring: #e9eae4;
 
-    --theme-base-rgb: 58 31 49;
-    --theme-accent-rgb: 232 161 60;
-    --theme-glow-rgb: 124 35 68;
-    --theme-ink-rgb: 246 234 216;
-    --color-surface-rgb: 58 31 49;
-    --color-surface-elevated-rgb: 74 42 63;
-    --color-text-primary-rgb: 246 234 216;
-    --color-text-muted-rgb: 203 179 166;
-    --color-accent-rgb: 232 161 60;
+    --theme-base-rgb: 35 42 46;
+    --theme-accent-rgb: 233 234 228;
+    --theme-glow-rgb: 22 50 143;
+    --theme-ink-rgb: 232 235 230;
+    --color-surface-rgb: 35 42 46;
+    --color-surface-elevated-rgb: 46 55 60;
+    --color-text-primary-rgb: 232 235 230;
+    --color-text-muted-rgb: 163 173 179;
+    --color-accent-rgb: 233 234 228;
 
-    --color-field-deep: #7c2344;
-    --color-varak: #d9c6a8;
-    --color-varak-rule: #d9c6a8;
+    --color-field-deep: #16328f;
+    --color-varak: #a8b2b8;
+    --color-varak-rule: #a8b2b8;
 
-    /* Raw anchors for scene-local lightening (.ss-soft) — same values as the
-       register's own base/glow, so a subtree can mix from them without a
-       circular var() reference. */
-    --dusk-base-raw: #3a1f31;
-    --dusk-glow-raw: #7c2344;
-
-    /* Re-pointed at dusk ink — see the long comment on the :root declaration. */
-    --color-border: color-mix(in oklab, var(--theme-ink) 12%, transparent);
+    /* Re-pointed at carbon ink — see the long comment on the :root declaration. */
+    --color-border: color-mix(in oklab, var(--theme-ink) 16%, transparent);
+    --color-rule: color-mix(in oklab, var(--theme-ink) 30%, transparent);
 
     background-color: var(--theme-base);
     color: var(--theme-ink);
@@ -121,19 +149,29 @@
       color 250ms cubic-bezier(0.2, 0, 0, 1);
   }
 
+  /*
+   * Display lines are the stamped/printed head of a form: Archivo pushed wide
+   * and tight. The wdth axis carries hierarchy here, so headings do not need
+   * to reach for weight alone.
+   */
   h1,
   h2,
   h3,
   .font-display {
     font-family: var(--font-display);
-    /*
-     * Young Serif ships ONE weight (400). Without this the browser synthesises
-     * bold wherever font-semibold/font-bold is present — 197 call sites — and
-     * faux-bold on a display serif looks broken. Display hierarchy comes from
-     * size, never weight.
-     */
-    font-synthesis: none;
-    font-synthesis-weight: none;
+    font-variation-settings: 'wdth' 112;
+    letter-spacing: -0.015em;
+  }
+
+  /*
+   * Recorded values — batch numbers, dates, weights, prices in a spec table.
+   * `tabular-nums` is not optional: a column of prices that does not align is
+   * the exact failure this world exists to avoid.
+   */
+  .font-mono,
+  .field-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
   }
 
   :focus-visible {
@@ -142,8 +180,8 @@
   }
 
   ::selection {
-    background: var(--theme-glow);
-    color: var(--theme-ink);
+    background: var(--theme-accent);
+    color: var(--theme-base);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -162,8 +200,34 @@
 }
 
 @layer components {
+  /*
+   * ONE container. Every surface on this site uses this and nothing else.
+   * The audit found five competing max-widths and four horizontal padding
+   * ramps across 40 routes; that is the single largest reason the site did
+   * not read as one product.
+   *
+   * 1280px, not 1200: the catalogue grid needs four comfortable columns at
+   * xl, and the retired 1200px cap forced /shop down to three.
+   */
   .container-site {
-    @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Wide variant — dense tables and the admin console only. */
+  .container-wide {
+    @apply mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8;
+  }
+
+  /*
+   * ONE vertical rhythm. Sections declare their own spacing with these two
+   * classes and never with ad-hoc py-*. More space above a heading than
+   * below it is enforced by .docket-head, below.
+   */
+  .section-y {
+    @apply py-14 md:py-20;
+  }
+  .section-y-tight {
+    @apply py-8 md:py-12;
   }
 
   .grain-overlay {
@@ -171,619 +235,247 @@
     inset: 0;
     pointer-events: none;
     opacity: var(--theme-grain-opacity);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.85 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.09  0 0 0 0 0.11  0 0 0 0 0.14  0 0 0 0.85 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     mix-blend-mode: multiply;
   }
 
   /* multiply makes grain invisible on a dark ground. */
+  [data-register='carbon'] .grain-overlay,
   [data-register='dusk'] .grain-overlay {
     mix-blend-mode: screen;
   }
 
   /*
-   * ─── THE SHOP AT DUSK ─────────────────────────────────────────────────
-   * Hero scene (components/hero/shop-scene.tsx). Every colour is derived
-   * from the dusk register's tokens via color-mix — zero hex literals, so
-   * the scene re-themes with admin presets and costs the colour ratchet
-   * nothing. All looping animations move only transform/opacity; glows
-   * that "breathe" do so by fading a pre-painted overlay, never by
-   * animating box-shadow. The global prefers-reduced-motion rule freezes
-   * every one of these automatically.
+   * ─── THE DOCKET GRAMMAR ────────────────────────────────────────────────
+   * Everything below is the form itself: the sheet, the ruled row, the field
+   * label, the stamp. These five classes replace the ~40 hand-built card and
+   * button variants the audit counted across the tree. If a new surface needs
+   * a container, it uses .docket — it does not invent a rounded-2xl.
    */
-  /* Scene-derived colours — declared on the register so any dusk band
-     (counters, festival, story) can reuse the scene's atoms. */
-  [data-register='dusk'],
-  .ss-stage {
-    --ss-plaster: color-mix(in oklab, var(--theme-ink) 88%, var(--theme-accent));
-    --ss-plaster-shade: color-mix(in oklab, var(--theme-ink) 68%, var(--theme-base));
-    --ss-board: color-mix(in oklab, var(--theme-base) 68%, black);
-    --ss-amber-hi: color-mix(in oklab, var(--theme-accent) 52%, white);
-    --ss-amber-glow: color-mix(in oklab, var(--theme-accent) 55%, transparent);
-    --ss-night: color-mix(in oklab, var(--theme-base) 78%, black);
-  }
-  .ss-stage {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    contain: layout paint style;
+
+  /* THE SHEET. A cut sheet of docket stock resting on the ground. */
+  .docket {
+    background-color: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    /* Softened from 3px on owner feedback — paper, but friendly paper. */
+    border-radius: 8px;
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--theme-ink) 6%, transparent),
+      0 1px 2px color-mix(in oklab, var(--theme-ink) 7%, transparent);
   }
 
   /*
-   * Softer twilight: applied to the hero's scene wrapper only. The whole
-   * scene derives from these two tokens, so lifting them lightens the sky,
-   * horizon and shop coherently; the text layer outside the wrapper keeps
-   * the register's full-contrast tokens.
+   * THE PUNCH EDGE. A perforated left margin — the stub of a torn-off
+   * docket. Applied to the hero card and order receipts, never everywhere;
+   * it is the world's signature and it cheapens on repetition.
    */
-  .ss-soft {
-    --theme-base: color-mix(in oklab, var(--dusk-base-raw) 78%, white);
-    --theme-glow: color-mix(in oklab, var(--dusk-glow-raw) 70%, white);
+  .docket--perf {
+    position: relative;
+    padding-left: 1.25rem;
   }
-  /* Depth where the words live: a quiet plum scrim over the left third so
-     the lighter sky never costs the headline its contrast. */
-  .ss-scrim {
+  .docket--perf::before {
+    content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      100deg,
-      color-mix(in oklab, var(--dusk-base-raw) 62%, transparent) 0%,
-      color-mix(in oklab, var(--dusk-base-raw) 30%, transparent) 38%,
-      transparent 62%
+    left: 0.5rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 3px;
+    background-image: radial-gradient(
+      circle at 1.5px 3px,
+      var(--color-rule) 0 1.5px,
+      transparent 1.6px
     );
-  }
-  .ss-sky {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      var(--ss-night) 0%,
-      var(--theme-base) 42%,
-      color-mix(in oklab, var(--theme-base) 55%, var(--theme-glow)) 68%,
-      color-mix(in oklab, var(--theme-glow) 52%, var(--theme-accent)) 88%,
-      color-mix(in oklab, var(--theme-accent) 42%, var(--theme-glow)) 100%
-    );
-  }
-  .ss-horizon {
-    position: absolute;
-    left: 50%;
-    bottom: -12%;
-    width: 130%;
-    height: 55%;
-    transform: translateX(-50%);
-    background: radial-gradient(
-      ellipse 60% 55% at 50% 100%,
-      color-mix(in oklab, var(--theme-accent) 30%, transparent) 0%,
-      transparent 70%
-    );
-  }
-  .ss-ground {
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 9%;
-    background: linear-gradient(180deg, transparent, var(--ss-night) 80%);
+    background-size: 3px 9px;
+    background-repeat: repeat-y;
   }
 
-  .ss-star {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--theme-ink) 85%, transparent);
-    animation: ssTwinkle 3.2s ease-in-out infinite;
+  /*
+   * THE FIELD LABEL. The pre-printed caption on a form: small, condensed,
+   * tracked, never sentence case. This is the one eyebrow pattern on the
+   * site — the audit counted eleven variants of it.
+   */
+  .field-label {
+    font-family: var(--font-display);
+    font-variation-settings: 'wdth' 84;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--color-text-muted-rgb) / 1);
   }
-  .ss-star:nth-child(3n) {
-    animation-duration: 4.4s;
+
+  /*
+   * THE RULED ROW. A label/value pair on one ruled line — the atom the whole
+   * system is built from. Used in the batch card, the spec panel, the cart
+   * summary, the checkout review and every admin detail view.
+   */
+  .field-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .field-row:last-child {
+    border-bottom: 0;
+  }
+
+  /*
+   * THE STAMP. The primary action. A rubber stamp is rectangular, sits
+   * slightly off-square, and prints with a hard edge — so this is not a pill
+   * and never a gradient.
+   */
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    background-color: var(--theme-accent);
+    color: var(--theme-base);
+    font-family: var(--font-display);
+    font-variation-settings: 'wdth' 92;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition:
+      transform 120ms cubic-bezier(0.2, 0, 0, 1),
+      box-shadow 120ms cubic-bezier(0.2, 0, 0, 1);
+    box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink) 22%, transparent);
+  }
+  /* Pressing a stamp pushes it into the paper. */
+  .stamp:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 0 color-mix(in oklab, var(--theme-ink) 22%, transparent);
+  }
+
+  /* THE COUNTERSTAMP. Secondary action: the outline, not the fill. */
+  .stamp--ghost {
+    background-color: transparent;
+    color: var(--theme-accent);
+    box-shadow: inset 0 0 0 1.5px var(--theme-accent);
+  }
+  .stamp--ghost:active {
+    transform: translateY(1px);
+  }
+
+  /*
+   * THE LIVE MARK. "Made today" / "dispatching now". Ember, and nowhere else.
+   * A dot rather than a badge so a grid of them reads as a column of state
+   * instead of a wall of colour.
+   */
+  .live-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-display);
+    font-variation-settings: 'wdth' 84;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ember);
+  }
+  .live-mark::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-ember);
+  }
+  /* Ember at 6px on the carbon ground needs lifting to stay visible. */
+  [data-register='carbon'] .live-mark,
+  [data-register='dusk'] .live-mark {
+    color: #ff8b4a;
+  }
+  [data-register='carbon'] .live-mark::before,
+  [data-register='dusk'] .live-mark::before {
+    background-color: #ff8b4a;
+  }
+
+  /*
+   * THE SECTION HEAD. One markup shape for every section heading on the site,
+   * replacing the duplicated eyebrow/h2/link cluster the audit found repeated
+   * across the homepage, shop, category, festivals and corporate surfaces.
+   * More space above than below, per the rhythm rule.
+   */
+  .docket-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-rule);
+  }
+
+  /*
+   * ─── THE FESTIVAL BATCH (hero motion) ─────────────────────────────────
+   * One authored load sequence, then stillness: headline word-groups rise
+   * (0–480ms), typed values tick in (~600ms), the red dispatch seal thunks
+   * (~900ms). Bounded loops: the ticker (compositor-only translateX), two
+   * bobbing cutouts, the ember pulse .live-mark already owns. All of it is
+   * transform/opacity, all of it is zeroed by the global reduced-motion
+   * block above — the hero must persuade as a still.
+   */
+  /* (The scrolling .fb-ticker band was removed on owner feedback.) */
+  .fb-word {
+    display: inline-block;
+    animation: fbWord 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes fbWord {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  /* Typed values completing the form — a single opacity step, like ink landing. */
+  .fb-tick {
+    animation: fbTick 0.01s step-end both;
+    animation-delay: 0.6s;
+  }
+  @keyframes fbTick {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* The dispatch seal: pressed once, on load. Rests at a hand-stamped angle. */
+  .fb-seal {
+    animation: fbSeal 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
     animation-delay: 0.9s;
   }
-  .ss-star:nth-child(3n + 1) {
-    animation-duration: 5.1s;
-    animation-delay: 1.7s;
-    width: 2px;
-    height: 2px;
-  }
-  @keyframes ssTwinkle {
-    0%,
-    100% {
-      opacity: 0.85;
-    }
-    50% {
-      opacity: 0.15;
-    }
-  }
-
-  /* ── the shopfront ── */
-  .ss-shop {
-    position: absolute;
-    bottom: 4%;
-    left: 50%;
-    width: min(78vw, 330px);
-    transform: translateX(-50%);
-    /* Above .ss-ground on every breakpoint — the ground is a plane behind
-       the shop, never a scrim over the door. */
-    z-index: 1;
-    animation: ssRise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s backwards;
-  }
-  @media (min-width: 768px) {
-    .ss-shop {
-      left: auto;
-      right: clamp(3rem, 9vw, 11rem);
-      transform: none;
-      /* Jewel scale, deliberately: the flat-colour illustration charms at
-         miniature size and turns crude when it fills half the viewport. */
-      width: clamp(320px, 28vw, 440px);
-      bottom: 6%;
-    }
-  }
-  @keyframes ssRise {
-    from {
-      opacity: 0;
-      transform: translate(var(--ss-rise-x, -50%), 26px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(var(--ss-rise-x, -50%), 0);
-    }
-  }
-  @media (min-width: 768px) {
-    .ss-shop {
-      --ss-rise-x: 0;
-    }
-  }
-
-  .ss-body {
-    position: relative;
-    height: clamp(150px, 14vw, 205px);
-    background: linear-gradient(180deg, var(--ss-plaster), var(--ss-plaster-shade) 160%);
-    border-radius: 8px 8px 0 0;
-  }
-  /* Base plinth — the shop sits on something, not on air. */
-  .ss-body::after {
-    content: '';
-    position: absolute;
-    left: -3%;
-    right: -3%;
-    top: 100%;
-    height: 6%;
-    background: color-mix(in oklab, var(--ss-plaster-shade) 70%, black);
-    border-radius: 2px;
-  }
-  .ss-sign {
-    position: absolute;
-    top: calc(-1 * clamp(2.1rem, 2.6vw, 2.8rem));
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-    width: max-content;
-    padding: 0.35rem 1.1rem;
-    text-align: center;
-    background: var(--ss-board);
-    border-radius: 6px;
-    box-shadow: 0 10px 24px -10px color-mix(in oklab, black 55%, transparent);
-    animation: ssSignDrop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.75s backwards;
-  }
-  @keyframes ssSignDrop {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -10px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-  }
-
-  .ss-awning {
-    position: absolute;
-    top: 8%;
-    left: -4%;
-    right: -4%;
-    height: 18%;
-    z-index: 3;
-    transform-origin: top center;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--theme-glow) 0 10%,
-      var(--ss-plaster) 10% 20%
-    );
-    border-radius: 6px 6px 0 0;
-    box-shadow: 0 8px 14px -8px color-mix(in oklab, black 45%, transparent);
-    animation: ssUnroll 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.3) 0.5s backwards;
-  }
-  /* Scalloped valance: cream half-discs hang from the awning's bottom edge,
-     one per stripe period (10 whole scallops, no clipped fragment). */
-  .ss-awning::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    height: 36%;
-    background: radial-gradient(circle at 50% 0, var(--ss-plaster) 53%, transparent 55%);
-    background-size: 10% 100%;
-  }
-  @keyframes ssUnroll {
-    from {
-      transform: scaleY(0.1);
-    }
-    to {
-      transform: scaleY(1);
-    }
-  }
-
-  .ss-garland {
-    position: absolute;
-    top: 30%;
-    left: 1%;
-    right: 1%;
-    height: 8%;
-    animation: ssSignDrop 0.5s ease-out 1s backwards;
-  }
-  .ss-mg {
-    position: absolute;
-    width: 3.2%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, var(--ss-amber-hi), var(--theme-accent) 70%);
-    animation: ssSway 3.4s ease-in-out infinite;
-  }
-  .ss-mg:nth-child(even) {
-    animation-duration: 4.2s;
-    animation-delay: 1.1s;
-  }
-  @keyframes ssSway {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(14%);
-    }
-  }
-
-  .ss-windows {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 42%;
-    display: flex;
-    gap: 6%;
-    height: 24%;
-  }
-  .ss-win {
-    position: relative;
-    flex: 1;
-    border-radius: 4px;
-    /* Mullions over lamplight: two uprights and a transom, so the pane reads
-       as a real display window instead of an amber slab. */
-    background:
-      linear-gradient(
-        90deg,
-        transparent calc(33.3% - 1px),
-        color-mix(in oklab, var(--ss-board) 72%, var(--theme-accent)) calc(33.3% - 1px)
-          calc(33.3% + 1px),
-        transparent calc(33.3% + 1px)
-      ),
-      linear-gradient(
-        90deg,
-        transparent calc(66.6% - 1px),
-        color-mix(in oklab, var(--ss-board) 72%, var(--theme-accent)) calc(66.6% - 1px)
-          calc(66.6% + 1px),
-        transparent calc(66.6% + 1px)
-      ),
-      linear-gradient(180deg, var(--ss-amber-hi), var(--theme-accent) 115%);
-    box-shadow:
-      inset 0 0 0 2px color-mix(in oklab, var(--ss-plaster-shade) 80%, black),
-      0 0 16px 2px color-mix(in oklab, var(--theme-accent) 38%, transparent);
-    animation: ssWinOn 0.8s ease-out backwards;
-  }
-  /* Sill board under each window. */
-  .ss-sill {
-    position: absolute;
-    left: -4%;
-    right: -4%;
-    top: 100%;
-    height: 9%;
-    min-height: 3px;
-    border-radius: 1px;
-    background: color-mix(in oklab, var(--ss-plaster-shade) 82%, black);
-  }
-  .ss-win:nth-child(1) {
-    animation-delay: 1.05s;
-  }
-  .ss-win:nth-child(2) {
-    animation-delay: 1.3s;
-  }
-  .ss-win:nth-child(3) {
-    animation-delay: 1.55s;
-  }
-  @keyframes ssWinOn {
+  @keyframes fbSeal {
     0% {
       opacity: 0;
-    }
-    55% {
-      opacity: 0.4;
+      transform: scale(1.35) rotate(-11deg);
     }
     70% {
       opacity: 1;
-    }
-    82% {
-      opacity: 0.7;
+      transform: scale(0.94) rotate(-5deg);
     }
     100% {
       opacity: 1;
-    }
-  }
-  /* the breathe: a pre-painted brighter pane whose opacity drifts */
-  .ss-win::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      circle at 50% 30%,
-      color-mix(in oklab, white 45%, transparent),
-      transparent 70%
-    );
-    animation: ssBreathe 4.6s ease-in-out infinite;
-  }
-  .ss-win:nth-child(2)::before {
-    animation-delay: 1.4s;
-  }
-  .ss-win:nth-child(3)::before {
-    animation-delay: 2.6s;
-  }
-  @keyframes ssBreathe {
-    0%,
-    100% {
-      opacity: 0.25;
-    }
-    50% {
-      opacity: 0.75;
-    }
-  }
-  .ss-shelf {
-    position: absolute;
-    left: 9%;
-    right: 9%;
-    height: 5%;
-    min-height: 3px;
-    border-radius: 2px;
-    background: color-mix(in oklab, var(--ss-board) 70%, var(--theme-accent));
-  }
-  .ss-sweet {
-    position: absolute;
-    width: 11%;
-    aspect-ratio: 1;
-    border-radius: 2px;
-    background: color-mix(in oklab, var(--theme-glow) 75%, var(--theme-accent));
-  }
-  .ss-sweet--round {
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--theme-accent) 75%, var(--theme-glow));
-  }
-  .ss-sweet--diamond {
-    transform: rotate(45deg);
-    background: color-mix(in oklab, var(--ss-plaster) 70%, var(--theme-accent));
-  }
-
-  .ss-door {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 15%;
-    height: 28%;
-    z-index: 2;
-    border-radius: 5px 5px 0 0;
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--ss-amber-hi) 85%, white),
-      var(--theme-accent) 120%
-    );
-    box-shadow:
-      inset 0 0 0 2px var(--ss-board),
-      0 0 18px 3px color-mix(in oklab, var(--theme-accent) 42%, transparent);
-  }
-  /* Transom line + twin door panels — a door, not a glowing slab. */
-  .ss-door::before {
-    content: '';
-    position: absolute;
-    inset: 18% 18% 12%;
-    border-radius: 2px;
-    background:
-      linear-gradient(
-        0deg,
-        transparent calc(52% - 1px),
-        color-mix(in oklab, var(--ss-board) 65%, var(--theme-accent)) calc(52% - 1px) calc(52% + 1px),
-        transparent calc(52% + 1px)
-      ),
-      linear-gradient(180deg, transparent, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ss-board) 60%, var(--theme-accent));
-  }
-  .ss-door::after {
-    content: '';
-    position: absolute;
-    right: 24%;
-    top: 55%;
-    width: 7%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--ss-board);
-  }
-  .ss-doorstep {
-    position: absolute;
-    bottom: -2%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 23%;
-    height: 3%;
-    min-height: 3px;
-    border-radius: 2px;
-    background: color-mix(in oklab, var(--ss-plaster-shade) 60%, black);
-    z-index: 2;
-  }
-  .ss-doorglow {
-    position: absolute;
-    bottom: -4%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 46%;
-    height: 8%;
-    background: radial-gradient(
-      ellipse 50% 100% at 50% 0%,
-      color-mix(in oklab, var(--theme-accent) 38%, transparent),
-      transparent 75%
-    );
-    animation: ssBreathe 5.2s ease-in-out 0.8s infinite;
-  }
-
-  /* ── atmosphere ── */
-  .ss-steam {
-    position: absolute;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: color-mix(in srgb, white 80%, transparent);
-    filter: blur(5px);
-    opacity: 0;
-    animation: ssSteam 5s ease-out infinite;
-  }
-  .ss-steam:nth-child(2) {
-    animation-duration: 5.8s;
-    animation-delay: 1.6s;
-  }
-  .ss-steam:nth-child(3) {
-    animation-duration: 6.6s;
-    animation-delay: 3.1s;
-  }
-  @keyframes ssSteam {
-    0% {
-      opacity: 0;
-      transform: translateY(0) scale(0.7);
-    }
-    22% {
-      opacity: 0.65;
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-84px) scale(1.7) translateX(8px);
+      transform: scale(1) rotate(-5deg);
     }
   }
 
-  .ss-firefly {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--ss-amber-hi);
-    box-shadow: 0 0 8px 2px var(--ss-amber-glow);
-    animation:
-      ssDrift 14s ease-in-out infinite,
-      ssTwinkle 2.3s ease-in-out infinite;
+  /* Cutouts breathing on the festival card — slow, small, compositor-only. */
+  .fb-bob {
+    animation: fbBob 6s ease-in-out infinite alternate;
   }
-  .ss-firefly + .ss-firefly {
-    animation-duration: 18s, 3.1s;
-    animation-delay: 4s, 0.8s;
-  }
-  @keyframes ssDrift {
-    0%,
-    100% {
-      transform: translate(0, 0);
-    }
-    25% {
-      transform: translate(-34px, -22px);
-    }
-    55% {
-      transform: translate(18px, -44px);
-    }
-    80% {
-      transform: translate(30px, -10px);
-    }
-  }
-
-  .ss-petal {
-    position: absolute;
-    width: 7px;
-    height: 11px;
-    border-radius: 50% 50% 50% 0;
-    /* Cream-leaning rose so petals read as soft light against the plum sky,
-       never as dark specks. */
-    background: color-mix(in oklab, var(--theme-ink) 62%, var(--theme-glow));
-    opacity: 0;
-    animation: ssPetal 11s linear infinite;
-  }
-  .ss-petal + .ss-petal {
-    animation-duration: 17s;
-    animation-delay: 6s;
-  }
-  @keyframes ssPetal {
-    0% {
-      opacity: 0;
-      transform: translate(0, -20px) rotate(10deg);
-    }
-    8% {
-      opacity: 0.45;
-    }
-    88% {
-      opacity: 0.3;
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-70px, 78vh) rotate(320deg);
-    }
-  }
-
-  /* A thin crescent moon keeps the upper sky from reading empty. */
-  .ss-moon {
-    position: absolute;
-    top: 12%;
-    right: 13%;
-    width: clamp(34px, 3vw, 52px);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--theme-ink) 80%, var(--theme-accent));
-    box-shadow: 0 0 34px 4px color-mix(in oklab, var(--theme-ink) 25%, transparent);
-  }
-  .ss-moon::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    transform: translate(-22%, -10%);
-    background: var(--ss-night);
-  }
-
-  /* Server-rendered word-stagger for the headline: pure CSS, so the LCP
-     element paints and animates before any JS hydrates. */
-  .ss-word {
-    display: inline-block;
-    animation: ssWordRise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-  @keyframes ssWordRise {
+  @keyframes fbBob {
     from {
-      opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(-4px) rotate(-1deg);
     }
     to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* CTA picks up the window-glow on hover — lamplight as affordance. */
-  .ss-cta-glow:hover {
-    box-shadow: 0 0 30px -2px color-mix(in oklab, var(--theme-accent) 55%, transparent);
-  }
-
-  @media (max-width: 767px) {
-    .ss-firefly,
-    .ss-petal,
-    .ss-star--far {
-      display: none;
-    }
-    /* Spec: mobile renders a simplified scene — the garland hangs still. */
-    .ss-mg {
-      animation: none;
+      transform: translateY(5px) rotate(1.2deg);
     }
   }
 
