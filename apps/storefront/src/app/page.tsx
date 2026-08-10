@@ -7,7 +7,10 @@ import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { HeroBatch } from '@/components/hero/hero-batch';
 import type { Metadata } from 'next';
+import { CategoryRail } from '@/components/sections/category-rail';
 import { FestivalNextBand } from '@/components/sections/festival-next-band';
+import { ReviewsBand } from '@/components/sections/reviews-band';
+import { TrustStrip } from '@/components/sections/trust-strip';
 
 /*
  * Title and description are inherited from the root layout — this IS the page
@@ -21,43 +24,17 @@ export const metadata: Metadata = {
 };
 
 /*
- * The homepage, in the Batch Card world. One story, five beats:
- * the card (what was made today) → the counter (what people take home) →
- * the kitchen rule (why it keeps for four days and not four months) →
- * festival next → corporate dispatch.
+ * The homepage, in the Sweet Counter world (warm pivot, owner-directed
+ * 2026-08-10). One story, seven beats, product-first:
+ * the card (what was made today) → the rail (every aisle, one tap) →
+ * the counter (what people take home) → the kitchen rule (four badges,
+ * three seconds) → festival next → what customers say (real reviews only,
+ * absent until they exist) → corporate dispatch.
  *
- * The retired composition's decorative bands (counter-shelf, story-night,
- * the paisley eyebrows, the three icon-circle trust cards) are removed from
- * the page, not from the repo. The trust claims they carried are now stated
- * as what they actually are: a specification.
+ * The verbose spec <dl> that carried the kitchen rule moved into
+ * sections/trust-strip.tsx, compressed to the same claims at a glance —
+ * "lots to see, little to read" is the pivot's page rule.
  */
-
-/**
- * The kitchen rule, as a spec table rather than three cards with icon circles.
- * Every one of these is a claim PRODUCT.md can substantiate.
- */
-const SPEC: { label: string; value: string; note: string }[] = [
-  {
-    label: 'Preservatives',
-    value: 'NIL',
-    note: 'Nothing added to extend shelf life. The short window is the proof, not a limitation.',
-  },
-  {
-    label: 'Shelf life',
-    value: '4–7 DAYS',
-    note: 'Fresh khoya and mawa sweets. The shipping range is the shelf-stable line — barfis, laddoos, mysore pak.',
-  },
-  {
-    label: 'Kitchen',
-    value: 'KHAMMAM',
-    note: 'One kitchen, the same family, since 1983. Three counters you can walk into.',
-  },
-  {
-    label: 'Dispatch',
-    value: 'SAME DAY',
-    note: 'Made in the morning, dispatched the same day, temperature-controlled across India.',
-  },
-];
 
 export default function HomePage() {
   const bestsellers = SAMPLE_PRODUCTS.filter((p) => p.bestseller).slice(0, 8);
@@ -65,6 +42,9 @@ export default function HomePage() {
   return (
     <>
       <HeroBatch />
+
+      {/* ── THE RAIL ────────────────────────────────────────────────── */}
+      <CategoryRail />
 
       {/* ── THE COUNTER ─────────────────────────────────────────────── */}
       <section aria-labelledby="bestsellers-heading" className="container-site section-y">
@@ -100,44 +80,13 @@ export default function HomePage() {
       </section>
 
       {/* ── THE KITCHEN RULE ────────────────────────────────────────── */}
-      <section aria-labelledby="spec-heading" className="container-site section-y">
-        <Reveal>
-          <div className="docket-head">
-            <div>
-              <h2 id="spec-heading" className="font-display text-display-md">
-                No preservatives, ever.
-              </h2>
-            </div>
-            <Link
-              href="/about"
-              className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-            >
-              Read our story <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </Reveal>
-        <Stagger gap={60}>
-          <dl className="grid gap-x-10 md:grid-cols-2">
-            {SPEC.map((row) => (
-              <div
-                key={row.label}
-                className="flex flex-col gap-1 border-b border-[color:var(--color-border)] py-4"
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <dt className="field-label">{row.label}</dt>
-                  <dd className="field-value text-theme-ink text-sm font-bold">{row.value}</dd>
-                </div>
-                <p className="text-text-muted max-w-[52ch] text-[13px] leading-relaxed">
-                  {row.note}
-                </p>
-              </div>
-            ))}
-          </dl>
-        </Stagger>
-      </section>
+      <TrustStrip />
 
       {/* ── FESTIVAL NEXT ───────────────────────────────────────────── */}
       <FestivalNextBand />
+
+      {/* ── WHAT CUSTOMERS SAY (absent until real reviews exist) ────── */}
+      <ReviewsBand />
 
       {/* ── CORPORATE DISPATCH ──────────────────────────────────────── */}
       <section className="container-site section-y">

@@ -65,6 +65,24 @@ export function Footer() {
               Hand-made sweets from a family kitchen in Khammam, Telangana, since 1983. No
               preservatives. Full ingredient and allergen panel on every product.
             </p>
+            {/* WhatsApp-first contact (brand commitment) — same numbers as the
+                mobile drawer, so the friendly exit exists at every width. */}
+            <div className="mt-4 flex flex-col items-start gap-1.5 text-sm">
+              <a
+                href="https://wa.me/919398859978"
+                target="_blank"
+                rel="noreferrer"
+                className="text-theme-ink/85 hover:text-theme-accent font-medium transition-colors"
+              >
+                WhatsApp +91 93988 59978
+              </a>
+              <a
+                href="tel:+919398859978"
+                className="text-theme-ink/70 hover:text-theme-accent transition-colors"
+              >
+                Call +91 93988 59978
+              </a>
+            </div>
           </div>
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.heading}>

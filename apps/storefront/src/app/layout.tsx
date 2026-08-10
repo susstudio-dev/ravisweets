@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Anek_Telugu, Archivo, Courier_Prime } from 'next/font/google';
+import { Anek_Telugu, Courier_Prime, Poppins } from 'next/font/google';
 import { SiteChrome } from '@/components/site-chrome';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
@@ -13,24 +13,22 @@ import { getVisualVersion } from '@/lib/flags/visual-v2';
 import './globals.css';
 
 /*
- * ARCHIVO carries the whole interface — display and body both.
+ * POPPINS carries the whole interface — display and body both.
  *
- * The Batch Card world is printed forms, and Archivo descends from the
- * 19th-century American grotesques that job printers actually set forms,
- * dockets and signage in. Its `wdth` axis is requested deliberately: the
- * condensed end sets the ruled column headers on a docket, the expanded end
- * sets the stamped display lines. That width range is the hierarchy device
- * here, which is why one family can do both jobs without a second face.
+ * Owner decision 2026-08-10 (krish): after studying Food on Farm (Poppins)
+ * and Sweet Karam Coffee (Jost), the interface moves to a friendly geometric
+ * sans. Archivo's condensed-grotesque register read as office kit; a
+ * customer buying sweets should meet the same warmth the counter has.
+ * Hierarchy now comes from size and weight (400/500/600/700) — Poppins has
+ * no width axis, and the wdth-based hierarchy retired with it.
  *
- * A display serif is specifically refused. The retired world used one, and a
- * warm serif over a cream ground is the arrangement every Indian sweets brand
- * ships; this world's authority comes from the grid and the record, not from
- * heritage lettering.
+ * A display serif is still refused: warm serif over cream is the arrangement
+ * every Indian sweets brand ships. The geometric sans keeps us modern-warm
+ * rather than heritage-nostalgic.
  */
-const archivo = Archivo({
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: 'variable',
-  axes: ['wdth'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-display',
   display: 'swap',
 });
@@ -86,38 +84,38 @@ const anekTelugu = Anek_Telugu({
  * from anything dynamic.
  */
 const DIRECTION_CONTRACT = `<!--
-  THESIS: The paperwork is the proof. Ravi Sweets makes sweets without
-  preservatives and dispatches the same day; the kitchen's own batch record is
-  what demonstrates that, so the record is the interface. Refuses the category
-  default: warm cream ground, heritage serif display, festive accent, and
-  freshness as a claim in a paragraph.
+  THESIS: The paperwork is the proof, read at a warm counter. Ravi Sweets
+  makes sweets without preservatives and dispatches the same day; the
+  kitchen's own batch record is what demonstrates that, so the record is
+  still the interface - but the paper now lives where the customer meets it,
+  warm under shop light. Owner pivot 2026-08-10 (krish, after Food on Farm /
+  Sweet Karam Coffee research): product-first, customer-friendly, warm.
 
-  OWN-WORLD: NCR docket stock #E9EAE4 (cool, never cream), press ink #161C24,
-  stamp-pad blue #2046C8 (hue 226, unoccupied in the category; violet measured
-  10deg off Cadbury 2685C and was rejected), gummed manila label #EBC77E,
-  ember #E2571F for live state only, kumkum red #CC0000 (the logo's own red,
-  darkened from #FF0000 to pass AA as ink) as celebration/certification ink - the seal, festival
-  line-work, sale stamps - never interactive, never a flood. Carbon copy
-  #232A2E is the dark register. Archivo across a wdth axis is the printed
-  form, Courier Prime is what was typed into it. Softened paper (owner
-  decision 2026-08-03): radii 3-18px, elevation is contact not float.
+  OWN-WORLD: halwai cream #FAF6E5 (hue ~49deg - must stay >=42deg so the
+  carbon accent clears ember by 25deg), press ink #161C24, stamp-pad blue
+  #2046C8 (hue 226, unoccupied in the category; re-confirmed by owner
+  2026-08-10 over reference-site orange), gummed manila label #EBC77E, ember
+  #E2571F for live state only, kumkum red #CC0000 as celebration/
+  certification ink - never interactive, never a flood. Burnt jaggery
+  #2B2620 is the dark register. Poppins 400-700 carries display and body;
+  Courier Prime is what was typed into the form. Sweet-box paper: radii
+  6-24px, pill CTAs, elevation is contact not float.
 
-  STORY: The visitor arrives inside a festival window and sees the kitchen's
-  festival card stamped for dispatch - occasion, order-by date, today's date
-  on the red seal, one ruled proof row. They believe the freshness because the
-  record is legible; they act because the occasion is theirs.
+  STORY: The visitor lands on a warm counter: the festival card stamped for
+  dispatch, a rail of categories one tap away, today's bestsellers, the
+  kitchen rule as four short badges, real reviews when they exist - lots to
+  see, little to read.
 
-  FIRST VIEWPORT (the Festival Batch, owner-driven iteration of the batch
-  card): headline word-groups rise, the calendar-resolved festival line in
-  kumkum, body, both CTAs in the fold, the ruled proof row beneath them; right
-  side a manila festival card with tape corners, occasion line-work, bobbing
-  specimen cutouts and the red dispatch seal that thunks in at ~900ms. One
+  FIRST VIEWPORT (the Festival Batch, unchanged in structure): headline
+  word-groups rise, the calendar-resolved festival line in kumkum, body, both
+  CTAs in the fold, the ruled proof row; right side the manila festival card
+  with tape corners, bobbing product cutouts and the red dispatch seal. One
   authored motion sequence, then stillness; no carousels, no tickers.
 
-  FORM: The kitchen batch card and ingredient spec sheet - candidate 7 of 7 on
-  the grounded list, assigned by seed key d96049a4 - re-expressed at the
-  owner's direction as the Festival Batch: the system frames, the festival
-  fills.
+  FORM: The kitchen batch card re-expressed at the owner's direction as the
+  Sweet Counter: the record frames, the warmth fills. Product photography is
+  the missing asset - the admin media library overlays it everywhere the
+  moment it is uploaded.
 
   FINISH: unreviewed and undocumented is unfinished; this build ends with the
   finish review, the verdict, and DESIGN.md
@@ -197,7 +195,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#E9EAE4',
+  themeColor: '#FAF6E5',
   width: 'device-width',
   initialScale: 1,
 };
@@ -220,7 +218,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme={getVisualVersion()}
-      className={`${archivo.variable} ${courierPrime.variable} ${anekTelugu.variable}`}
+      className={`${poppins.variable} ${courierPrime.variable} ${anekTelugu.variable}`}
       suppressHydrationWarning
     >
       <body

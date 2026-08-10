@@ -23,7 +23,7 @@ import type { ThemePalette } from '../types/product';
 
 /** Default for sweets and anything without a stronger signal. The house stamp. */
 export const HOUSE: ThemePalette = {
-  base: '#E9EAE4',
+  base: '#FAF6E5',
   accent: '#2046C8',
   glow: '#EBC77E',
   ink: '#161C24',
@@ -32,7 +32,7 @@ export const HOUSE: ThemePalette = {
 
 /** Nut-forward: kaju, badam, pista, cashew. The green stamp. */
 export const BADAM: ThemePalette = {
-  base: '#EDEAE2',
+  base: '#F2EFE0',
   accent: '#1F6238',
   glow: '#DDC79B',
   ink: '#161C24',
@@ -41,7 +41,7 @@ export const BADAM: ThemePalette = {
 
 /** Dried fruit and floral: fig, date, apricot/khubani, rose preserves. The red stamp. */
 export const GULKAND: ThemePalette = {
-  base: '#EFE9E7',
+  base: '#F7EFE4',
   accent: '#A81B52',
   glow: '#E6BFC6',
   ink: '#161C24',
@@ -50,19 +50,25 @@ export const GULKAND: ThemePalette = {
 
 /** Savouries, namkeens, pickles, podis — the olive-brass stamp. */
 export const KESAR: ThemePalette = {
-  base: '#EEEBE0',
+  base: '#F3EFDE',
   accent: '#6B5A0E',
   glow: '#DCC372',
   ink: '#161C24',
   grainOpacity: 0.05,
 };
 
-/** Premium hampers and drops — the carbon copy as a product palette. */
+/**
+ * Premium hampers and drops — the dark register as a product palette.
+ *
+ * The accent here was #F2732F long after the storefront copy corrected it —
+ * two degrees off ember, so hamper products painted "made today" orange onto
+ * interactive elements. Synced 2026-08-10 with the warm-pivot values.
+ */
 export const HAMPER: ThemePalette = {
-  base: '#232A2E',
-  accent: '#F2732F',
+  base: '#2B2620',
+  accent: '#FAF6E5',
   glow: '#16328F',
-  ink: '#E8EBE6',
+  ink: '#F1EDE4',
   grainOpacity: 0.06,
 };
 

@@ -75,6 +75,9 @@ const SHOP_SECTIONS: NavSection[] = [
 ];
 
 const FLAT_NAV = [
+  // Gift hampers promoted out of the mega menu — the money link both
+  // reference stores surface at top level (warm pivot, 2026-08-10).
+  { label: 'Gift hampers', href: '/category/gift-hampers' },
   { label: 'Festivals', href: '/festivals/diwali' },
   { label: 'Corporate', href: '/corporate' },
   { label: 'Stores', href: '/stores' },
@@ -346,7 +349,7 @@ function ShopMegaMenu({ sections, flatNav }: ShopMegaMenuProps) {
             aria-haspopup="menu"
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
-            className="text-theme-ink/85 hover:text-theme-accent group relative inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors"
+            className="text-theme-ink/85 hover:text-theme-accent group relative inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13px] font-semibold transition-colors"
           >
             Shop
             <ChevronDown
@@ -432,7 +435,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       href={href}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'group relative inline-flex items-center px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors',
+        'group relative inline-flex items-center px-2.5 py-1.5 text-[13px] font-semibold transition-colors',
         active ? 'text-theme-accent' : 'text-theme-ink/85 hover:text-theme-accent',
       )}
     >
@@ -451,7 +454,7 @@ function Underline({ active = false }: { active?: boolean }) {
     <span
       aria-hidden="true"
       className={cn(
-        'bg-theme-accent pointer-events-none absolute inset-x-3 bottom-1 h-[2px] origin-center transition-transform duration-300',
+        'bg-theme-accent pointer-events-none absolute inset-x-2.5 bottom-1 h-[2px] origin-center transition-transform duration-300',
         active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
       )}
     />

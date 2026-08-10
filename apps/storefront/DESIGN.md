@@ -1,98 +1,88 @@
 ---
-name: Ravi Sweets — The Batch Card
-description: The kitchen's own batch record as the interface — cool NCR docket stock, stamp-pad blue, square-cut paper.
+name: Ravi Sweets — The Sweet Counter
+description: The kitchen's batch record read at a warm counter — halwai cream, stamp-pad blue, sweet-box paper, Poppins.
 colors:
-  docket-stock: "#E9EAE4"
-  docket-top-copy: "#F6F7F3"
+  docket-stock: "#FAF6E5"
+  docket-top-copy: "#FFFCF2"
   press-ink: "#161C24"
-  pencil-grey: "#565F68"
+  pencil-grey: "#5E594B"
   stamp-blue: "#2046C8"
   stamp-blue-pressed: "#16328F"
   manila-label: "#EBC77E"
-  steel-rule: "#8A9099"
-  steel-hairline: "#6B737B"
-  carbon-slate: "#232A2E"
-  carbon-top-copy: "#2E373C"
-  carbon-ink: "#E8EBE6"
-  carbon-pencil: "#A3ADB3"
-  carbon-accent: "#E9EAE4"
-  carbon-accent-pressed: "#FFFFFF"
+  brass-rule: "#9A9384"
+  brass-hairline: "#736C5B"
+  jaggery-dark: "#2B2620"
+  jaggery-top-copy: "#37312A"
+  jaggery-ink: "#F1EDE4"
+  jaggery-pencil: "#B0A898"
+  jaggery-accent: "#FAF6E5"
+  jaggery-accent-pressed: "#FFFFFF"
   ember: "#E2571F"
-  ember-on-carbon: "#FF8B4A"
+  ember-on-dark: "#FF8B4A"
   green-stamp: "#1F6238"
-  green-stamp-stock: "#EDEAE2"
+  green-stamp-stock: "#F2EFE0"
   green-stamp-label: "#DDC79B"
   red-stamp: "#A81B52"
-  red-stamp-stock: "#EFE9E7"
+  red-stamp-stock: "#F7EFE4"
   red-stamp-label: "#E6BFC6"
   olive-brass-stamp: "#6B5A0E"
-  olive-brass-stock: "#EEEBE0"
+  olive-brass-stock: "#F3EFDE"
   olive-brass-label: "#DCC372"
 typography:
   display-xl:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "clamp(2.75rem, 2rem + 3.4vw, 5rem)"
     fontWeight: 600
-    lineHeight: 0.98
-    letterSpacing: "-0.028em"
-    fontVariation: "'wdth' 112"
-  display-lg:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    lineHeight: 1.05
+    letterSpacing: "-0.012em"  display-lg:
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "clamp(2.25rem, 1.7rem + 2.4vw, 3.5rem)"
     fontWeight: 600
-    lineHeight: 1.02
-    letterSpacing: "-0.024em"
-    fontVariation: "'wdth' 112"
-  display-md:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    lineHeight: 1.08
+    letterSpacing: "-0.012em"  display-md:
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem)"
     fontWeight: 600
-    lineHeight: 1.1
-    letterSpacing: "-0.018em"
-    fontVariation: "'wdth' 112"
-  heading:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    lineHeight: 1.12
+    letterSpacing: "-0.008em"  heading:
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem)"
     fontWeight: 600
-    lineHeight: 1.25
-    fontVariation: "'wdth' 112"
-  body:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    lineHeight: 1.25  body:
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.6
     letterSpacing: "normal"
   caption:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 400
     lineHeight: 1.45
     letterSpacing: "0.01em"
   label:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    fontFamily: "Poppins, system-ui, sans-serif"
     fontSize: "0.6875rem"
     fontWeight: 600
     lineHeight: 1.2
-    letterSpacing: "0.14em"
-    fontVariation: "'wdth' 84"
-  value:
+    letterSpacing: "0.08em"  value:
     fontFamily: "Courier Prime, ui-monospace, monospace"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.45
     fontFeature: "tabular-nums"
   indic:
-    fontFamily: "Anek Telugu, Archivo, sans-serif"
+    fontFamily: "Anek Telugu, Poppins, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1
 rounded:
-  sm: "0px"
-  md: "2px"
-  lg: "3px"
-  xl: "4px"
-  2xl: "6px"
-  3xl: "8px"
+  sm: "6px"
+  md: "8px"
+  lg: "12px"
+  xl: "16px"
+  2xl: "20px"
+  3xl: "24px"
   pill: "9999px"
   circle: "50%"
 spacing:
@@ -113,14 +103,14 @@ components:
     backgroundColor: "{colors.stamp-blue}"
     textColor: "{colors.docket-stock}"
     typography: "{typography.label}"
-    rounded: "{rounded.md}"
-    padding: "12px 24px"
+    rounded: "{rounded.pill}"
+    padding: "12px 28px"
   stamp-ghost:
     backgroundColor: "transparent"
     textColor: "{colors.stamp-blue}"
     typography: "{typography.label}"
-    rounded: "{rounded.md}"
-    padding: "12px 24px"
+    rounded: "{rounded.pill}"
+    padding: "12px 28px"
   docket:
     backgroundColor: "{colors.docket-top-copy}"
     textColor: "{colors.press-ink}"
@@ -154,27 +144,27 @@ components:
     padding: "10px 14px"
 ---
 
-# Design System: Ravi Sweets — The Batch Card
+# Design System: Ravi Sweets — The Sweet Counter
 
 ## Overview
 
-**Creative North Star: "The Batch Card"**
+**Creative North Star: "The Sweet Counter"** *(warm pivot of "The Batch Card", owner-directed 2026-08-10)*
 
-The paperwork is the proof. The brand's binding claim is that the sweets are made without preservatives and dispatched the same day, and the thing that actually demonstrates that is the kitchen's own record: the docket taped above the kadai, the gummed label on the box, the rubber-stamped date, the FSSAI composition panel. So the record is not decoration around the interface — the record **is** the interface. A visitor reads a batch number, a MADE date computed live, a BEST BEFORE four days out, and a PRESERVATIVES: NIL row, and believes the claim because they can read it rather than because a paragraph asserts it.
+The paperwork is the proof, read at a warm counter. The brand's binding claim is that the sweets are made without preservatives and dispatched the same day, and the thing that actually demonstrates that is the kitchen's own record: the docket taped above the kadai, the gummed label on the box, the rubber-stamped date, the FSSAI composition panel. The record is still the interface — but after studying the stores customers actually love (Food on Farm, Sweet Karam Coffee), the owner moved the paper from the office to the counter: warm halwai cream, a friendly geometric face, pill CTAs, and a home page that shows products before it says anything.
 
-The world is defined as much by what it refuses. Every neighbouring Indian sweets brand ships the same arrangement: a warm cream ground, a heritage display serif, a festive saffron or rose accent, and freshness stated as a sentence. This system rejects all four. The ground is cool NCR docket stock, faintly green — so the food and the manila tag are the only warm things on any page, which is the entire appetite strategy. The display face is a grotesque, not a serif; authority here comes from the grid and the record, not from heritage lettering. The accent is a stamp-pad blue occupying hue ground no competitor holds. And freshness is a field on a form with a date in it.
+What survives from the Batch Card, deliberately: the stamp-pad blue accent (hue 226, still the one colour no competitor holds — re-confirmed by the owner over the reference stores' orange), the manila label, ember as live-state-only ink, kumkum red as celebration ink, the ruled label/value grammar, and elevation as contact rather than float. What was reversed: "never cream" (the ground is now #FAF6E5 — with the discipline that its hue stays ≥42° so the dark register's cream accent clears ember by 25°), the condensed grotesque (Poppins 400–700 carries display and body; Courier Prime remains only for recorded values), and the guillotined corners (radii 6–24px, sweet-box scale).
 
-Density is that of a working document, not a lookbook. Type is compact, rules are horizontal and structural, corners are guillotined, and elevation is a sheet in contact with a counter rather than a card floating over one. Colour is scarce and load-bearing: the accent is ink, the manila is a wash, and ember means one thing only. Warmth in this system comes from the photography and the manila tag — never from the paper.
+The home page rule is "lots to see, little to read": hero, category rail, bestsellers, four trust badges, festival band, real reviews (the section is absent until approved reviews exist — testimonials are never invented), corporate. Product photography is the missing asset; the admin media library overlays it everywhere the moment it is uploaded.
 
 **Key Characteristics:**
 
-- Cool docket stock ground (#E9EAE4), never cream, never pure white
+- Warm halwai cream ground (#FAF6E5, hue ~49°); dark register is burnt jaggery (#2B2620)
 - Stamp-pad blue accent at hue 226, verified clear of the category
-- One grotesque family (Archivo) carrying hierarchy on its width axis; a typewriter mono (Courier Prime) carrying every recorded value
-- Square-cut paper: radii 0–8px; elevation caps at a 10px blur
+- Poppins carrying display and body on weight (400–700); Courier Prime for recorded values only
+- Sweet-box paper: radii 6–24px, pill primary CTAs; elevation still caps at a 10px blur
 - Ruled label/value rows as the atom the whole system is built from
-- Two registers, one grammar: light docket and dark carbon copy swap roles without component changes
-- Ember reserved exclusively for live state
+- Two registers, one grammar: cream counter and burnt-jaggery copy swap roles without component changes
+- Ember reserved exclusively for live state; kumkum red for celebration/certification ink
 - One container, one rhythm, one product grid
 
 ## Colors

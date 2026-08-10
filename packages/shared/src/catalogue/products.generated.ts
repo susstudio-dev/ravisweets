@@ -94,7 +94,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: false,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -182,7 +182,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -266,7 +266,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -356,7 +356,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -444,7 +444,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -524,7 +524,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: false,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -599,7 +599,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: false,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -679,7 +679,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -764,7 +764,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: false,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -851,7 +851,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -934,7 +934,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -1015,7 +1015,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: false,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -1097,7 +1097,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -1155,7 +1155,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -1214,7 +1214,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1272,10 +1272,10 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#232A2E',
-      accent: '#F2732F',
+      base: '#2B2620',
+      accent: '#FAF6E5',
       glow: '#16328F',
-      ink: '#E8EBE6',
+      ink: '#F1EDE4',
       grainOpacity: 0.06,
     },
     garnish: 'paisley',
@@ -1330,7 +1330,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: false,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1389,7 +1389,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1447,7 +1447,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1507,7 +1507,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -1572,7 +1572,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1630,10 +1630,10 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#232A2E',
-      accent: '#F2732F',
+      base: '#2B2620',
+      accent: '#FAF6E5',
       glow: '#16328F',
-      ink: '#E8EBE6',
+      ink: '#F1EDE4',
       grainOpacity: 0.06,
     },
     garnish: 'paisley',
@@ -1696,7 +1696,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -1756,7 +1756,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -1824,7 +1824,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -1893,7 +1893,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -1962,7 +1962,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2031,7 +2031,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2100,7 +2100,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2169,7 +2169,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2238,7 +2238,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2307,7 +2307,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2376,7 +2376,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2445,7 +2445,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2514,7 +2514,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2583,7 +2583,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2652,7 +2652,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2721,7 +2721,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2790,7 +2790,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -2861,7 +2861,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -2932,7 +2932,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3003,7 +3003,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -3074,7 +3074,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3145,7 +3145,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -3216,7 +3216,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3287,7 +3287,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3358,7 +3358,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3429,7 +3429,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3500,7 +3500,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3571,7 +3571,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3642,7 +3642,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -3712,7 +3712,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -3782,7 +3782,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -3852,7 +3852,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -3922,7 +3922,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -3992,7 +3992,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -4062,7 +4062,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -4132,7 +4132,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EDEAE2',
+      base: '#F2EFE0',
       accent: '#1F6238',
       glow: '#DDC79B',
       ink: '#161C24',
@@ -4200,7 +4200,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4268,7 +4268,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4336,7 +4336,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4404,7 +4404,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4472,7 +4472,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4540,7 +4540,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4608,7 +4608,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4676,7 +4676,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4743,7 +4743,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4810,7 +4810,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4877,7 +4877,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -4944,7 +4944,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5011,7 +5011,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5078,7 +5078,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5145,7 +5145,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5212,7 +5212,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5279,7 +5279,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5346,7 +5346,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EEEBE0',
+      base: '#F3EFDE',
       accent: '#6B5A0E',
       glow: '#DCC372',
       ink: '#161C24',
@@ -5418,7 +5418,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: true,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -5490,7 +5490,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#EFE9E7',
+      base: '#F7EFE4',
       accent: '#A81B52',
       glow: '#E6BFC6',
       ink: '#161C24',
@@ -5562,7 +5562,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -5634,7 +5634,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -5706,7 +5706,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -5778,7 +5778,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',
@@ -5848,7 +5848,7 @@ export const GENERATED_CATALOGUE: Product[] = [
     bestseller: false,
     new: true,
     theme_palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',

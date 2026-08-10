@@ -250,7 +250,7 @@ export function HeroBatch() {
           */}
           <h1
             key={heroHeadline}
-            className="font-display text-display-xl mt-3 lg:text-[clamp(2.75rem,2rem+3.4vw,4.4rem)] lg:leading-[0.98] lg:tracking-[-0.028em]"
+            className="font-display text-display-xl mt-3 font-semibold lg:text-[clamp(2.75rem,2rem+3.4vw,4.4rem)] lg:leading-[1.05] lg:tracking-[-0.012em]"
           >
             {headlineLines.map((line, li) => (
               <span key={li} className="block text-balance">

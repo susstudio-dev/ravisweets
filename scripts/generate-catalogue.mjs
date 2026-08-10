@@ -197,7 +197,7 @@ const UNIT_MODES = new Set(['weight', 'quantity']);
  * row today, but the column is nullable and Product.theme_palette is not.
  */
 const HOUSE_PALETTE = {
-  base: '#E9EAE4',
+  base: '#FAF6E5',
   accent: '#2046C8',
   glow: '#EBC77E',
   ink: '#161C24',

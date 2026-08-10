@@ -139,8 +139,10 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
           <div className="mt-auto flex items-end justify-between gap-2 pt-3">
             <div className="min-w-0">
               <p className="field-label truncate">{primaryVariant.title}</p>
+              {/* Price reads as a price, not a typed record — warm pivot 2026-08-10.
+                  The mono stays for batch numbers and spec tables only. */}
               <p className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="field-value text-theme-ink text-[15px] font-bold">
+                <span className="font-display text-theme-ink text-base font-bold">
                   {formatMoney({
                     amount: onSale && effective.salePrice !== null
                       ? effective.salePrice
@@ -149,7 +151,7 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
                   })}
                 </span>
                 {onSale && (
-                  <span className="field-value text-text-muted text-[11px] line-through">
+                  <span className="text-text-muted text-[11px] line-through">
                     {formatMoney(primaryVariant.price)}
                   </span>
                 )}

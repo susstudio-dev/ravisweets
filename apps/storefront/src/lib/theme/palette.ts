@@ -1,33 +1,34 @@
 /**
- * THE BATCH CARD — the single source of truth for every brand colour.
+ * THE SWEET COUNTER — the single source of truth for every brand colour.
  *
- * The identity's organising image is the kitchen's own paperwork: the batch
- * docket taped above the kadai, the gummed manila label on the box, the
- * rubber-stamp date, the FSSAI composition panel. Ravi Sweets' claim is that
- * the sweets are made today, without preservatives, in Khammam — and the
- * record is what proves it. So the record IS the interface.
+ * The identity's organising image is still the kitchen's own paperwork — the
+ * batch docket, the gummed label, the rubber-stamp date — but the paper now
+ * lives where the customer meets it: on the sweet-shop counter, warm under
+ * shop light. Owner decision 2026-08-10 (krish, after studying Food on Farm
+ * and Sweet Karam Coffee): the ground goes warm and friendly; the record
+ * grammar stays.
  *
  * Design decisions encoded here:
  *
- *  - THE GROUND IS WORKING STOCK, NOT CREAM. #E9EAE4 is cool and faintly
- *    green, the colour of NCR docket paper — deliberately NOT the warm cream
- *    every Indian sweets brand ships. The system is cool so the food and the
- *    manila tag are the only warm things on the page. That contrast is the
- *    entire appetite strategy; warm the ground and it collapses.
- *  - THE ACCENT IS STAMP-PAD BLUE. #2046C8, hue 226deg. Chosen over the
- *    obvious violet after measuring it: violet #6D2FA0 sits 10deg from
- *    Cadbury 2685C, the most-owned colour in Indian confectionery. Blue
- *    clears all nine measured competitors by >=25deg AND is what an Indian
- *    office stamp pad and ballpoint actually contain. palette.test.ts pins
- *    both facts.
+ *  - THE GROUND IS WARM HALWAI CREAM. #FAF6E5 replaces the cool NCR grey.
+ *    The earlier "never cream" rule was reversed by the owner — the category
+ *    reads warm as appetising, and the customer research (both reference
+ *    stores) bears it out. NOTE for the hue-clearance test: the carbon
+ *    register re-uses this cream as its accent, so the cream must keep a
+ *    yellow-green lean (hue >=42deg) to clear EMBER (17deg) by 25deg —
+ *    #FAF6E5 measures ~49deg. Do not warm it toward orange.
+ *  - THE ACCENT STAYS STAMP-PAD BLUE. #2046C8, hue 226deg. Re-confirmed by
+ *    the owner 2026-08-10: blue clears all nine measured competitors by
+ *    >=25deg and is the one colour Ravi Sweets owns in the category. Warmth
+ *    comes from the ground, the manila and the food — never the CTA hue.
  *  - THE FIELD IS A GUMMED MANILA LABEL. #EBC77E is the warm tag stuck to
  *    the box — a wash and a panel ground for INK, never for accent text.
  *  - EMBER IS RESERVED FOR LIVE STATE. #E2571F marks "made today" and
  *    nothing else. It sits outside RegisterTokens precisely so it cannot
  *    spread into general use.
- *  - THE TWO REGISTERS SWAP ROLES. Blue is interactive on the docket and a
- *    panel on the carbon copy; ember is the live mark on the docket and the
- *    interactive colour on the carbon copy.
+ *  - THE TWO REGISTERS SWAP ROLES. Blue is interactive on the counter paper
+ *    and a panel on the dark register; the dark register's interactive colour
+ *    is the cream itself, pressed onto the dark sheet.
  *
  * palette.test.ts asserts every contrast pair, so this file cannot drift out
  * of spec silently.
@@ -63,48 +64,51 @@ export interface RegisterTokens {
 }
 
 /**
- * THE DOCKET — the light register, used everywhere commerce happens.
- * Working NCR stock, press-blue ink, a steel rule, a manila tag.
+ * THE COUNTER PAPER — the light register, used everywhere commerce happens.
+ * Warm halwai cream, press-blue ink, a brass rule, a manila tag.
  */
 export const DOCKET: RegisterTokens = {
-  base: '#E9EAE4', // NCR docket stock; cool, never cream, never #ffffff
-  surfaceElevated: '#F6F7F3', // the top copy of the form
-  ink: '#161C24', // press black, faintly blue
-  inkMuted: '#565F68', // pencil grey
+  base: '#FAF6E5', // halwai cream; hue ~49deg — keep >=42deg, see header note
+  surfaceElevated: '#FFFCF2', // the top copy of the form
+  ink: '#161C24', // press black, faintly blue — print stays cool on warm paper
+  inkMuted: '#5E594B', // warm pencil
   accent: '#2046C8', // stamp-pad blue — links, filled CTAs
   accentDeep: '#16328F', // the same stamp, pressed harder
   field: '#EBC77E', // gummed manila label — washes and panels, never text
-  varak: '#8A9099', // steel rule, decorative only
-  varakRule: '#6B737B', // steel hairline; must clear 3:1, #8A9099 does not
+  varak: '#9A9384', // brass rule, decorative only
+  varakRule: '#736C5B', // brass hairline; must clear 3:1
 };
 
 /**
- * THE CARBON COPY — the dark register. The duplicate sheet under the carbon
- * paper: the same form, read in the dark. Festival drops, the story band,
- * corporate, footer.
+ * THE BURNT JAGGERY COPY — the dark register. The same form, read after the
+ * shop shuts: warm dark wood and jaggery, not cool slate. Festival drops, the
+ * story band, corporate, footer.
  */
 export const CARBON_TOKENS: RegisterTokens = {
-  base: '#232A2E', // carbon-smudged slate
-  surfaceElevated: '#2E373C',
-  ink: '#E8EBE6',
-  inkMuted: '#A3ADB3',
+  base: '#2B2620', // burnt jaggery
+  surfaceElevated: '#37312A',
+  ink: '#F1EDE4',
+  inkMuted: '#B0A898',
   /*
-   * THE INVERTED STAMP. On the carbon copy the primary action is the docket
-   * stock itself, pressed onto the dark sheet.
+   * THE INVERTED STAMP. On the dark copy the primary action is the counter
+   * paper itself, pressed onto the dark sheet.
    *
    * This slot previously held #F2732F on the reasoning that "ember becomes the
    * interactive colour on dark". That was wrong twice over. #F2732F sits two
    * degrees from EMBER, so the one rule this world is built on — ember means
    * LIVE STATE and nothing else — was broken by the token set that declares
    * it. And on the dark ground it made "made today" and "clickable"
-   * indistinguishable oranges. Stock-on-carbon is materially truer to the
+   * indistinguishable oranges. Stock-on-dark is materially truer to the
    * form and leaves ember free to mean the one thing it means.
+   *
+   * Because this accent IS the cream, the cream's hue is what the ember
+   * hue-clearance assertions measure — see the header note before warming it.
    */
-  accent: '#E9EAE4',
+  accent: '#FAF6E5',
   accentDeep: '#FFFFFF', // the same stamp, pressed harder
   field: '#16328F', // stamp blue becomes a panel colour on dark
-  varak: '#A8B2B8',
-  varakRule: '#A8B2B8',
+  varak: '#B5AC9B',
+  varakRule: '#B5AC9B',
 };
 
 /**
@@ -164,7 +168,7 @@ export const PRODUCT_PALETTES = {
   house: LIGHT,
   /** Nut-forward: kaju, badam, pista, cashew. The green stamp. */
   badam: {
-    base: '#EDEAE2',
+    base: '#F2EFE0',
     accent: '#1F6238',
     glow: '#DDC79B',
     ink: '#161C24',
@@ -172,7 +176,7 @@ export const PRODUCT_PALETTES = {
   },
   /** Dried fruit and floral: fig, date, apricot, rose preserves. The red stamp. */
   gulkand: {
-    base: '#EFE9E7',
+    base: '#F7EFE4',
     accent: '#A81B52',
     glow: '#E6BFC6',
     ink: '#161C24',
@@ -180,7 +184,7 @@ export const PRODUCT_PALETTES = {
   },
   /** Savouries, namkeens, podis — the olive-brass stamp. */
   kesar: {
-    base: '#EEEBE0',
+    base: '#F3EFDE',
     accent: '#6B5A0E',
     glow: '#DCC372',
     ink: '#161C24',

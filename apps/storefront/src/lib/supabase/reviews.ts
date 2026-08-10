@@ -70,6 +70,31 @@ export async function listApprovedReviews(productId: string): Promise<Review[]> 
   return (data as ReviewRow[]).map(fromRow);
 }
 
+/**
+ * Home-page review band: the best approved reviews across the whole
+ * catalogue. Only reviews with a real written body qualify — a star-only
+ * rating is a signal, not a quote. Returns [] on any failure; the band
+ * renders nothing rather than inventing testimonials (PRODUCT.md: never
+ * paraphrase into invented quotes).
+ */
+export async function listFeaturedReviews(limit = 6): Promise<Review[]> {
+  const supa = await getSupabase();
+  if (!supa) return [];
+  const { data, error } = await supa
+    .from('reviews')
+    .select('*')
+    .eq('status', 'approved')
+    .gte('rating', 4)
+    .order('helpful_count', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(limit * 3);
+  if (error || !data) return [];
+  return (data as ReviewRow[])
+    .map(fromRow)
+    .filter((r) => r.body.trim().length >= 20)
+    .slice(0, limit);
+}
+
 export async function listMyReviewForProduct(productId: string): Promise<Review | null> {
   const supa = await getSupabase();
   if (!supa) return null;

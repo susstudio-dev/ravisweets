@@ -9,7 +9,7 @@ import { pendingPhoto } from '@/lib/images';
 
 /*
  * Shown only when Supabase is unreachable. Keep the first entry in step with
- * the active row seeded by supabase/migrations/0011_batch_card_world.sql —
+ * the active row seeded by supabase/migrations/0017_sweet_counter_world.sql —
  * if these drift, the admin previews a palette the storefront never renders.
  *
  * Every `imageUrl` here is intentionally empty. The retired presets pointed at
@@ -19,10 +19,10 @@ import { pendingPhoto } from '@/lib/images';
 const FALLBACK_PRESETS: ThemePreset[] = [
   {
     id: 'batch-card',
-    name: 'The Batch Card — the house palette',
+    name: 'The Sweet Counter — the house palette',
     active: true,
     palette: {
-      base: '#E9EAE4',
+      base: '#FAF6E5',
       accent: '#2046C8',
       glow: '#EBC77E',
       ink: '#161C24',

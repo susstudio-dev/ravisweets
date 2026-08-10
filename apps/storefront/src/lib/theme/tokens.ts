@@ -28,19 +28,21 @@ export const rawPalette = {
   ink: DOCKET.ink,
   varak: { DEFAULT: DOCKET.varak, rule: DOCKET.varakRule },
   /*
-   * Cool slate, not warm stone. The docket ground is faintly green-grey; a
-   * warm neutral ramp beside it reads as two different papers.
+   * Warm stone, matching the halwai-cream ground (warm pivot 2026-08-10). A
+   * cool ramp beside warm paper read as two different papers; the text end of
+   * the ramp stays aligned with inkMuted/varakRule so utility greys and the
+   * register tokens agree.
    */
   neutral: {
-    50: '#F7F8F6',
-    100: '#EEF0EC',
-    200: '#DDE0DC',
-    300: '#C3C9C6',
-    400: '#98A0A3',
-    500: '#6B737B',
-    600: '#565F68',
-    700: '#3F4750',
-    800: '#2A323A',
+    50: '#FBF8EF',
+    100: '#F3EFE2',
+    200: '#E4DFCE',
+    300: '#CCC6B2',
+    400: '#9E978A',
+    500: '#736C5B',
+    600: '#5E594B',
+    700: '#45403A',
+    800: '#2F2A24',
     900: '#161C24',
   },
   semantic: { success: '#1F6238', warn: '#6B5A0E', danger: '#A81B52' },
@@ -56,17 +58,18 @@ export const rawPalette = {
  * genuine chips only — a rubber stamp is rectangular, so reach for it rarely.
  */
 /*
- * Softened from the original guillotine cut (0-8px) on owner feedback,
- * 2026-08-03: "give some border radius to the sweet cards, don't keep
- * everything very sharp." Still paper, never a pill — but friendly paper.
+ * Softened twice on owner feedback. 2026-08-03: "give some border radius to
+ * the sweet cards, don't keep everything very sharp" took the guillotine cut
+ * to 3-18px. 2026-08-10 (warm pivot): the counter world rounds further to a
+ * sweet-box scale, and the primary CTA graduates to a real pill.
  */
 export const radii = {
-  sm: '3px',
-  md: '6px',
-  lg: '8px',
-  xl: '10px',
-  '2xl': '14px',
-  '3xl': '18px',
+  sm: '6px',
+  md: '8px',
+  lg: '12px',
+  xl: '16px',
+  '2xl': '20px',
+  '3xl': '24px',
   pill: '9999px',
   circle: '50%',
 } as const;
