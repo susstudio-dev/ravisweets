@@ -11,7 +11,25 @@
   # and has no server to mint per-request nonces, so script-src/style-src must
   # allow 'unsafe-inline'. The CSP still adds real value: it locks base-uri,
   # object-src, frame-ancestors, form-action, and pins connect/img/font origins.
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://ravisweets.com https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'
+  #
+  # RAZORPAY (added 2026-08-10 — this policy was silently breaking checkout).
+  # The previous policy had `script-src 'self'`, `frame-src 'none'` and a
+  # connect-src limited to Supabase, which blocked all three things Razorpay
+  # needs: checkout.razorpay.com/v1/checkout.js, the iframe the modal opens in,
+  # and the XHRs to api/lumberjack. loadRazorpay() therefore resolved null,
+  # attemptRazorpayPayment returned 'unavailable', and checkout confirmed the
+  # order UNPAID. No online payment could succeed while this was deployed.
+  #
+  # frame-src and connect-src use *.razorpay.com rather than exact hosts on
+  # purpose: the modal moves through several subdomains during 3-D Secure and
+  # UPI-intent flows, and a too-narrow list fails at the bank step — which
+  # looks identical to the bug this replaces. script-src and img-src stay
+  # pinned to exact hosts.
+  #
+  # static.cloudflareinsights.com is the Web Analytics beacon that Cloudflare
+  # Pages injects automatically; without it the beacon is blocked on every page
+  # and collects nothing.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://api.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://ravisweets.com https://*.supabase.co https://cdn.razorpay.com; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.razorpay.com https://cloudflareinsights.com; frame-src https://*.razorpay.com
 
 /admin
   X-Robots-Tag: noindex, nofollow
