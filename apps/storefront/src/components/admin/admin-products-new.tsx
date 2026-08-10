@@ -138,7 +138,21 @@ export function AdminProductsNew() {
         id: variantId,
         title: variantTitle.trim(),
         weight_grams: variantWeight,
-        price_amount: variantPriceRupees * 100,
+        /*
+         * RUPEES, not paise — do not reintroduce the `* 100` that was here.
+         *
+         * The column name invites the paise reading, but every other writer
+         * treats it as rupees: 0014_seed_products.sql copies Money.amount in
+         * verbatim, and the inline editor calls upsertVariantPrice(v.id,
+         * v.price) unscaled. The live rows agree — the dearest SKU reads 3300,
+         * which is ₹3,300 and not ₹33. formatMoney prints Money.amount with
+         * maximumFractionDigits: 0, so rupees is the unit end to end.
+         *
+         * This was harmless while nothing read the products table back. Now
+         * that the build bakes the catalogue from it, a product added through
+         * this form would have shipped to the live shop at 100× its price.
+         */
+        price_amount: variantPriceRupees,
         sku: effectiveSku(),
         stock_available: variantStock,
       },
