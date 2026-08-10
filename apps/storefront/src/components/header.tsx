@@ -75,10 +75,15 @@ const SHOP_SECTIONS: NavSection[] = [
 ];
 
 const FLAT_NAV = [
+  // The Essence — the ten-piece rotating drop (VAULT_10_PLAN). Sits right
+  // after Shop: it is the brand's flagship statement, not a utility link.
+  { label: 'Essence', href: '/essence' },
   // Gift hampers promoted out of the mega menu — the money link both
   // reference stores surface at top level (warm pivot, 2026-08-10).
   { label: 'Gift hampers', href: '/category/gift-hampers' },
-  { label: 'Festivals', href: '/festivals/diwali' },
+  // The INDEX, not /festivals/diwali: deep-linking one festival hid the other
+  // ten — the owner asked for "all the festivals by default" (2026-08-11).
+  { label: 'Festivals', href: '/festivals' },
   { label: 'Corporate', href: '/corporate' },
   { label: 'Stores', href: '/stores' },
   { label: 'About', href: '/about' },

@@ -62,7 +62,7 @@ export function Footer() {
               PRODUCT.md actually substantiates — composition transparency.
             */}
             <p className="text-theme-ink/70 mt-3 text-sm">
-              Hand-made sweets from a family kitchen in Khammam, Telangana, since 1983. No
+              Hand-made sweets from our Hyderabad &amp; Khammam kitchens, since 1983. No
               preservatives. Full ingredient and allergen panel on every product.
             </p>
             {/* WhatsApp-first contact (brand commitment) — same numbers as the

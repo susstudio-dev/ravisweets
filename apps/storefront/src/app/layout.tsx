@@ -156,13 +156,18 @@ export const metadata: Metadata = {
     default: 'Ravi Sweets · Hand-made Indian Sweets & Gift Hampers',
     template: '%s | Ravi Sweets',
   },
+  /*
+   * "Family kitchen" retired from the brand voice 2026-08-11 (owner: global
+   * brand, large kitchen — the cottage register undersold it). Heritage
+   * stays as the year; scale claims stay out entirely.
+   */
   description:
-    'Hand-made Indian sweets, namkeens and gift hampers from one family kitchen since 1983. No preservatives, delivered fresh across India.',
+    'Hand-made Indian sweets, namkeens and gift hampers, made fresh since 1983. No preservatives, delivered fresh across India.',
   openGraph: {
     type: 'website',
     siteName: 'Ravi Sweets',
     locale: 'en_IN',
-    title: 'Ravi Sweets · Indian sweets and gift hampers, made by one family since 1983',
+    title: 'Ravi Sweets · Indian sweets and gift hampers, made fresh since 1983',
     description:
       "Hand-made sweets, namkeens and gift hampers. No preservatives, dispatched the day they're made, delivered across India.",
   },
@@ -170,7 +175,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ravi Sweets · Made this morning, delivered across India',
     description:
-      'Hand-made sweets and gift hampers from a family kitchen, since 1983. No preservatives.',
+      'Hand-made sweets and gift hampers, made fresh since 1983. No preservatives.',
   },
   // Allow indexing now that the site has real content + LocalBusiness schema.
   // Once production photography lands, leave this; until then the brand is real

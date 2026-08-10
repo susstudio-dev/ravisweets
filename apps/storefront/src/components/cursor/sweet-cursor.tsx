@@ -136,17 +136,15 @@ export function SweetCursor() {
 
   return (
     /*
-     * The control joins the contact slip's corner cluster rather than forming
-     * a second floating stack of its own.
-     *
-     * The sweet cursor is a binding brand commitment and it stays. Its BUTTON
-     * was the problem: a 56px labelled pill with a pulsing halo at z-40, sat
-     * directly on top of the contact pills at z-30, and read to a first-time
-     * visitor as a developer toggle left in the build. Now it is a quiet
-     * square in the same docket grammar as everything else — discoverable on
-     * hover, invisible until wanted, and out of the way of the shop.
+     * Bottom-LEFT, alone. The previous berth — right-[8.5rem], meant to sit
+     * beside the contact cluster — was measured against nothing: the cluster
+     * (+ toggle, gap, WhatsApp pill with its label) spans ~196px from the
+     * right edge, so a control anchored 136px in sat BEHIND the pill and
+     * poked out between it and the +. Owner screenshot, 2026-08-11. The
+     * left corner has no other tenant at any width, so the toggle can never
+     * be overlapped again rather than merely not-currently-overlapped.
      */
-    <div className="fixed bottom-4 right-[8.5rem] z-30 hidden print:hidden lg:block">
+    <div className="fixed bottom-4 left-4 z-30 hidden print:hidden lg:block">
       <button
         type="button"
         onClick={() => setEnabled((v) => !v)}
@@ -163,7 +161,8 @@ export function SweetCursor() {
         ) : (
           <MousePointer2 className="h-4 w-4 -rotate-12" aria-hidden="true" />
         )}
-        <span className="field-label bg-theme-ink pointer-events-none absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap px-2 py-1 text-[color:var(--theme-base)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 lg:block">
+        {/* Left-anchored: a centred tooltip clips at the viewport's left edge here. */}
+        <span className="field-label bg-theme-ink pointer-events-none absolute bottom-full left-0 mb-2 hidden whitespace-nowrap px-2 py-1 text-[color:var(--theme-base)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 lg:block">
           Katli cursor
         </span>
       </button>

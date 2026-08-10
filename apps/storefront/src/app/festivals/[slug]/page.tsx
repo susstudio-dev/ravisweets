@@ -18,6 +18,7 @@ import {
 
 export type FestivalSlug =
   | 'diwali'
+  | 'independence-day'
   | 'raksha-bandhan'
   | 'eid'
   | 'holi'
@@ -83,6 +84,43 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
       },
     ],
     productSlugs: ['diwali-premium-hamper', 'kaju-katli', 'qubani-ka-meetha', 'badam-ki-jali'],
+  },
+  'independence-day': {
+    title: 'Independence Day',
+    telugu: 'స్వాతంత్ర్య దినోత్సవం',
+    tagline: 'The tricolour on the sweet box.',
+    eyebrow: '15 August · 2026',
+    body: 'Office runs, school functions, society celebrations — mithai in tricolour packing, dispatched the morning the flag goes up.',
+    date: '2026-08-15T00:00:00+05:30',
+    heroImage: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
+    theme: {
+      base: '#f4f7e8',
+      accent: '#3a7a1c',
+      glow: '#e8d79a',
+      ink: '#122a08',
+      grainOpacity: 0.05,
+    },
+    gifteeFor: [
+      {
+        icon: Users,
+        title: 'For your team',
+        body: 'Flag-day office boxes — barfi, dry fruits, one sweet per desk or a tray per floor.',
+        href: '/corporate#enquiry',
+      },
+      {
+        icon: Gift,
+        title: 'For the function',
+        body: 'School and society celebration packs — single-piece boxes, easy to hand out.',
+        href: '/category/sweets',
+      },
+      {
+        icon: Handshake,
+        title: 'For clients',
+        body: 'A tricolour-ribboned hamper says the right thing on the 15th.',
+        href: '/category/gift-hampers',
+      },
+    ],
+    productSlugs: ['kaju-katli', 'badam-ki-jali', 'motichoor-ladoo', 'cardamom-soan-papdi'],
   },
   'raksha-bandhan': {
     title: 'Raksha Bandhan',
@@ -449,7 +487,7 @@ export async function generateMetadata({
   const title = shortenTitle(`${f.title} Sweets`, f.tagline);
   const description = seoDescription(
     f.body,
-    'Made fresh and dispatched from our Khammam kitchen.',
+    'Made fresh and dispatched the same morning.',
     'Delivered across India.',
   );
 

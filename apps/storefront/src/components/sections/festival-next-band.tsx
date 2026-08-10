@@ -18,6 +18,12 @@ import { Reveal } from '@/components/motion/reveal';
  */
 
 const FESTIVALS = [
+  {
+    slug: 'independence-day',
+    title: 'Independence Day',
+    telugu: 'స్వాతంత్ర్య దినోత్సవం',
+    date: '2026-08-15',
+  },
   { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', date: '2026-08-28' },
   { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', date: '2026-11-08' },
   { slug: 'christmas', title: 'Christmas', telugu: 'క్రిస్మస్', date: '2026-12-25' },

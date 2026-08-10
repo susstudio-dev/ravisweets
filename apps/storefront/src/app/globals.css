@@ -481,6 +481,61 @@
     }
   }
 
+  /*
+   * ─── HERO AMBIENT (the counter under shop light) ──────────────────────
+   * Continuous, quiet motion behind the hero content — owner request
+   * 2026-08-11 ("some moving animation element"). Warm glow fields drift,
+   * steam rises off the fresh batch, specimen marks float. The original
+   * thesis ("one authored sequence, then stillness") is amended, not
+   * repealed: the authored sequence still runs once; what follows is
+   * ambience, never message. Everything is transform/opacity, sub-0.1
+   * opacity ink, and the global reduced-motion block zeroes all of it.
+   */
+  .ra-drift {
+    animation: raDrift var(--ra-dur, 30s) ease-in-out infinite alternate;
+  }
+  @keyframes raDrift {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      transform: translate3d(4rem, -2.5rem, 0) scale(1.12);
+    }
+  }
+
+  .ra-float {
+    animation: raFloat var(--ra-dur, 18s) ease-in-out infinite alternate;
+  }
+  @keyframes raFloat {
+    from {
+      transform: translateY(0) rotate(0deg);
+    }
+    to {
+      transform: translateY(-2.25rem) rotate(10deg);
+    }
+  }
+
+  .ra-steam {
+    opacity: 0;
+    animation: raSteam var(--ra-dur, 7s) linear infinite;
+  }
+  @keyframes raSteam {
+    0% {
+      opacity: 0;
+      transform: translateY(1.25rem) scaleX(1);
+    }
+    25% {
+      opacity: 0.5;
+    }
+    60% {
+      opacity: 0.22;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-3.5rem) scaleX(1.35);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .grain-overlay {
       display: none;

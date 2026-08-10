@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
 import { CATALOGUE, type Product } from '@ravisweets/shared';
 import { Grain } from '@/components/brand/grain';
+import { HeroAmbient } from '@/components/hero/hero-ambient';
 import { Reveal } from '@/components/motion/reveal';
 import { cn } from '@/lib/cn';
 import { isUsableImage } from '@/lib/images';
@@ -80,8 +81,15 @@ const FOUNDED = '1983';
  * and is NOT itself retired copy; it is dropped only because it belongs to a
  * retired row, which is also why the pattern is deliberately not widened to
  * "hyderabad" and must never be.
+ *
+ * "family kitchen" joined the pattern 2026-08-11: the owner retired the
+ * small-kitchen positioning ("we are a global brand, we have a very huge
+ * kitchen"), and the live site_content row — written by 0012 — carries
+ * 'Family kitchen' as the eyebrow, so it must fall through to the new
+ * defaults until 0019_global_kitchen.sql is pasted. Same quarantine, next
+ * ring. Delete each ring only after its migration has run.
  */
-const RETIRED_COPY = /khammam|telangana|ఖమ్మం/i;
+const RETIRED_COPY = /khammam|telangana|ఖమ్మం|family kitchen/i;
 
 function live<T>(row: T | null | undefined): T | undefined {
   if (row == null) return undefined;
@@ -90,6 +98,12 @@ function live<T>(row: T | null | undefined): T | undefined {
 
 /** Mirrors the calendar in festival-next-band.tsx (shared module is phase 4b). */
 const FESTIVALS = [
+  {
+    slug: 'independence-day',
+    title: 'Independence Day',
+    telugu: 'స్వాతంత్ర్య దినోత్సవం',
+    date: '2026-08-15',
+  },
   { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', date: '2026-08-28' },
   { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', date: '2026-11-08' },
   { slug: 'christmas', title: 'Christmas', telugu: 'క్రిస్మస్', date: '2026-12-25' },
@@ -143,13 +157,18 @@ export function HeroBatch() {
 
   const heroEyebrowIndic =
     db?.eyebrowIndic ?? preset?.eyebrow?.split('·')[0]?.trim() ?? 'రవి స్వీట్స్';
-  const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? 'Family kitchen';
+  /*
+   * "Mithai house", not "Family kitchen" — owner direction 2026-08-11: the
+   * brand is global and the kitchen is large; the cottage register undersold
+   * it. House-of-mithai keeps the heritage note without the smallness.
+   */
+  const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? 'Mithai house';
   const heroHeadline =
     db?.headline ?? preset?.headline ?? 'Made this morning. Nothing added to make it last.';
   const heroBody =
     db?.body ??
     preset?.body ??
-    `Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made by one family since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
+    `Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
   const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's batch";
   /*
    * Resolved from the SAME admitted source as the label above. Read
@@ -200,7 +219,7 @@ export function HeroBatch() {
    * on the deadline chip, which is the only thing here that is urgent.
    */
   const proof = [
-    { value: FOUNDED, label: 'family kitchen' },
+    { value: FOUNDED, label: 'mithai house' },
     { value: 'NIL', label: 'preservatives' },
     { value: 'Same-day', label: 'dispatch' },
   ];
@@ -217,13 +236,16 @@ export function HeroBatch() {
         ("a little disturbing"). Red now enters the hero only as the seal and
         the festival line — ink, not a moving band.
       */}
+      <HeroAmbient />
       {/*
-        items-START, not items-center: the left column is taller than the
-        festival card at every width above the lg breakpoint, so centring
-        floated the card in its own dead space and pushed the proof block
-        down. Top-aligned, the two columns share a baseline at the eyebrow.
+        Default STRETCH, not items-start: top-alignment left the festival card
+        ending mid-column with dead cream below it at every width above lg —
+        the owner's screenshot called it out. The card column now stretches to
+        the left column's height and the card itself spreads its rows
+        (flex-col, cutouts centred in the growing middle), so the two columns
+        end together. The shared baseline at the eyebrow is unchanged.
       */}
-      <div className="container-site relative z-10 grid items-start gap-8 pb-10 pt-5 md:pb-14 md:pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14">
+      <div className="container-site relative z-10 grid gap-8 pb-8 pt-4 md:pb-10 md:pt-6 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14">
         {/* ── THE WORD ─────────────────────────────────────────────────── */}
         <div>
           <p className="flex flex-wrap items-baseline gap-x-2.5">
@@ -235,22 +257,23 @@ export function HeroBatch() {
           </p>
 
           {/*
-            The lg cap lowers text-display-xl's ceiling from 5rem to 4.4rem in
-            THIS column only. Measured: at 1440 the h1 has 650px and the first
-            sentence needs 721px at 5rem, so it broke as "Made this /
-            morning." — an orphan the owner called out. At 4.4rem it needs
-            634px and sits on one line, giving three lines with nothing
-            stranded. The clamp's lower half is untouched, so narrower
-            viewports keep their existing ramp rather than jumping to a fixed
-            size. The token itself is left alone: seven other headings use
-            text-display-xl at max-w-3xl/4xl, where it is not too big.
+            The lg cap lowers text-display-xl's ceiling from 5rem to 4rem in
+            THIS column only. The 4.4rem cut (which itself fixed the "Made
+            this / morning." orphan — first sentence 634px in a 650px column)
+            still pushed the proof row below the fold on the owner's ~774px
+            effective viewport, screenshot 2026-08-11. At 4rem the first
+            sentence needs ~576px, so the no-orphan property holds with more
+            slack, and the whole column — eyebrow to proof — fits a 768px
+            viewport with the header above it. The clamp's lower half is
+            untouched; the token itself is left alone (seven other headings
+            use text-display-xl at max-w-3xl/4xl, where it is not too big).
 
             The second sentence still wraps to two lines by design — fitting it
             on one would need 46px type, which is not a hero.
           */}
           <h1
             key={heroHeadline}
-            className="font-display text-display-xl mt-3 font-semibold lg:text-[clamp(2.75rem,2rem+3.4vw,4.4rem)] lg:leading-[1.05] lg:tracking-[-0.012em]"
+            className="font-display text-display-xl mt-2 font-semibold lg:text-[clamp(2.75rem,1.9rem+2.9vw,4rem)] lg:leading-[1.05] lg:tracking-[-0.012em]"
           >
             {headlineLines.map((line, li) => (
               <span key={li} className="block text-balance">
@@ -266,13 +289,13 @@ export function HeroBatch() {
             ))}
           </h1>
 
-          <p className="text-text-muted mt-4 max-w-[52ch] leading-relaxed">{heroBody}</p>
+          <p className="text-text-muted mt-3 max-w-[52ch] leading-relaxed">{heroBody}</p>
 
           {/*
             CTAs come BEFORE the proof — owner feedback: the actions were
             landing below the fold.
           */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
             <Link href={primaryCtaHref} className="stamp">
               {primaryCtaLabel}
             </Link>
@@ -293,7 +316,7 @@ export function HeroBatch() {
             "Delivered across India" moved out: it is reach, not a deadline,
             and the body copy above already says it.
           */}
-          <div className="mt-4">
+          <div className="mt-3">
             <p
               className="fb-tick field-value inline-flex flex-wrap items-baseline gap-x-2 border border-current px-2.5 py-1.5 text-[11px] font-bold tracking-[0.08em]"
               style={{ color: 'var(--color-brand)' }}
@@ -308,12 +331,12 @@ export function HeroBatch() {
           </div>
 
           {/* The proof block — the docket's field rows, given room to count. */}
-          <ul className="fb-tick mt-7 grid max-w-[27rem] grid-cols-3 border-y border-[color:var(--color-rule)]">
+          <ul className="fb-tick mt-5 grid max-w-[27rem] grid-cols-3 border-y border-[color:var(--color-rule)]">
             {proof.map((item, i) => (
               <li
                 key={item.label}
                 className={cn(
-                  'py-3',
+                  'py-2.5',
                   i > 0 && 'border-l border-[color:var(--color-rule)] pl-4',
                 )}
               >
@@ -327,9 +350,9 @@ export function HeroBatch() {
         </div>
 
         {/* ── THE FESTIVAL CARD ────────────────────────────────────────── */}
-        <Reveal delay={0.1}>
+        <Reveal delay={0.1} className="h-full">
           <div
-            className="relative rounded-xl border border-[color:var(--color-border)] p-6 pb-5 pt-10 shadow-soft"
+            className="relative flex h-full flex-col rounded-xl border border-[color:var(--color-border)] p-6 pb-5 pt-10 shadow-soft"
             style={{ backgroundColor: 'var(--theme-glow)' }}
           >
             {/* Tape corners — the card is pinned up in the kitchen. */}
@@ -356,19 +379,21 @@ export function HeroBatch() {
             </p>
 
             {/* The cutouts — bobbing chips: product photos when usable,
-                specimen marks until then. */}
+                specimen marks until then. flex-1 centres them in whatever
+                height the stretched card gains, so a tall left column reads
+                as a taller card rather than as dead cream below a short one. */}
             {/* gap-3 + w-20 on phones: three 96px chips overflowed a 390px
                 viewport, forced the hero's single column wider than the
                 screen, and the section's overflow-hidden clipped every line
                 on the page at the right edge. */}
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            <div className="mt-5 flex flex-1 flex-wrap content-center items-center justify-center gap-3 md:gap-4">
               {cutouts.map((p, i) => (
                 <FestivalCutout key={p.id} product={p} index={i} />
               ))}
             </div>
 
             {/* The live row — ember means exactly this. */}
-            <p className="mt-6 flex justify-center">
+            <p className="mt-5 flex justify-center">
               <span className="live-mark">Made fresh this morning</span>
             </p>
 
@@ -439,6 +464,27 @@ function FestivalLinework({ slug }: { slug: string }) {
               <path d={`M${x} 15 Q ${x - 3} 10 ${x} 6 Q ${x + 3} 10 ${x} 15`} {...stroke} />
             </g>
           ))}
+        </>
+      ) : slug === 'independence-day' ? (
+        <>
+          {/* The chakra between two rules — one ink, so the wheel carries it. */}
+          <path d="M0 14 H 138" {...stroke} strokeLinecap="round" />
+          <path d="M182 14 H 320" {...stroke} strokeLinecap="round" />
+          <circle cx="160" cy="14" r="11" {...stroke} />
+          {Array.from({ length: 12 }, (_, i) => {
+            const a = (i * Math.PI) / 6;
+            return (
+              <line
+                key={i}
+                x1={160 + 3 * Math.cos(a)}
+                y1={14 + 3 * Math.sin(a)}
+                x2={160 + 9.5 * Math.cos(a)}
+                y2={14 + 9.5 * Math.sin(a)}
+                stroke="var(--color-brand)"
+                strokeWidth="1"
+              />
+            );
+          })}
         </>
       ) : (
         <>
@@ -547,7 +593,7 @@ function FestivalCutout({ product, index }: { product: Product; index: number })
     <Link
       href={`/product/${product.slug}`}
       className={cn(
-        'fb-bob group bg-surface-elevated block w-20 rounded-lg border border-[color:var(--color-border)] p-2 pb-1.5 shadow-soft transition-shadow hover:shadow-lifted md:w-28',
+        'fb-bob group bg-surface-elevated block w-20 rounded-lg border border-[color:var(--color-border)] p-2 pb-1.5 shadow-soft transition-shadow hover:shadow-lifted md:w-32',
       )}
       style={{
         rotate: `${tilt}deg`,
@@ -564,7 +610,7 @@ function FestivalCutout({ product, index }: { product: Product; index: number })
             src={photo.url}
             alt=""
             fill
-            sizes="(min-width: 768px) 112px, 80px"
+            sizes="(min-width: 768px) 128px, 80px"
             className="object-cover"
             onError={() => setImgFailed(true)}
           />

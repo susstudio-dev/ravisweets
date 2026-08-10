@@ -71,6 +71,15 @@ const FESTIVALS: FestivalRow[] = [
     palette: { base: '#fff4e3', accent: '#a56a0f', ink: '#2a1a04' },
   },
   {
+    slug: 'independence-day',
+    title: 'Independence Day',
+    telugu: 'స్వాతంత్ర్య దినోత్సవం',
+    date: '2026-08-15',
+    monthLabel: 'Aug',
+    blurb: 'Tricolour boxes for the office, the school, the society gate.',
+    palette: { base: '#f4f9e8', accent: '#3a7a1c', ink: '#122a08' },
+  },
+  {
     slug: 'raksha-bandhan',
     title: 'Raksha Bandhan',
     telugu: 'రక్షా బంధన్',
@@ -162,9 +171,8 @@ export default function FestivalsIndexPage() {
         </Reveal>
         <Reveal delay={0.1}>
           <p className="text-theme-ink/75 mt-6 max-w-2xl text-lg leading-relaxed">
-            Ten festivals, ten boxes. From the Pongal clay pot in January to the Christmas Eve tin
-            in December — every edition is curated, slow-cooked, and shipped from our Khammam
-            kitchen.
+            From the Pongal clay pot in January to the Christmas Eve tin in December — every
+            edition is curated, slow-cooked, and dispatched the morning it ships.
           </p>
         </Reveal>
       </section>

@@ -24,22 +24,23 @@ const SORTS: { value: string; label: string }[] = [
 
 interface FiltersProps {
   categorySlug: CategorySlug;
-  activeDietary: string[];
-  activeSort: string;
-  inStockOnly: boolean;
-  total: number;
 }
 
-export function CategoryFilters({
-  categorySlug,
-  activeDietary,
-  activeSort,
-  inStockOnly,
-}: FiltersProps) {
+/**
+ * Self-sufficient: filter state lives in the URL and nowhere else, so the
+ * filters and the grid read it independently and no props need to thread
+ * between them. That is what lets the page put this in the title rail while
+ * CategoryBrowser keeps the grid column (owner layout request, 2026-08-11).
+ */
+export function CategoryFilters({ categorySlug }: FiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const [, startTransition] = useTransition();
+
+  const activeDietary = (params.get('diet') ?? '').split(',').filter(Boolean);
+  const activeSort = params.get('sort') ?? 'featured';
+  const inStockOnly = params.get('stock') === 'in';
 
   function updateParam(name: string, value: string | undefined) {
     const next = new URLSearchParams(params.toString());
@@ -61,7 +62,8 @@ export function CategoryFilters({
   const hasFilters = activeDietary.length > 0 || inStockOnly || activeSort !== 'featured';
 
   return (
-    <aside className="md:sticky md:top-20 md:self-start" aria-label="Filters">
+    /* Sticky is the parent rail's job now — this is one block within it. */
+    <aside aria-label="Filters">
       <div className="docket p-5">
         <div className="docket-head">
           <h2 className="font-display text-theme-ink text-lg">Refine</h2>

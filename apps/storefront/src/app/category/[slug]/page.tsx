@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CATALOGUE, type CategorySlug } from '@ravisweets/shared';
 import { Reveal } from '@/components/motion/reveal';
 import { CategoryBrowser } from '@/components/category/category-browser';
+import { CategoryFilters } from '@/components/category/category-filters';
 import { seoDescription, seoTitle } from '@/lib/seo/metadata';
 
 interface PageProps {
@@ -204,7 +205,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = seoTitle(meta.title, meta.titleHook);
   const description = seoDescription(
     meta.body,
-    'Made fresh in our Khammam kitchen since 1983.',
+    'Made fresh in our kitchens since 1983.',
     'Delivered across India.',
   );
 
@@ -225,39 +226,55 @@ export default async function CategoryPage({ params }: PageProps) {
 
   return (
     <>
-      <div className="container-site pt-6">
-        <Link
-          href="/"
-          className="text-theme-ink hover:text-theme-accent inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to home
-        </Link>
-      </div>
+      {/*
+        THE TITLE RAIL. The head used to run full-width — back link, a
+        display-lg title, the intro — and spent the whole first viewport
+        before a single product appeared (owner screenshot, 2026-08-11).
+        Everything that introduced the range now stands in a sticky left
+        rail beside the grid, so the products start directly below the
+        masthead. The h1 and intro stay OUTSIDE the Suspense boundary:
+        they are server-rendered and must remain in the static HTML — the
+        grid behind useSearchParams contributes nothing to the export.
+      */}
+      <section
+        aria-labelledby="cat-heading"
+        className="container-site grid gap-8 pb-20 pt-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10"
+      >
+        <aside className="lg:sticky lg:top-20 lg:self-start">
+          <Link
+            href="/"
+            className="text-theme-ink hover:text-theme-accent inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back to home
+          </Link>
 
-      {/* The category head: a docket-head, no kicker — the heading carries itself. */}
-      <section aria-labelledby="cat-heading" className="container-site section-y-tight">
-        <Reveal>
-          <div className="docket-head">
+          <Reveal>
             <h1
               id="cat-heading"
-              className="font-display text-display-md md:text-display-lg text-theme-ink"
+              className="font-display text-display-md text-theme-ink mt-3"
             >
               {meta.title}
             </h1>
-            <p className="field-value text-theme-ink text-sm">
+            <p className="field-value text-theme-ink mt-2 text-sm">
               {products.length} {products.length === 1 ? 'PRODUCT' : 'PRODUCTS'}
             </p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <p className="text-text-muted max-w-2xl md:text-lg">{meta.body}</p>
-        </Reveal>
-      </section>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="text-text-muted mt-4 text-sm leading-relaxed">{meta.body}</p>
+          </Reveal>
 
-      <Suspense fallback={<div className="container-site pb-20" />}>
-        <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />
-      </Suspense>
+          <div className="mt-6">
+            <Suspense fallback={null}>
+              <CategoryFilters categorySlug={slug as CategorySlug} />
+            </Suspense>
+          </div>
+        </aside>
+
+        <Suspense fallback={<div />}>
+          <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />
+        </Suspense>
+      </section>
 
       {/*
         THE RANGE, AS A RECORD — AND AS SERVER-RENDERED HTML.
