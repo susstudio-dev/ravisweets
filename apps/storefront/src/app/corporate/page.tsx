@@ -7,6 +7,7 @@ import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
 import { Grain } from '@/components/brand/grain';
+import { pendingPhoto } from '@/lib/images';
 
 /*
  * CORPORATE, AS A TENDER DOCUMENT.
@@ -20,9 +21,10 @@ import { Grain } from '@/components/brand/grain';
  */
 
 export const metadata: Metadata = {
-  title: 'Corporate gifting',
+  title: 'Corporate Gifting & Bulk Diwali Hampers',
   description:
-    'Corporate Diwali runs, multi-address CSV delivery, GST-compliant invoices, logo printing — managed by a dedicated account manager.',
+    'Corporate Diwali runs from 25 units — multi-address CSV delivery, GST invoices, logo printing, a dedicated account manager.',
+  alternates: { canonical: '/corporate' },
 };
 
 /** The capability sheet: what the corporate desk can be held to, as a record. */
@@ -72,7 +74,7 @@ const HAMPERS = [
     priceFrom: '₹899',
     moq: '50 UNITS',
     contents: 'Kaju Katli · Badam ki Jali · Pistachios · Brass diya',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/cashew_mithai-removebg-preview.png',
+    image: pendingPhoto('2025/09/cashew_mithai-removebg-preview.png'),
   },
   {
     title: 'Premium',
@@ -81,7 +83,7 @@ const HAMPERS = [
     priceFrom: '₹1,499',
     moq: '50 UNITS',
     contents: 'Qubani ka Meetha · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
   },
   {
     title: 'Grande',
@@ -90,7 +92,7 @@ const HAMPERS = [
     priceFrom: '₹2,499',
     moq: '25 UNITS',
     contents: 'Full Hyderabadi spread · custom silk wrap · hand-painted brass box',
-    image: 'https://ravisweets.com/wp-content/uploads/2025/09/anjjeer_katli-removebg-preview.png',
+    image: pendingPhoto('2025/09/anjjeer_katli-removebg-preview.png'),
   },
   // `as const` narrows templateId to the literal union, so the owner-photo
   // slot path `corporate.${templateId}` typechecks against SlotPath.

@@ -102,7 +102,7 @@ export function ShopScene() {
             RAVI SWEETS
           </span>
           <span className="font-indic text-theme-accent block text-[clamp(0.5rem,0.65vw,0.65rem)] tracking-[0.28em]">
-            ఖమ్మం · SINCE 1985
+            ఖమ్మం · SINCE 1983
           </span>
         </div>
 

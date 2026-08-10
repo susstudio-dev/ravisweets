@@ -2,26 +2,48 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, Check, Lock, ShoppingBag } from 'lucide-react';
-import { useMemo, useState, useTransition } from 'react';
+import { motion } from 'motion/react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { useMemo, useRef, useState, useTransition } from 'react';
 import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
 import { useSession } from '@/lib/supabase/session-context';
+import { getSupabase } from '@/lib/supabase/client';
 import { commitOrderToSupabase, sendOrderEmail } from '@/lib/supabase/orders';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { generateOrderId, generateOrderNumber, saveOrder } from '@/lib/orders/store';
 import type { Order, OrderAddress, PaymentMethod } from '@/lib/orders/types';
-import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
-type Step = 'address' | 'payment' | 'review';
+/**
+ * THE CHECKOUT DOCKET.
+ *
+ * Three numbered strips on one form: 01 ADDRESS / 02 DISPATCH / 03 PAYMENT.
+ * The completed strips stay on the sheet with an Edit affordance; the active
+ * strip holds the fields. Validation is inline ink-red text under the field —
+ * no toasts.
+ *
+ * PAYMENT. The `razorpay-order` Supabase Edge Function is the trusted half:
+ * `create` reads the amount from the order row server-side, `verify`
+ * recomputes the HMAC before anything is marked paid. When the function is
+ * not deployed (or keys are unset) the flow falls back to confirming the
+ * order and collecting payment on delivery or by phone — stated honestly,
+ * with no padlock and no rupee amount on the terminal button.
+ */
 
-const STEP_ORDER: Step[] = ['address', 'payment', 'review'];
+type Step = 'address' | 'dispatch' | 'payment';
+
+const STEP_ORDER: Step[] = ['address', 'dispatch', 'payment'];
+
+const STEP_LABEL: Record<Step, string> = {
+  address: 'Address',
+  dispatch: 'Dispatch',
+  payment: 'Payment',
+};
 
 const PAYMENT_METHODS: { id: PaymentMethod; label: string; sub: string }[] = [
   { id: 'upi', label: 'UPI', sub: 'GPay · PhonePe · Paytm · BHIM' },
@@ -44,6 +66,147 @@ function emptyAddress(): OrderAddress {
   };
 }
 
+/* ── Razorpay glue ─────────────────────────────────────────────────────── */
+
+interface RazorpaySuccess {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayOptions {
+  key: string;
+  order_id: string;
+  amount?: number;
+  currency?: string;
+  name?: string;
+  description?: string;
+  prefill?: { name?: string; email?: string; contact?: string };
+  handler: (response: RazorpaySuccess) => void;
+  modal?: { ondismiss?: () => void };
+}
+
+type RazorpayCtor = new (options: RazorpayOptions) => { open: () => void };
+
+const RAZORPAY_SRC = 'https://checkout.razorpay.com/v1/checkout.js';
+
+/** Loads checkout.js on demand — never at render, never as a preload. */
+function loadRazorpay(): Promise<RazorpayCtor | null> {
+  return new Promise((resolve) => {
+    const w = window as Window & { Razorpay?: RazorpayCtor };
+    if (w.Razorpay) {
+      resolve(w.Razorpay);
+      return;
+    }
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SRC}"]`);
+    const script = existing ?? document.createElement('script');
+    script.addEventListener('load', () => resolve(w.Razorpay ?? null));
+    script.addEventListener('error', () => resolve(null));
+    if (!existing) {
+      script.src = RAZORPAY_SRC;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  });
+}
+
+type PayAttempt =
+  | { kind: 'paid'; paymentId: string }
+  | { kind: 'unavailable' }
+  | { kind: 'dismissed' }
+  | { kind: 'verify-failed' };
+
+/**
+ * create → open checkout → verify. Success ONLY after the edge function has
+ * verified the signature server-side; a forged browser callback marks nothing
+ * paid. Any infrastructure failure (function not deployed, keys unset, script
+ * blocked) resolves to 'unavailable' and the caller falls back honestly.
+ */
+async function attemptRazorpayPayment(order: Order): Promise<PayAttempt> {
+  const supa = await getSupabase();
+  if (!supa) return { kind: 'unavailable' };
+
+  /*
+   * Named rather than inlined: `data as typeof created` inside the try would
+   * capture the NARROWED type of `created` (null at that point, since it was
+   * initialised null), typing the variable null forever and making every
+   * later property access `never`.
+   */
+  interface RazorpayCreateResponse {
+    razorpayOrderId?: string;
+    amount?: number;
+    currency?: string;
+    keyId?: string;
+    error?: string;
+  }
+  let created: RazorpayCreateResponse | null = null;
+  try {
+    const { data, error } = await supa.functions.invoke('razorpay-order', {
+      body: { action: 'create', orderId: order.id },
+    });
+    if (error) return { kind: 'unavailable' };
+    created = data as RazorpayCreateResponse | null;
+  } catch {
+    return { kind: 'unavailable' };
+  }
+  if (!created || created.error || !created.razorpayOrderId || !created.keyId) {
+    return { kind: 'unavailable' };
+  }
+  // Property reads (not destructuring) so the truthiness narrowing above holds.
+  const razorpayOrderId = created.razorpayOrderId;
+  const keyId = created.keyId;
+  const amount = created.amount;
+  const currency = created.currency;
+
+  const Razorpay = await loadRazorpay();
+  if (!Razorpay) return { kind: 'unavailable' };
+
+  const response = await new Promise<RazorpaySuccess | 'dismissed' | 'failed'>((resolve) => {
+    try {
+      const rzp = new Razorpay({
+        key: keyId,
+        order_id: razorpayOrderId,
+        amount,
+        currency,
+        name: 'Ravi Sweets',
+        description: `Order ${order.number}`,
+        prefill: {
+          name: order.address.name,
+          email: order.address.email,
+          contact: order.address.phone,
+        },
+        handler: (res) => resolve(res),
+        modal: { ondismiss: () => resolve('dismissed') },
+      });
+      rzp.open();
+    } catch {
+      resolve('failed');
+    }
+  });
+  if (response === 'failed') return { kind: 'unavailable' };
+  if (response === 'dismissed') return { kind: 'dismissed' };
+
+  try {
+    const { data, error } = await supa.functions.invoke('razorpay-order', {
+      body: {
+        action: 'verify',
+        orderId: order.id,
+        razorpayOrderId: response.razorpay_order_id,
+        razorpayPaymentId: response.razorpay_payment_id,
+        razorpaySignature: response.razorpay_signature,
+      },
+    });
+    if (error) return { kind: 'verify-failed' };
+    const verdict = data as { ok?: boolean } | null;
+    if (verdict?.ok) return { kind: 'paid', paymentId: response.razorpay_payment_id };
+    return { kind: 'verify-failed' };
+  } catch {
+    return { kind: 'verify-failed' };
+  }
+}
+
+/* ── The flow ──────────────────────────────────────────────────────────── */
+
 export function CheckoutFlow() {
   const router = useRouter();
   const reduced = useReducedMotion();
@@ -60,8 +223,14 @@ export function CheckoutFlow() {
   const [address, setAddress] = useState<OrderAddress>(emptyAddress());
   const [payment, setPayment] = useState<PaymentMethod>('upi');
   const [errors, setErrors] = useState<Partial<Record<keyof OrderAddress, string>>>({});
+  const [payError, setPayError] = useState<string | null>(null);
   const [placing, startPlacing] = useTransition();
   const [authOpen, setAuthOpen] = useState(false);
+  // One order per checkout session — a dismissed payment retries against the
+  // SAME order id instead of minting a duplicate row.
+  const pendingOrderRef = useRef<Order | null>(null);
+  const committedRef = useRef(false);
+  const busyRef = useRef(false);
 
   const stepIndex = STEP_ORDER.indexOf(step);
   const shippingEstimate = lineCount === 0 ? 0 : freeShipping ? 0 : 99;
@@ -89,15 +258,15 @@ export function CheckoutFlow() {
   function goNext() {
     if (step === 'address') {
       if (!validateAddress()) return;
+      setStep('dispatch');
+    } else if (step === 'dispatch') {
       setStep('payment');
-    } else if (step === 'payment') {
-      setStep('review');
     }
   }
 
   function goBack() {
-    if (step === 'payment') setStep('address');
-    else if (step === 'review') setStep('payment');
+    if (step === 'dispatch') setStep('address');
+    else if (step === 'payment') setStep('dispatch');
   }
 
   function placeOrder() {
@@ -110,71 +279,108 @@ export function CheckoutFlow() {
       return;
     }
     startPlacing(async () => {
-      // Simulated payment latency — real Razorpay/Stripe flow replaces this.
-      await new Promise((r) => setTimeout(r, 900));
-      const id = generateOrderId();
-      const number = generateOrderNumber();
-      const order: Order = {
-        id,
-        number,
-        placedAt: Date.now(),
-        status: 'placed',
-        address,
-        payment: { method: payment, reference: `sim_${number}` },
-        lines: lineViews.map((l) => ({
-          productId: l.productId,
-          productSlug: l.product.slug,
-          productTitle: l.product.title,
-          variantId: l.variantId,
-          variantTitle: l.variant.title,
-          quantity: l.quantity,
-          unitPrice: l.variant.price,
-          lineTotal: l.lineTotal,
-          imageUrl: l.product.images[0]?.url,
-        })),
-        subtotal,
-        shipping: { amount: shippingEstimate, currency: subtotal.currency },
-        total: grandTotal,
-      };
-      // Always mirror to localStorage (so /orders pages and /account work
-      // immediately + survive Supabase outages). When Supabase is configured,
-      // also commit the row server-side under the customer's auth.uid().
-      saveOrder(order);
-      if (authConfigured) {
-        const result = await commitOrderToSupabase({
-          order,
-          discount: totalDiscount,
-          primaryCouponCode: primaryCode,
-          redeemedCouponCodes: appliedCoupons.map((a) => a.coupon.code),
-        });
-        if (!result.ok) {
-          // Non-fatal: localStorage write succeeded; warn for debugging.
+      if (busyRef.current) return;
+      busyRef.current = true;
+      setPayError(null);
+      try {
+        // Reuse id/number across retries; refresh the mutable fields.
+        const prev = pendingOrderRef.current;
+        const number = prev?.number ?? generateOrderNumber();
+        const order: Order = {
+          id: prev?.id ?? generateOrderId(),
+          number,
+          placedAt: prev?.placedAt ?? Date.now(),
+          status: 'placed',
+          address,
+          payment: { method: payment, reference: prev?.payment.reference ?? `sim_${number}` },
+          lines: lineViews.map((l) => ({
+            productId: l.productId,
+            productSlug: l.product.slug,
+            productTitle: l.product.title,
+            variantId: l.variantId,
+            variantTitle: l.variant.title,
+            quantity: l.quantity,
+            unitPrice: l.variant.price,
+            lineTotal: l.lineTotal,
+            imageUrl: l.product.images[0]?.url,
+          })),
+          subtotal,
+          shipping: { amount: shippingEstimate, currency: subtotal.currency },
+          total: grandTotal,
+        };
+        pendingOrderRef.current = order;
+        // Always mirror to localStorage (so /orders pages and /account work
+        // immediately + survive Supabase outages). When Supabase is configured,
+        // also commit the row server-side under the customer's auth.uid().
+        saveOrder(order);
+        if (authConfigured && !committedRef.current) {
+          const result = await commitOrderToSupabase({
+            order,
+            discount: totalDiscount,
+            primaryCouponCode: primaryCode,
+            redeemedCouponCodes: appliedCoupons.map((a) => a.coupon.code),
+          });
+          if (!result.ok) {
+            // Non-fatal: localStorage write succeeded; warn for debugging.
 
-          console.warn('Supabase order commit failed:', result.reason);
-        } else {
-          // Fire the order-confirmation email. No-ops silently if Resend
-          // isn't yet wired up in Supabase secrets.
-          void sendOrderEmail(order.id, 'placed');
+            console.warn('Supabase order commit failed:', result.reason);
+          } else {
+            committedRef.current = true;
+            // Fire the order-confirmation email. No-ops silently if Resend
+            // isn't yet wired up in Supabase secrets.
+            void sendOrderEmail(order.id, 'placed');
+          }
         }
+
+        // Online payment. Only attempted when the order row exists server-side
+        // (the edge function reads the amount from the DB, never the client)
+        // and the buyer chose an online method. COD — and any build where the
+        // function is not deployed — goes straight to confirmation.
+        if (committedRef.current && payment !== 'cod') {
+          const attempt = await attemptRazorpayPayment(order);
+          if (attempt.kind === 'dismissed') {
+            setPayError('Payment was not completed. Try again, or choose cash on delivery.');
+            return;
+          }
+          if (attempt.kind === 'verify-failed') {
+            setPayError(
+              `We could not verify that payment. If an amount was debited, contact us quoting order ${order.number} before retrying.`,
+            );
+            return;
+          }
+          if (attempt.kind === 'paid') {
+            const paid: Order = {
+              ...order,
+              payment: { ...order.payment, reference: attempt.paymentId },
+            };
+            pendingOrderRef.current = paid;
+            saveOrder(paid);
+          }
+          // 'unavailable' falls through: the order is confirmed and payment
+          // is collected on delivery or by phone, as stated on the form.
+        }
+
+        clear();
+        clearCoupons();
+        router.push(`/orders?id=${order.id}`);
+      } finally {
+        busyRef.current = false;
       }
-      clear();
-      clearCoupons();
-      router.push(`/orders?id=${id}`);
     });
   }
 
   if (lineCount === 0) {
     return (
       <section className="container-site flex min-h-[60vh] flex-col items-start gap-5 py-24">
-        <Paisley size="lg" />
+        <span
+          className="block h-10 w-10 rotate-45 border-2 border-dashed border-[color:var(--color-varak-rule)] opacity-50"
+          aria-hidden="true"
+        />
         <h1 className="font-display text-display-md text-theme-ink">Your cart is empty.</h1>
         <p className="text-theme-ink/70 max-w-lg">
           Add something before you check out — our Hyderabadi specials are a good place to start.
         </p>
-        <Link
-          href="/category/hyderabadi-specials"
-          className="bg-theme-accent inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)]"
-        >
+        <Link href="/category/hyderabadi-specials" className="stamp">
           Shop now
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
@@ -184,278 +390,264 @@ export function CheckoutFlow() {
 
   return (
     <section className="container-site grid gap-10 py-10 md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-14">
-      {/* Left: header + stepper + current step panel */}
+      {/* Left: header + the three numbered strips */}
       <div>
         <Reveal>
           <Link
             href="/cart"
-            className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
+            className="text-theme-ink/70 hover:text-theme-accent inline-flex items-center gap-1.5 text-sm underline underline-offset-4 transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to cart
           </Link>
         </Reveal>
         <Reveal delay={0.05}>
-          <p className="text-theme-accent mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Checkout
-          </p>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-6 leading-[1.02]">
             One more step, then it&rsquo;s wrapped.
           </h1>
         </Reveal>
 
-        {/* Stepper */}
-        <ol className="mt-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
+        <ol className="mt-10 flex flex-col gap-4" aria-label="Checkout steps">
           {STEP_ORDER.map((s, i) => {
             const active = i === stepIndex;
             const done = i < stepIndex;
             return (
-              <li key={s} className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    'flex h-7 w-7 items-center justify-center rounded-full border text-[11px] transition-colors',
-                    done
-                      ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                      : active
-                        ? 'border-theme-accent text-theme-accent'
-                        : 'text-theme-ink/40 border-[color:var(--color-border)]',
+              <li key={s} aria-current={active ? 'step' : undefined}>
+                <div className={cn('docket-head', !active && 'mb-0')}>
+                  <h2
+                    className={cn(
+                      'font-display flex items-baseline gap-3 text-base font-semibold transition-colors',
+                      active ? 'text-theme-ink' : done ? 'text-theme-ink/80' : 'text-theme-ink/45',
+                    )}
+                  >
+                    <span className="field-value text-sm" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {STEP_LABEL[s]}
+                  </h2>
+                  {done && (
+                    <button
+                      type="button"
+                      onClick={() => setStep(s)}
+                      className="text-theme-accent hover:text-theme-ink inline-flex min-h-9 items-center gap-1 text-xs font-semibold underline underline-offset-4 transition-colors"
+                    >
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      Edit
+                    </button>
                   )}
-                >
-                  {done ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : i + 1}
-                </span>
-                <span
-                  className={cn(
-                    'transition-colors',
-                    active ? 'text-theme-ink' : done ? 'text-theme-ink/80' : 'text-theme-ink/45',
-                  )}
-                >
-                  {s === 'address' ? 'Address' : s === 'payment' ? 'Payment' : 'Review'}
-                </span>
-                {i < STEP_ORDER.length - 1 && (
-                  <span
-                    className="mx-1 h-px w-6 bg-[color:var(--color-border)]"
-                    aria-hidden="true"
-                  />
+                </div>
+
+                {active && s === 'address' && (
+                  <motion.div
+                    key="panel-address"
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATION.quick, ease: EASE.standard }}
+                    className="grid gap-4"
+                  >
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field
+                        label="Full name"
+                        name="name"
+                        value={address.name}
+                        onChange={(v) => setAddress({ ...address, name: v })}
+                        error={errors.name}
+                        autoComplete="name"
+                      />
+                      <Field
+                        label="Phone"
+                        name="phone"
+                        value={address.phone}
+                        onChange={(v) => setAddress({ ...address, phone: v })}
+                        error={errors.phone}
+                        inputMode="tel"
+                        autoComplete="tel"
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+                    <Field
+                      label="Email"
+                      name="email"
+                      value={address.email}
+                      onChange={(v) => setAddress({ ...address, email: v })}
+                      error={errors.email}
+                      type="email"
+                      autoComplete="email"
+                    />
+                    <Field
+                      label="Address line 1"
+                      name="line1"
+                      value={address.line1}
+                      onChange={(v) => setAddress({ ...address, line1: v })}
+                      error={errors.line1}
+                      autoComplete="address-line1"
+                    />
+                    <Field
+                      label="Address line 2 (optional)"
+                      name="line2"
+                      value={address.line2 ?? ''}
+                      onChange={(v) => setAddress({ ...address, line2: v })}
+                      autoComplete="address-line2"
+                    />
+                    <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
+                      <Field
+                        label="City"
+                        name="city"
+                        value={address.city}
+                        onChange={(v) => setAddress({ ...address, city: v })}
+                        error={errors.city}
+                        autoComplete="address-level2"
+                      />
+                      <Field
+                        label="State"
+                        name="state"
+                        value={address.state}
+                        onChange={(v) => setAddress({ ...address, state: v })}
+                        error={errors.state}
+                        autoComplete="address-level1"
+                      />
+                      <Field
+                        label="Pincode"
+                        name="pincode"
+                        value={address.pincode}
+                        onChange={(v) => setAddress({ ...address, pincode: v })}
+                        error={errors.pincode}
+                        inputMode="numeric"
+                        autoComplete="postal-code"
+                        className="sm:w-32"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
+                {active && s === 'dispatch' && (
+                  <motion.div
+                    key="panel-dispatch"
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATION.quick, ease: EASE.standard }}
+                    className="flex flex-col gap-5"
+                  >
+                    <div className="docket p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="field-label">Dispatch to</h3>
+                        <button
+                          type="button"
+                          onClick={() => setStep('address')}
+                          className="text-theme-accent hover:text-theme-ink text-xs font-semibold underline underline-offset-4 transition-colors"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                      <p className="text-theme-ink/80 mt-2 text-sm leading-relaxed">
+                        {address.name}
+                        <br />
+                        {address.line1}
+                        {address.line2 ? `, ${address.line2}` : ''}
+                        <br />
+                        {address.city}, {address.state} {address.pincode}
+                        <br />
+                        {address.phone} · {address.email}
+                      </p>
+                    </div>
+
+                    <div className="docket p-5">
+                      <h3 className="field-label">Items · {lineCount}</h3>
+                      <ul className="mt-2">
+                        {lineViews.map((l) => (
+                          <li
+                            key={`${l.productId}-${l.variantId}`}
+                            className="field-row text-sm"
+                          >
+                            <span className="text-theme-ink/80 min-w-0">
+                              {l.product.title}{' '}
+                              <span className="text-theme-ink/50">
+                                · {l.variant.title} × {l.quantity}
+                              </span>
+                            </span>
+                            <span className="field-value text-theme-ink shrink-0 text-sm">
+                              {formatMoney(l.lineTotal)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <dl className="mt-3 border-t border-[color:var(--color-rule)] pt-1">
+                        <div className="field-row">
+                          <dt className="field-label">
+                            Shipping{freeShipping ? ' · waived' : ' (estimate)'}
+                          </dt>
+                          <dd className="field-value text-sm">
+                            {formatMoney({
+                              amount: shippingEstimate,
+                              currency: subtotal.currency,
+                            })}
+                          </dd>
+                        </div>
+                        <div className="field-row">
+                          <dt className="field-label">Dispatch</dt>
+                          <dd className="field-value text-sm">SAME DAY</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </motion.div>
+                )}
+
+                {active && s === 'payment' && (
+                  <motion.div
+                    key="panel-payment"
+                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATION.quick, ease: EASE.standard }}
+                    className="flex flex-col gap-3"
+                  >
+                    <ul className="grid gap-2">
+                      {PAYMENT_METHODS.map((m) => {
+                        const selected = payment === m.id;
+                        return (
+                          <li key={m.id}>
+                            <label
+                              className={cn(
+                                'flex cursor-pointer items-start gap-3 rounded-md border p-4 transition-colors',
+                                selected
+                                  ? 'border-theme-accent bg-theme-glow/10'
+                                  : 'bg-surface-elevated hover:border-theme-accent border-[color:var(--color-border)]',
+                              )}
+                            >
+                              <input
+                                type="radio"
+                                name="payment"
+                                value={m.id}
+                                checked={selected}
+                                onChange={() => setPayment(m.id)}
+                                className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4"
+                              />
+                              <div>
+                                <p className="font-display text-theme-ink text-base">{m.label}</p>
+                                <p className="text-theme-ink/60 text-xs">{m.sub}</p>
+                              </div>
+                            </label>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <p className="text-theme-ink/70 text-sm">
+                      If online payment is unavailable right now, we&rsquo;ll confirm your order
+                      and collect payment on delivery or by phone.
+                    </p>
+                  </motion.div>
                 )}
               </li>
             );
           })}
         </ol>
 
-        {/* Step panels */}
-        <div className="relative mt-10 min-h-[24rem]">
-          <AnimatePresence mode="wait" initial={false}>
-            {step === 'address' && (
-              <motion.div
-                key="address"
-                initial={reduced ? { opacity: 0 } : { opacity: 0, x: 20 }}
-                animate={reduced ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, x: -20 }}
-                transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                className="grid gap-4"
-              >
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field
-                    label="Full name"
-                    name="name"
-                    value={address.name}
-                    onChange={(v) => setAddress({ ...address, name: v })}
-                    error={errors.name}
-                    autoComplete="name"
-                  />
-                  <Field
-                    label="Phone"
-                    name="phone"
-                    value={address.phone}
-                    onChange={(v) => setAddress({ ...address, phone: v })}
-                    error={errors.phone}
-                    inputMode="tel"
-                    autoComplete="tel"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-                <Field
-                  label="Email"
-                  name="email"
-                  value={address.email}
-                  onChange={(v) => setAddress({ ...address, email: v })}
-                  error={errors.email}
-                  type="email"
-                  autoComplete="email"
-                />
-                <Field
-                  label="Address line 1"
-                  name="line1"
-                  value={address.line1}
-                  onChange={(v) => setAddress({ ...address, line1: v })}
-                  error={errors.line1}
-                  autoComplete="address-line1"
-                />
-                <Field
-                  label="Address line 2 (optional)"
-                  name="line2"
-                  value={address.line2 ?? ''}
-                  onChange={(v) => setAddress({ ...address, line2: v })}
-                  autoComplete="address-line2"
-                />
-                <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
-                  <Field
-                    label="City"
-                    name="city"
-                    value={address.city}
-                    onChange={(v) => setAddress({ ...address, city: v })}
-                    error={errors.city}
-                    autoComplete="address-level2"
-                  />
-                  <Field
-                    label="State"
-                    name="state"
-                    value={address.state}
-                    onChange={(v) => setAddress({ ...address, state: v })}
-                    error={errors.state}
-                    autoComplete="address-level1"
-                  />
-                  <Field
-                    label="Pincode"
-                    name="pincode"
-                    value={address.pincode}
-                    onChange={(v) => setAddress({ ...address, pincode: v })}
-                    error={errors.pincode}
-                    inputMode="numeric"
-                    autoComplete="postal-code"
-                    className="sm:w-32"
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {step === 'payment' && (
-              <motion.div
-                key="payment"
-                initial={reduced ? { opacity: 0 } : { opacity: 0, x: 20 }}
-                animate={reduced ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, x: -20 }}
-                transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                className="flex flex-col gap-3"
-              >
-                <p className="text-theme-ink/70 text-sm">
-                  We&rsquo;ll simulate the payment in this demo — nothing is charged.
-                </p>
-                <ul className="grid gap-2">
-                  {PAYMENT_METHODS.map((m) => {
-                    const selected = payment === m.id;
-                    return (
-                      <li key={m.id}>
-                        <label
-                          className={cn(
-                            'flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all',
-                            selected
-                              ? 'border-theme-accent bg-theme-glow/10 shadow-soft'
-                              : 'bg-surface-elevated hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
-                          )}
-                        >
-                          <input
-                            type="radio"
-                            name="payment"
-                            value={m.id}
-                            checked={selected}
-                            onChange={() => setPayment(m.id)}
-                            className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4"
-                          />
-                          <div>
-                            <p className="font-display text-theme-ink text-base">{m.label}</p>
-                            <p className="text-theme-ink/60 text-xs">{m.sub}</p>
-                          </div>
-                        </label>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </motion.div>
-            )}
-
-            {step === 'review' && (
-              <motion.div
-                key="review"
-                initial={reduced ? { opacity: 0 } : { opacity: 0, x: 20 }}
-                animate={reduced ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, x: -20 }}
-                transition={{ duration: DURATION.quick, ease: EASE.standard }}
-                className="flex flex-col gap-5"
-              >
-                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-display text-theme-ink text-base">Shipping to</h3>
-                    <button
-                      type="button"
-                      onClick={() => setStep('address')}
-                      className="text-theme-accent text-xs font-semibold hover:underline"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <p className="text-theme-ink/80 mt-2 text-sm leading-relaxed">
-                    {address.name}
-                    <br />
-                    {address.line1}
-                    {address.line2 ? `, ${address.line2}` : ''}
-                    <br />
-                    {address.city}, {address.state} {address.pincode}
-                    <br />
-                    {address.phone} · {address.email}
-                  </p>
-                </div>
-                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-display text-theme-ink text-base">Paying with</h3>
-                    <button
-                      type="button"
-                      onClick={() => setStep('payment')}
-                      className="text-theme-accent text-xs font-semibold hover:underline"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <p className="text-theme-ink/80 mt-2 text-sm">
-                    {PAYMENT_METHODS.find((m) => m.id === payment)?.label}
-                  </p>
-                </div>
-                <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
-                  <h3 className="font-display text-theme-ink text-base">Items · {lineCount}</h3>
-                  <ul className="mt-3 flex flex-col divide-y divide-[color:var(--color-border)]">
-                    {lineViews.map((l) => (
-                      <li
-                        key={`${l.productId}-${l.variantId}`}
-                        className="flex justify-between gap-4 py-2 text-sm"
-                      >
-                        <span className="text-theme-ink/80">
-                          {l.product.title}{' '}
-                          <span className="text-theme-ink/50">
-                            · {l.variant.title} × {l.quantity}
-                          </span>
-                        </span>
-                        <span className="text-theme-ink font-semibold tabular-nums">
-                          {formatMoney(l.lineTotal)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Nav buttons */}
-        <div className="mt-10 flex items-center justify-between gap-3">
+        {/* Nav */}
+        <div className="mt-8 flex items-center justify-between gap-3">
           {step !== 'address' ? (
             <button
               type="button"
               onClick={goBack}
-              className="text-theme-ink/70 hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+              className="text-theme-ink/70 hover:text-theme-accent inline-flex min-h-11 items-center gap-1.5 text-sm underline underline-offset-4 transition-colors"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back
@@ -463,27 +655,17 @@ export function CheckoutFlow() {
           ) : (
             <span />
           )}
-          {step !== 'review' ? (
-            <button
-              type="button"
-              onClick={goNext}
-              className="bg-theme-accent shadow-soft hover:shadow-lifted group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5"
-            >
+          {step !== 'payment' ? (
+            <button type="button" onClick={goNext} className="stamp">
               Continue
-              <ArrowRight
-                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                aria-hidden="true"
-              />
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
           ) : (
             <button
               type="button"
               onClick={placeOrder}
               disabled={placing}
-              className={cn(
-                'bg-theme-ink shadow-soft group inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300',
-                placing ? 'opacity-70' : 'hover:shadow-lifted hover:-translate-y-0.5',
-              )}
+              className={cn('stamp', placing && 'cursor-wait opacity-70')}
             >
               {placing ? (
                 <>
@@ -496,66 +678,70 @@ export function CheckoutFlow() {
                   Placing order…
                 </>
               ) : (
-                <>
-                  <Lock className="h-4 w-4" aria-hidden="true" />
-                  Place order · {formatMoney(grandTotal)}
-                </>
+                'Place order'
               )}
             </button>
           )}
         </div>
+        {payError && (
+          <p className="mt-3 text-right text-xs font-semibold text-red-700" role="alert">
+            {payError}
+          </p>
+        )}
       </div>
 
       {/* Right: summary */}
       <aside aria-label="Order summary" className="md:sticky md:top-20 md:self-start">
-        <div className="bg-surface-elevated shadow-soft rounded-3xl border border-[color:var(--color-border)] p-6">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="text-theme-accent h-4 w-4" aria-hidden="true" />
+        <div className="docket p-5 md:p-6">
+          <div className="docket-head">
             <h2 className="font-display text-theme-ink text-lg">Order summary</h2>
+            <span className="field-value text-xs">
+              {lineCount === 1 ? '1 ITEM' : `${lineCount} ITEMS`}
+            </span>
           </div>
-          <ul className="mt-4 flex max-h-60 flex-col gap-3 overflow-y-auto pr-1 text-sm">
+          <ul className="max-h-60 overflow-y-auto pr-1">
             {lineViews.map((l) => (
-              <li key={`${l.productId}-${l.variantId}`} className="flex justify-between gap-4">
-                <span className="text-theme-ink/80">
-                  <span className="line-clamp-1">{l.product.title}</span>
-                  <span className="text-theme-ink/50 text-xs">
+              <li key={`${l.productId}-${l.variantId}`} className="field-row text-sm">
+                <div className="min-w-0">
+                  <p className="text-theme-ink/80 line-clamp-1">{l.product.title}</p>
+                  <p className="text-theme-ink/50 text-xs">
                     {l.variant.title} · × {l.quantity}
-                  </span>
-                </span>
-                <span className="text-theme-ink shrink-0 font-semibold tabular-nums">
+                  </p>
+                </div>
+                <span className="field-value text-theme-ink shrink-0 text-sm">
                   {formatMoney(l.lineTotal)}
                 </span>
               </li>
             ))}
           </ul>
-          <dl className="mt-6 space-y-2 border-t border-[color:var(--color-border)] pt-5 text-sm">
-            <div className="flex items-center justify-between">
-              <dt className="text-theme-ink/70">Subtotal</dt>
-              <dd className="text-theme-ink tabular-nums">{formatMoney(subtotal)}</dd>
+          <dl className="mt-4 border-t border-[color:var(--color-rule)] pt-1">
+            <div className="field-row">
+              <dt className="field-label">Subtotal</dt>
+              <dd className="field-value text-sm">{formatMoney(subtotal)}</dd>
             </div>
             {totalDiscount > 0 && (
-              <div className="flex items-center justify-between">
-                <dt className="text-theme-ink/70">
+              <div className="field-row">
+                <dt className="field-label">
                   Discount{primaryCode ? ` · ${primaryCode}` : ''}
                 </dt>
-                <dd className="tabular-nums text-emerald-700">
+                <dd className="field-value text-sm text-[#1F6238]">
                   −{formatMoney({ amount: totalDiscount, currency: subtotal.currency })}
                 </dd>
               </div>
             )}
-            <div className="flex items-center justify-between">
-              <dt className="text-theme-ink/70">Shipping{freeShipping ? ' · free' : ''}</dt>
-              <dd className="text-theme-ink tabular-nums">
+            <div className="field-row">
+              <dt className="field-label">Shipping{freeShipping ? ' · free' : ''}</dt>
+              <dd className="field-value text-sm">
                 {formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
               </dd>
             </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-theme-ink/70">GST</dt>
-              <dd className="text-theme-ink/60 tabular-nums">Included</dd>
+            <div className="field-row">
+              <dt className="field-label">GST</dt>
+              <dd className="field-value text-text-muted text-sm">Included</dd>
             </div>
-            <div className="flex items-center justify-between border-t border-[color:var(--color-border)] pt-3">
-              <dt className="text-theme-ink font-semibold">Total</dt>
-              <dd className="font-display text-theme-accent text-2xl tabular-nums">
+            <div className="field-row">
+              <dt className="field-label text-theme-ink">Total</dt>
+              <dd className="field-value text-theme-ink text-lg font-bold">
                 {formatMoney(grandTotal)}
               </dd>
             </div>
@@ -604,9 +790,7 @@ function Field({
   const invalid = Boolean(error);
   return (
     <label className={cn('flex flex-col gap-1.5', className)}>
-      <span className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
-        {label}
-      </span>
+      <span className="field-label">{label}</span>
       <input
         name={name}
         type={type}
@@ -618,7 +802,7 @@ function Field({
         aria-invalid={invalid}
         aria-describedby={invalid ? `${name}-err` : undefined}
         className={cn(
-          'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
+          'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-md border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
           invalid
             ? 'border-red-600 focus-visible:border-red-600 focus-visible:ring-red-600/30'
             : 'focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 border-[color:var(--color-border)]',

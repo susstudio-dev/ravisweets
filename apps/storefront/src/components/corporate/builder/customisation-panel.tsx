@@ -97,19 +97,16 @@ export function CustomisationPanel({
   const overLimit = message.length > MESSAGE_MAX;
 
   return (
-    <section
-      aria-labelledby="custom-heading"
-      className="bg-surface-elevated flex flex-col gap-5 rounded-2xl border border-[color:var(--color-border)] p-5"
-    >
-      <h2 id="custom-heading" className="font-display text-theme-ink text-lg">
-        Customise
-      </h2>
+    <section aria-labelledby="custom-heading" className="docket flex flex-col gap-5 p-5">
+      <div className="docket-head mb-0">
+        <h2 id="custom-heading" className="font-display text-theme-ink text-lg">
+          Customise
+        </h2>
+      </div>
 
       {/* Ribbon */}
       <fieldset>
-        <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
-          Ribbon colour
-        </legend>
+        <legend className="field-label mb-2">Ribbon colour</legend>
         <div className="flex flex-wrap gap-2">
           {RIBBON_SWATCHES.map((r) => {
             const active = r.id === ribbon;
@@ -121,14 +118,14 @@ export function CustomisationPanel({
                 aria-pressed={active}
                 aria-label={`Ribbon colour: ${r.label}`}
                 className={cn(
-                  'focus-visible:ring-theme-accent flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
+                  'focus-visible:ring-theme-accent flex h-9 w-9 items-center justify-center rounded-md border-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2',
                   active
                     ? 'border-theme-accent ring-theme-accent/30 ring-2'
-                    : 'border-[color:var(--color-border)] hover:-translate-y-0.5',
+                    : 'hover:border-theme-accent/60 border-[color:var(--color-border)]',
                 )}
                 title={r.label}
               >
-                <span className="h-5 w-5 rounded-full" style={{ backgroundColor: r.hex }} />
+                <span className="h-5 w-5" style={{ backgroundColor: r.hex }} />
               </button>
             );
           })}
@@ -137,9 +134,7 @@ export function CustomisationPanel({
 
       {/* Box finish */}
       <fieldset>
-        <legend className="text-theme-ink/60 mb-2 text-[11px] font-semibold uppercase tracking-wider">
-          Box finish
-        </legend>
+        <legend className="field-label mb-2">Box finish</legend>
         <div className="flex flex-col gap-2">
           {BOX_FINISHES.map((f) => {
             const active = f.id === box;
@@ -147,10 +142,10 @@ export function CustomisationPanel({
               <label
                 key={f.id}
                 className={cn(
-                  'flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-all',
+                  'flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors',
                   active
                     ? 'border-theme-accent bg-theme-glow/10'
-                    : 'bg-surface hover:border-theme-accent border-[color:var(--color-border)] hover:-translate-y-0.5',
+                    : 'bg-surface hover:border-theme-accent border-[color:var(--color-border)]',
                 )}
               >
                 <input
@@ -181,7 +176,7 @@ export function CustomisationPanel({
               onLogoToggle(e.target.checked);
               if (!e.target.checked) clearLogo();
             }}
-            className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4 rounded border-[color:var(--color-border)]"
+            className="text-theme-accent focus:ring-theme-accent mt-1 h-4 w-4 rounded-md border-[color:var(--color-border)]"
           />
           <span>
             <span className="font-semibold">Logo printing</span>
@@ -193,23 +188,21 @@ export function CustomisationPanel({
 
         {logoPrint && (
           <div className="ml-6 mt-3 flex flex-col gap-3">
-            <p className="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-semibold text-amber-900">
+            <p className="inline-flex w-fit items-center gap-1.5 rounded-md bg-amber-500/20 px-3 py-1 text-[11px] font-semibold text-amber-900">
               <Clock3 className="h-3 w-3" aria-hidden="true" />
               Adds 10 business days to lead time
             </p>
 
             {logoDataUrl ? (
-              <div className="bg-surface flex items-center gap-3 rounded-xl border border-[color:var(--color-border)] p-3">
+              <div className="bg-surface flex items-center gap-3 rounded-lg border border-[color:var(--color-border)] p-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={logoDataUrl}
                   alt={logoName ? `Uploaded logo: ${logoName}` : 'Uploaded logo'}
-                  className="h-16 w-16 rounded-lg border border-[color:var(--color-border)] bg-white object-contain p-1.5"
+                  className="h-16 w-16 rounded-md border border-[color:var(--color-border)] bg-white object-contain p-1.5"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-[0.18em]">
-                    Uploaded
-                  </p>
+                  <p className="field-label">Uploaded</p>
                   <p className="text-theme-ink truncate text-sm font-medium">
                     {logoName ?? 'logo'}
                   </p>
@@ -221,13 +214,13 @@ export function CustomisationPanel({
                   type="button"
                   onClick={clearLogo}
                   aria-label="Remove uploaded logo"
-                  className="text-theme-ink/55 rounded-full p-1.5 transition-colors hover:bg-red-500/10 hover:text-red-700"
+                  className="text-theme-ink/55 rounded-md p-1.5 transition-colors hover:bg-red-500/10 hover:text-red-700"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             ) : (
-              <label className="bg-surface hover:border-theme-accent hover:bg-theme-glow/10 flex cursor-pointer flex-col items-start gap-1 rounded-xl border border-dashed border-[color:var(--color-border)] px-4 py-3 transition-colors">
+              <label className="bg-surface hover:border-theme-accent hover:bg-theme-glow/10 flex cursor-pointer flex-col items-start gap-1 rounded-lg border border-dashed border-[color:var(--color-border)] px-4 py-3 transition-colors">
                 <span className="text-theme-ink inline-flex items-center gap-2 text-sm font-semibold">
                   <Upload className="text-theme-accent h-4 w-4" aria-hidden="true" />
                   Upload your logo
@@ -257,7 +250,7 @@ export function CustomisationPanel({
       {/* Personalised message */}
       <div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-theme-ink/60 text-[11px] font-semibold uppercase tracking-wider">
+          <span className="field-label">
             <Type className="mr-1 inline h-3 w-3" aria-hidden="true" />
             Personalised message (optional)
           </span>
@@ -267,7 +260,7 @@ export function CustomisationPanel({
             placeholder="A short message printed on the enclosed card."
             rows={3}
             className={cn(
-              'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
+              'bg-surface text-theme-ink placeholder:text-theme-ink/40 rounded-md border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2',
               overLimit
                 ? 'border-red-600 focus-visible:border-red-600 focus-visible:ring-red-600/30'
                 : 'focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 border-[color:var(--color-border)]',
@@ -275,7 +268,7 @@ export function CustomisationPanel({
           />
           <span
             className={cn(
-              'text-[11px] font-medium tabular-nums',
+              'field-value text-[11px] font-medium',
               overLimit ? 'text-red-700' : 'text-theme-ink/50',
             )}
           >

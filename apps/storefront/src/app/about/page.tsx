@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
+import { pendingPhoto } from '@/lib/images';
 
 export const metadata: Metadata = {
-  title: 'Our story',
+  title: 'Our story — a Khammam family kitchen',
   description:
-    'Ravi Sweets — a Khammam family kitchen, in the Telangana sweet tradition. Slow-cooked, for generations.',
+    'Ravi Sweets began in one Khammam kitchen and still works the same slow way — hand-cut katli, hand-rolled laddu, no preservatives, since 1983.',
+  alternates: { canonical: '/about' },
 };
 
 const TIMELINE = [
@@ -52,10 +54,10 @@ const PILLARS = [
  * root-relative, the photographs return with no component change.
  */
 const PORTRAIT =
-  'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
+  pendingPhoto('2025/09/kaju_katli-removebg-preview.png');
 
 const KITCHEN =
-  'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png';
+  pendingPhoto('2025/09/boondi_laddu-removebg-preview.png');
 
 export default function AboutPage() {
   return (

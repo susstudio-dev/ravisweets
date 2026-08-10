@@ -1,7 +1,12 @@
 import type { ThemePalette } from '../types/product';
 
 /**
- * ROSE & CREAM — the five named palettes a product may paint the site with.
+ * THE BATCH CARD — the five named palettes a product may paint the site with.
+ *
+ * Every one is the SAME docket, stamped in a different ink. Hovering a sweet
+ * retunes the stamp, not the brand; the ground never moves more than a few
+ * degrees. Real Indian stamp pads come in blue, green, red, violet and black,
+ * and four of those are used here.
  *
  * WHY THIS FILE EXISTS TWICE. The canonical authoring copy lives in the
  * storefront at `apps/storefront/src/lib/theme/palette.ts`, where it is derived
@@ -16,49 +21,49 @@ import type { ThemePalette } from '../types/product';
  * If you change a value here, change it in the storefront copy too.
  */
 
-/** Default for sweets and anything without a stronger signal. */
+/** Default for sweets and anything without a stronger signal. The house stamp. */
 export const HOUSE: ThemePalette = {
-  base: '#FAF5E9',
-  accent: '#A8345D',
-  glow: '#E8A13C',
-  ink: '#2E2118',
-  grainOpacity: 0.05,
+  base: '#E9EAE4',
+  accent: '#2046C8',
+  glow: '#EBC77E',
+  ink: '#161C24',
+  grainOpacity: 0.04,
 };
 
-/** Nut-forward: kaju, badam, pista, cashew. Roasted-almond warmth. */
+/** Nut-forward: kaju, badam, pista, cashew. The green stamp. */
 export const BADAM: ThemePalette = {
-  base: '#F7EFE2',
-  accent: '#7A4A21',
-  glow: '#DDBE8E',
-  ink: '#2E2118',
-  grainOpacity: 0.05,
+  base: '#EDEAE2',
+  accent: '#1F6238',
+  glow: '#DDC79B',
+  ink: '#161C24',
+  grainOpacity: 0.04,
 };
 
-/** Dried fruit and floral: fig, date, apricot/khubani, rose preserves. */
+/** Dried fruit and floral: fig, date, apricot/khubani, rose preserves. The red stamp. */
 export const GULKAND: ThemePalette = {
-  base: '#FAEEE9',
-  accent: '#962D53',
-  glow: '#E9B9C9',
-  ink: '#2E2118',
+  base: '#EFE9E7',
+  accent: '#A81B52',
+  glow: '#E6BFC6',
+  ink: '#161C24',
+  grainOpacity: 0.04,
+};
+
+/** Savouries, namkeens, pickles, podis — the olive-brass stamp. */
+export const KESAR: ThemePalette = {
+  base: '#EEEBE0',
+  accent: '#6B5A0E',
+  glow: '#DCC372',
+  ink: '#161C24',
   grainOpacity: 0.05,
 };
 
-/** Savouries, namkeens, pickles, podis — fried-gold, turmeric-deep. */
-export const KESAR: ThemePalette = {
-  base: '#F8F0DC',
-  accent: '#7A5A14',
-  glow: '#DCC372',
-  ink: '#2E2118',
-  grainOpacity: 0.06,
-};
-
-/** Premium hampers and drops — the dusk register as a product palette. */
+/** Premium hampers and drops — the carbon copy as a product palette. */
 export const HAMPER: ThemePalette = {
-  base: '#3A1F31',
-  accent: '#E8A13C',
-  glow: '#7C2344',
-  ink: '#F6EAD8',
-  grainOpacity: 0.07,
+  base: '#232A2E',
+  accent: '#F2732F',
+  glow: '#16328F',
+  ink: '#E8EBE6',
+  grainOpacity: 0.06,
 };
 
 export const PRODUCT_PALETTES = {

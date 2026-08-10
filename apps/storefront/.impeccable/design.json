@@ -1,0 +1,646 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-02T18:15:00.000Z",
+  "title": "Design System: Ravi Sweets — The Batch Card",
+  "extensions": {
+    "colorMeta": {
+      "docket-stock": {
+        "role": "neutral",
+        "displayName": "Docket Stock",
+        "canonical": "#E9EAE4",
+        "tonalRamp": [
+          "oklch(15% 0.005 130)",
+          "oklch(26% 0.005 130)",
+          "oklch(37% 0.005 130)",
+          "oklch(48% 0.005 130)",
+          "oklch(59% 0.005 130)",
+          "oklch(70% 0.005 130)",
+          "oklch(82% 0.005 130)",
+          "oklch(95% 0.005 130)"
+        ]
+      },
+      "docket-top-copy": {
+        "role": "neutral",
+        "displayName": "Docket Top Copy",
+        "canonical": "#F6F7F3",
+        "tonalRamp": [
+          "oklch(15% 0.004 130)",
+          "oklch(26% 0.004 130)",
+          "oklch(37% 0.004 130)",
+          "oklch(48% 0.004 130)",
+          "oklch(59% 0.004 130)",
+          "oklch(71% 0.004 130)",
+          "oklch(83% 0.004 130)",
+          "oklch(96% 0.004 130)"
+        ]
+      },
+      "press-ink": {
+        "role": "neutral",
+        "displayName": "Press Ink",
+        "canonical": "#161C24",
+        "tonalRamp": [
+          "oklch(15% 0.018 258)",
+          "oklch(26% 0.018 258)",
+          "oklch(37% 0.018 258)",
+          "oklch(48% 0.018 258)",
+          "oklch(59% 0.018 258)",
+          "oklch(70% 0.018 258)",
+          "oklch(82% 0.018 258)",
+          "oklch(95% 0.018 258)"
+        ]
+      },
+      "pencil-grey": {
+        "role": "neutral",
+        "displayName": "Pencil Grey",
+        "canonical": "#565F68",
+        "tonalRamp": [
+          "oklch(15% 0.017 250)",
+          "oklch(26% 0.017 250)",
+          "oklch(37% 0.017 250)",
+          "oklch(48% 0.017 250)",
+          "oklch(59% 0.017 250)",
+          "oklch(70% 0.017 250)",
+          "oklch(82% 0.017 250)",
+          "oklch(95% 0.017 250)"
+        ]
+      },
+      "stamp-blue": {
+        "role": "primary",
+        "displayName": "Stamp-Pad Blue",
+        "canonical": "#2046C8",
+        "tonalRamp": [
+          "oklch(15% 0.20 265)",
+          "oklch(26% 0.20 265)",
+          "oklch(37% 0.20 265)",
+          "oklch(46% 0.20 265)",
+          "oklch(59% 0.18 265)",
+          "oklch(70% 0.14 265)",
+          "oklch(82% 0.09 265)",
+          "oklch(95% 0.03 265)"
+        ]
+      },
+      "stamp-blue-pressed": {
+        "role": "primary",
+        "displayName": "Stamp Pressed",
+        "canonical": "#16328F",
+        "tonalRamp": [
+          "oklch(15% 0.16 266)",
+          "oklch(26% 0.16 266)",
+          "oklch(36% 0.16 266)",
+          "oklch(48% 0.16 266)",
+          "oklch(59% 0.15 266)",
+          "oklch(70% 0.12 266)",
+          "oklch(82% 0.08 266)",
+          "oklch(95% 0.03 266)"
+        ]
+      },
+      "manila-label": {
+        "role": "secondary",
+        "displayName": "Gummed Manila Label",
+        "canonical": "#EBC77E",
+        "tonalRamp": [
+          "oklch(15% 0.09 82)",
+          "oklch(26% 0.09 82)",
+          "oklch(37% 0.09 82)",
+          "oklch(48% 0.09 82)",
+          "oklch(59% 0.09 82)",
+          "oklch(70% 0.09 82)",
+          "oklch(84% 0.09 82)",
+          "oklch(95% 0.05 82)"
+        ]
+      },
+      "steel-rule": {
+        "role": "neutral",
+        "displayName": "Steel Rule",
+        "canonical": "#8A9099",
+        "tonalRamp": [
+          "oklch(15% 0.012 250)",
+          "oklch(26% 0.012 250)",
+          "oklch(37% 0.012 250)",
+          "oklch(48% 0.012 250)",
+          "oklch(64% 0.012 250)",
+          "oklch(74% 0.012 250)",
+          "oklch(85% 0.012 250)",
+          "oklch(95% 0.012 250)"
+        ]
+      },
+      "steel-hairline": {
+        "role": "neutral",
+        "displayName": "Steel Hairline",
+        "canonical": "#6B737B",
+        "tonalRamp": [
+          "oklch(15% 0.013 250)",
+          "oklch(26% 0.013 250)",
+          "oklch(37% 0.013 250)",
+          "oklch(52% 0.013 250)",
+          "oklch(63% 0.013 250)",
+          "oklch(74% 0.013 250)",
+          "oklch(85% 0.013 250)",
+          "oklch(95% 0.013 250)"
+        ]
+      },
+      "carbon-slate": {
+        "role": "neutral",
+        "displayName": "Carbon Slate",
+        "canonical": "#232A2E",
+        "tonalRamp": [
+          "oklch(15% 0.011 230)",
+          "oklch(27% 0.011 230)",
+          "oklch(37% 0.011 230)",
+          "oklch(48% 0.011 230)",
+          "oklch(59% 0.011 230)",
+          "oklch(70% 0.011 230)",
+          "oklch(82% 0.011 230)",
+          "oklch(95% 0.011 230)"
+        ]
+      },
+      "carbon-top-copy": {
+        "role": "neutral",
+        "displayName": "Carbon Top Copy",
+        "canonical": "#2E373C",
+        "tonalRamp": [
+          "oklch(15% 0.012 230)",
+          "oklch(26% 0.012 230)",
+          "oklch(37% 0.012 230)",
+          "oklch(48% 0.012 230)",
+          "oklch(59% 0.012 230)",
+          "oklch(70% 0.012 230)",
+          "oklch(82% 0.012 230)",
+          "oklch(95% 0.012 230)"
+        ]
+      },
+      "carbon-ink": {
+        "role": "neutral",
+        "displayName": "Carbon Ink",
+        "canonical": "#E8EBE6",
+        "tonalRamp": [
+          "oklch(15% 0.005 140)",
+          "oklch(26% 0.005 140)",
+          "oklch(37% 0.005 140)",
+          "oklch(48% 0.005 140)",
+          "oklch(59% 0.005 140)",
+          "oklch(70% 0.005 140)",
+          "oklch(82% 0.005 140)",
+          "oklch(93% 0.005 140)"
+        ]
+      },
+      "carbon-pencil": {
+        "role": "neutral",
+        "displayName": "Carbon Pencil",
+        "canonical": "#A3ADB3",
+        "tonalRamp": [
+          "oklch(15% 0.012 230)",
+          "oklch(26% 0.012 230)",
+          "oklch(37% 0.012 230)",
+          "oklch(48% 0.012 230)",
+          "oklch(61% 0.012 230)",
+          "oklch(73% 0.012 230)",
+          "oklch(84% 0.012 230)",
+          "oklch(95% 0.012 230)"
+        ]
+      },
+      "carbon-ember": {
+        "role": "primary",
+        "displayName": "Carbon Ember",
+        "canonical": "#F2732F",
+        "tonalRamp": [
+          "oklch(15% 0.16 45)",
+          "oklch(26% 0.16 45)",
+          "oklch(37% 0.16 45)",
+          "oklch(48% 0.16 45)",
+          "oklch(59% 0.16 45)",
+          "oklch(68% 0.16 45)",
+          "oklch(82% 0.11 45)",
+          "oklch(95% 0.04 45)"
+        ]
+      },
+      "ember": {
+        "role": "tertiary",
+        "displayName": "Ember",
+        "canonical": "#E2571F",
+        "tonalRamp": [
+          "oklch(15% 0.18 42)",
+          "oklch(26% 0.18 42)",
+          "oklch(37% 0.18 42)",
+          "oklch(48% 0.18 42)",
+          "oklch(62% 0.18 42)",
+          "oklch(73% 0.15 42)",
+          "oklch(84% 0.10 42)",
+          "oklch(95% 0.04 42)"
+        ]
+      },
+      "ember-on-carbon": {
+        "role": "tertiary",
+        "displayName": "Ember on Carbon",
+        "canonical": "#FF8B4A",
+        "tonalRamp": [
+          "oklch(15% 0.15 45)",
+          "oklch(26% 0.15 45)",
+          "oklch(37% 0.15 45)",
+          "oklch(48% 0.15 45)",
+          "oklch(59% 0.15 45)",
+          "oklch(74% 0.15 45)",
+          "oklch(85% 0.10 45)",
+          "oklch(95% 0.04 45)"
+        ]
+      },
+      "green-stamp": {
+        "role": "tertiary",
+        "displayName": "Green Stamp (nut-forward)",
+        "canonical": "#1F6238",
+        "tonalRamp": [
+          "oklch(15% 0.10 155)",
+          "oklch(26% 0.10 155)",
+          "oklch(43% 0.10 155)",
+          "oklch(54% 0.10 155)",
+          "oklch(65% 0.10 155)",
+          "oklch(76% 0.09 155)",
+          "oklch(86% 0.06 155)",
+          "oklch(95% 0.03 155)"
+        ]
+      },
+      "red-stamp": {
+        "role": "tertiary",
+        "displayName": "Red Stamp (dried fruit and floral)",
+        "canonical": "#A81B52",
+        "tonalRamp": [
+          "oklch(15% 0.18 8)",
+          "oklch(26% 0.18 8)",
+          "oklch(37% 0.18 8)",
+          "oklch(46% 0.18 8)",
+          "oklch(59% 0.18 8)",
+          "oklch(72% 0.14 8)",
+          "oklch(84% 0.09 8)",
+          "oklch(95% 0.03 8)"
+        ]
+      },
+      "olive-brass-stamp": {
+        "role": "tertiary",
+        "displayName": "Olive-Brass Stamp (savouries)",
+        "canonical": "#6B5A0E",
+        "tonalRamp": [
+          "oklch(15% 0.08 96)",
+          "oklch(26% 0.08 96)",
+          "oklch(43% 0.08 96)",
+          "oklch(54% 0.08 96)",
+          "oklch(65% 0.08 96)",
+          "oklch(76% 0.08 96)",
+          "oklch(86% 0.06 96)",
+          "oklch(95% 0.03 96)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display-xl": {
+        "displayName": "Display XL",
+        "purpose": "Page-defining headlines. Archivo at wdth 112. One per page at most."
+      },
+      "display-lg": {
+        "displayName": "Display LG",
+        "purpose": "The hero h1 inside the batch card."
+      },
+      "display-md": {
+        "displayName": "Display MD",
+        "purpose": "Major section headings."
+      },
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Subsection and card group headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running copy. Keep measures in the 48-70ch band."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Supporting notes and secondary descriptions."
+      },
+      "label": {
+        "displayName": "Field Label",
+        "purpose": "The pre-printed caption on a form (.field-label). Archivo at wdth 84, always uppercase. The only small-caps label pattern on the site."
+      },
+      "value": {
+        "displayName": "Recorded Value",
+        "purpose": "Courier Prime with tabular-nums (.field-value). Every batch number, date, weight, percentage and price. Never prose."
+      },
+      "indic": {
+        "displayName": "Telugu Mark",
+        "purpose": "Anek Telugu, variable 100-800, not preloaded. Short Telugu marks only, never body copy."
+      }
+    },
+    "shadows": [
+      {
+        "name": "flat",
+        "value": "none",
+        "purpose": "The default. Most surfaces carry no shadow at all."
+      },
+      {
+        "name": "soft",
+        "value": "0 1px 0 rgb(22 28 36 / 0.06), 0 1px 2px rgb(22 28 36 / 0.07)",
+        "purpose": "A sheet resting on the ground. What .docket carries at rest."
+      },
+      {
+        "name": "lifted",
+        "value": "0 1px 0 rgb(22 28 36 / 0.09), 0 4px 10px rgb(22 28 36 / 0.10)",
+        "purpose": "Hover response on an interactive sheet. Never a resting state."
+      },
+      {
+        "name": "stamp-contact",
+        "value": "0 1px 0 color-mix(in oklab, var(--theme-ink) 22%, transparent)",
+        "purpose": "The hard contact edge under a .stamp. Collapses to 0 on :active as the stamp presses into the paper."
+      },
+      {
+        "name": "border-hairline",
+        "value": "inset 0 0 0 1px color-mix(in oklab, var(--theme-ink) 14%, transparent)",
+        "purpose": "The 1px alpha-ink border (--color-border). 16% on the carbon register."
+      },
+      {
+        "name": "rule",
+        "value": "inset 0 -1px 0 color-mix(in oklab, var(--theme-ink) 26%, transparent)",
+        "purpose": "The ruled line on a form (--color-rule) - heavier than a border, always horizontal. 30% on carbon."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Default easing for state transitions, register swaps and colour changes."
+      },
+      {
+        "name": "ease-emphasised",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entrances and reveals."
+      },
+      {
+        "name": "duration-instant",
+        "value": "100ms",
+        "purpose": "Immediate feedback."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Quick-add icon swap."
+      },
+      {
+        "name": "duration-quick",
+        "value": "200ms",
+        "purpose": "Docket hover elevation, nav hover."
+      },
+      {
+        "name": "duration-base",
+        "value": "300ms",
+        "purpose": "Image scale on card hover."
+      },
+      {
+        "name": "duration-slow",
+        "value": "450ms",
+        "purpose": "Reveal entrances."
+      },
+      {
+        "name": "duration-cinematic",
+        "value": "650ms",
+        "purpose": "Long editorial band transitions."
+      },
+      {
+        "name": "stamp-press",
+        "value": "transform 120ms cubic-bezier(0.2, 0, 0, 1), box-shadow 120ms cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Pressing a stamp: translateY(1px) with the contact shadow collapsing to zero."
+      },
+      {
+        "name": "register-swap",
+        "value": "background-color 250ms cubic-bezier(0.2, 0, 0, 1), color 250ms cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Body-level transition when the runtime palette changes."
+      },
+      {
+        "name": "reveal-distance",
+        "value": "12px",
+        "purpose": "Entrance travel. Under prefers-reduced-motion, durations collapse to 0.01ms AND delays to 0s."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1200px"
+      },
+      {
+        "name": "container-site",
+        "value": "1280px"
+      },
+      {
+        "name": "container-wide",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Stamp (Primary Action)",
+      "kind": "button",
+      "refersTo": "stamp",
+      "description": "The primary action. A rubber stamp is rectangular and prints with a hard edge, so this is never a pill and never a gradient. Pressing it pushes it into the paper.",
+      "html": "<button class=\"ds-stamp\">Shop today's batch</button>",
+      "css": ".ds-stamp { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: none; border-radius: 2px; background-color: var(--theme-accent, #2046C8); color: var(--theme-base, #E9EAE4); font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 92; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 22%, transparent); transition: transform 120ms cubic-bezier(0.2,0,0,1), box-shadow 120ms cubic-bezier(0.2,0,0,1), background-color 120ms cubic-bezier(0.2,0,0,1); } .ds-stamp:hover { background-color: #16328F; } .ds-stamp:focus-visible { outline: 2px solid var(--color-ring, #2046C8); outline-offset: 2px; } .ds-stamp:active { transform: translateY(1px); box-shadow: 0 0 0 color-mix(in oklab, var(--theme-ink, #161C24) 22%, transparent); }"
+    },
+    {
+      "name": "Counterstamp (Secondary Action)",
+      "kind": "button",
+      "refersTo": "stamp-ghost",
+      "description": "The secondary action: the outline, not the fill. A 1.5px inset ring rather than a border, so it does not shift layout against the filled stamp beside it.",
+      "html": "<button class=\"ds-stamp-ghost\">Corporate gifting</button>",
+      "css": ".ds-stamp-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: none; border-radius: 2px; background-color: transparent; color: var(--theme-accent, #2046C8); font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 92; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; box-shadow: inset 0 0 0 1.5px var(--theme-accent, #2046C8); transition: transform 120ms cubic-bezier(0.2,0,0,1), background-color 120ms cubic-bezier(0.2,0,0,1); } .ds-stamp-ghost:hover { background-color: color-mix(in oklab, var(--theme-accent, #2046C8) 8%, transparent); } .ds-stamp-ghost:focus-visible { outline: 2px solid var(--color-ring, #2046C8); outline-offset: 2px; } .ds-stamp-ghost:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Docket (Card)",
+      "kind": "card",
+      "refersTo": "docket",
+      "description": "The only container in the system. A cut sheet of docket stock resting on the ground - 3px corners, a 1px alpha-ink border, and a contact shadow rather than a float. Replaced roughly 40 hand-built card variants.",
+      "html": "<article class=\"ds-docket\"><h3 class=\"ds-docket-title\">Qubani ka Meetha</h3><p class=\"ds-docket-body\">Slow-cooked apricot, set overnight. Made without preservatives.</p></article>",
+      "css": ".ds-docket { background-color: var(--color-surface-elevated, #F6F7F3); color: var(--theme-ink, #161C24); border: 1px solid var(--color-border, rgba(22,28,36,0.14)); border-radius: 3px; padding: 1.25rem; font-family: var(--font-body, 'Archivo', system-ui, sans-serif); box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 6%, transparent), 0 1px 2px color-mix(in oklab, var(--theme-ink, #161C24) 7%, transparent); transition: box-shadow 200ms cubic-bezier(0.2,0,0,1); } .ds-docket:hover { box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 9%, transparent), 0 4px 10px color-mix(in oklab, var(--theme-ink, #161C24) 10%, transparent); } .ds-docket-title { font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 112; font-size: 0.9375rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; margin: 0; } .ds-docket-body { margin: 0.375rem 0 0; font-size: 0.8125rem; line-height: 1.45; color: var(--color-text-muted, #565F68); }"
+    },
+    {
+      "name": "Docket with Perforated Edge",
+      "kind": "card",
+      "refersTo": "docket-perf",
+      "description": "The world's signature: the perforated stub of a torn-off docket, rendered as a repeating radial gradient 8px in from the left edge. Reserved for the hero card and order receipts - it cheapens on repetition.",
+      "html": "<article class=\"ds-docket-perf\"><span class=\"ds-perf-label\">Batch record</span><h3 class=\"ds-perf-title\">KH-0208-041</h3></article>",
+      "css": ".ds-docket-perf { position: relative; background-color: var(--color-surface-elevated, #F6F7F3); color: var(--theme-ink, #161C24); border: 1px solid var(--color-border, rgba(22,28,36,0.14)); border-radius: 3px; padding: 1.25rem 1.25rem 1.25rem 2.5rem; font-family: var(--font-body, 'Archivo', system-ui, sans-serif); box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 6%, transparent), 0 1px 2px color-mix(in oklab, var(--theme-ink, #161C24) 7%, transparent); } .ds-docket-perf::before { content: ''; position: absolute; left: 0.5rem; top: 0.5rem; bottom: 0.5rem; width: 3px; background-image: radial-gradient(circle at 1.5px 3px, var(--color-rule, rgba(22,28,36,0.26)) 0 1.5px, transparent 1.6px); background-size: 3px 9px; background-repeat: repeat-y; } .ds-perf-label { display: block; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted, #565F68); } .ds-perf-title { margin: 0.375rem 0 0; font-family: var(--font-mono, 'Courier Prime', ui-monospace, monospace); font-variant-numeric: tabular-nums; font-size: 1.125rem; font-weight: 700; }"
+    },
+    {
+      "name": "Ruled Row (Label / Value)",
+      "kind": "custom",
+      "refersTo": "field-row",
+      "description": "The atom the whole system is built from: a pre-printed label left, a typed value right, separated by a full-width hairline. The last row's rule is removed. When in doubt about presenting a pair of facts, this is the answer.",
+      "html": "<dl class=\"ds-field-list\"><div class=\"ds-field-row\"><dt class=\"ds-field-label\">Batch no.</dt><dd class=\"ds-field-value\">KH-0208-041</dd></div><div class=\"ds-field-row\"><dt class=\"ds-field-label\">Made</dt><dd class=\"ds-field-value ds-field-value--strong\">02 AUG 2026</dd></div><div class=\"ds-field-row\"><dt class=\"ds-field-label\">Best before</dt><dd class=\"ds-field-value\">06 AUG 2026</dd></div><div class=\"ds-field-row\"><dt class=\"ds-field-label\">Preservatives</dt><dd class=\"ds-field-value\">NIL</dd></div></dl>",
+      "css": ".ds-field-list { margin: 0; } .ds-field-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border, rgba(22,28,36,0.14)); } .ds-field-row:last-child { border-bottom: 0; } .ds-field-label { margin: 0; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted, #565F68); } .ds-field-value { margin: 0; font-family: var(--font-mono, 'Courier Prime', ui-monospace, monospace); font-variant-numeric: tabular-nums; font-size: 0.875rem; color: var(--theme-ink, #161C24); } .ds-field-value--strong { font-weight: 700; }"
+    },
+    {
+      "name": "Live Mark",
+      "kind": "chip",
+      "refersTo": "live-mark",
+      "description": "\"Made today\" / \"dispatching now\". The only place ember appears. A 6px dot rather than a badge, deliberately: a grid of badges reads as a wall of colour, a grid of dots reads as a column of state.",
+      "html": "<span class=\"ds-live-mark\">Made today</span>",
+      "css": ".ds-live-mark { display: inline-flex; align-items: center; gap: 0.375rem; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ember, #E2571F); } .ds-live-mark::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-ember, #E2571F); }"
+    },
+    {
+      "name": "Section Head",
+      "kind": "nav",
+      "refersTo": "docket-head",
+      "description": "One markup shape for every section heading on the site, replacing the duplicated eyebrow/h2/link cluster that was repeated across home, shop, category, festivals and corporate. Sits over a 2px rule with more space below the rule than above it.",
+      "html": "<div class=\"ds-docket-head\"><h2 class=\"ds-head-label\">Also on the counter today</h2><a class=\"ds-head-link\" href=\"#\">The whole catalogue &rarr;</a></div>",
+      "css": ".ds-docket-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0.75rem; padding-bottom: 0.75rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-rule, rgba(22,28,36,0.26)); } .ds-head-label, .ds-head-link { margin: 0; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; } .ds-head-label { color: var(--color-text-muted, #565F68); } .ds-head-link { color: var(--theme-accent, #2046C8); text-decoration: none; transition: color 200ms cubic-bezier(0.2,0,0,1); } .ds-head-link:hover { color: var(--theme-ink, #161C24); } .ds-head-link:focus-visible { outline: 2px solid var(--color-ring, #2046C8); outline-offset: 2px; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "A blank on the form. Docket-stock ground, 4px corners, hairline border. Focus shifts the border to the accent and adds a 2px ring at 30% - a border shift, never a glow.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-caption\">Delivery pincode</span><input class=\"ds-input\" type=\"text\" inputmode=\"numeric\" placeholder=\"507001\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.375rem; } .ds-field-caption { font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted, #565F68); } .ds-input { background-color: var(--color-surface, #E9EAE4); color: var(--theme-ink, #161C24); border: 1px solid var(--color-border, rgba(22,28,36,0.14)); border-radius: 4px; padding: 0.625rem 0.875rem; font-family: var(--font-body, 'Archivo', system-ui, sans-serif); font-size: 0.875rem; transition: border-color 150ms cubic-bezier(0.2,0,0,1), box-shadow 150ms cubic-bezier(0.2,0,0,1); } .ds-input::placeholder { color: color-mix(in oklab, var(--theme-ink, #161C24) 40%, transparent); } .ds-input:focus-visible { outline: none; border-color: var(--theme-accent, #2046C8); box-shadow: 0 0 0 2px color-mix(in oklab, var(--theme-accent, #2046C8) 30%, transparent); } .ds-input[aria-invalid='true'] { border-color: #dc2626; } .ds-input[aria-invalid='true']:focus-visible { box-shadow: 0 0 0 2px rgba(220,38,38,0.3); }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "docket",
+      "description": "A small docket: the plate on top, the record underneath. The Flavour Atlas retunes the STAMP, not the page - the product's accent colours the price and quick-add, its label colour tints the image slot at 20%, and the card's ground never moves. Sale marks use ember and outrank bestseller marks.",
+      "html": "<article class=\"ds-product-card\"><div class=\"ds-product-plate\"><span class=\"ds-product-flag\">20% off</span></div><div class=\"ds-product-record\"><h3 class=\"ds-product-title\">Kaju Katli</h3><p class=\"ds-product-desc\">Cashew, sugar, a sheet of silver varak. Cut on the diagonal.</p><div class=\"ds-product-foot\"><div><p class=\"ds-product-weight\">500 g box</p><p class=\"ds-product-price\">&#8377;780</p></div><button class=\"ds-product-add\" aria-label=\"Add Kaju Katli to cart\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></button></div></div></article>",
+      "css": ".ds-product-card { display: flex; flex-direction: column; background-color: var(--color-surface-elevated, #F6F7F3); border: 1px solid var(--color-border, rgba(22,28,36,0.14)); border-radius: 3px; overflow: hidden; font-family: var(--font-body, 'Archivo', system-ui, sans-serif); box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 6%, transparent), 0 1px 2px color-mix(in oklab, var(--theme-ink, #161C24) 7%, transparent); transition: box-shadow 200ms cubic-bezier(0.2,0,0,1); } .ds-product-card:hover { box-shadow: 0 1px 0 color-mix(in oklab, var(--theme-ink, #161C24) 9%, transparent), 0 4px 10px color-mix(in oklab, var(--theme-ink, #161C24) 10%, transparent); } .ds-product-plate { position: relative; aspect-ratio: 1; background-color: color-mix(in oklab, var(--theme-glow, #EBC77E) 20%, transparent); border-bottom: 1px solid var(--color-border, rgba(22,28,36,0.14)); } .ds-product-flag { position: absolute; left: 0; top: 0; padding: 0.25rem 0.5rem; background-color: var(--color-ember, #E2571F); color: var(--theme-base, #E9EAE4); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; } .ds-product-record { display: flex; flex: 1; flex-direction: column; padding: 0.875rem; } .ds-product-title { margin: 0; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 112; font-size: 15px; font-weight: 600; line-height: 1.35; letter-spacing: -0.015em; color: var(--theme-ink, #161C24); } .ds-product-desc { margin: 0.25rem 0 0; font-size: 13px; line-height: 1.35; color: var(--color-text-muted, #565F68); } .ds-product-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; } .ds-product-weight { margin: 0; font-family: var(--font-display, 'Archivo', system-ui, sans-serif); font-variation-settings: 'wdth' 84; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted, #565F68); } .ds-product-price { margin: 0.125rem 0 0; font-family: var(--font-mono, 'Courier Prime', ui-monospace, monospace); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 700; color: var(--theme-accent, #2046C8); } .ds-product-add { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 2rem; height: 2rem; border: none; border-radius: 2px; background-color: var(--theme-accent, #2046C8); color: var(--theme-base, #E9EAE4); cursor: pointer; transition: transform 150ms cubic-bezier(0.2,0,0,1); } .ds-product-add:hover { background-color: #16328F; } .ds-product-add:focus-visible { outline: 2px solid var(--color-ring, #2046C8); outline-offset: 2px; } .ds-product-add:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Code Chip",
+      "kind": "chip",
+      "refersTo": "stamp-ghost",
+      "description": "The one sanctioned pill in the system. Promo codes and count badges only - a genuine chip, set in the mono because a code is a recorded value. A rubber stamp is rectangular, so reach for this rarely.",
+      "html": "<span class=\"ds-code-chip\">DIWALI25</span>",
+      "css": ".ds-code-chip { display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; background-color: color-mix(in oklab, var(--theme-glow, #EBC77E) 45%, transparent); color: var(--theme-ink, #161C24); font-family: var(--font-mono, 'Courier Prime', ui-monospace, monospace); font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Batch Card",
+    "overview": "The paperwork is the proof. The brand's binding claim is that the sweets are made without preservatives and dispatched the same day, and the thing that actually demonstrates that is the kitchen's own record: the docket taped above the kadai, the gummed label on the box, the rubber-stamped date, the FSSAI composition panel. So the record is not decoration around the interface - the record IS the interface. A visitor reads a batch number, a MADE date computed live, a BEST BEFORE four days out, and a PRESERVATIVES: NIL row, and believes the claim because they can read it rather than because a paragraph asserts it.\n\nThe world is defined as much by what it refuses. Every neighbouring Indian sweets brand ships the same arrangement: a warm cream ground, a heritage display serif, a festive saffron or rose accent, and freshness stated as a sentence. This system rejects all four. The ground is cool NCR docket stock, faintly green - so the food and the manila tag are the only warm things on any page, which is the entire appetite strategy. The display face is a grotesque, not a serif; authority here comes from the grid and the record, not from heritage lettering. The accent is a stamp-pad blue occupying hue ground no competitor holds. And freshness is a field on a form with a date in it.\n\nDensity is that of a working document, not a lookbook. Type is compact, rules are horizontal and structural, corners are guillotined, and elevation is a sheet in contact with a counter rather than a card floating over one. Colour is scarce and load-bearing: the accent is ink, the manila is a wash, and ember means one thing only. Warmth in this system comes from the photography and the manila tag - never from the paper.",
+    "keyCharacteristics": [
+      "Cool docket stock ground (#E9EAE4), never cream, never pure white",
+      "Stamp-pad blue accent at hue 226, verified clear of the category",
+      "One grotesque family (Archivo) carrying hierarchy on its width axis; a typewriter mono (Courier Prime) carrying every recorded value",
+      "Square-cut paper: radii 0-8px; elevation caps at a 10px blur",
+      "Ruled label/value rows as the atom the whole system is built from",
+      "Two registers, one grammar: light docket and dark carbon copy swap roles without component changes",
+      "Ember reserved exclusively for live state",
+      "One container, one rhythm, one product grid"
+    ],
+    "rules": [
+      {
+        "name": "The Runtime Palette Rule",
+        "body": "The live palette is resolved at RUNTIME by applyPalette() from the active row in the Supabase theme_presets table (supabase/migrations/0011_batch_card_world.sql seeds batch-card as active and carbon-copy as an inactive alternative). The :root values in globals.css are FIRST-PAINT DEFAULTS ONLY and are overwritten the moment the active preset loads. Changing a brand colour in code alone does nothing to the live site - it must land in the database too. Keep the :root block byte-identical to DOCKET in palette.ts so the first paint does not flash.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ember Containment Rule",
+        "body": "#E2571F appears on .live-mark and on the sale flag, and nowhere else. It is excluded from RegisterTokens by construction and palette.test.ts asserts that no register token equals it. If you want a warm highlight, you want the manila label, not ember.",
+        "section": "colors"
+      },
+      {
+        "name": "The 25-Degree Rule",
+        "body": "The accent must clear all nine tracked competitor hues by at least 25 degrees. palette.test.ts enforces this against a measured set (Cadbury 2685C, Bombay Sweet Shop wine and petrol, Anand crimson and gold, Almond House terracotta, Haldiram burnt brick, Bikanervala vermilion, Sweet Karam teal) and separately pins the accent to the exact string #2046C8. Both tests must be re-run and re-argued before any accent change, not deleted.",
+        "section": "colors"
+      },
+      {
+        "name": "The Manila-Is-Ground Rule",
+        "body": "#EBC77E is a wash and a panel ground for ink. Never set text in it, never use it as an accent, never put accent-coloured text on it above UI scale - only accentDeep on manila is certified, and only at 3:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cool Ground Rule",
+        "body": "The base never warms and never becomes #FFFFFF. The system is cool precisely so the food photography and the manila tag are the only warm elements on screen; warm the ground and the appetite contrast collapses.",
+        "section": "colors"
+      },
+      {
+        "name": "The Width-Not-Weight Rule",
+        "body": "Hierarchy rides Archivo's wdth axis (84 / 92 / 112), not weight alone. That width range is why one family can do both the display and body jobs without a second face. Reaching for a heavier weight where a width change is available flattens the system back into a generic sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Typed-Value Rule",
+        "body": "Anything that was recorded - a batch number, a date, a weight, a percentage, a price - is set in Courier Prime with font-variant-numeric: tabular-nums. Tabular is not optional: a column of prices that does not align is the exact failure this world exists to avoid. Conversely, prose is never set in the mono; it is a value face, not a texture.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Eyebrow Rule",
+        "body": ".field-label is the only small-caps label pattern on the site. The audit that produced this world counted eleven hand-rolled variants of it. If a new surface needs a small tracked caption, it uses .field-label and does not re-declare text-[11px] uppercase tracking-[...].",
+        "section": "typography"
+      },
+      {
+        "name": "The One Container Rule",
+        "body": "Every storefront surface uses .container-site and nothing else. .container-wide is for the admin console and dense tables. A new page that introduces its own max-w-* is a regression, not a variation.",
+        "section": "layout"
+      },
+      {
+        "name": "The Two-Up Rule",
+        "body": "Two products per row at the smallest breakpoint is not negotiable. Products-per-viewport is the strongest lever on browse-to-detail conversion, and a food grid reads perfectly well two-up at 375px.",
+        "section": "layout"
+      },
+      {
+        "name": "The Rhythm Rule",
+        "body": "Section spacing comes from .section-y / .section-y-tight. If a surface needs different air, change the class definition once - do not write py-24 on the section.",
+        "section": "layout"
+      },
+      {
+        "name": "The Contact-Not-Float Rule",
+        "body": "Every shadow leads with a 0 1px 0 contact edge before any blur, and no blur exceeds 10px. If a surface needs to feel more present, raise its tone or give it a rule - do not raise its shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Motion-As-Response Rule",
+        "body": "Elevation changes are responses to state, never decoration. .docket moves soft to lifted on hover in 200ms; .stamp presses in 120ms. Motion easing is cubic-bezier(0.2, 0, 0, 1) (standard) or cubic-bezier(0.16, 1, 0.3, 1) (emphasised), with durations from the 100-650ms scale. Entrance reveals travel 12px. Under prefers-reduced-motion all durations collapse to 0.01ms AND all delays to 0s - a backwards-filled entrance would otherwise hold its hidden state and then pop.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square-Cut Rule",
+        "body": "New surfaces use rounded-lg (3px) or less. Anything above rounded-3xl (8px) is out of world. rounded-full on a rectangular element is always wrong.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Perf-Edge Rule",
+        "body": ".docket--perf is the world's signature and it cheapens on repetition. It belongs on the hero card and on order receipts. It currently appears on exactly one element and should stay in the low single digits.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do ship palette changes as a Supabase migration against theme_presets, not as a code edit. Code-only changes affect first paint and nothing else.",
+      "Do keep the :root block in globals.css byte-identical to DOCKET in palette.ts, so first paint does not flash into the runtime palette.",
+      "Do run `vitest run src/lib/theme/palette.test.ts` after any colour change. 48 assertions currently pass; they pin every contrast pair, the exact accent hex, the 25-degree competitor clearance, ember's exclusion from the register set, and the five-member product palette list.",
+      "Do reach for .docket, .field-row, .field-label, .field-value, .stamp, .docket-head before writing new component CSS. A new surface needing a container uses .docket.",
+      "Do set every recorded value in Courier Prime with tabular-nums.",
+      "Do use data-register=\"carbon\" to take a subtree dark. It re-themes everything inside with zero component changes.",
+      "Do use #6B737B (steel hairline) for any rule that carries meaning; #8A9099 (steel rule) does not clear 3:1.",
+      "Do mirror any edit to PRODUCT_PALETTES into packages/shared/src/catalogue/palettes.ts - the set is deliberately duplicated because the shared package cannot import upward."
+    ],
+    "donts": [
+      "Don't warm the ground or move it toward #FFFFFF. The cool stock is the appetite strategy.",
+      "Don't use ember for anything but live state. It is outside the register token set specifically so it cannot spread, and a test asserts that.",
+      "Don't set text in the manila label colour, or put accent text on a manila panel above UI scale.",
+      "Don't introduce a display serif, a new font family, or a heavier weight where an Archivo wdth change would do.",
+      "Don't write rounded-full on a rectangular element, or arbitrary radii like rounded-[2rem]. Both escape the compressed scale.",
+      "Don't add a max-w-* to a page. Use .container-site.",
+      "Don't write ad-hoc py-* on a section. Use .section-y / .section-y-tight.",
+      "Don't hand-roll another eyebrow (text-[11px] uppercase tracking-[...]). Use .field-label.",
+      "Don't repeat .docket--perf. It is the signature and it cheapens on repetition.",
+      "Don't exceed a 10px shadow blur or add a hover lift to a stamp.",
+      "Don't move the accent hue without re-running the clearance test and arguing the result. Deleting the test is not passing it.",
+      "Don't re-add cream, anjeer, pista or gunmetal to the Tailwind palette. They were removed for having zero class usages; register colour is read through the --theme-* / --color-* properties instead.",
+      "Don't use hex-valued CSS variables in Tailwind colour bindings. They must be rgb(var(--x-rgb) / <alpha-value>) - with a hex-valued var, text-theme-ink/60 silently emits nothing, which is how 1003 opacity usages were once dead across the tree."
+    ]
+  },
+  "colorMeta": {}
+}

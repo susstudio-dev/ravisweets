@@ -40,8 +40,16 @@ export function saveOrder(order: Order): void {
 }
 
 export function generateOrderId(): string {
-  // Rough uniqueness is fine — this is a placeholder until real backend assigns IDs.
-  return `ord_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+  /*
+   * MUST be a real UUID. `orders.id` is a Postgres `uuid` column, and this id
+   * is sent verbatim in the insert — the previous `ord_<base36>` format made
+   * every server-side commit fail with "invalid input syntax for type uuid",
+   * silently: orders only ever reached localStorage, confirmation emails
+   * never sent, and Razorpay could never find the row it prices from.
+   * crypto.randomUUID is available in every browser this site supports and
+   * in the Node the build runs on.
+   */
+  return crypto.randomUUID();
 }
 
 export function generateOrderNumber(): string {

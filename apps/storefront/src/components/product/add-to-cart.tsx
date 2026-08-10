@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, Minus, Plus, ShoppingBag, Sparkles } from 'lucide-react';
+import { Check, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { cn } from '@/lib/cn';
 import { DURATION, EASE } from '@/lib/motion/constants';
@@ -63,9 +63,9 @@ export function AddToCart({ productId, variantId, disabled, maxQty = 99 }: AddTo
 
   return (
     <div className="relative flex flex-wrap items-center gap-3">
-      {/* Quantity stepper */}
+      {/* Quantity stepper — a bordered square counter, not a pill. */}
       <div
-        className="inline-flex items-center rounded-full border border-[color:var(--color-border)] bg-surface-elevated p-1"
+        className="bg-surface-elevated inline-flex items-stretch overflow-hidden rounded-md border border-[color:var(--color-border)]"
         role="group"
         aria-label="Quantity"
       >
@@ -74,7 +74,7 @@ export function AddToCart({ productId, variantId, disabled, maxQty = 99 }: AddTo
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={disabled || qty <= 1}
           aria-label="Decrease quantity"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+          className="text-theme-ink/75 hover:bg-theme-ink/5 hover:text-theme-ink focus-visible:ring-theme-accent flex h-11 w-11 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset"
         >
           <Minus className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -88,48 +88,31 @@ export function AddToCart({ productId, variantId, disabled, maxQty = 99 }: AddTo
             if (Number.isFinite(n)) setQty(Math.min(maxQty, Math.max(1, Math.floor(n))));
           }}
           aria-label="Quantity"
-          className="w-12 bg-transparent text-center text-sm font-semibold tabular-nums text-theme-ink outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="field-value text-theme-ink w-12 border-x border-[color:var(--color-border)] bg-transparent text-center text-sm font-bold outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         <button
           type="button"
           onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
           disabled={disabled || qty >= maxQty}
           aria-label="Increase quantity"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-theme-ink/75 transition-colors hover:bg-theme-glow/20 hover:text-theme-ink disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
+          className="text-theme-ink/75 hover:bg-theme-ink/5 hover:text-theme-ink focus-visible:ring-theme-accent flex h-11 w-11 items-center justify-center transition-colors disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset"
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
 
+      {/* THE STAMP. Primary action; presses into the paper, never levitates. */}
       <button
         type="button"
         onClick={handleClick}
         disabled={disabled}
         aria-live="polite"
         className={cn(
-          'group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-7 py-3 text-sm font-semibold shadow-soft transition-all duration-300',
-          'bg-theme-accent text-[color:var(--theme-base)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent focus-visible:ring-offset-2',
+          'stamp relative',
           disabled && 'cursor-not-allowed opacity-50',
-          !disabled && 'hover:-translate-y-0.5 hover:shadow-lifted',
           state === 'error' && 'bg-red-700',
         )}
       >
-        {/* Ribbon-pull success sweep */}
-        {state === 'success' && !reduced && (
-          <motion.span
-            key="sweep"
-            initial={{ x: '-110%' }}
-            animate={{ x: '110%' }}
-            transition={{ duration: 0.55, ease: EASE.emphasised }}
-            className="pointer-events-none absolute inset-y-0 w-1/2"
-            style={{
-              background:
-                'linear-gradient(90deg, transparent, color-mix(in oklab, var(--theme-glow) 70%, transparent), transparent)',
-            }}
-            aria-hidden="true"
-          />
-        )}
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={state}
@@ -159,12 +142,9 @@ export function AddToCart({ productId, variantId, disabled, maxQty = 99 }: AddTo
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.quick, ease: EASE.standard }}
-            className="rounded-full bg-theme-ink px-4 py-2 text-xs font-medium text-[color:var(--theme-base)] shadow-soft"
+            className="bg-theme-ink rounded-md px-4 py-2 text-xs font-medium text-[color:var(--theme-base)] shadow-soft"
           >
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-theme-glow" aria-hidden="true" />
-              Added — view cart
-            </span>
+            Added — view cart
           </motion.div>
         )}
       </AnimatePresence>

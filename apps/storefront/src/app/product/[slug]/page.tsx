@@ -5,6 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
 import { FlavourScope } from '@/lib/theme/theme-provider';
 import { jsonLdHtml } from '@/lib/seo/json-ld';
+import { seoDescription, seoTitle } from '@/lib/seo/metadata';
+import { isUsableImage } from '@/lib/images';
 import { CompositionPanel } from '@/components/product/composition-panel';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { ProductReviews } from '@/components/product/product-reviews';
@@ -27,18 +29,83 @@ export async function generateStaticParams() {
   return SAMPLE_PRODUCTS.map((p) => ({ slug: p.slug }));
 }
 
+/**
+ * What each category IS, in the words a buyer would search.
+ *
+ * A product title alone ("Kaju Katli", "Cranberry") is 9–24 characters and
+ * lands under Google's 30-character floor once `| Ravi Sweets` is appended —
+ * 16 of the crawl's short titles were product pages. This gives every title a
+ * second, category-true clause to spend the remaining budget on, and it is a
+ * clause a person actually types into a search box.
+ */
+const CATEGORY_TITLE_HOOK: Record<string, string> = {
+  'hyderabadi-specials': 'Hyderabadi Sweet, Made Fresh',
+  sweets: 'Fresh Indian Mithai',
+  'sweet-bites': 'Bite-size Mithai Tin',
+  'healthy-sweets': 'Sugar-free Laddu',
+  namkeens: 'Crisp Namkeen',
+  savouries: 'Andhra Savoury Snack',
+  'dry-fruits': 'Premium Dry Fruit',
+  pickles: 'Andhra Pickle',
+  powders: 'Telugu Podi',
+  biscuits: 'Bakery Biscuit',
+  combos: 'Snack Combo Box',
+  'gift-hampers': 'Indian Sweets Gift Hamper',
+  'festival-specials': 'Festival Gift Box',
+};
+
+/** Reads after the word "More" in the related-products heading. */
+const CATEGORY_H2_LABEL: Record<string, string> = {
+  'hyderabadi-specials': 'Hyderabadi specials',
+  sweets: 'sweets from the kitchen',
+  'sweet-bites': 'Sweet Bites flavours',
+  'healthy-sweets': 'healthy laddus',
+  namkeens: 'namkeens',
+  savouries: 'savouries',
+  'dry-fruits': 'dry fruits',
+  pickles: 'pickles',
+  powders: 'podis and powders',
+  biscuits: 'biscuits',
+  combos: 'combo boxes',
+  'gift-hampers': 'gift hampers',
+  'festival-specials': 'festival specials',
+};
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = SAMPLE_PRODUCTS.find((p) => p.slug === slug);
   if (!product) return { title: 'Not found' };
-  const primaryImage = product.images[0];
+
+  /*
+   * Many catalogue titles are already `Name — Descriptor` ("Chekkalu — Crunchy
+   * Rice Crackers"). Splitting on that dash lets the descriptor be treated as
+   * the enrichment, so an over-long one is trimmed while the product NAME is
+   * never touched — "Nuvvula Laddu — Bone-Strengthening Sesame Laddu" is 47
+   * characters on its own and was the last title over 60 after the suffix.
+   * Products with a bare name fall through to the category hook instead.
+   */
+  const [name = product.title, ...rest] = product.title.split(' — ');
+  const descriptor = rest.join(' — ');
+  const title = seoTitle(name, descriptor || CATEGORY_TITLE_HOOK[product.category] || '');
+  const description = seoDescription(
+    product.description,
+    'Made fresh in our Khammam kitchen, without preservatives.',
+    'Delivered across India.',
+  );
+  // Only a photo that resolves may become an og:image — a 404 there produces a
+  // blank card on every share, which is worse than no card at all.
+  const ogImage = product.images.find((i) => isUsableImage(i.url))?.url;
+
   return {
-    title: product.title,
-    description: product.description,
+    title,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
-      title: product.title,
-      description: product.description,
-      images: primaryImage ? [primaryImage.url] : undefined,
+      type: 'website',
+      title,
+      description,
+      url: `/product/${product.slug}`,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
@@ -53,13 +120,23 @@ export default async function ProductPage({ params }: PageProps) {
     (p) => p.id !== product.id && (p.category === product.category || p.bestseller),
   ).slice(0, 4);
 
+  /*
+   * `image` previously serialised every catalogue URL unconditionally, and
+   * every one of those pointed at the retired WordPress library. Structured
+   * data claiming images that 404 is a Rich Results error, not a cosmetic one:
+   * Google drops the product snippet rather than showing it without a photo.
+   * An OMITTED image property degrades gracefully; a broken one does not.
+   */
+  const images = product.images.map((i) => i.url).filter(isUsableImage);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
     description: product.description,
-    image: product.images.map((i) => i.url),
+    ...(images.length ? { image: images } : {}),
     category: product.category,
+    brand: { '@type': 'Brand', name: 'Ravi Sweets' },
     offers: product.variants.map((v) => ({
       '@type': 'Offer',
       sku: v.sku,
@@ -215,11 +292,20 @@ export default async function ProductPage({ params }: PageProps) {
         <section aria-labelledby="related-heading" className="container-site section-y-tight">
           <Reveal>
             <div className="docket-head">
+              {/*
+                Third and last of the duplicated product H2s. Naming BOTH the
+                product and the category is what makes it unique per page —
+                scoping it to the category alone still left 15 savoury pages
+                sharing one heading. It also gives the block honest
+                internal-link context: a crawler reads what the four links
+                beneath it lead to, and why they are related to this page.
+              */}
               <h2
                 id="related-heading"
                 className="font-display text-display-md text-theme-ink leading-[1.05]"
               >
-                More from the kitchen
+                More {CATEGORY_H2_LABEL[product.category] ?? 'from the kitchen'}, like{' '}
+                {product.title}
               </h2>
             </div>
           </Reveal>

@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { CategorySlug, Product } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
-import { Paisley } from '@/components/brand/paisley';
 import { Stagger } from '@/components/motion/stagger';
 import { CategoryFilters } from './category-filters';
 
@@ -62,27 +61,24 @@ export function CategoryBrowser({
       />
 
       <div>
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-theme-ink/60 text-sm">
-            Showing <span className="text-theme-ink font-semibold">{shown.length}</span>{' '}
-            {shown.length === 1 ? 'product' : 'products'}
+        {/* The result count, typed into the record on its own ruled line. */}
+        <div className="mb-6 border-b border-[color:var(--color-rule)] pb-2.5">
+          <p className="field-value text-theme-ink text-sm" aria-live="polite">
+            SHOWING {shown.length} OF {products.length}
           </p>
         </div>
 
         {shown.length === 0 ? (
-          <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed border-[color:var(--color-border)] p-8">
-            <Paisley size="md" />
+          <div className="docket flex flex-col items-start gap-3 p-8">
+            <span className="inline-block h-2 w-2 rotate-45 bg-varak-rule" aria-hidden="true" />
             <p className="font-display text-theme-ink text-lg">Nothing matches those filters.</p>
-            <p className="text-theme-ink/70 text-sm">Try removing a dietary tag, or browse all.</p>
-            <Link
-              href={`/category/${categorySlug}`}
-              className="text-theme-accent mt-2 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
-            >
+            <p className="text-text-muted text-sm">Try removing a dietary tag, or browse all.</p>
+            <Link href={`/category/${categorySlug}`} className="stamp stamp--ghost mt-1">
               Clear filters
             </Link>
           </div>
         ) : (
-          <Stagger gap={75} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger gap={75} className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {shown.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

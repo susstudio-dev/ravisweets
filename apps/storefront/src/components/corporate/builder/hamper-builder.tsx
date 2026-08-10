@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, HelpCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, HelpCircle } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CATALOGUE,
@@ -15,7 +15,6 @@ import {
   type Product,
   type TemplateId,
 } from '@ravisweets/shared';
-import { Paisley } from '@/components/brand/paisley';
 import { Reveal } from '@/components/motion/reveal';
 import {
   BUILDER_SCHEMA_VERSION,
@@ -206,33 +205,27 @@ export function HamperBuilder() {
           : !belowMoq && config.items.length > 0;
 
   return (
-    <section className="container-site py-8 md:py-12">
+    <section className="container-site section-y-tight">
       {/* Header */}
       <Reveal>
         <Link
           href="/corporate"
-          className="text-theme-ink/60 hover:text-theme-accent inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition-colors"
+          className="field-label hover:text-theme-accent inline-flex items-center gap-1.5 transition-colors"
         >
           ← Back to corporate
         </Link>
       </Reveal>
       <Reveal delay={0.05}>
         <div className="mt-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-6">
-          <div>
-            <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-              <Paisley size="sm" />
-              Hamper builder
-            </p>
-            <h1 className="font-display text-display-md text-theme-ink md:text-display-lg mt-2 leading-[1.02]">
-              {STEP_LABEL[step].title === 'Start'
-                ? 'Start with a template.'
-                : STEP_LABEL[step].title === 'Compose'
-                  ? 'Compose the box.'
-                  : STEP_LABEL[step].title === 'Customise'
-                    ? 'Make it yours.'
-                    : 'Review and submit.'}
-            </h1>
-          </div>
+          <h1 className="font-display text-display-md text-theme-ink md:text-display-lg leading-[1.02]">
+            {STEP_LABEL[step].title === 'Start'
+              ? 'Start with a template.'
+              : STEP_LABEL[step].title === 'Compose'
+                ? 'Compose the box.'
+                : STEP_LABEL[step].title === 'Customise'
+                  ? 'Make it yours.'
+                  : 'Review and submit.'}
+          </h1>
           <ShareButton config={config} disabled={config.items.length === 0 || belowMoq} />
         </div>
       </Reveal>
@@ -246,7 +239,7 @@ export function HamperBuilder() {
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.quick, ease: EASE.standard }}
             role="status"
-            className="text-theme-ink mt-6 flex items-start justify-between gap-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
+            className="text-theme-ink mt-6 flex items-start justify-between gap-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
           >
             <p>
               This link uses an unsupported format. We&rsquo;ve loaded a fresh Premium template
@@ -254,7 +247,7 @@ export function HamperBuilder() {
             </p>
             <button
               type="button"
-              className="text-theme-accent text-xs font-semibold uppercase tracking-wider hover:underline"
+              className="field-label text-theme-accent hover:underline"
               onClick={() => setSchemaRejected(false)}
             >
               Dismiss
@@ -398,14 +391,10 @@ export function HamperBuilder() {
                   type="button"
                   onClick={submitEnquiry}
                   disabled={belowMoq || config.items.length === 0}
-                  className="bg-theme-ink shadow-soft hover:shadow-lifted disabled:hover:shadow-soft group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                  className="stamp disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
                   Submit as enquiry
-                  <ArrowRight
-                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
                 {belowMoq && (
                   <p className="text-theme-ink/70 text-xs">
@@ -431,27 +420,30 @@ export function HamperBuilder() {
           type="button"
           onClick={prevStep}
           disabled={STEP_ORDER.indexOf(step) === 0}
-          className="text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          className="stamp stamp--ghost disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
         </button>
-        <p className="text-theme-ink/55 text-xs">
-          {price.total > 0 &&
-            `Live total: ${formatMoney({ amount: price.total, currency: 'INR' })}`}
+        <p className="flex items-baseline gap-2">
+          {price.total > 0 && (
+            <>
+              <span className="field-label">Live total</span>
+              <span className="field-value text-theme-ink text-sm">
+                {formatMoney({ amount: price.total, currency: 'INR' })}
+              </span>
+            </>
+          )}
         </p>
         {step !== 'review' && (
           <button
             type="button"
             onClick={nextStep}
             disabled={!canAdvance}
-            className="bg-theme-accent shadow-soft hover:shadow-lifted disabled:hover:shadow-soft group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="stamp disabled:cursor-not-allowed disabled:opacity-50"
           >
             Continue
-            <ArrowRight
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
-              aria-hidden="true"
-            />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -472,7 +464,7 @@ export function HamperBuilder() {
 
 function HelpRow({ helps }: { helps: string[] }) {
   return (
-    <ul className="bg-surface-elevated mt-6 flex flex-col gap-2 rounded-2xl border border-dashed border-[color:var(--color-border)] p-4">
+    <ul className="bg-surface-elevated mt-6 flex flex-col gap-2 rounded-lg border border-dashed border-[color:var(--color-border)] p-4">
       {helps.map((h, i) => (
         <li key={i} className="text-theme-ink/70 flex items-start gap-2 text-xs">
           <HelpCircle
@@ -493,56 +485,48 @@ function ReviewSummary({ config }: { config: HamperConfig }) {
     return { p, v, qty: it.qtyPerHamper };
   });
   return (
-    <div className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-6">
-      <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
-        Your hamper
-      </p>
-      <h2 className="font-display text-theme-ink mt-2 text-2xl">
-        {lines.length} item types · {config.totalUnits} hampers
-      </h2>
-      <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-            Box finish
-          </dt>
-          <dd className="font-display text-theme-ink mt-1 text-base capitalize">
+    <div className="docket p-5 md:p-6">
+      <div className="docket-head">
+        <h2 className="font-display text-theme-ink text-xl">Your hamper</h2>
+        <p className="field-value text-theme-ink text-sm">
+          {lines.length} items · {config.totalUnits} hampers
+        </p>
+      </div>
+      <dl>
+        <div className="field-row">
+          <dt className="field-label">Box finish</dt>
+          <dd className="field-value text-theme-ink text-sm capitalize">
             {config.box.replace('-', ' ')}
           </dd>
         </div>
-        <div>
-          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-            Ribbon
-          </dt>
-          <dd className="font-display text-theme-ink mt-1 text-base capitalize">{config.ribbon}</dd>
+        <div className="field-row">
+          <dt className="field-label">Ribbon</dt>
+          <dd className="field-value text-theme-ink text-sm capitalize">{config.ribbon}</dd>
         </div>
-        <div>
-          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-            Logo print
-          </dt>
-          <dd className="font-display text-theme-ink mt-1 text-base">
+        <div className="field-row">
+          <dt className="field-label">Logo print</dt>
+          <dd className="field-value text-theme-ink text-sm">
             {config.logoPrint ? 'Yes' : 'No'}
           </dd>
         </div>
-        <div>
-          <dt className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-            Personalised note
-          </dt>
-          <dd className="text-theme-ink/85 mt-1 text-sm">
+        <div className="field-row">
+          <dt className="field-label">Personalised note</dt>
+          <dd className="text-theme-ink/85 max-w-[32ch] text-right text-sm">
             {config.message ? `"${config.message}"` : 'None'}
           </dd>
         </div>
       </dl>
 
-      <div className="mt-6 border-t border-[color:var(--color-border)] pt-4">
-        <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
+      <div className="mt-6">
+        <p className="field-label border-b-2 border-[color:var(--color-rule)] pb-2">
           Items per hamper
         </p>
-        <ul className="mt-3 flex flex-col gap-2">
+        <ul>
           {lines.map(({ p, v, qty }, i) =>
             p && v ? (
-              <li key={i} className="flex items-center justify-between gap-3 text-sm">
+              <li key={i} className="field-row text-sm">
                 <span className="text-theme-ink font-medium">{p.title}</span>
-                <span className="text-theme-ink/55">
+                <span className="field-value text-theme-ink/70 text-sm">
                   {v.title} × {qty}
                 </span>
               </li>

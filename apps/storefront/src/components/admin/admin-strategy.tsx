@@ -1148,7 +1148,7 @@ function HealthSection({ subBrand }: { subBrand: string }) {
 
 function BrandSection() {
   const phrases = [
-    'Khammam since 1985. — heritage anchor',
+    'Khammam since 1983. — heritage anchor',
     'From our kitchen, not a warehouse. — freshness anchor',
     'Sweetened with bellam. — health anchor (Telugu intentional)',
     'Build your own hamper. — customisation anchor',
@@ -1176,7 +1176,7 @@ function BrandSection() {
           />
           <PyramidLevel
             label="Who we are"
-            body="A Khammam family kitchen since 1985. Two stores, one recipe book, one founder, no shortcuts."
+            body="A Khammam family kitchen since 1983. Two stores, one recipe book, one founder, no shortcuts."
           />
           <PyramidLevel
             label="What we do"
@@ -2985,7 +2985,7 @@ function LimitedEditionSection() {
               b: 'Every piece uses a real technique and a Hyderabadi/Andhra heritage cue. Functional food that is genuinely delicious.',
             },
             {
-              h: 'A 1985 halwai house, not a faceless startup',
+              h: 'A 1983 halwai house, not a faceless startup',
               b: 'Forty years of trust, a real founder on camera, real Khammam + Hyderabad kitchens. FSSAI-safe by design.',
             },
           ].map((r) => (
@@ -4013,7 +4013,7 @@ function PlaybookSection({ checked, toggle }: PlaybookSectionProps) {
       title: 'Day 6 (Saturday)',
       items: [
         'Khammam kitchen content shoot · founder + family + jaggery vat',
-        'Founder story film — "How my father started this in 1985" (5 min, edited Mon)',
+        'Founder story film — "How my father started this in 1983" (5 min, edited Mon)',
         'Local Telangana press contact — pitch The Hans India + Telangana Today + Deccan Chronicle',
         'Walk-in customer interviews (5 buyers · "Why do you buy here?")',
       ],

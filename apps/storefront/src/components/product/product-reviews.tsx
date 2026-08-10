@@ -12,7 +12,6 @@ import {
 import { useSession } from '@/lib/supabase/session-context';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { Reveal } from '@/components/motion/reveal';
-import { Paisley } from '@/components/brand/paisley';
 
 interface Props {
   productId: string;
@@ -63,25 +62,29 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
   return (
     <section
       aria-labelledby="reviews-heading"
-      className="container-site grid gap-10 py-14 md:grid-cols-[1fr_2fr] md:gap-12"
+      className="container-site section-y grid gap-10 md:grid-cols-[1fr_2fr] md:gap-12"
     >
       {/* Summary column */}
       <div>
         <Reveal>
-          <p className="text-theme-accent flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]">
-            <Paisley size="sm" />
-            Customer reviews
-          </p>
-          <h2
-            id="reviews-heading"
-            className="font-display text-display-md text-theme-ink mt-2 leading-[1.05]"
-          >
-            What people say.
-          </h2>
+          <div className="docket-head">
+            {/*
+              `productTitle` was already a prop and already unused for display.
+              Spending it here retires the second of the three headings that
+              were byte-identical across all 83 product pages in the crawl.
+            */}
+            <h2
+              id="reviews-heading"
+              className="font-display text-display-md text-theme-ink leading-[1.05]"
+            >
+              What people say about {productTitle}.
+            </h2>
+          </div>
         </Reveal>
 
         <div className="mt-6 flex items-baseline gap-3">
-          <span className="font-display text-theme-ink text-5xl tabular-nums">
+          {/* The average is a recorded value — it goes in the typed face. */}
+          <span className="field-value text-theme-ink text-5xl font-bold">
             {summary.avg.toFixed(1)}
           </span>
           <Stars value={summary.avg} size="lg" />
@@ -104,39 +107,35 @@ export function ProductReviews({ productId, productTitle }: Omit<Props, 'product
                     className="fill-theme-accent text-theme-accent h-3 w-3"
                     aria-hidden="true"
                   />
-                  <div className="bg-theme-ink/8 relative h-2 flex-1 overflow-hidden rounded-full">
+                  <div className="bg-theme-ink/8 relative h-2 flex-1 overflow-hidden">
                     <div
-                      className="bg-theme-accent absolute inset-y-0 left-0 rounded-full"
+                      className="bg-theme-accent absolute inset-y-0 left-0"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="text-theme-ink/55 w-7 text-right tabular-nums">{count}</span>
+                  <span className="field-value text-theme-ink/55 w-7 text-right">{count}</span>
                 </li>
               );
             })}
           </ul>
         )}
 
-        <button
-          type="button"
-          onClick={tryOpen}
-          className="bg-theme-accent shadow-soft hover:shadow-lifted mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5"
-        >
+        <button type="button" onClick={tryOpen} className="stamp mt-7">
           <MessageSquarePlus className="h-4 w-4" aria-hidden="true" />
           {myReview ? 'Update your review' : 'Write a review'}
         </button>
       </div>
 
-      {/* Reviews list column */}
+      {/* Reviews list column — ruled entries on the sheet, not floating cards. */}
       <div>
         {reviews === null ? (
-          <div className="bg-theme-ink/5 h-32 animate-pulse rounded-2xl" />
+          <div className="bg-theme-ink/5 h-32 animate-pulse rounded-lg" />
         ) : reviews.length === 0 ? (
-          <div className="text-theme-ink/55 rounded-2xl border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm">
+          <div className="text-theme-ink/55 rounded-lg border border-dashed border-[color:var(--color-border)] p-10 text-center text-sm">
             No reviews yet for {productTitle}. Yours could be the first.
           </div>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="divide-y divide-[color:var(--color-border)]">
             {reviews.map((r) => (
               <ReviewCard key={r.id} review={r} />
             ))}
@@ -175,31 +174,29 @@ function ReviewCard({ review }: { review: Review }) {
     day: 'numeric',
   });
   return (
-    <li className="bg-surface-elevated rounded-2xl border border-[color:var(--color-border)] p-5">
+    <li className="py-5 first:pt-0">
       <div className="flex flex-wrap items-center gap-3">
         <Stars value={review.rating} />
         {review.verified && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-emerald-700">
             <ShieldCheck className="h-3 w-3" aria-hidden="true" />
             Verified buyer
           </span>
         )}
-        <span className="text-theme-ink/55 text-xs">{date}</span>
+        <span className="field-value text-theme-ink/55 text-xs">{date}</span>
       </div>
       {review.title && <h3 className="font-display text-theme-ink mt-3 text-lg">{review.title}</h3>}
       <p className="text-theme-ink/85 mt-2 text-sm leading-relaxed">{review.body}</p>
       {review.brandReply && (
-        <div className="border-theme-accent bg-theme-glow/10 mt-4 rounded-xl border-l-4 p-4">
-          <p className="text-theme-accent text-[10px] font-semibold uppercase tracking-wider">
-            Reply from Ravi Sweets
-          </p>
+        <div className="border-theme-accent bg-theme-glow/10 mt-4 rounded-md border-l-2 p-4">
+          <p className="field-label text-theme-accent">Reply from Ravi Sweets</p>
           <p className="text-theme-ink/85 mt-1 text-sm">{review.brandReply}</p>
         </div>
       )}
       {review.helpfulCount > 0 && (
         <p className="text-theme-ink/55 mt-3 inline-flex items-center gap-1 text-xs">
           <ThumbsUp className="h-3 w-3" aria-hidden="true" />
-          {review.helpfulCount} found this helpful
+          <span className="field-value">{review.helpfulCount}</span> found this helpful
         </p>
       )}
     </li>
@@ -279,21 +276,17 @@ function ReviewComposer({
         type="button"
         aria-label="Close"
         onClick={onClose}
-        className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+        className="bg-theme-ink/60 absolute inset-0 focus-visible:outline-none"
       />
-      <form
-        onSubmit={send}
-        className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-lg rounded-3xl p-6 ring-1 ring-[color:var(--color-border)]"
-      >
+      {/* The composer is a docket sheet lifted off the counter. */}
+      <form onSubmit={send} className="docket shadow-lifted relative z-10 w-full max-w-lg p-6">
         <h2 className="font-display text-theme-ink text-xl">
           {existing ? 'Update your review' : 'Write a review'}
         </h2>
         <p className="text-theme-ink/65 mt-1 text-xs">{productTitle}</p>
 
         <fieldset className="mt-5">
-          <legend className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            Rating
-          </legend>
+          <legend className="field-label">Rating</legend>
           <div className="mt-2 flex gap-1">
             {([1, 2, 3, 4, 5] as const).map((s) => (
               <button
@@ -301,7 +294,7 @@ function ReviewComposer({
                 type="button"
                 aria-label={`${s} stars`}
                 onClick={() => setRating(s)}
-                className="hover:bg-theme-glow/15 focus-visible:ring-theme-accent rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                className="hover:bg-theme-ink/5 focus-visible:ring-theme-accent rounded-md p-2 transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
                 <Star
                   className={`h-7 w-7 ${s <= rating ? 'fill-theme-accent text-theme-accent' : 'text-theme-ink/25'}`}
@@ -312,9 +305,7 @@ function ReviewComposer({
         </fieldset>
 
         <label className="mt-5 flex flex-col gap-1.5">
-          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            Title (optional)
-          </span>
+          <span className="field-label">Title (optional)</span>
           <input
             type="text"
             value={title}
@@ -326,8 +317,8 @@ function ReviewComposer({
         </label>
 
         <label className="mt-3 flex flex-col gap-1.5">
-          <span className="text-theme-ink/55 text-[10px] font-semibold uppercase tracking-wider">
-            Your review · {body.length}/1500
+          <span className="field-label">
+            Your review · <span className="field-value normal-case">{body.length}/1500</span>
           </span>
           <textarea
             rows={5}
@@ -339,21 +330,17 @@ function ReviewComposer({
           />
         </label>
 
-        {error && <p className="mt-3 text-xs font-medium text-[#c0392b]">{error}</p>}
+        {error && <p className="mt-3 text-xs font-medium text-red-700">{error}</p>}
         {success && <p className="mt-3 text-xs font-medium text-emerald-700">{success}</p>}
 
         <div className="mt-5 flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold"
-          >
+          <button type="button" onClick={onClose} className="stamp stamp--ghost">
             Cancel
           </button>
           <button
             type="submit"
             disabled={busy || tooShort}
-            className="bg-theme-accent shadow-soft hover:shadow-lifted rounded-full px-5 py-2 text-sm font-semibold text-[color:var(--theme-base)] transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="stamp disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? 'Submitting…' : existing ? 'Update review' : 'Submit review'}
           </button>

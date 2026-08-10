@@ -9,6 +9,7 @@ import { Paisley } from '@/components/brand/paisley';
 import { Grain } from '@/components/brand/grain';
 import { Reveal } from '@/components/motion/reveal';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { pendingPhoto } from '@/lib/images';
 
 const INGREDIENTS = [
   'Saffron',
@@ -23,7 +24,7 @@ const INGREDIENTS = [
   'Milk',
 ];
 
-const MACRO = 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png';
+const MACRO = pendingPhoto('2025/09/kaju_katli-removebg-preview.png');
 
 /**
  * A foreground product macro with a slow-moving horizontal marquee of ingredient
@@ -135,9 +136,6 @@ export function IngredientMarquee() {
             aria-hidden="true"
           />
           <Grain />
-          <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-            Dev only
-          </div>
         </motion.div>
       </div>
     </section>

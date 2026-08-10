@@ -8,6 +8,8 @@ import { ProductCard } from '@/components/product-card';
 import { FlavourScope } from '@/lib/theme/theme-provider';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
+import { pendingPhoto } from '@/lib/images';
+import { seoDescription, shortenTitle } from '@/lib/seo/metadata';
 import {
   HamperARPreview,
   SAMPLE_HAMPER_GLB,
@@ -48,7 +50,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     body: 'Six hampers, three price bands, logo-ready for corporate runs. Priority list opens to earlier customers and corporate accounts first.',
     date: '2026-11-08T00:00:00+05:30',
     heroImage:
-      'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png',
+      pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png'),
     // 2026-05-06: festival palettes retuned to harmonise with the site-wide
     // Rose & Cream direction. Bases stay in a continuous cream family so the
     // header / megamenu don't feel like a different website per festival.
@@ -89,7 +91,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     eyebrow: 'Brothers & sisters · 2026',
     body: 'A hamper tied with a thread — the traditional signifier, done properly. Compact boxes for courier and weighted boxes for hand-delivery.',
     date: '2026-08-28T00:00:00+05:30',
-    heroImage: 'https://ravisweets.com/wp-content/uploads/2025/09/kaju_katli-removebg-preview.png',
+    heroImage: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
     theme: {
       base: '#f9eee2',
       accent: '#b54766',
@@ -127,7 +129,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     body: 'The Deccan table shines brightest here. Double ka Meetha, Qubani, Badam ki Jali — Hyderabadi classics, plated the slow way.',
     date: '2026-03-30T00:00:00+05:30',
     heroImage:
-      'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+      pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
       base: '#f1f4e3',
       accent: '#5b7a3c',
@@ -165,7 +167,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     body: 'Gujiya-style boxes, jaggery-led laddus, and cooling mithai for the post-rang plate. Colour-coded gift sleeves so the box is a celebration before the lid even opens.',
     date: '2027-03-13T00:00:00+05:30',
     heroImage:
-      'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+      pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
       base: '#fbeaef',
       accent: '#c83a6a',
@@ -202,7 +204,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     eyebrow: 'Harvest festival · 2027',
     body: 'Our Pongal Pot Set arrives with a hand-thrown clay pot, a sealed sachet of jaggery-rice-moong-ghee mix, and a sprig of dried banana leaf. Boil milk, tip it in — Pongal in fifteen minutes.',
     date: '2027-01-15T00:00:00+05:30',
-    heroImage: 'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
+    heroImage: pendingPhoto('2025/08/booster.webp'),
     theme: {
       base: '#f6efd8',
       accent: '#a06a18',
@@ -239,7 +241,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     eyebrow: 'Makar Sankranti · 2027',
     body: 'Sesame-and-jaggery laddus pressed by hand, plus the Telugu Sankranti spread — Ariselu, Bobbatlu, Sajja Burelu. Fly the kite, share the box.',
     date: '2027-01-14T00:00:00+05:30',
-    heroImage: 'https://ravisweets.com/wp-content/uploads/2025/08/11-2-400x400.jpg',
+    heroImage: pendingPhoto('2025/08/11-2-400x400.jpg'),
     theme: {
       base: '#fbf0d8',
       accent: '#a85a14',
@@ -276,7 +278,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     eyebrow: 'Telugu new year · 2027',
     body: 'The first taste of the year sets the tone. Our Ugadi box pairs Bellam Gavvalu, Sajja Burelu, and a small jar of Mango Pickle — six tastes, one new year.',
     date: '2027-03-19T00:00:00+05:30',
-    heroImage: 'https://ravisweets.com/wp-content/uploads/2025/08/booster.webp',
+    heroImage: pendingPhoto('2025/08/booster.webp'),
     theme: {
       base: '#f3efde',
       accent: '#76682c',
@@ -314,7 +316,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     body: 'Payasam-set kits, flaky Soan Papdi, and Kerala-style banana chips. Sized for the family seated cross-legged, served on the leaf.',
     date: '2027-09-04T00:00:00+05:30',
     heroImage:
-      'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png',
+      pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
       base: '#eef4dd',
       accent: '#3a7a3c',
@@ -352,7 +354,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     body: 'Steamed modak kits, Bellam Sunnundalu, Bobbatlu — the prasad-tier sweets the elders trust. Boxes sized for the modak count you need.',
     date: '2027-09-15T00:00:00+05:30',
     heroImage:
-      'https://ravisweets.com/wp-content/uploads/2025/09/boondi_laddu-removebg-preview.png',
+      pendingPhoto('2025/09/boondi_laddu-removebg-preview.png'),
     theme: {
       base: '#fbf0d6',
       accent: '#a85a08',
@@ -389,7 +391,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     eyebrow: 'Christmas · 2026',
     body: 'Soft-set kalakand, ghee-rich shortbread biscuits, and our Sweet Bites in twelve flavours — a Christmas Eve box that fits a Telangana table just as well.',
     date: '2026-12-25T00:00:00+05:30',
-    heroImage: 'https://ravisweets.com/wp-content/uploads/2025/08/STRAWBERRY-BITES.webp',
+    heroImage: pendingPhoto('2025/08/STRAWBERRY-BITES.webp'),
     theme: {
       base: '#fbeae6',
       accent: '#9c2a3a',
@@ -435,7 +437,28 @@ export async function generateMetadata({
   const { slug } = await params;
   const f = FESTIVALS[slug as FestivalSlug];
   if (!f) return { title: 'Festival not found' };
-  return { title: `${f.title} — ${f.tagline}`, description: f.body };
+
+  /*
+   * `${title} — ${tagline}` ran to 96 characters before the layout appended
+   * `| Ravi Sweets`, and every festival page was over Google's 60-character
+   * and 561-pixel limits — the whole of that finding in the crawl. The
+   * taglines are good editorial lines but they were written for the page, not
+   * for a SERP. `shortenTitle` keeps the festival name whole and spends
+   * whatever budget is left on the tagline, cut at a word boundary.
+   */
+  const title = shortenTitle(`${f.title} Sweets`, f.tagline);
+  const description = seoDescription(
+    f.body,
+    'Made fresh and dispatched from our Khammam kitchen.',
+    'Delivered across India.',
+  );
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/festivals/${slug}` },
+    openGraph: { type: 'website', title, description, url: `/festivals/${slug}` },
+  };
 }
 
 /** Dispatch needs three clear days before the festival for the fresh range. */
@@ -550,7 +573,8 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
         <Reveal>
           <div className="docket-head">
             <h2 id="for-heading" className="font-display text-display-md">
-              A box for each kind of recipient.
+              {/* Named per festival — 10 pages shared this <h2> verbatim. */}
+              A {f.title} box for each kind of recipient.
             </h2>
           </div>
         </Reveal>
@@ -581,7 +605,7 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
         <Reveal>
           <div className="docket-head">
             <h2 id="hampers-heading" className="font-display text-display-md">
-              What our kitchen recommends this year.
+              What our kitchen recommends for {f.title}.
             </h2>
           </div>
         </Reveal>
@@ -599,7 +623,7 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
           <div data-register="carbon" className="bg-theme-base text-theme-ink p-7 md:p-10">
             <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <h2 className="font-display text-display-md">Be first in line.</h2>
+                <h2 className="font-display text-display-md">Be first in line for {f.title}.</h2>
                 <p className="text-text-muted mt-3 text-sm leading-relaxed md:text-base">
                   The {f.title} collection opens to our priority list before anyone else. Leave
                   your email and we&rsquo;ll ping you when it&rsquo;s live.

@@ -188,7 +188,15 @@ export function PromoStrip() {
       aria-label="Site-wide promotion"
       className={cn(
         'relative isolate overflow-hidden',
-        !campaign && 'bg-theme-accent text-[color:var(--theme-base)]',
+        /*
+         * The default strip is ink-on-stock with a ruled edge, not a saturated
+         * slab. A full-bleed band of the accent colour across the top of every
+         * page made stamp blue read as a background rather than as the ink,
+         * and it out-shouted the primary CTA directly beneath it. The accent
+         * survives here only on the inline action.
+         */
+        !campaign &&
+          'bg-surface-elevated text-theme-ink border-b border-[color:var(--color-rule)]',
       )}
       style={campaignStyle}
     >

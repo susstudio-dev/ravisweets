@@ -1,93 +1,147 @@
 'use client';
 
-import { Instagram, MessageCircle, Phone } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Instagram, MessageCircle, Phone, Plus } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/cn';
 
 /**
- * Floating contact stack — sitewide, mounted in root layout.
+ * THE CONTACT SLIP — sitewide, mounted in root layout.
  *
- * Three always-visible round buttons stacked vertically: WhatsApp · Instagram · Call.
- * No fan/collapse mechanic — feedback was that the +/X toggle felt like an
- * extra step and obscured the brand-priority channel (WhatsApp).
+ * WhatsApp-first contact is a binding brand commitment (PRODUCT.md), so it is
+ * preserved exactly: WhatsApp is the rest state and is always ONE tap away.
  *
- * Tooltip-style labels appear on hover (desktop) so the rest state stays calm.
+ * What changed is the noise. The retired version stacked three 48px circles,
+ * each with a 2px ring and a lifted shadow, and the WhatsApp one carried an
+ * infinite `animate-ping` halo. Together with the promo strip, the scroll
+ * progress bar and the cursor control, a visitor met five floating widgets on
+ * first paint — the single loudest reason this did not read as a serious
+ * product. Real commerce sites ship one.
+ *
+ * So: one slip. WhatsApp is the stamp; Call and Instagram are ruled rows
+ * behind a disclosure that does not cost anyone the primary channel.
  */
 
 const PHONE_E164 = '919398859978';
+const PHONE_DISPLAY = '+91 93988 59978';
 const WA_TEXT = encodeURIComponent(
   "Hi Ravi Sweets, I'm interested in placing an order. Could you help?",
 );
 
 export function FloatingContact() {
   const [shown, setShown] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const lastY = useRef(0);
 
   useEffect(() => {
-    // Tiny delay so the pills don't compete with first-paint of the hero.
+    // Tiny delay so the slip does not compete with first paint of the hero.
     const id = window.setTimeout(() => setShown(true), 600);
     return () => window.clearTimeout(id);
   }, []);
 
+  /*
+   * Retreat while the visitor is scrolling down, return when they scroll up.
+   *
+   * A permanently-parked widget in the bottom-right corner sat on top of the
+   * quick-add button of the last product in a row, the primary corporate CTA,
+   * and the FSSAI/GSTIN compliance line in the footer. A buyer who cannot
+   * press "add" does not buy, and a buyer who cannot read the FSSAI line does
+   * not trust food. Reading direction is down, so down is when it gets out of
+   * the way.
+   */
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY;
+      if (Math.abs(y - lastY.current) > 8) {
+        setHidden(y > lastY.current && y > 240);
+        lastY.current = y;
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointer(e: MouseEvent) {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+    window.addEventListener('mousedown', onPointer);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('mousedown', onPointer);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
   return (
     <div
-      aria-label="Quick contact"
-      className={`pointer-events-none fixed bottom-5 right-4 z-30 flex flex-col items-end gap-2.5 transition-all duration-500 ${
-        shown ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'
-      } md:bottom-28`}
+      ref={ref}
+      className={cn(
+        'fixed bottom-4 right-4 z-30 flex flex-col items-end gap-1.5 transition-all duration-200',
+        shown ? 'opacity-100' : 'translate-y-4 opacity-0',
+        // 200%, not 130%: on a 44px control anchored at bottom-4, 130% is only
+        // ~57px of travel, so it never fully cleared the viewport and kept
+        // painting over the DISPATCH row and the FSSAI compliance line.
+        hidden && !open && 'pointer-events-none translate-y-[200%] opacity-0',
+      )}
     >
-      {/* WhatsApp — primary channel for Indian D2C food brands */}
-      <a
-        href={`https://wa.me/${PHONE_E164}?text=${WA_TEXT}`}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Chat with us on WhatsApp"
-        title="Chat on WhatsApp"
-        className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lifted ring-2 ring-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-white/70"
-      >
-        <span
-          className="absolute inset-0 animate-ping rounded-full bg-[#25d366]/40"
-          style={{ animationDuration: '2.6s' }}
-          aria-hidden="true"
-        />
-        <MessageCircle className="relative h-[22px] w-[22px]" strokeWidth={2.4} aria-hidden="true" />
-        <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-theme-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] opacity-0 shadow-soft transition-opacity duration-200 group-hover:opacity-100 md:block">
-          Chat on WhatsApp
-        </span>
-      </a>
+      {/* The secondary rows — disclosed, never competing at rest. */}
+      {open && (
+        <div className="docket w-[210px] overflow-hidden">
+          <p className="field-label border-b border-[color:var(--color-border)] px-3 py-2">
+            Talk to us
+          </p>
+          <a
+            href={`tel:+${PHONE_E164}`}
+            className="hover:bg-theme-glow/25 flex items-center gap-2.5 border-b border-[color:var(--color-border)] px-3 py-2.5 transition-colors"
+          >
+            <Phone className="text-theme-accent h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="field-value text-[13px]">{PHONE_DISPLAY}</span>
+          </a>
+          <a
+            href="https://www.instagram.com/ravi__sweets/"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:bg-theme-glow/25 flex items-center gap-2.5 px-3 py-2.5 transition-colors"
+          >
+            <Instagram className="text-theme-accent h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="text-[13px] font-medium">@ravi__sweets</span>
+          </a>
+        </div>
+      )}
 
-      {/* Instagram */}
-      <a
-        href="https://instagram.com/ravi__sweets"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Follow us on Instagram"
-        title="@ravi__sweets"
-        className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lifted ring-2 ring-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:ring-white/70"
-        style={{
-          background:
-            'linear-gradient(135deg, #f58529 0%, #dd2a7b 50%, #8134af 100%)',
-        }}
-      >
-        <Instagram className="h-[22px] w-[22px]" strokeWidth={2.4} aria-hidden="true" />
-        <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-theme-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] opacity-0 shadow-soft transition-opacity duration-200 group-hover:opacity-100 md:block">
-          @ravi__sweets
-        </span>
-      </a>
+      <div className="flex items-stretch gap-1.5">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? 'Hide other contact options' : 'Show other contact options'}
+          className="docket text-theme-ink hover:bg-theme-glow/30 flex h-11 w-11 items-center justify-center transition-colors"
+        >
+          <Plus
+            className={cn('h-4 w-4 transition-transform duration-200', open && 'rotate-45')}
+            aria-hidden="true"
+          />
+        </button>
 
-      {/* Phone — brand-accent solid + white icon, mirrors WhatsApp / Instagram
-          contrast so the three pills read as a single visual unit. The
-          previous dark-ink + cream-icon combo blended into the cream page
-          background and the icon disappeared on first glance. */}
-      <a
-        href={`tel:+${PHONE_E164}`}
-        aria-label="Call Ravi Sweets"
-        title="+91 93988 59978"
-        className="pointer-events-auto group relative flex h-12 w-12 items-center justify-center rounded-full bg-theme-accent text-[color:var(--theme-base)] shadow-lifted ring-theme-base/40 hover:ring-theme-base/70 ring-2 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
-      >
-        <Phone className="h-[22px] w-[22px]" strokeWidth={2.4} aria-hidden="true" />
-        <span className="pointer-events-none absolute right-full top-1/2 mr-2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-theme-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] opacity-0 shadow-soft transition-opacity duration-200 group-hover:opacity-100 md:block">
-          +91 93988 59978
-        </span>
-      </a>
+        {/* WhatsApp — the brand's primary channel, never behind a disclosure. */}
+        <a
+          href={`https://wa.me/${PHONE_E164}?text=${WA_TEXT}`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Chat with us on WhatsApp"
+          className="stamp h-11 !px-4"
+          style={{ backgroundColor: '#128C4B', color: '#ffffff' }}
+        >
+          <MessageCircle className="h-4 w-4" strokeWidth={2.4} aria-hidden="true" />
+          <span className="hidden sm:inline">WhatsApp</span>
+        </a>
+      </div>
     </div>
   );
 }

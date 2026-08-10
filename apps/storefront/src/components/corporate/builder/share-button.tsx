@@ -38,12 +38,7 @@ export function ShareButton({
       type="button"
       onClick={copy}
       disabled={disabled}
-      className={cn(
-        'group inline-flex items-center gap-2 rounded-full border border-theme-ink/25 px-5 py-2.5 text-sm font-semibold text-theme-ink transition-all duration-300',
-        disabled
-          ? 'cursor-not-allowed opacity-50'
-          : 'hover:-translate-y-0.5 hover:border-theme-accent hover:text-theme-accent',
-      )}
+      className={cn('stamp stamp--ghost', disabled && 'cursor-not-allowed opacity-50')}
     >
       <AnimatePresence mode="wait">
         {copied ? (
@@ -55,7 +50,7 @@ export function ShareButton({
             transition={{ duration: DURATION.quick, ease: EASE.emphasised }}
             className="inline-flex items-center gap-2"
           >
-            <Check className="h-4 w-4 text-theme-accent" aria-hidden="true" />
+            <Check className="h-4 w-4" aria-hidden="true" />
             Link copied
           </motion.span>
         ) : (

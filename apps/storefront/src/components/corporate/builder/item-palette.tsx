@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useRef, useState } from 'react';
 import type { CategorySlug, Product } from '@ravisweets/shared';
 import { formatMoney } from '@ravisweets/shared';
-import { cn } from '@/lib/cn';
+import { isUsableImage } from '@/lib/images';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
@@ -40,6 +40,45 @@ const CATEGORY_ORDER: CategorySlug[] = [
   'savouries',
   'dry-fruits',
 ];
+
+/**
+ * The specimen plate: a flavour-washed ground carrying either the product
+ * photograph or, while the catalogue still points at the retired host, the
+ * dashed 45°-rotated specimen mark. Decided at render — a dead URL never
+ * becomes a request (see lib/images.ts).
+ */
+function SpecimenPlate({
+  product,
+  markSize = 'h-10 w-10',
+  sizes,
+  cover,
+}: {
+  product: Product;
+  markSize?: string;
+  sizes: string;
+  cover?: boolean;
+}) {
+  const img = product.images[0];
+  if (!img || !isUsableImage(img.url)) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+        <span
+          className={`block ${markSize} rotate-45 border-2 border-dashed`}
+          style={{ borderColor: product.theme_palette.accent, opacity: 0.4 }}
+        />
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={img.url}
+      alt={img.alt}
+      fill
+      sizes={sizes}
+      className={cover ? 'object-cover' : 'object-contain p-3'}
+    />
+  );
+}
 
 export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps) {
   const [query, setQuery] = useState('');
@@ -91,15 +130,16 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
   return (
     <aside
       aria-labelledby="palette-heading"
-      className="bg-surface-elevated flex min-h-[32rem] flex-col gap-4 rounded-2xl border border-[color:var(--color-border)] p-5"
+      className="docket flex min-h-[32rem] flex-col gap-4 p-5"
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="docket-head mb-0">
         <h2 id="palette-heading" className="font-display text-theme-ink text-lg">
           Choose items
         </h2>
-        <span className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
-          {selectedCount} added
-        </span>
+        <p className="flex items-baseline gap-1.5">
+          <span className="field-value text-theme-ink text-sm">{selectedCount}</span>
+          <span className="field-label">added</span>
+        </p>
       </div>
 
       {/* Search */}
@@ -114,7 +154,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search — e.g. kaju, badam, mixture"
-          className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+          className="bg-surface text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
           autoComplete="off"
         />
       </label>
@@ -125,13 +165,11 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
           if (items.length === 0) return null;
           return (
             <div key={cat}>
-              <p className="text-theme-ink/55 mb-2 text-[11px] font-semibold uppercase tracking-wider">
+              <p className="field-label mb-2 border-b border-[color:var(--color-border)] pb-1.5">
                 {CATEGORY_LABEL[cat] ?? cat}
               </p>
-              {/* Image-led tile grid — 2 columns of square cards. The product
-                  cutout dominates each tile (the user feedback was "more
-                  visualization, less text"). Title + price stay below the
-                  image; the floating + button is the only chrome on the card. */}
+              {/* Specimen cells — 2 columns. The flavour wash grounds the
+                  plate; name and price sit under a caption rule. */}
               <ul className="grid grid-cols-2 gap-3">
                 {items.map((p) => {
                   const primary = p.variants[0];
@@ -150,40 +188,35 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                         type="button"
                         onClick={() => handleAdd(p)}
                         aria-label={`Add ${p.title} to hamper`}
-                        className="hover:border-theme-accent hover:shadow-lifted focus-visible:ring-theme-accent group flex w-full flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] text-left transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2"
+                        className="hover:border-theme-accent hover:shadow-lifted focus-visible:ring-theme-accent group flex w-full flex-col overflow-hidden rounded-lg border border-[color:var(--color-border)] text-left transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2"
                       >
                         <div
                           className="relative aspect-square w-full overflow-hidden"
-                          style={{
-                            background: `radial-gradient(ellipse at 30% 30%, color-mix(in oklab, ${p.theme_palette.glow} 40%, ${p.theme_palette.base}) 0%, ${p.theme_palette.base} 80%)`,
-                          }}
+                          style={{ backgroundColor: p.theme_palette.glow + '33' }}
                         >
-                          <Image
-                            src={img.url}
-                            alt=""
-                            fill
+                          <SpecimenPlate
+                            product={p}
                             sizes="(min-width: 1024px) 200px, 45vw"
-                            className="object-contain p-3 drop-shadow-[0_18px_28px_rgba(60,30,5,0.18)] transition-transform duration-500 group-hover:scale-105"
                           />
-                          {/* Floating + button */}
+                          {/* Add stamp — action colour is fixed; only identity varies. */}
                           <span
-                            className="shadow-soft absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--theme-base)] transition-transform duration-300 group-hover:scale-110"
-                            style={{ backgroundColor: p.theme_palette.accent }}
+                            className="bg-theme-accent absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md text-[color:var(--theme-base)]"
                             aria-hidden="true"
                           >
                             <Plus className="h-4 w-4" />
                           </span>
                           {/* Variant count chip when product has multiple sizes */}
                           {p.variants.length > 1 && (
-                            <span className="bg-theme-ink/70 absolute bottom-2 left-2 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)] backdrop-blur">
+                            <span className="bg-theme-ink/70 absolute bottom-2 left-2 rounded-md px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[color:var(--theme-base)]">
                               {p.variants.length} sizes
                             </span>
                           )}
                         </div>
-                        <div className="bg-surface px-3 py-2">
+                        <div className="bg-surface-elevated w-full border-t border-[color:var(--color-border)] px-2.5 py-2">
                           <p className="font-display text-theme-ink truncate text-sm">{p.title}</p>
-                          <p className="text-theme-ink/60 text-[11px]">
-                            from {formatMoney(primary.price)}
+                          <p className="text-text-muted mt-0.5 flex items-baseline gap-1 text-[11px]">
+                            from{' '}
+                            <span className="field-value">{formatMoney(primary.price)}</span>
                           </p>
                         </div>
                       </button>
@@ -195,16 +228,13 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                             exit={{ opacity: 0, x: -8 }}
                             transition={{ duration: DURATION.quick, ease: EASE.standard }}
                             role="tooltip"
-                            className="bg-surface-elevated shadow-lifted pointer-events-none absolute left-full top-0 z-30 hidden w-72 origin-top-left translate-x-3 rounded-2xl border border-[color:var(--color-border)] p-3 lg:block"
+                            className="docket shadow-lifted pointer-events-none absolute left-full top-0 z-30 hidden w-72 origin-top-left translate-x-3 p-3 lg:block"
                           >
-                            <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-                              <Image
-                                src={img.url}
-                                alt={img.alt}
-                                fill
-                                sizes="288px"
-                                className="object-cover"
-                              />
+                            <div
+                              className="relative aspect-[4/3] overflow-hidden rounded-md"
+                              style={{ backgroundColor: p.theme_palette.glow + '33' }}
+                            >
+                              <SpecimenPlate product={p} sizes="288px" cover />
                             </div>
                             <p className="font-display text-theme-ink mt-3 text-sm">{p.title}</p>
                             <p className="text-theme-ink/65 mt-1 line-clamp-2 text-[11px]">
@@ -214,15 +244,18 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                               {p.dietary_tags.slice(0, 4).map((t) => (
                                 <span
                                   key={t}
-                                  className="bg-theme-glow/30 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+                                  className="bg-theme-glow/30 text-theme-ink rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
                                 >
                                   {t}
                                 </span>
                               ))}
                             </div>
-                            <p className="text-theme-ink/50 mt-2 text-[10px] uppercase tracking-wider">
-                              Ingredients · {p.ingredients.slice(0, 4).join(', ')}
-                              {p.ingredients.length > 4 ? '…' : ''}
+                            <p className="mt-2 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                              <span className="field-label">Ingredients</span>
+                              <span className="text-text-muted text-[11px]">
+                                {p.ingredients.slice(0, 4).join(', ')}
+                                {p.ingredients.length > 4 ? '…' : ''}
+                              </span>
                             </p>
                           </motion.div>
                         )}
@@ -257,7 +290,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
               type="button"
               aria-label="Close variant picker"
               onClick={() => setVariantSheet(null)}
-              className="absolute inset-0 bg-black/55 backdrop-blur-sm focus-visible:outline-none"
+              className="bg-theme-ink/60 absolute inset-0 focus-visible:outline-none"
             />
             <motion.div
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 30 }}
@@ -267,12 +300,9 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                 duration: reduced ? DURATION.fast : DURATION.slow,
                 ease: EASE.emphasised,
               }}
-              className="bg-surface-elevated shadow-lifted relative z-10 w-full max-w-md overflow-hidden rounded-t-3xl p-6 ring-1 ring-[color:var(--color-border)] sm:rounded-3xl"
+              className="docket shadow-lifted relative z-10 w-full max-w-md overflow-hidden p-6"
             >
-              <p className="text-theme-accent text-[11px] font-semibold uppercase tracking-[0.18em]">
-                Pick a size
-              </p>
-              <h3 className="font-display text-theme-ink mt-1 text-2xl">{variantSheet.title}</h3>
+              <h3 className="font-display text-theme-ink text-2xl">{variantSheet.title}</h3>
               <ul className="mt-5 flex flex-col gap-2">
                 {variantSheet.variants.map((v) => {
                   const oos = v.stock_available <= 0;
@@ -285,7 +315,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                           onAdd(variantSheet.id, v.id);
                           setVariantSheet(null);
                         }}
-                        className="bg-surface hover:border-theme-accent hover:shadow-soft group flex w-full items-center justify-between gap-4 rounded-2xl border border-[color:var(--color-border)] px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="bg-surface hover:border-theme-accent flex w-full items-center justify-between gap-4 rounded-lg border border-[color:var(--color-border)] px-4 py-3 text-left transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <span>
                           <span className="font-display text-theme-ink block text-base">
@@ -295,7 +325,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
                             {oos ? 'Out of stock' : `${v.stock_available} units in stock`}
                           </span>
                         </span>
-                        <span className="font-display text-theme-accent text-base">
+                        <span className="field-value text-theme-ink text-base">
                           {formatMoney(v.price)}
                         </span>
                       </button>
@@ -306,7 +336,7 @@ export function ItemPalette({ products, selectedCount, onAdd }: ItemPaletteProps
               <button
                 type="button"
                 onClick={() => setVariantSheet(null)}
-                className="border-theme-ink/25 text-theme-ink/80 hover:border-theme-accent hover:text-theme-accent mt-5 w-full rounded-full border px-5 py-2 text-sm font-semibold"
+                className="stamp stamp--ghost mt-5 w-full"
               >
                 Cancel
               </button>

@@ -4,6 +4,7 @@ import { ArrowRight, Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucid
 import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
 import { jsonLdHtml } from '@/lib/seo/json-ld';
+import { pendingPhoto } from '@/lib/images';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ravisweets.com';
@@ -23,8 +24,10 @@ const SITE_URL =
 export const metadata: Metadata = {
   // The root layout appends "| Ravi Sweets", so the brand is not repeated here.
   title: 'Sweet Shop in Khammam & Hyderabad (Kondapur)',
+  // Was 181 characters. The locality terms that carry the local-pack intent —
+  // Khammam, Kondapur, Hyderabad — all survive inside the 155-char cut.
   description:
-    'Visit Ravi Sweets — two counters in Khammam and one in Kondapur, Hyderabad. Hand-made Telangana sweets, Hyderabadi specials, namkeens and gift hampers, made fresh daily since 1983.',
+    'Visit Ravi Sweets — two counters in Khammam and one in Kondapur, Hyderabad. Telangana sweets and namkeens, made fresh daily since 1983.',
   alternates: {
     canonical: '/stores',
   },
@@ -123,7 +126,7 @@ const LOCAL_BUSINESS_JSONLD = {
       sameAs: [
         'https://ravisweets.com',
         'https://ravisweets.in',
-        'https://instagram.com/ravi__sweets',
+        'https://www.instagram.com/ravi__sweets/',
       ],
       areaServed: { '@type': 'Country', name: 'India' },
     },
@@ -216,7 +219,7 @@ const CONTACT = [
     icon: Instagram,
     label: 'Instagram',
     value: '@ravi__sweets',
-    href: 'https://instagram.com/ravi__sweets',
+    href: 'https://www.instagram.com/ravi__sweets/',
     note: 'Kitchen stories and seasonal runs',
   },
 ];
@@ -230,7 +233,7 @@ const CONTACT = [
  * root-relative, the photograph returns with no component change.
  */
 const STORE_IMAGE =
-  'https://ravisweets.com/wp-content/uploads/2025/09/dry_fruit_chikki-removebg-preview.png';
+  pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png');
 
 export default function StoresPage() {
   return (
