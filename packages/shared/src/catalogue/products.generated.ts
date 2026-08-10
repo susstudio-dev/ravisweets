@@ -58,7 +58,7 @@ export const GENERATED_CATALOGUE: Product[] = [
         title: '250 g',
         weight_grams: 250,
         price: {
-          amount: 1,
+          amount: 254,
           currency: 'INR',
         },
         sku: 'RS-QKM-250',
