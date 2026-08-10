@@ -103,8 +103,13 @@ const PRODUCT_COLUMNS =
   'featured, bestseller, is_new, theme_palette, garnish, builder_eligible, ' +
   'rubric_passed_on, source_url, unit_mode';
 
+// hsn_code was missing here until 2026-08-10, which is why every seeded variant
+// in the live database had it null and 0016_variant_hsn_codes.sql exists to
+// backfill them. The catalogue has always carried the value; only the seed
+// dropped it on the floor. Any column added to Variant must be added here too —
+// an omission is silent, because `insert` simply defaults the column.
 const VARIANT_COLUMNS =
-  'id, product_id, title, weight_grams, price_amount, price_currency, sku, stock_available';
+  'id, product_id, title, weight_grams, price_amount, price_currency, sku, stock_available, hsn_code';
 
 for (const product of products) {
   const values = [
@@ -150,6 +155,9 @@ for (const product of products) {
       sqlText(variant.price.currency),
       sqlText(variant.sku),
       sqlNumber(variant.stock_available),
+      // Optional on Variant, and the column is nullable, so an absent code
+      // seeds as null rather than as an invented tariff heading.
+      sqlText(variant.hsn_code ?? null),
     ];
     lines.push(`insert into public.variants (${VARIANT_COLUMNS})`);
     lines.push(`values (${variantValues.join(', ')})`);

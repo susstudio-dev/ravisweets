@@ -307,8 +307,13 @@ function mapVariant(row) {
     sku: asString(row.sku),
     stock_available: asNumber(row.stock_available),
   };
-  // hsn_code is optional in the type and null on every row today — 0014's
-  // insert column list omits it — so it is emitted only when the DB has one.
+  // hsn_code is optional in the type, so it is emitted only when the database
+  // has one — an empty string would typecheck but claim a tariff heading the
+  // row does not have. It was null on every row until 2026-08-10 (0014's insert
+  // column list omitted the column); 0016_variant_hsn_codes.sql backfills the
+  // seeded rows and the fixed generator carries it for new ones, so this branch
+  // now normally fires. Nothing renders the value yet — it is baked because it
+  // is invoicing data, and a bake that drops it makes the restore pointless.
   const hsn = asString(row.hsn_code, '');
   if (hsn) variant.hsn_code = hsn;
   return variant;
