@@ -356,8 +356,30 @@ export function CheckoutFlow() {
             pendingOrderRef.current = paid;
             saveOrder(paid);
           }
-          // 'unavailable' falls through: the order is confirmed and payment
-          // is collected on delivery or by phone, as stated on the form.
+          /*
+           * 'unavailable' used to fall through here and confirm the order, on
+           * the reasoning that payment could be collected on delivery or by
+           * phone. That is wrong when the buyer picked an ONLINE method: they
+           * chose UPI/card/netbanking, were shown a confirmation, and were
+           * never charged — while the shop gets an unpaid order and no signal
+           * that anything failed. Nothing on the form promises phone
+           * collection for an online method, so the fallback was silent, not
+           * honest.
+           *
+           * `attemptRazorpayPayment` returns 'unavailable' for EVERY
+           * infrastructure fault — function not deployed, keys unset, checkout
+           * script blocked by an ad-blocker, create call rejected. All of them
+           * are conditions the buyer can act on, so say so and let them retry
+           * or switch to cash on delivery. The order row is already committed,
+           * so retrying reuses the same id and number rather than duplicating.
+           */
+          if (attempt.kind === 'unavailable') {
+            setPayError(
+              `We could not open the payment window, so order ${order.number} has not been paid for. ` +
+                'Try again, or choose cash on delivery. Nothing has been charged.',
+            );
+            return;
+          }
         }
 
         clear();
