@@ -210,6 +210,20 @@ export function OrderDetail({ orderId }: { orderId: string }) {
               <dt className="field-label">Shipping</dt>
               <dd className="field-value text-sm">{formatMoney(order.shipping)}</dd>
             </div>
+            {(order.fees ?? []).map((f) => (
+              <div key={f.label} className="field-row">
+                <dt className="field-label">{f.label}</dt>
+                <dd className="field-value text-sm">{formatMoney(f.amount)}</dd>
+              </div>
+            ))}
+            {(order.discount?.amount ?? 0) > 0 && (
+              <div className="field-row">
+                <dt className="field-label">Discount</dt>
+                <dd className="field-value text-sm text-[#1F6238]">
+                  −{formatMoney(order.discount!)}
+                </dd>
+              </div>
+            )}
             <div className="field-row">
               <dt className="field-label text-theme-ink">Total</dt>
               <dd className="field-value text-theme-ink text-lg font-bold">

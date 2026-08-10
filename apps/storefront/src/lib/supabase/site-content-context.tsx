@@ -20,7 +20,7 @@ import {
 } from '@/lib/content/page-media';
 import { listMediaAssets, type MediaAsset } from '@/lib/media/assets';
 import { mediaPublicUrl } from '@/lib/media/public-url';
-import { loadAllSiteContent } from './site-content';
+import { DEFAULT_CHARGES, loadAllSiteContent, parseCharges } from './site-content';
 import type {
   ActiveFestival,
   EditorialBandHeading,
@@ -28,6 +28,7 @@ import type {
   HeroContent,
   HomeTrust,
   SignatureMomentContent,
+  StoreCharges,
 } from './site-content';
 
 interface SiteContentValue {
@@ -37,6 +38,8 @@ interface SiteContentValue {
   footer: FooterContent | null;
   homeTrust: HomeTrust | null;
   activeFestival: ActiveFestival | null;
+  /** Order-level charges — parsed (never raw), DEFAULT_CHARGES until loaded. */
+  charges: StoreCharges;
   /** Owner-assigned page photo slots — parsed (never raw) page_media row. */
   pageMedia: PageMedia;
   /** media_assets registry, newest first. Empty when Supabase is unconfigured. */
@@ -54,6 +57,7 @@ const Ctx = createContext<SiteContentValue>({
   footer: null,
   homeTrust: null,
   activeFestival: null,
+  charges: DEFAULT_CHARGES,
   pageMedia: EMPTY_PAGE_MEDIA,
   mediaAssets: [],
   productImages: {},
@@ -85,6 +89,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     footer: null,
     homeTrust: null,
     activeFestival: null,
+    charges: DEFAULT_CHARGES,
     pageMedia: EMPTY_PAGE_MEDIA,
     loading: true,
   });
@@ -108,7 +113,8 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         footer: all.footer ?? null,
         homeTrust: all.home_trust ?? null,
         activeFestival: all.active_festival ?? null,
-        // Re-parsed on every refetch — the raw row is never trusted.
+        // Both re-parsed on every refetch — the raw rows are never trusted.
+        charges: parseCharges(all.charges),
         pageMedia: parsePageMedia(all.page_media),
         loading: false,
       });

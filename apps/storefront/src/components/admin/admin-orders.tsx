@@ -48,6 +48,7 @@ function downloadCsv(orders: Order[]) {
     'City',
     'Subtotal (₹)',
     'Shipping (₹)',
+    'Fees (₹)',
     'Discount (₹)',
     'Total (₹)',
     'Items',
@@ -64,6 +65,7 @@ function downloadCsv(orders: Order[]) {
     // Money.amount is integer rupees (see razorpay-order fn) — export as-is.
     o.subtotal.amount,
     o.shipping.amount,
+    (o.fees ?? []).reduce((sum, f) => sum + f.amount.amount, 0),
     o.discount?.amount ?? 0,
     o.total.amount,
     o.lines.map((l) => `${l.productTitle} × ${l.quantity}`).join(' | '),
@@ -506,6 +508,12 @@ export function AdminOrders() {
               <span>Shipping</span>
               <span className="font-mono">₹{active.shipping.amount.toLocaleString('en-IN')}</span>
             </div>
+            {(active.fees ?? []).map((f) => (
+              <div key={f.label} className="text-theme-ink/65 flex justify-between">
+                <span>{f.label}</span>
+                <span className="font-mono">₹{f.amount.amount.toLocaleString('en-IN')}</span>
+              </div>
+            ))}
             {(active.discount?.amount ?? 0) > 0 && (
               <div className="text-theme-ink/65 flex justify-between">
                 <span>Discount</span>

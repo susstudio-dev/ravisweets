@@ -87,6 +87,8 @@ function template(args: {
   lines: { productTitle: string; variantTitle: string; quantity: number; lineTotal: number }[];
   subtotal: number;
   shipping: number;
+  fees: { label: string; amount: number }[];
+  discount: number;
   total: number;
   address: { line1: string; line2?: string; city: string; state: string; pincode: string };
   trackingUrl?: string;
@@ -136,6 +138,20 @@ function template(args: {
         <div style="display:flex;justify-content:space-between;color:#1f0c02aa;margin-bottom:8px;">
           <span>Shipping</span><span style="font-family:'SF Mono',Menlo,monospace;">${inr(args.shipping)}</span>
         </div>
+        ${args.fees
+          .map(
+            (f) => `<div style="display:flex;justify-content:space-between;color:#1f0c02aa;margin-bottom:8px;">
+          <span>${esc(f.label)}</span><span style="font-family:'SF Mono',Menlo,monospace;">${inr(f.amount)}</span>
+        </div>`,
+          )
+          .join('')}
+        ${
+          args.discount > 0
+            ? `<div style="display:flex;justify-content:space-between;color:#1F6238;margin-bottom:8px;">
+          <span>Discount</span><span style="font-family:'SF Mono',Menlo,monospace;">−${inr(args.discount)}</span>
+        </div>`
+            : ''
+        }
         <div style="display:flex;justify-content:space-between;font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;color:#a8501f;">
           <span>Total</span><span style="font-family:'SF Mono',Menlo,monospace;">${inr(args.total)}</span>
         </div>
@@ -235,6 +251,13 @@ serve(async (req: Request) => {
       })),
       subtotal: order.subtotal,
       shipping: order.shipping,
+      // Absent on pre-0018 rows and pre-charges orders — both mean no fees.
+      fees: Array.isArray(order.fees)
+        ? (order.fees as Array<{ label: string; amount: number }>).filter(
+            (f) => typeof f?.label === 'string' && typeof f?.amount === 'number',
+          )
+        : [],
+      discount: typeof order.discount === 'number' ? order.discount : 0,
       total: order.total,
       address,
       trackingUrl: safeHttpUrl(body.trackingUrl),

@@ -16,7 +16,8 @@ export type SiteContentKey =
   | 'footer'
   | 'home_trust'
   | 'active_festival'
-  | 'page_media';
+  | 'page_media'
+  | 'charges';
 
 export type { PageMedia };
 
@@ -74,6 +75,50 @@ export interface HomeTrust {
   cards: TrustCard[];
 }
 
+/**
+ * Order-level charges, admin-set in /admin/settings. All values are INTEGER
+ * RUPEES (Money.amount convention — never paise). Reads must go through
+ * parseCharges: the row is admin-typed and a bad value here changes what
+ * customers are billed.
+ */
+export interface StoreCharges {
+  /** Flat shipping per order. */
+  shippingFlat: number;
+  /** Subtotal at/above which shipping is free; null disables the threshold. */
+  freeShippingAbove: number | null;
+  /** Added only when the buyer chooses Cash on Delivery. 0 = off. */
+  codFee: number;
+  /** Flat packing/handling charge on every order. 0 = off. */
+  packingFee: number;
+}
+
+/** Mirrors the pre-charges behaviour exactly: flat ₹99, nothing else. */
+export const DEFAULT_CHARGES: StoreCharges = {
+  shippingFlat: 99,
+  freeShippingAbove: null,
+  codFee: 0,
+  packingFee: 0,
+};
+
+const asFee = (v: unknown, fallback: number): number =>
+  typeof v === 'number' && Number.isFinite(v) && v >= 0 ? Math.round(v) : fallback;
+
+export function parseCharges(raw: unknown): StoreCharges {
+  if (!raw || typeof raw !== 'object') return DEFAULT_CHARGES;
+  const r = raw as Record<string, unknown>;
+  return {
+    shippingFlat: asFee(r.shippingFlat, DEFAULT_CHARGES.shippingFlat),
+    freeShippingAbove:
+      typeof r.freeShippingAbove === 'number' &&
+      Number.isFinite(r.freeShippingAbove) &&
+      r.freeShippingAbove > 0
+        ? Math.round(r.freeShippingAbove)
+        : null,
+    codFee: asFee(r.codFee, DEFAULT_CHARGES.codFee),
+    packingFee: asFee(r.packingFee, DEFAULT_CHARGES.packingFee),
+  };
+}
+
 type ContentByKey = {
   hero: HeroContent;
   signature_moment: SignatureMomentContent;
@@ -82,6 +127,7 @@ type ContentByKey = {
   home_trust: HomeTrust;
   active_festival: ActiveFestival;
   page_media: PageMedia;
+  charges: StoreCharges;
 };
 
 export async function loadSiteContent<K extends SiteContentKey>(

@@ -29,6 +29,8 @@ interface OrderRow {
   subtotal: number;
   shipping: number;
   discount: number;
+  /** [{label, amount}] in integer rupees; null on pre-charges orders. */
+  fees: { label: string; amount: number }[] | null;
   total: number;
   currency: string;
   coupon_code: string | null;
@@ -47,6 +49,14 @@ function fromRow(r: OrderRow): Order {
     subtotal: { amount: r.subtotal, currency: r.currency as 'INR' },
     shipping: { amount: r.shipping, currency: r.currency as 'INR' },
     discount: { amount: r.discount, currency: r.currency as 'INR' },
+    ...(Array.isArray(r.fees) && r.fees.length > 0
+      ? {
+          fees: r.fees.map((f) => ({
+            label: f.label,
+            amount: { amount: f.amount, currency: r.currency as 'INR' },
+          })),
+        }
+      : {}),
     total: { amount: r.total, currency: r.currency as 'INR' },
   };
 }
@@ -63,7 +73,7 @@ export async function commitOrderToSupabase(
 
   const { order, discount, primaryCouponCode, redeemedCouponCodes } = input;
 
-  const { error } = await supa.from('orders').insert({
+  const baseRow = {
     id: order.id,
     number: order.number,
     customer_id: user.id,
@@ -77,7 +87,26 @@ export async function commitOrderToSupabase(
     total: order.total.amount,
     currency: order.total.currency,
     coupon_code: primaryCouponCode,
-  });
+  };
+  const feeRows = order.fees?.map((f) => ({ label: f.label, amount: f.amount.amount })) ?? [];
+
+  let { error } = await supa
+    .from('orders')
+    .insert(feeRows.length > 0 ? { ...baseRow, fees: feeRows } : baseRow);
+
+  // Migration-order tolerance: if 0018 hasn't been applied yet, PostgREST
+  // rejects the unknown `fees` column. The order must still commit — the fee
+  // is already inside `total`, only the itemisation is lost.
+  // PGRST204 = column missing from PostgREST's schema cache; 42703 = Postgres
+  // undefined column. The message test is a belt-and-braces fallback.
+  if (
+    error &&
+    feeRows.length > 0 &&
+    (error.code === 'PGRST204' || error.code === '42703' || /fees/i.test(error.message))
+  ) {
+    console.warn('orders.fees column missing (apply 0018) — committing without itemised fees');
+    ({ error } = await supa.from('orders').insert(baseRow));
+  }
 
   if (error) return { ok: false, reason: error.message };
 

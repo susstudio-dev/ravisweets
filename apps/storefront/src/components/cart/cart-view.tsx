@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { formatMoney, type Product } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
+import { useSiteContent } from '@/lib/supabase/site-content-context';
+import { computeOrderFees, computeShipping, feesTotal } from '@/lib/orders/charges';
 import { CouponInput } from '@/components/cart/coupon-input';
 import { Reveal } from '@/components/motion/reveal';
 import { isUsableImage } from '@/lib/images';
@@ -25,11 +27,16 @@ import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 export function CartView() {
   const { lineViews, lineCount, subtotal, updateQty, remove, clear } = useCart();
   const { totalDiscount, freeShipping } = useCoupons();
+  const { charges } = useSiteContent();
   const reduced = useReducedMotion();
 
-  const shippingEstimate = lineCount === 0 ? 0 : freeShipping ? 0 : 99;
+  // The cart quotes the same rules as checkout so the two never disagree.
+  // Passing 'upi' yields only the method-independent fees (packing) — the COD
+  // fee genuinely can't be known until the buyer picks a payment method.
+  const shippingEstimate = computeShipping(charges, subtotal.amount, lineCount, freeShipping);
+  const cartFees = lineCount === 0 ? [] : computeOrderFees(charges, 'upi');
   const grandTotal = {
-    amount: Math.max(0, subtotal.amount - totalDiscount + shippingEstimate),
+    amount: Math.max(0, subtotal.amount - totalDiscount + shippingEstimate + feesTotal(cartFees)),
     currency: subtotal.currency,
   };
 
@@ -200,6 +207,14 @@ export function CartView() {
                   : formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
               </dd>
             </div>
+            {cartFees.map((f) => (
+              <div key={f.label} className="field-row">
+                <dt className="field-label">{f.label}</dt>
+                <dd className="field-value text-sm">
+                  {formatMoney({ amount: f.amount, currency: subtotal.currency })}
+                </dd>
+              </div>
+            ))}
             <div className="field-row">
               <dt className="field-label">GST</dt>
               <dd className="field-value text-text-muted text-xs">Calculated at checkout</dd>

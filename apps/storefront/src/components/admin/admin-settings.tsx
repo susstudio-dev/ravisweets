@@ -9,16 +9,27 @@ import {
   type StoreHourEntry,
   type StoreSettings,
 } from '@/lib/supabase/settings';
+import {
+  DEFAULT_CHARGES,
+  loadSiteContent,
+  parseCharges,
+  saveSiteContent,
+  type StoreCharges,
+} from '@/lib/supabase/site-content';
 import { logAdminAction } from '@/lib/supabase/orders';
 import { useSession } from '@/lib/supabase/session-context';
 
 export function AdminSettings() {
   const { configured } = useSession();
   const [settings, setSettings] = useState<StoreSettings | null>(null);
+  const [charges, setCharges] = useState<StoreCharges>(DEFAULT_CHARGES);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     void loadSettings().then(setSettings);
+    // Charges live in site_content (public read — checkout must see them),
+    // not in store_settings; parse defends against hand-edited rows.
+    void loadSiteContent('charges').then((raw) => setCharges(parseCharges(raw)));
   }, []);
 
   async function save() {
@@ -29,12 +40,20 @@ export function AdminSettings() {
     }
     setBusy(true);
     const r = await saveSettings(settings);
+    const rc = r.ok ? await saveSiteContent('charges', charges) : null;
     setBusy(false);
     if (!r.ok) {
       window.alert(`Save failed: ${r.reason}`);
       return;
     }
-    await logAdminAction('save', 'store_settings', 'singleton', null, settings);
+    if (rc && !rc.ok) {
+      // The store_settings half DID persist — say so, or a retry looks like
+      // it's re-fixing things that never broke.
+      await logAdminAction('save', 'store_settings', 'singleton', null, settings);
+      window.alert(`Settings saved, but charges failed: ${rc.reason}. Press Save to retry.`);
+      return;
+    }
+    await logAdminAction('save', 'store_settings', 'singleton', null, { ...settings, charges });
     window.alert('Settings saved.');
   }
 
@@ -49,8 +68,9 @@ export function AdminSettings() {
           </p>
           <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">Settings</h1>
           <p className="text-theme-ink/65 mt-1 text-sm">
-            Store hours, delivery zones, owner profile, and filter taxonomy. All edits land in the
-            singleton <code>store_settings</code> row.
+            Charges, store hours, delivery zones, owner profile, and filter taxonomy. Charges land
+            in <code>site_content</code> (public read — checkout prices from it); everything else
+            in the singleton <code>store_settings</code> row.
           </p>
         </div>
         <button
@@ -63,6 +83,78 @@ export function AdminSettings() {
           {busy ? 'Saving…' : 'Save settings'}
         </button>
       </header>
+
+      <Section title="Charges">
+        <p className="text-theme-ink/65 text-[11px]">
+          Order-level charges, all in whole rupees. They apply to the live cart within a minute of
+          saving — no republish needed. Set a fee to 0 to remove its line from checkout entirely.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Whole rupees only (Math.round mirrors parseCharges), so the form
+              always round-trips exactly what checkout will charge. */}
+          <Field label="Shipping · flat (₹)">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={charges.shippingFlat}
+              onChange={(e) =>
+                setCharges({
+                  ...charges,
+                  shippingFlat: Math.max(0, Math.round(Number(e.target.value) || 0)),
+                })
+              }
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Free shipping above (₹, empty = never)">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={charges.freeShippingAbove ?? ''}
+              onChange={(e) => {
+                // 0 and empty both mean "no threshold" — parseCharges treats
+                // 0 as null, so the form must too or a typed 0 flips meaning
+                // on reload.
+                const n = Math.round(Number(e.target.value) || 0);
+                setCharges({ ...charges, freeShippingAbove: n > 0 ? n : null });
+              }}
+              className={inputCls}
+            />
+          </Field>
+          <Field label="COD fee (₹, 0 = off)">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={charges.codFee}
+              onChange={(e) =>
+                setCharges({
+                  ...charges,
+                  codFee: Math.max(0, Math.round(Number(e.target.value) || 0)),
+                })
+              }
+              className={inputCls}
+            />
+          </Field>
+          <Field label="Packing fee (₹, 0 = off)">
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={charges.packingFee}
+              onChange={(e) =>
+                setCharges({
+                  ...charges,
+                  packingFee: Math.max(0, Math.round(Number(e.target.value) || 0)),
+                })
+              }
+              className={inputCls}
+            />
+          </Field>
+        </div>
+      </Section>
 
       <Section title="Store hours">
         {settings.storeHours.map((h, i) => (

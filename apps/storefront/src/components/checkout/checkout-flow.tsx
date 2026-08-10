@@ -9,8 +9,10 @@ import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
 import { useSession } from '@/lib/supabase/session-context';
+import { useSiteContent } from '@/lib/supabase/site-content-context';
 import { getSupabase } from '@/lib/supabase/client';
 import { commitOrderToSupabase, sendOrderEmail } from '@/lib/supabase/orders';
+import { computeOrderFees, computeShipping, feesTotal } from '@/lib/orders/charges';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { generateOrderId, generateOrderNumber, saveOrder } from '@/lib/orders/store';
 import type { Order, OrderAddress, PaymentMethod } from '@/lib/orders/types';
@@ -219,6 +221,7 @@ export function CheckoutFlow() {
     clear: clearCoupons,
   } = useCoupons();
   const { configured: authConfigured, user, isAnonymous } = useSession();
+  const { charges } = useSiteContent();
   const [step, setStep] = useState<Step>('address');
   const [address, setAddress] = useState<OrderAddress>(emptyAddress());
   const [payment, setPayment] = useState<PaymentMethod>('upi');
@@ -231,16 +234,35 @@ export function CheckoutFlow() {
   const pendingOrderRef = useRef<Order | null>(null);
   const committedRef = useRef(false);
   const busyRef = useRef(false);
+  // Render-side mirror of the committed order: once the row exists its money
+  // is frozen (RLS blocks customer updates), so the summaries must show the
+  // committed amounts, not a live recompute that can never be collected.
+  const [lockedOrder, setLockedOrder] = useState<Order | null>(null);
 
   const stepIndex = STEP_ORDER.indexOf(step);
-  const shippingEstimate = lineCount === 0 ? 0 : freeShipping ? 0 : 99;
+  const shippingEstimate = computeShipping(charges, subtotal.amount, lineCount, freeShipping);
+  const orderFees = useMemo(
+    () => (lineCount === 0 ? [] : computeOrderFees(charges, payment)),
+    [charges, payment, lineCount],
+  );
   const grandTotal = useMemo(
     () => ({
-      amount: Math.max(0, subtotal.amount - totalDiscount + shippingEstimate),
+      amount: Math.max(
+        0,
+        subtotal.amount - totalDiscount + shippingEstimate + feesTotal(orderFees),
+      ),
       currency: subtotal.currency,
     }),
-    [subtotal, shippingEstimate, totalDiscount],
+    [subtotal, shippingEstimate, totalDiscount, orderFees],
   );
+
+  const displaySubtotal = lockedOrder ? lockedOrder.subtotal : subtotal;
+  const displayShipping = lockedOrder ? lockedOrder.shipping.amount : shippingEstimate;
+  const displayDiscount = lockedOrder ? (lockedOrder.discount?.amount ?? 0) : totalDiscount;
+  const displayFees = lockedOrder
+    ? (lockedOrder.fees ?? []).map((f) => ({ label: f.label, amount: f.amount.amount }))
+    : orderFees;
+  const displayTotal = lockedOrder ? lockedOrder.total : grandTotal;
 
   function validateAddress(): boolean {
     const next: Partial<Record<keyof OrderAddress, string>> = {};
@@ -286,29 +308,49 @@ export function CheckoutFlow() {
         // Reuse id/number across retries; refresh the mutable fields.
         const prev = pendingOrderRef.current;
         const number = prev?.number ?? generateOrderNumber();
-        const order: Order = {
-          id: prev?.id ?? generateOrderId(),
-          number,
-          placedAt: prev?.placedAt ?? Date.now(),
-          status: 'placed',
-          address,
-          payment: { method: payment, reference: prev?.payment.reference ?? `sim_${number}` },
-          lines: lineViews.map((l) => ({
-            productId: l.productId,
-            productSlug: l.product.slug,
-            productTitle: l.product.title,
-            variantId: l.variantId,
-            variantTitle: l.variant.title,
-            quantity: l.quantity,
-            unitPrice: l.variant.price,
-            lineTotal: l.lineTotal,
-            imageUrl: l.product.images[0]?.url,
-          })),
-          subtotal,
-          shipping: { amount: shippingEstimate, currency: subtotal.currency },
-          discount: { amount: totalDiscount, currency: subtotal.currency },
-          total: grandTotal,
-        };
+        /*
+         * MONEY IS FROZEN AT FIRST COMMIT. RLS gives customers INSERT but not
+         * UPDATE on orders, so once the row is committed nothing the client
+         * recomputes can ever reach it. A retry that changed the total — the
+         * buyer switching to COD after a failed online attempt (which would
+         * add the COD fee), or the 60s charges poll repricing mid-checkout —
+         * would make the buyer's copy disagree with the row the admin
+         * collects against. So a committed order is rebuilt from itself:
+         * only the payment method may change, never the amounts. The rare
+         * cost (a waived late-COD fee) is the shop's, never a mismatch.
+         */
+        const order: Order =
+          committedRef.current && prev
+            ? { ...prev, payment: { method: payment, reference: prev.payment.reference } }
+            : {
+                id: prev?.id ?? generateOrderId(),
+                number,
+                placedAt: prev?.placedAt ?? Date.now(),
+                status: 'placed',
+                address,
+                payment: { method: payment, reference: prev?.payment.reference ?? `sim_${number}` },
+                lines: lineViews.map((l) => ({
+                  productId: l.productId,
+                  productSlug: l.product.slug,
+                  productTitle: l.product.title,
+                  variantId: l.variantId,
+                  variantTitle: l.variant.title,
+                  quantity: l.quantity,
+                  unitPrice: l.variant.price,
+                  lineTotal: l.lineTotal,
+                  imageUrl: l.product.images[0]?.url,
+                })),
+                subtotal,
+                shipping: { amount: shippingEstimate, currency: subtotal.currency },
+                discount: { amount: totalDiscount, currency: subtotal.currency },
+                ...(orderFees.length > 0 && {
+                  fees: orderFees.map((f) => ({
+                    label: f.label,
+                    amount: { amount: f.amount, currency: subtotal.currency },
+                  })),
+                }),
+                total: grandTotal,
+              };
         pendingOrderRef.current = order;
         // Always mirror to localStorage (so /orders pages and /account work
         // immediately + survive Supabase outages). When Supabase is configured,
@@ -327,6 +369,7 @@ export function CheckoutFlow() {
             console.warn('Supabase order commit failed:', result.reason);
           } else {
             committedRef.current = true;
+            setLockedOrder(order);
             // Fire the order-confirmation email. No-ops silently if Resend
             // isn't yet wired up in Supabase secrets.
             void sendOrderEmail(order.id, 'placed');
@@ -601,11 +644,19 @@ export function CheckoutFlow() {
                           </dt>
                           <dd className="field-value text-sm">
                             {formatMoney({
-                              amount: shippingEstimate,
+                              amount: displayShipping,
                               currency: subtotal.currency,
                             })}
                           </dd>
                         </div>
+                        {displayFees.map((f) => (
+                          <div key={f.label} className="field-row">
+                            <dt className="field-label">{f.label}</dt>
+                            <dd className="field-value text-sm">
+                              {formatMoney({ amount: f.amount, currency: subtotal.currency })}
+                            </dd>
+                          </div>
+                        ))}
                         <div className="field-row">
                           <dt className="field-label">Dispatch</dt>
                           <dd className="field-value text-sm">SAME DAY</dd>
@@ -740,24 +791,32 @@ export function CheckoutFlow() {
           <dl className="mt-4 border-t border-[color:var(--color-rule)] pt-1">
             <div className="field-row">
               <dt className="field-label">Subtotal</dt>
-              <dd className="field-value text-sm">{formatMoney(subtotal)}</dd>
+              <dd className="field-value text-sm">{formatMoney(displaySubtotal)}</dd>
             </div>
-            {totalDiscount > 0 && (
+            {displayDiscount > 0 && (
               <div className="field-row">
                 <dt className="field-label">
                   Discount{primaryCode ? ` · ${primaryCode}` : ''}
                 </dt>
                 <dd className="field-value text-sm text-[#1F6238]">
-                  −{formatMoney({ amount: totalDiscount, currency: subtotal.currency })}
+                  −{formatMoney({ amount: displayDiscount, currency: subtotal.currency })}
                 </dd>
               </div>
             )}
             <div className="field-row">
               <dt className="field-label">Shipping{freeShipping ? ' · free' : ''}</dt>
               <dd className="field-value text-sm">
-                {formatMoney({ amount: shippingEstimate, currency: subtotal.currency })}
+                {formatMoney({ amount: displayShipping, currency: subtotal.currency })}
               </dd>
             </div>
+            {displayFees.map((f) => (
+              <div key={f.label} className="field-row">
+                <dt className="field-label">{f.label}</dt>
+                <dd className="field-value text-sm">
+                  {formatMoney({ amount: f.amount, currency: subtotal.currency })}
+                </dd>
+              </div>
+            ))}
             <div className="field-row">
               <dt className="field-label">GST</dt>
               <dd className="field-value text-text-muted text-sm">Included</dd>
@@ -765,7 +824,7 @@ export function CheckoutFlow() {
             <div className="field-row">
               <dt className="field-label text-theme-ink">Total</dt>
               <dd className="field-value text-theme-ink text-lg font-bold">
-                {formatMoney(grandTotal)}
+                {formatMoney(displayTotal)}
               </dd>
             </div>
           </dl>

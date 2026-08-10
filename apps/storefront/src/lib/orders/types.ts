@@ -44,5 +44,8 @@ export interface Order {
   /** Coupon discount already reflected in total. Optional: pre-coupon local
    *  orders and old localStorage mirrors don't carry it. */
   discount?: Money;
+  /** Order-level fees (packing, COD…) already reflected in total. Optional:
+   *  orders placed before charges existed don't carry it. */
+  fees?: { label: string; amount: Money }[];
   total: Money;
 }
