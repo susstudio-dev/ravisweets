@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowDown, ArrowRight, ArrowUp, ImagePlus, Plus, Save, Search, X } from 'lucide-react';
 import {
   CATALOGUE,
@@ -11,6 +11,10 @@ import {
   type ProductImage,
 } from '@ravisweets/shared';
 import {
+  EMPTY_CATALOGUE_OVERRIDES,
+  type CatalogueOverrides,
+  listCatalogueOverrides,
+  mergeProductOverrides,
   updateProductImages,
   upsertProductBuilderEligible,
   upsertProductCategory,
@@ -60,17 +64,40 @@ export function AdminProducts() {
   const { configured } = useSession();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<Product | null>(null);
+  // The admin used to render the bundled CATALOGUE and nothing else, so an
+  // owner edited a price, the write landed, and the screen kept showing the
+  // hardcoded number. Everything below is the merge of bundle + database.
+  const [overrides, setOverrides] = useState<CatalogueOverrides>(EMPTY_CATALOGUE_OVERRIDES);
+  const [loaded, setLoaded] = useState(false);
+
+  const refresh = useCallback(async () => {
+    setOverrides(await listCatalogueOverrides());
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const rows = useMemo(
+    () => CATALOGUE.map((p) => mergeProductOverrides(p, overrides)),
+    [overrides],
+  );
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return CATALOGUE;
+    if (!query.trim()) return rows;
     const q = query.toLowerCase();
-    return CATALOGUE.filter(
+    return rows.filter(
       (p) =>
         p.title.toLowerCase().includes(q) ||
         p.slug.toLowerCase().includes(q) ||
         p.category.includes(q),
     );
-  }, [query]);
+  }, [query, rows]);
+
+  // Nothing seeded is a completely different situation from a broken read, and
+  // both look like "the bundled prices" on screen — so say which one it is.
+  const noRows = configured && loaded && !overrides.error && overrides.products.size === 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -84,7 +111,7 @@ export function AdminProducts() {
           </h1>
           <p className="text-theme-ink/65 mt-1 text-sm">
             {configured
-              ? 'Inline edit on price, stock, sale, image upload + flags. Click "Add product" to launch a new SKU.'
+              ? 'Live values from the database, falling back to the bundled catalogue for anything not seeded yet. Inline edit on price, stock, sale, image upload + flags. Click "Add product" to launch a new SKU.'
               : 'Read-only — connect Supabase to edit.'}
           </p>
         </div>
@@ -111,6 +138,19 @@ export function AdminProducts() {
         />
       </label>
 
+      {overrides.error && (
+        <p className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-800">
+          {`Live values could not be read (${overrides.error}). Every price, stock count and flag below is the bundled catalogue, not the database — treat them as unverified until this is fixed.`}
+        </p>
+      )}
+      {noRows && (
+        <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+          {
+            'No products in the database yet — everything below comes from the bundled catalogue, and saves will match zero rows. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md).'
+          }
+        </p>
+      )}
+
       <div className="bg-surface-elevated overflow-x-auto rounded-2xl border border-[color:var(--color-border)]">
         <table className="w-full text-sm">
           <thead className="bg-theme-glow/10 text-theme-ink/65 text-[11px] font-semibold uppercase tracking-wider">
@@ -126,6 +166,9 @@ export function AdminProducts() {
           <tbody>
             {filtered.map((p) => {
               const totalStock = p.variants.reduce((s, v) => s + v.stock_available, 0);
+              // Per-row only once SOMETHING is seeded — when the table is empty
+              // the banner above already says it, 83 times over is just noise.
+              const missingRow = overrides.products.size > 0 && !overrides.products.has(p.id);
               return (
                 <tr
                   key={p.id}
@@ -152,6 +195,8 @@ export function AdminProducts() {
                       {p.featured && <Tag>Featured</Tag>}
                       {p.bestseller && <Tag>Bestseller</Tag>}
                       {p.new && <Tag>New</Tag>}
+                      {overrides.products.get(p.id)?.archived && <WarnTag>Archived</WarnTag>}
+                      {missingRow && <WarnTag>Not in DB</WarnTag>}
                     </div>
                   </td>
                   <td className="text-theme-ink/40 px-4 py-3 text-right">
@@ -164,12 +209,34 @@ export function AdminProducts() {
         </table>
       </div>
 
-      {active && <ProductDrawer product={active} onClose={() => setActive(null)} />}
+      {active && (
+        <ProductDrawer
+          // Keyed so picking a different row from the table behind the panel
+          // remounts it — without this the drawer keeps the previous product's
+          // form state and offers to save it onto the new one.
+          key={active.id}
+          product={active}
+          seeded={overrides.products.has(active.id)}
+          onSaved={refresh}
+          onClose={() => setActive(null)}
+        />
+      )}
     </div>
   );
 }
 
-function ProductDrawer({ product, onClose }: { product: Product; onClose: () => void }) {
+function ProductDrawer({
+  product,
+  seeded,
+  onSaved,
+  onClose,
+}: {
+  product: Product;
+  /** Whether this product has a row in `products`. Nothing saves when false. */
+  seeded: boolean;
+  onSaved: () => void;
+  onClose: () => void;
+}) {
   const { configured } = useSession();
   const [flags, setFlags] = useState({
     featured: product.featured,
@@ -225,9 +292,14 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
   // whole array persists in one updateProductImages write on Save.
   const [images, setImages] = useState<ProductImage[]>(product.images.map((im) => ({ ...im })));
   const [pickerOpen, setPickerOpen] = useState(false);
-  // True when the last save matched zero DB rows: the product exists only in
-  // the bundled CATALOGUE, so the image write saved nothing (needs 0014 seed).
-  const [notSeeded, setNotSeeded] = useState(false);
+  // The product exists only in the bundled CATALOGUE, so nothing typed into
+  // this drawer can be saved (needs the 0014 seed). Now known from the list's
+  // read BEFORE the first keystroke rather than only after a wasted save; a
+  // zero-row image write still flips it on for a row that disappeared since.
+  const [notSeeded, setNotSeeded] = useState(!seeded);
+  // The reason the last save stopped, kept on screen after the alert is
+  // dismissed — an alert you clicked past is not a record of anything.
+  const [error, setError] = useState<string | null>(null);
   const [variants, setVariants] = useState(
     product.variants.map((v) => ({
       id: v.id,
@@ -256,6 +328,17 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     });
   }
 
+  /**
+   * Report a write that did not land. Returns false so every call site is a
+   * single `return fail(...)` — the alert is the interrupt, the banner is the
+   * record that survives dismissing it.
+   */
+  function fail(message: string): false {
+    setError(message);
+    window.alert(message);
+    return false;
+  }
+
   async function save() {
     if (!configured) {
       window.alert('Supabase not configured — saves require backend.');
@@ -263,8 +346,23 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     }
     setBusy(true);
     setSaved(false);
-    setNotSeeded(false);
+    setError(null);
+    setNotSeeded(!seeded);
 
+    const landed = await runSave();
+    setBusy(false);
+    // Refresh the table whether or not we made it to the end: stopping partway
+    // means the writes BEFORE the failure did land, and leaving pre-save
+    // numbers on screen is the exact lie this whole change exists to remove.
+    onSaved();
+    if (landed) {
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2200);
+    }
+  }
+
+  /** True only when every write we attempted actually changed a row. */
+  async function runSave(): Promise<boolean> {
     // Update flags
     if (
       flags.featured !== product.featured ||
@@ -272,11 +370,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       flags.new !== product.new
     ) {
       const r = await upsertProductFlags(product.id, flags);
-      if (!r.ok) {
-        window.alert(`Flag save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Flag save failed: ${r.reason}`);
       await logAdminAction(
         'update-flags',
         'product',
@@ -289,11 +383,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     // Update unit_mode if changed (requires migration 0002)
     if (unitMode !== (product.unit_mode ?? 'weight')) {
       const r = await upsertProductUnitMode(product.id, unitMode);
-      if (!r.ok) {
-        window.alert(`unit_mode save failed: ${r.reason}. Run migration 0002.`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`unit_mode save failed: ${r.reason}. Run migration 0002.`);
       await logAdminAction(
         'update-unit-mode',
         'product',
@@ -305,11 +395,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
     if (description !== product.description) {
       const r = await upsertProductDescription(product.id, description);
-      if (!r.ok) {
-        window.alert(`Description save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Description save failed: ${r.reason}`);
       await logAdminAction(
         'update-description',
         'product',
@@ -321,11 +407,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
     if (category !== product.category) {
       const r = await upsertProductCategory(product.id, category);
-      if (!r.ok) {
-        window.alert(`Category save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Category save failed: ${r.reason}`);
       await logAdminAction(
         'update-category',
         'product',
@@ -340,11 +422,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       dietaryTags.some((t) => !product.dietary_tags.includes(t));
     if (tagsChanged) {
       const r = await upsertProductDietaryTags(product.id, dietaryTags);
-      if (!r.ok) {
-        window.alert(`Dietary tags save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Dietary tags save failed: ${r.reason}`);
       await logAdminAction(
         'update-dietary-tags',
         'product',
@@ -356,11 +434,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
     if (shelfLifeDays !== product.shelf_life_days) {
       const r = await upsertProductShelfLifeDays(product.id, shelfLifeDays);
-      if (!r.ok) {
-        window.alert(`Shelf life save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Shelf life save failed: ${r.reason}`);
       await logAdminAction(
         'update-shelf-life',
         'product',
@@ -372,11 +446,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
     if (builderEligible !== product.builder_eligible) {
       const r = await upsertProductBuilderEligible(product.id, builderEligible);
-      if (!r.ok) {
-        window.alert(`Builder-eligible save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Builder-eligible save failed: ${r.reason}`);
       await logAdminAction(
         'update-builder-eligible',
         'product',
@@ -392,13 +462,9 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     const imagesChanged = JSON.stringify(images) !== JSON.stringify(product.images);
     if (imagesChanged) {
       const r = await updateProductImages(product.id, images);
-      if (!r.ok) {
-        window.alert(`Image save failed: ${r.reason}`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Image save failed: ${r.reason}`);
       imagesMatched = r.matched;
-      setNotSeeded(!r.matched);
+      if (!r.matched) setNotSeeded(true);
       if (r.matched) {
         await logAdminAction(
           'update-images',
@@ -420,11 +486,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
     const nutritionChanged = JSON.stringify(prev) !== JSON.stringify(next);
     if (nutritionChanged) {
       const r = await upsertProductNutrition(product.id, next);
-      if (!r.ok) {
-        window.alert(`Nutrition save failed: ${r.reason}. Run migration 0004.`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Nutrition save failed: ${r.reason}. Run migration 0004.`);
       await logAdminAction('update-nutrition', 'product', product.id, prev, next);
     }
 
@@ -445,11 +507,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
         sale_ends_at: onSale && saleEndsAt ? new Date(saleEndsAt).toISOString() : null,
         sale_label: onSale && saleLabel.trim() ? saleLabel.trim() : null,
       });
-      if (!r.ok) {
-        window.alert(`Sale save failed: ${r.reason}. Run migration 0003.`);
-        setBusy(false);
-        return;
-      }
+      if (!r.ok) return fail(`Sale save failed: ${r.reason}. Run migration 0003.`);
       await logAdminAction(
         'update-sale',
         'product',
@@ -474,11 +532,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       const original = product.variants[i]!;
       if (v.title !== original.title) {
         const r = await upsertVariantTitle(v.id, v.title);
-        if (!r.ok) {
-          window.alert(`Title save failed for ${v.sku}: ${r.reason}`);
-          setBusy(false);
-          return;
-        }
+        if (!r.ok) return fail(`Title save failed for ${v.sku}: ${r.reason}`);
         await logAdminAction(
           'update-title',
           'variant',
@@ -489,11 +543,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       }
       if (v.price !== original.price.amount) {
         const r = await upsertVariantPrice(v.id, v.price);
-        if (!r.ok) {
-          window.alert(`Price save failed for ${v.title}: ${r.reason}`);
-          setBusy(false);
-          return;
-        }
+        if (!r.ok) return fail(`Price save failed for ${v.title}: ${r.reason}`);
         await logAdminAction(
           'update-price',
           'variant',
@@ -504,11 +554,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       }
       if (v.stock !== original.stock_available) {
         const r = await upsertVariantStock(v.id, v.stock);
-        if (!r.ok) {
-          window.alert(`Stock save failed for ${v.title}: ${r.reason}`);
-          setBusy(false);
-          return;
-        }
+        if (!r.ok) return fail(`Stock save failed for ${v.title}: ${r.reason}`);
         await logAdminAction(
           'update-stock',
           'variant',
@@ -519,11 +565,7 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       }
     }
 
-    setBusy(false);
-    if (imagesMatched) {
-      setSaved(true);
-      window.setTimeout(() => setSaved(false), 2200);
-    }
+    return imagesMatched;
   }
 
   return (
@@ -984,7 +1026,15 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 
       {notSeeded && (
         <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
-          {"Saved nothing — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md)."}
+          {
+            "Nothing here can be saved — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md)."
+          }
+        </p>
+      )}
+
+      {error && (
+        <p className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-800">
+          {error}
         </p>
       )}
 
@@ -1008,9 +1058,10 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
       </div>
 
       <p className="text-theme-ink/55 mt-4 text-[11px]">
-        Note: storefront catalogue is currently bundled at build. Live edits land here in
-        <code> products </code> + <code>variants</code> tables and become visible on the storefront
-        once Phase 3&rsquo;s build-time fetch + webhook rebuild is wired.
+        Note: edits land in the <code>products</code> + <code>variants</code> tables and this screen
+        reads them straight back. The storefront still ships the catalogue bundled at build, so a
+        change here reaches shoppers only after Phase 3&rsquo;s build-time fetch + webhook rebuild
+        is wired.
       </p>
 
       <MediaPickerDialog
@@ -1036,6 +1087,15 @@ function ProductDrawer({ product, onClose }: { product: Product; onClose: () => 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
     <span className="bg-theme-glow/30 text-theme-accent rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+      {children}
+    </span>
+  );
+}
+
+/** Same chip, but for a state the owner needs to act on rather than admire. */
+function WarnTag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-800">
       {children}
     </span>
   );

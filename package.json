@@ -14,7 +14,8 @@
     "typecheck": "pnpm -r typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,mdx,css}\"",
-    "generate:seed": "node --import tsx scripts/generate-product-seed.mjs"
+    "generate:seed": "node --import tsx scripts/generate-product-seed.mjs",
+    "generate:catalogue": "node --import tsx scripts/generate-catalogue.mjs"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

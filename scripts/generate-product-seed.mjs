@@ -19,7 +19,13 @@ import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { CATALOGUE } from '../packages/shared/src/catalogue/products.ts';
+// HARDCODED_CATALOGUE, not CATALOGUE. Since the build-time bake landed,
+// CATALOGUE resolves to the *database* contents (products.generated.ts) when
+// there are any, so seeding from it would round-trip the database back into a
+// migration and make this file's output depend on the network. The seed's job
+// is unchanged: publish the hand-authored array as the starting state for an
+// empty database.
+import { HARDCODED_CATALOGUE as CATALOGUE } from '../packages/shared/src/catalogue/products.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_FILE = path.join(ROOT, 'supabase', 'migrations', '0014_seed_products.sql');
@@ -128,7 +134,9 @@ for (const product of products) {
     product.unit_mode ? sqlText(product.unit_mode) : 'default',
   ];
   lines.push('');
-  lines.push(`-- ${product.title} (${product.variants.length} variant${product.variants.length === 1 ? '' : 's'})`);
+  lines.push(
+    `-- ${product.title} (${product.variants.length} variant${product.variants.length === 1 ? '' : 's'})`,
+  );
   lines.push(`insert into public.products (${PRODUCT_COLUMNS})`);
   lines.push(`values (${values.join(', ')})`);
   lines.push('on conflict do nothing;');

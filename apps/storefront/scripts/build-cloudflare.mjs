@@ -13,6 +13,7 @@
  */
 import { execSync } from 'node:child_process';
 import { rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 process.env.BUILD_TARGET = 'cloudflare';
 
@@ -100,6 +101,40 @@ if (badHost && process.env.ALLOW_NONCANONICAL_BUILD !== 'true') {
 }
 
 const run = (cmd) => execSync(cmd, { stdio: 'inherit', env: process.env });
+
+/*
+ * BAKE THE CATALOGUE BEFORE BUILDING IT.
+ *
+ * A static export has no server at request time, so the only moment the
+ * storefront can read the products the admin has been editing in Supabase is
+ * right now, before next build turns the pages into HTML. The generator writes
+ * packages/shared/src/catalogue/products.generated.ts, which is what CATALOGUE
+ * resolves to — so this step is the difference between deploying the shop the
+ * admin sees and deploying a year-old hardcoded array.
+ *
+ * IT MUST NEVER FAIL THE BUILD. Reading the database is a network call, and
+ * this build runs in CI where credentials can be missing and the project can be
+ * paused. The generated file is committed, so a failure here simply means the
+ * deploy ships the last known-good catalogue — stale beats blank. The generator
+ * exits 0 on every one of its own error paths; this try/catch covers the ones
+ * it cannot (a missing tsx, a Node that will not start).
+ *
+ * Run from the repo root because `--import tsx` resolves the loader from the
+ * working directory, and tsx is a root devDependency.
+ */
+const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url));
+try {
+  execSync('node --import tsx scripts/generate-catalogue.mjs', {
+    stdio: 'inherit',
+    env: process.env,
+    cwd: REPO_ROOT,
+  });
+} catch (err) {
+  console.warn(
+    `\n  Catalogue generation failed (${err.message.split('\n')[0]}).\n` +
+      '  Continuing with the committed products.generated.ts — the build is not blocked.\n',
+  );
+}
 
 // output:'export' cannot render the @modal intercept route — set it aside.
 run('node scripts/prepare-export.mjs disable');

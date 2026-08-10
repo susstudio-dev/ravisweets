@@ -37,8 +37,9 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 9 | `supabase/migrations/0012_global_voice.sql` | Hero copy rewrite in `site_content` + `theme_presets` (removes Khammam-era voice). Idempotent |
 | 10 | `supabase/migrations/0013_media_library.sql` | **Media library**: creates the `media` bucket, `media_assets` registry, and `site_content_versions` + snapshot trigger. `/admin/photos` and `/admin/media` need this. Idempotent |
 | 11 | `supabase/migrations/0014_seed_products.sql` | Seeds 83 products + 165 variants from the bundled catalogue. Every insert is `on conflict do nothing`, so re-running never overwrites admin edits. Product photo edits in `/admin/products` need this |
+| 12 | `supabase/migrations/0015_publish_state.sql` | **Publishing**: creates the single-row `publish_state` table the `publish-site` edge function uses to coalesce rebuild requests. Admin-read only; written solely by that function. Idempotent |
 
-Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, and friends (25 tables total).
+Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, `publish_state`, and friends (26 tables total).
 
 #### The media library (0013 + 0014)
 
@@ -83,6 +84,7 @@ Commit the change — the deploy builds read this file.
 |----------|---------|-----------|
 | `send-order-email` | Transactional order-status emails via [Resend](https://resend.com) | Emails silently skip (calls are fire-and-forget) |
 | `team-management` | Staff invites / role changes on `/admin/team` | That admin page is non-functional |
+| `publish-site` | The admin's **Publish** button — asks Cloudflare Pages to rebuild so build-time content (the baked catalogue and page content) goes live | Admin edits still save and Realtime-driven copy still updates live, but anything baked at build time waits for the next git push or a manual Cloudflare deploy |
 
 Deploy with the Supabase CLI:
 
@@ -91,11 +93,23 @@ supabase login
 supabase link --project-ref <NEW_PROJECT_REF>
 supabase functions deploy send-order-email
 supabase functions deploy team-management
+supabase functions deploy publish-site
 supabase secrets set RESEND_API_KEY=re_xxx           # required by send-order-email
 supabase secrets set "ORDER_FROM_EMAIL=Ravi Sweets <orders@yourdomain.com>"  # optional
+supabase secrets set CLOUDFLARE_DEPLOY_HOOK_URL=https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/xxx  # required by publish-site
 ```
 
 `team-management` needs no extra secrets (it uses the auto-injected service-role key).
+
+#### Publishing (`publish-site` + 0015)
+
+Get the hook from the Pages project → **Settings → Builds & deployments → Deploy hooks → Add deploy hook** (branch: the production branch). That URL **is** the credential — it accepts an unauthenticated POST, so anyone holding it can spend the account's build minutes. It belongs in Supabase function secrets only; a static export has no server to hide it in, and a `NEXT_PUBLIC_*` name would publish it in the browser bundle.
+
+Behaviour, all enforced server-side:
+
+- **Admin only.** The caller's JWT is verified against the Auth server and must carry `app_metadata.role = 'admin'` — the same claim `is_admin()` checks. `verify_jwt` alone is not enough, because anonymous sign-ins are on and every guest holds a valid token.
+- **Repeat publishes inside 5 minutes coalesce into one build.** The window lives in `publish_state` (migration **0015** — without it the function returns a 500 saying so), because edge isolates share no memory.
+- **A coalesced publish is not dropped.** It stamps `pending_since` on the row and the response returns `nextEligibleAt` / `retryAfterSeconds`; the next build that runs clears the marker and reports the pending edits it swept up. Responses are `{ triggered, coalesced, expectedLiveAt, … }` — a coalesced request is a 200, not an error.
 
 ---
 
@@ -173,6 +187,7 @@ Cloudflare, so there is nowhere on Cloudflare for a secret to hide.
 | **Database password** / `postgresql://…` connection string | Your password manager only. For migrations, pass it via an env var at run time (`PGPASSWORD=…`) or use the Supabase CLI — never write it to a tracked file. |
 | **`service_role` key** (bypasses RLS) | Supabase only — Edge Functions read it via `supabase secrets set`. Never in the client or the repo. |
 | **Resend / MSG91 / (later) Razorpay·Stripe secret keys** | Supabase Edge Function secrets, or the payment provider's server side. Never in the static site. |
+| **Cloudflare Pages deploy-hook URL** (`CLOUDFLARE_DEPLOY_HOOK_URL`) | Supabase Edge Function secrets only — `publish-site` reads it. The URL is the whole credential: it takes an unauthenticated POST, so anyone with it can trigger builds. Rotate by deleting the hook in the Pages project and creating a new one. |
 
 `.env.local` (your local dev copy) is gitignored and also holds only the public
 anon key — keep it that way.

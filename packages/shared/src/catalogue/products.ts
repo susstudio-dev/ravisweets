@@ -1,4 +1,5 @@
 import type { CategorySlug, DietaryTag, GarnishMark, Product } from '../types/product';
+import { GENERATED_CATALOGUE } from './products.generated';
 import { GULKAND, HOUSE, BADAM, KESAR, HAMPER } from './palettes';
 
 /**
@@ -79,7 +80,7 @@ function pendingPhoto(_file: string): string {
  * nut-heavy dry-fruit range, date laddus inside healthy sweets) override it
  * per SKU with `MiniSku.theme_palette`.
  */
-export const CATALOGUE: Product[] = [
+export const HARDCODED_CATALOGUE: Product[] = [
   // ─── Hyderabadi specials ────────────────────────────────────────────────
   {
     id: 'p_qubani',
@@ -696,6 +697,38 @@ export const CATALOGUE: Product[] = [
   // ─── Biscuits ───────────────────────────────────────────────────────────
   ...biscuitsGroup(),
 ];
+
+/**
+ * THE CATALOGUE THE SITE ACTUALLY RENDERS.
+ *
+ * Prefers the database. `products.generated.ts` is baked at build time by
+ * `pnpm run generate:catalogue` (scripts/generate-catalogue.mjs), which reads
+ * the Supabase `products` and `variants` tables with the anon key and writes
+ * them out as a plain module. That is the only way a static export can show
+ * database content at all: `output: 'export'` leaves no server to query at
+ * request time, so the query happens once, during the build.
+ *
+ * Until this existed the admin was writing to a database nothing read back —
+ * every page, and the admin's own product list, rendered the literal above. A
+ * variant edited to ₹1 in Supabase still showed ₹279 on the shop.
+ *
+ * WHY THE FALLBACK. Reading the database is a network call in a build, and
+ * builds run in places where that call can fail: no credentials on a fresh
+ * clone, an outage, a paused project, a change to the RLS policy. If any of
+ * those blanked the catalogue, a deploy would ship a shop with nothing in it —
+ * a far worse outcome than showing slightly stale prices. So the generator
+ * refuses to write an empty file, and the `.length` check here is the second
+ * line of the same defence: an empty generated array means "I learned nothing",
+ * never "the shop is empty".
+ *
+ * The array above therefore stays the seed of record. It is also what
+ * `pnpm run generate:seed` emits into supabase/migrations/0014_seed_products.sql
+ * to populate an empty database, which is what closes the loop: hardcoded array
+ * → seed → database → admin edits → generated module → site.
+ */
+export const CATALOGUE: Product[] = GENERATED_CATALOGUE.length
+  ? GENERATED_CATALOGUE
+  : HARDCODED_CATALOGUE;
 
 // ─── Helpers — group definitions kept at the bottom so the curated SKUs
 // above stay easy to scan. Every SKU below is a real Ravi Sweets product

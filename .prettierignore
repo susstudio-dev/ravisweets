@@ -1,0 +1,13 @@
+# Generated files — the tool that writes them owns their formatting.
+#
+# products.generated.ts is emitted by scripts/generate-catalogue.mjs on every
+# build, one value per line, so that an admin's price edit shows up as exactly
+# one changed line in review. Prettier reflows that into packed arrays and
+# wrapped strings, which is prettier to read and far worse to diff — and, more
+# importantly, it does not match what the generator writes. Formatting the
+# committed copy would put it permanently out of sync with the copy every build
+# regenerates, so `pnpm run format` would fight the build forever.
+packages/shared/src/catalogue/products.generated.ts
+
+# Likewise generated, by scripts/generate-product-seed.mjs.
+supabase/migrations/0014_seed_products.sql
