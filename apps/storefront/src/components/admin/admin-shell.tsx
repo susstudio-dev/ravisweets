@@ -13,6 +13,7 @@ import {
   CalendarClock,
   Camera,
   Compass,
+  CreditCard,
   FileText,
   Image,
   Inbox,
@@ -42,6 +43,7 @@ const NAV: { label: string; href: string; icon: typeof LayoutDashboard }[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Strategy', href: '/admin/strategy', icon: Compass },
   { label: 'Orders', href: '/admin/orders', icon: Package },
+  { label: 'Payments', href: '/admin/payments', icon: CreditCard },
   { label: 'Products', href: '/admin/products', icon: Boxes },
   { label: 'Inventory', href: '/admin/inventory', icon: BarChart3 },
   { label: 'Locations', href: '/admin/locations', icon: MapPin },
@@ -167,17 +169,23 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
   }
 
   return (
-    <div className="bg-theme-base flex min-h-screen">
+    /*
+     * App frame, not a page: the shell owns the viewport (h-dvh) and scrolling
+     * happens in two independent containers — the sidebar nav and <main>.
+     * The document itself never scrolls, so the sidebar stays put however long
+     * the content or the nav list grows.
+     */
+    <div className="bg-theme-base flex h-dvh overflow-hidden">
       {/* Desktop sidebar — hidden on small screens */}
       <aside className="bg-surface-elevated hidden w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] md:flex">
-        <Link href="/admin" className="flex items-center gap-2 px-5 py-5">
+        <Link href="/admin" className="flex shrink-0 items-center gap-2 px-5 py-5">
           <Paisley size="sm" />
           <span className="font-display text-theme-ink text-lg">Ravi Admin</span>
         </Link>
-        <nav className="flex-1 px-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-2 pb-4">
           <AdminNavList pathname={pathname} />
         </nav>
-        <div className="border-t border-[color:var(--color-border)] p-4">
+        <div className="shrink-0 border-t border-[color:var(--color-border)] p-4">
           <p className="text-theme-ink/55 text-[11px] font-semibold uppercase tracking-wider">
             Signed in
           </p>
@@ -281,8 +289,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
         </div>
       )}
 
-      <div className="flex flex-1 flex-col">
-        <header className="bg-surface-elevated/85 flex h-14 items-center justify-between border-b border-[color:var(--color-border)] px-4 backdrop-blur md:h-16 md:px-8">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="bg-surface-elevated/85 flex h-14 shrink-0 items-center justify-between border-b border-[color:var(--color-border)] px-4 backdrop-blur md:h-16 md:px-8">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -305,7 +313,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY`}</code>
             View storefront →
           </Link>
         </header>
-        <main className="flex-1 px-4 py-5 md:px-8 md:py-8">{children}</main>
+        <main id="main" className="min-h-0 flex-1 overflow-y-auto px-4 py-5 md:px-8 md:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );

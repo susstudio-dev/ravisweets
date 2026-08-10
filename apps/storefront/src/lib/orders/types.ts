@@ -41,5 +41,8 @@ export interface Order {
   lines: OrderLine[];
   subtotal: Money;
   shipping: Money;
+  /** Coupon discount already reflected in total. Optional: pre-coupon local
+   *  orders and old localStorage mirrors don't carry it. */
+  discount?: Money;
   total: Money;
 }

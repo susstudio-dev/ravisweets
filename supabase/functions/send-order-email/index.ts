@@ -74,8 +74,10 @@ function safeHttpUrl(raw: unknown): string | undefined {
   }
 }
 
-function inr(paise: number): string {
-  return `₹${Math.round(paise / 100).toLocaleString('en-IN')}`;
+// Money.amount is integer RUPEES across the schema (see razorpay-order fn
+// header) — formatting must not divide.
+function inr(rupees: number): string {
+  return `₹${Math.round(rupees).toLocaleString('en-IN')}`;
 }
 
 function template(args: {
@@ -220,12 +222,12 @@ serve(async (req: Request) => {
       kind: body.kind,
       number: order.number,
       customerName: address.name,
-      lines: order.lines as Array<{
+      lines: (order.lines as Array<{
         productTitle: string;
         variantTitle: string;
         quantity: number;
         lineTotal: { amount: number };
-      }>.map((l) => ({
+      }>).map((l) => ({
         productTitle: l.productTitle,
         variantTitle: l.variantTitle,
         quantity: l.quantity,

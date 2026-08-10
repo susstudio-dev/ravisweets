@@ -306,6 +306,7 @@ export function CheckoutFlow() {
           })),
           subtotal,
           shipping: { amount: shippingEstimate, currency: subtotal.currency },
+          discount: { amount: totalDiscount, currency: subtotal.currency },
           total: grandTotal,
         };
         pendingOrderRef.current = order;

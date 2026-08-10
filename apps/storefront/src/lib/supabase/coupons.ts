@@ -58,6 +58,50 @@ function toRow(c: Coupon): CouponRow {
   };
 }
 
+/**
+ * Checkout-side lookup by code. RLS ("anyone reads active coupons") exposes
+ * only active, unexpired rows to customers, so a CONFIRMED miss (null) means
+ * the code is unknown, disabled, or expired. A query failure THROWS instead
+ * of returning null — conflating "network blip" with "no such coupon" would
+ * reject valid codes and let revalidation strip legitimately applied ones.
+ */
+export async function fetchCouponByCode(code: string): Promise<Coupon | null> {
+  const supa = await getSupabase();
+  if (!supa) return null;
+  const { data, error } = await supa
+    .from('coupons')
+    .select('*')
+    .eq('code', code.trim().toUpperCase())
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? fromRow(data as CouponRow) : null;
+}
+
+/**
+ * How many times the signed-in customer has redeemed a code. Filtered by
+ * customer_id explicitly, NOT left to RLS alone: an admin browsing the
+ * storefront passes the "admin reads all redemptions" policy and would
+ * otherwise count every customer's redemptions as their own. The GLOBAL
+ * usage cap is not client-readable and stays a server-side concern
+ * (validate.ts treats it as indicative only).
+ */
+export async function countMyRedemptions(code: string): Promise<number> {
+  const supa = await getSupabase();
+  if (!supa) return 0;
+  const {
+    data: { user },
+  } = await supa.auth.getUser();
+  if (!user) return 0;
+  const { count, error } = await supa
+    .from('coupon_redemptions')
+    .select('id', { count: 'exact', head: true })
+    .eq('coupon_code', code.trim().toUpperCase())
+    .eq('customer_id', user.id)
+    .is('reversed_at', null);
+  if (error) return 0;
+  return count ?? 0;
+}
+
 export async function listCoupons(): Promise<Coupon[]> {
   const supa = await getSupabase();
   if (!supa) return [];

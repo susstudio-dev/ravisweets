@@ -11,6 +11,8 @@ import {
   type ReactNode,
 } from 'react';
 import type { Coupon } from './types';
+import { useSession } from '@/lib/supabase/session-context';
+import { fetchCouponByCode } from '@/lib/supabase/coupons';
 
 const STORAGE_KEY = 'ravi.cart.coupons.v1';
 
@@ -48,6 +50,38 @@ function readInitial(): AppliedCoupon[] {
 export function CouponsProvider({ children }: { children: ReactNode }) {
   const [applied, setApplied] = useState<AppliedCoupon[]>(readInitial);
   const isFirstRender = useRef(true);
+  const { configured } = useSession();
+  const revalidated = useRef(false);
+
+  // Applied coupons rehydrate from localStorage with their discounts baked
+  // in, and checkout commits them without asking again — so a coupon the
+  // admin deactivated yesterday would ride a stale cart into a real order.
+  // On a configured store, re-check each persisted code against the coupons
+  // table once per session and drop the ones with no active row (RLS hides
+  // inactive/expired rows, so a miss IS the answer). A dropped code costs
+  // the customer a re-apply; the reverse costs the business real money.
+  useEffect(() => {
+    if (!configured || revalidated.current || applied.length === 0) return;
+    void Promise.all(
+      applied.map(async (a) => {
+        try {
+          // Throws on query failure; only a CONFIRMED absence counts as dead —
+          // a network blip must not strip a coupon the customer validly holds.
+          return { code: a.coupon.code, dead: (await fetchCouponByCode(a.coupon.code)) === null };
+        } catch {
+          return { code: a.coupon.code, dead: false, errored: true };
+        }
+      }),
+    ).then((checks) => {
+      // Only stop retrying once every code got a definitive answer; errored
+      // checks leave the flag unset so a later render tries again.
+      if (checks.every((c) => !c.errored)) revalidated.current = true;
+      const dead = new Set(checks.filter((c) => c.dead).map((c) => c.code));
+      if (dead.size > 0) {
+        setApplied((prev) => prev.filter((a) => !dead.has(a.coupon.code)));
+      }
+    });
+  }, [configured, applied]);
 
   useEffect(() => {
     if (isFirstRender.current) {

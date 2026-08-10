@@ -1,66 +1,118 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tag, X } from 'lucide-react';
 import { useCart } from '@/lib/cart/cart-context';
 import { useSession } from '@/lib/supabase/session-context';
 import { findDemoCoupon, DEMO_COUPONS } from '@/lib/coupons/validate';
 import { validateCoupon } from '@/lib/coupons/validate';
 import { useCoupons } from '@/lib/coupons/context';
+import { countMyRedemptions, fetchCouponByCode, listCoupons } from '@/lib/supabase/coupons';
+import { listMyOrders } from '@/lib/supabase/orders';
+import type { Coupon } from '@/lib/coupons/types';
 
 const COUPONS_ENABLED = process.env.NEXT_PUBLIC_COUPONS_ENABLED !== 'false';
 
 export function CouponInput() {
   const { subtotal, lineCount, lineViews } = useCart();
-  const { user } = useSession();
+  const { configured, user } = useSession();
   const { applied, apply, remove } = useCoupons();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [suggestedChips, setSuggestedChips] = useState<Coupon[]>([]);
 
   const isLoggedIn = !!user;
-  const suggestedChips = useMemo(() => {
-    if (!isLoggedIn) return [];
-    return DEMO_COUPONS.filter((c) => c.active).slice(0, 3);
-  }, [isLoggedIn]);
+
+  // Suggestion chips come from the live coupons table on a configured store
+  // (RLS already filters to active, unexpired rows) — demo codes would be
+  // rejected there since the demo fallback is gated off. Unconfigured stores
+  // keep the bundled demo set.
+  useEffect(() => {
+    // Unconfigured (demo) stores can never have a session, so demo chips must
+    // not sit behind the login check — they'd be unreachable.
+    if (!configured) {
+      setSuggestedChips(DEMO_COUPONS.filter((c) => c.active).slice(0, 3));
+      return;
+    }
+    if (!isLoggedIn) {
+      setSuggestedChips([]);
+      return;
+    }
+    let cancelled = false;
+    void listCoupons().then((live) => {
+      // RLS hides dead rows from customers but NOT from admins browsing the
+      // shop — filter client-side too so nobody is suggested an unusable code.
+      const now = Date.now();
+      const usable = live.filter(
+        (c) => c.active && (!c.validTo || new Date(c.validTo).getTime() >= now),
+      );
+      if (!cancelled) setSuggestedChips(usable.slice(0, 3));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn, configured]);
 
   if (!COUPONS_ENABLED || lineCount === 0) return null;
 
-  function tryApply(raw: string) {
+  async function tryApply(raw: string) {
+    if (busy) return;
     setError(null);
-    const coupon = findDemoCoupon(raw);
-    const result = validateCoupon(
-      coupon,
-      {
-        subtotal: subtotal.amount,
-        customerId: user?.id ?? null,
-        firstOrder: true, // demo: always treat as first order client-side
-        segments: [],
-        region: 'IN',
-        items: lineViews.map((l) => ({
-          productId: l.product.id,
-          collectionId: l.product.category,
-          // gift-hampers + festival-specials are both "hamper"-target eligible
-          isHamper:
-            l.product.category === 'gift-hampers' ||
-            l.product.category === 'festival-specials',
-        })),
-        appliedCodes: applied.map((a) => a.coupon.code),
-        perUserRedeemed: 0,
-        globalRedeemed: 0,
-        now: Date.now(),
-      },
-      applied.map((a) => a.coupon),
-    );
-    if (!result.ok || !coupon) {
-      setError(result.message ?? 'Code not valid.');
-      return;
+    setBusy(true);
+    try {
+      // The coupons table is authoritative on a configured store: RLS hides
+      // inactive/expired rows, and falling back to the demo set there would
+      // resurrect codes the admin deactivated. The bundled demo set only
+      // serves stores with no Supabase at all.
+      const dbCoupon = configured ? await fetchCouponByCode(raw) : null;
+      const coupon = dbCoupon ?? (configured ? null : findDemoCoupon(raw));
+      const perUserRedeemed = dbCoupon ? await countMyRedemptions(dbCoupon.code) : 0;
+      // Only pay for the orders query when the coupon actually cares.
+      const firstOrder =
+        dbCoupon?.constraints.firstOrderOnly && user
+          ? (await listMyOrders()).length === 0
+          : true;
+      const result = validateCoupon(
+        coupon,
+        {
+          subtotal: subtotal.amount,
+          customerId: user?.id ?? null,
+          firstOrder,
+          segments: [],
+          region: 'IN',
+          items: lineViews.map((l) => ({
+            productId: l.product.id,
+            collectionId: l.product.category,
+            // gift-hampers + festival-specials are both "hamper"-target eligible
+            isHamper:
+              l.product.category === 'gift-hampers' ||
+              l.product.category === 'festival-specials',
+          })),
+          appliedCodes: applied.map((a) => a.coupon.code),
+          perUserRedeemed,
+          globalRedeemed: 0,
+          now: Date.now(),
+        },
+        applied.map((a) => a.coupon),
+      );
+      if (!result.ok || !coupon) {
+        setError(result.message ?? 'Code not valid.');
+        return;
+      }
+      apply({
+        coupon,
+        discount: result.discount ?? 0,
+        message: result.message ?? 'Applied.',
+      });
+      setCode('');
+    } catch {
+      // Network/import failure — distinct from "code not valid" so a real
+      // coupon isn't reported as bogus on a flaky connection.
+      setError('Could not check that code. Please try again.');
+    } finally {
+      setBusy(false);
     }
-    apply({
-      coupon,
-      discount: result.discount ?? 0,
-      message: result.message ?? 'Applied.',
-    });
-    setCode('');
   }
 
   return (
@@ -76,7 +128,7 @@ export function CouponInput() {
             <button
               key={c.code}
               type="button"
-              onClick={() => tryApply(c.code)}
+              onClick={() => void tryApply(c.code)}
               className="field-value text-theme-ink/80 rounded-md border border-[color:var(--color-border)] bg-surface px-2.5 py-1 text-[11px] transition-colors hover:border-theme-accent hover:text-theme-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent"
             >
               {c.code}
@@ -88,7 +140,7 @@ export function CouponInput() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (code.trim()) tryApply(code);
+          if (code.trim()) void tryApply(code);
         }}
         className="mt-3 flex gap-2"
       >
@@ -105,10 +157,10 @@ export function CouponInput() {
         />
         <button
           type="submit"
-          disabled={!code.trim()}
+          disabled={!code.trim() || busy}
           className="stamp disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Apply
+          {busy ? 'Checking…' : 'Apply'}
         </button>
       </form>
       {error && (

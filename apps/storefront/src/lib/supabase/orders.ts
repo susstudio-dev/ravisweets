@@ -5,7 +5,7 @@ import type { Order, OrderStatus } from '@/lib/orders/types';
 
 export interface OrderCommitInput {
   order: Order;
-  /** Total discount in paise (sum of all applied coupons). */
+  /** Total discount in rupees (sum of all applied coupons). */
   discount: number;
   /** Primary coupon code attached to the order row (display + admin filter). */
   primaryCouponCode: string | null;
@@ -46,6 +46,7 @@ function fromRow(r: OrderRow): Order {
     lines: r.lines,
     subtotal: { amount: r.subtotal, currency: r.currency as 'INR' },
     shipping: { amount: r.shipping, currency: r.currency as 'INR' },
+    discount: { amount: r.discount, currency: r.currency as 'INR' },
     total: { amount: r.total, currency: r.currency as 'INR' },
   };
 }

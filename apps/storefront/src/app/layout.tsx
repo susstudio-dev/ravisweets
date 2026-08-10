@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Anek_Telugu, Archivo, Courier_Prime } from 'next/font/google';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { SweetCursor } from '@/components/cursor/sweet-cursor';
-import { FloatingContact } from '@/components/contact/floating-contact';
-import { PromoStrip } from '@/components/promo/promo-strip';
+import { SiteChrome } from '@/components/site-chrome';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
 import { CouponsProvider } from '@/lib/coupons/context';
@@ -258,14 +254,7 @@ export default function RootLayout({
                     as specks of debris on the paper rather than as ornament.
                     The component stays in the repo, unmounted.
                   */}
-                  <PromoStrip />
-                  <Header />
-                  <main id="main" className="flex-1">
-                    {children}
-                  </main>
-                  <Footer />
-                  <SweetCursor />
-                  <FloatingContact />
+                  <SiteChrome>{children}</SiteChrome>
                   {modal}
                 </LayoutGroup>
               </CouponsProvider>

@@ -141,10 +141,11 @@ export function AdminCoupons() {
                   {c.type.replace(/_/g, ' ')}
                 </td>
                 <td className="text-theme-ink px-4 py-3 text-right font-mono">
+                  {/* Coupon values are rupees, same unit validate.ts applies them in. */}
                   {c.type === 'percent'
-                    ? `${c.value}%${c.maxDiscountCap ? ` (cap ₹${c.maxDiscountCap / 100})` : ''}`
+                    ? `${c.value}%${c.maxDiscountCap ? ` (cap ₹${c.maxDiscountCap})` : ''}`
                     : c.type === 'flat'
-                      ? `₹${c.value / 100}`
+                      ? `₹${c.value}`
                       : c.type === 'free_shipping'
                         ? 'Free shipping'
                         : 'BOGO'}
@@ -152,7 +153,7 @@ export function AdminCoupons() {
                 <td className="text-theme-ink/65 px-4 py-3 capitalize">{c.targetScope}</td>
                 <td className="text-theme-ink/65 px-4 py-3 text-xs">
                   {[
-                    c.constraints.minSubtotal && `Min ₹${c.constraints.minSubtotal / 100}`,
+                    c.constraints.minSubtotal && `Min ₹${c.constraints.minSubtotal}`,
                     c.constraints.firstOrderOnly && 'First order',
                     c.constraints.regions?.join(','),
                   ]
@@ -309,7 +310,7 @@ function CouponForm({
           </Field>
           <Field
             label={
-              c.type === 'percent' ? 'Value (% off)' : c.type === 'flat' ? 'Value (paise)' : 'Value'
+              c.type === 'percent' ? 'Value (% off)' : c.type === 'flat' ? 'Value (₹)' : 'Value'
             }
           >
             <input
@@ -320,7 +321,7 @@ function CouponForm({
               className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
             />
           </Field>
-          <Field label="Max discount cap (paise, optional)">
+          <Field label="Max discount cap (₹, optional)">
             <input
               type="number"
               value={c.maxDiscountCap ?? ''}
@@ -351,7 +352,7 @@ function CouponForm({
               className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
             />
           </Field>
-          <Field label="Min subtotal (paise)">
+          <Field label="Min subtotal (₹)">
             <input
               type="number"
               value={c.constraints.minSubtotal ?? ''}

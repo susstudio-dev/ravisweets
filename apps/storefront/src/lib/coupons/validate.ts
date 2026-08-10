@@ -169,8 +169,9 @@ export function validateCoupon(
 
 /**
  * Reference set of demo coupons baked into the bundle so the cart UI works
- * before Supabase is configured. The admin coupons table will replace this
- * once it's wired (Phase 2.5).
+ * before Supabase is configured. The checkout looks up the admin `coupons`
+ * table first (lib/supabase/coupons.ts fetchCouponByCode); this set is the
+ * fallback when Supabase is absent or the code has no DB row.
  *
  * IMPORTANT: every monetary field below is in RUPEES, matching Money.amount
  * across the rest of the app. An earlier draft stored these in paise which
@@ -232,8 +233,8 @@ export const DEMO_COUPONS: Coupon[] = [
 ];
 
 /**
- * Convenience lookup — case-insensitive against DEMO_COUPONS. Replace with a
- * Supabase query once the table is wired.
+ * Convenience lookup — case-insensitive against DEMO_COUPONS. Fallback path
+ * only: checkout tries the Supabase `coupons` table first.
  */
 export function findDemoCoupon(code: string): Coupon | null {
   const up = code.trim().toUpperCase();

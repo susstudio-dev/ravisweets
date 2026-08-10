@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { CATALOGUE } from '@ravisweets/shared';
 import { useAdminOrders } from '@/lib/admin/use-admin-orders';
+import { PublishPanel } from './publish-panel';
 
 export function AdminDashboard() {
   const orders = useAdminOrders();
@@ -31,6 +32,14 @@ export function AdminDashboard() {
           Operating snapshot — refresh the page to update. Numbers are demo until Supabase lifts.
         </p>
       </header>
+
+      {/*
+       * Publishing sits ABOVE the numbers, not below them. Everything under it
+       * is a read-out of what already happened; this is the one card that acts
+       * on the world, and it carries the "your edits are not live yet" signal —
+       * which is worth nothing if it is parked under two screens of charts.
+       */}
+      <PublishPanel />
 
       {/* KPI strip — 8 cards in two rows of 4 on xl, stacked on mobile. */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -303,7 +312,7 @@ function computeStats(orders: OrderShape[]) {
   for (let i = 13; i >= 0; i--) {
     const d = new Date(startOfToday.getTime() - i * dayMs);
     const key = d.toISOString().slice(0, 10);
-    spark14d.push(Math.round((dailyRevenue.get(key) ?? 0) / 100));
+    spark14d.push(dailyRevenue.get(key) ?? 0);
   }
   const peakDay = spark14d.length > 0 ? Math.max(...spark14d) : 0;
 

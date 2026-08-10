@@ -48,6 +48,7 @@ function downloadCsv(orders: Order[]) {
     'City',
     'Subtotal (₹)',
     'Shipping (₹)',
+    'Discount (₹)',
     'Total (₹)',
     'Items',
   ];
@@ -60,9 +61,11 @@ function downloadCsv(orders: Order[]) {
     o.address.phone,
     o.address.pincode,
     o.address.city,
-    Math.round(o.subtotal.amount / 100),
-    Math.round(o.shipping.amount / 100),
-    Math.round(o.total.amount / 100),
+    // Money.amount is integer rupees (see razorpay-order fn) — export as-is.
+    o.subtotal.amount,
+    o.shipping.amount,
+    o.discount?.amount ?? 0,
+    o.total.amount,
     o.lines.map((l) => `${l.productTitle} × ${l.quantity}`).join(' | '),
   ]);
   const escape = (v: unknown) => `"${String(v).replace(/"/g, '""')}"`;
@@ -354,7 +357,7 @@ export function AdminOrders() {
                           </p>
                         </div>
                         <span className="text-theme-accent font-mono text-xs font-semibold">
-                          ₹{Math.round(o.total.amount / 100).toLocaleString('en-IN')}
+                          ₹{o.total.amount.toLocaleString('en-IN')}
                         </span>
                       </div>
                       <p className="text-theme-ink/50 mt-1.5 text-[10px] uppercase tracking-wider">
@@ -503,6 +506,14 @@ export function AdminOrders() {
               <span>Shipping</span>
               <span className="font-mono">₹{active.shipping.amount.toLocaleString('en-IN')}</span>
             </div>
+            {(active.discount?.amount ?? 0) > 0 && (
+              <div className="text-theme-ink/65 flex justify-between">
+                <span>Discount</span>
+                <span className="font-mono">
+                  −₹{(active.discount?.amount ?? 0).toLocaleString('en-IN')}
+                </span>
+              </div>
+            )}
             <div className="font-display text-theme-ink mt-2 flex justify-between text-base">
               <span>Total</span>
               <span className="text-theme-accent font-mono">

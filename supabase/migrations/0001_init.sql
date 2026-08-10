@@ -226,7 +226,7 @@ create type coupon_target as enum ('cart', 'collection', 'product', 'hamper');
 create table if not exists public.coupons (
   code          text primary key,         -- case-insensitive: store uppercase
   type          coupon_type not null,
-  value         int not null,             -- percent (1-100) or paise (flat)
+  value         int not null,             -- percent (1-100) or rupees (flat)
   max_discount_cap int,
   target_scope  coupon_target not null default 'cart',
   target_ids    text[],
