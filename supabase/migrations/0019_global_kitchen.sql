@@ -14,6 +14,17 @@
 -- it anyway: once it runs, the DB rows pass the quarantine again and the
 -- owner can edit hero copy from /admin/content as usual.
 
+-- The body's three product names lead with the signature range (Kaju Katli is
+-- the brand mark), not the Hyderabadi specials — Qubani fronted the old line
+-- only by inheritance and the owner flagged it (2026-08-11). Keep in step with
+-- SIGNATURE_ORDER in apps/storefront/src/lib/signature.ts.
+--
+-- primaryCtaLabel is set here too: the live row still carries the retired
+-- 'Shop Hyderabadi specials' label over the '/shop' href that 0012 set. The
+-- client-side quarantine hides the mismatch today, but the moment this
+-- migration makes the row admissible again the old label would resurface —
+-- so the row must leave this migration fully coherent.
+
 begin;
 
 -- 1. site_content — the highest-precedence source.
@@ -21,7 +32,9 @@ update public.site_content
 set data = data
   || jsonb_build_object(
        'eyebrowEn', 'Mithai house',
-       'body',      'Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.'
+       'body',      'Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.',
+       'primaryCtaLabel', 'Shop today''s batch',
+       'primaryCtaHref',  '/shop'
      )
 where key = 'hero';
 
@@ -29,8 +42,10 @@ where key = 'hero';
 update public.theme_presets
 set hero = hero
   || jsonb_build_object(
-       'eyebrow', 'Mithai house',
-       'body',    'Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.'
+       'eyebrow',  'Mithai house',
+       'body',     'Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.',
+       'ctaLabel', 'Shop today''s batch',
+       'ctaHref',  '/shop'
      )
 where id = 'batch-card';
 

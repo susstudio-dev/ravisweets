@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
+import { signatureBestsellers } from '@/lib/signature';
 import { ProductCard } from '@/components/product-card';
 import { ProductGrid } from '@/components/product-grid';
 import { Reveal } from '@/components/motion/reveal';
@@ -37,7 +37,12 @@ export const metadata: Metadata = {
  */
 
 export default function HomePage() {
-  const bestsellers = SAMPLE_PRODUCTS.filter((p) => p.bestseller).slice(0, 8);
+  /*
+   * Signature-ranked, not catalogue-ordered: raw order led with whatever
+   * row the DB inserted first (Qubani), which the owner flagged as the
+   * wrong face for the shop (2026-08-11). See lib/signature.ts.
+   */
+  const bestsellers = signatureBestsellers().slice(0, 8);
 
   return (
     <>

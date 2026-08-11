@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
-import { CATALOGUE, type Product } from '@ravisweets/shared';
+import { type Product } from '@ravisweets/shared';
+import { signatureBestsellers } from '@/lib/signature';
 import { Grain } from '@/components/brand/grain';
 import { HeroAmbient } from '@/components/hero/hero-ambient';
 import { Reveal } from '@/components/motion/reveal';
@@ -165,10 +166,17 @@ export function HeroBatch() {
   const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? 'Mithai house';
   const heroHeadline =
     db?.headline ?? preset?.headline ?? 'Made this morning. Nothing added to make it last.';
+  /*
+   * The three names lead with the signature range (Kaju Katli is the brand
+   * mark itself), not the Hyderabadi specials — Qubani fronted this line by
+   * inheritance from the old locality-led positioning, and the owner flagged
+   * it (2026-08-11). Keep these three in step with SIGNATURE_ORDER in
+   * lib/signature.ts, which picks the festival-card cutouts below.
+   */
   const heroBody =
     db?.body ??
     preset?.body ??
-    `Qubani ka Meetha, Badam ki Jali, Kaju Katli — sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
+    `Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
   const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's batch";
   /*
    * Resolved from the SAME admitted source as the label above. Read
@@ -224,7 +232,7 @@ export function HeroBatch() {
     { value: 'Same-day', label: 'dispatch' },
   ];
 
-  const cutouts = CATALOGUE.filter((p) => p.bestseller).slice(0, 3);
+  const cutouts = signatureBestsellers().slice(0, 3);
 
   return (
     <section
