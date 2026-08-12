@@ -1,6 +1,7 @@
 'use client';
 
 import { getSupabase } from './client';
+import { ensureCustomerProfile } from './customers';
 import type { Order, OrderStatus } from '@/lib/orders/types';
 
 export interface OrderCommitInput {
@@ -71,6 +72,27 @@ export async function commitOrderToSupabase(
   if (!user) return { ok: false, reason: 'no-session' };
   if (user.is_anonymous) return { ok: false, reason: 'anonymous-session' };
 
+  /*
+   * THE CUSTOMERS ROW IS A PRECONDITION, NOT A RACE.
+   *
+   * orders.customer_id FKs public.customers(id) (0001_init.sql:165) and NOTHING
+   * in the database creates that row — there is no trigger on auth.users. The
+   * only writer is ensureCustomerProfile, which SupabaseProvider fires as an
+   * unawaited effect on identity change. So on a buyer's FIRST order the insert
+   * below can reach Postgres before the upsert does, and it fails 23503.
+   *
+   * That used to be masked by accident: checkout resumed the interrupted order
+   * through a setTimeout whose stale closure bounced the buyer back to the
+   * sign-in modal instead of inserting, which bought the upsert seconds. Fixing
+   * that closure (2026-08-11) removed the accident and exposed the race, so the
+   * invariant customers.ts has always documented is now actually enforced here.
+   *
+   * Idempotent (upsert onConflict id, ignoreDuplicates), so the returning-
+   * customer path pays one cheap no-op call for a guarantee on the first-order
+   * path — where getting it wrong loses a real sale silently.
+   */
+  await ensureCustomerProfile();
+
   const { order, discount, primaryCouponCode, redeemedCouponCodes } = input;
 
   const baseRow = {
@@ -106,6 +128,19 @@ export async function commitOrderToSupabase(
   ) {
     console.warn('orders.fees column missing (apply 0018) — committing without itemised fees');
     ({ error } = await supa.from('orders').insert(baseRow));
+  }
+
+  /*
+   * Belt and braces on the FK above. 23503 here can only mean the customers
+   * row still is not visible to this insert; re-run the upsert (awaited, so a
+   * transient failure surfaces) and try once more. One retry, never a loop —
+   * if it fails twice the cause is not timing and the caller must be told.
+   */
+  if (error?.code === '23503') {
+    await ensureCustomerProfile();
+    ({ error } = await supa
+      .from('orders')
+      .insert(feeRows.length > 0 ? { ...baseRow, fees: feeRows } : baseRow));
   }
 
   if (error) return { ok: false, reason: error.message };

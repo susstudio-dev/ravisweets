@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
-import { useMemo, useRef, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { formatMoney } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
@@ -229,6 +229,12 @@ export function CheckoutFlow() {
   const [payError, setPayError] = useState<string | null>(null);
   const [placing, startPlacing] = useTransition();
   const [authOpen, setAuthOpen] = useState(false);
+  /*
+   * Set when the sign-in modal closes having produced a real identity, so the
+   * interrupted order finishes by itself. STATE, not a ref, and consumed by an
+   * effect rather than a timer — see the effect below for why that matters.
+   */
+  const [resumeAfterAuth, setResumeAfterAuth] = useState(false);
   // One order per checkout session — a dismissed payment retries against the
   // SAME order id instead of minting a duplicate row.
   const pendingOrderRef = useRef<Order | null>(null);
@@ -276,6 +282,37 @@ export function CheckoutFlow() {
     setErrors(next);
     return Object.keys(next).length === 0;
   }
+
+  /*
+   * RESUME THE INTERRUPTED ORDER — as an effect, deliberately.
+   *
+   * This used to be `window.setTimeout(placeOrder, 200)` inside the modal's
+   * onSuccess, and it could never work: `placeOrder` is re-created every
+   * render and closes over `user` / `isAnonymous`, so the function handed to
+   * the timer was the one from the render BEFORE sign-in, permanently holding
+   * the anonymous values. 200ms later it re-read its own stale closure, saw
+   * an anonymous user and called setAuthOpen(true) — re-opening the sign-in
+   * modal on a buyer who had just completed it. Not a race the delay could
+   * win: no amount of waiting refreshes a captured closure.
+   *
+   * An effect keyed on the identity itself always runs against the current
+   * render, so it sees the real user. `resumeAfterAuth` is state rather than
+   * a ref for the other ordering too: if the session had already updated by
+   * the time onSuccess fired, a ref would have missed its only chance to be
+   * observed, while flipping state re-runs this effect regardless of which
+   * landed first.
+   */
+  useEffect(() => {
+    if (!resumeAfterAuth) return;
+    // Still anonymous — the identity has not landed in the session yet. Wait
+    // for the next change rather than bouncing the buyer back to the modal.
+    if (authConfigured && (!user || isAnonymous)) return;
+    setResumeAfterAuth(false);
+    placeOrder();
+    // `placeOrder` is intentionally not a dependency: it is re-created every
+    // render, and depending on it would re-run this effect continuously.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeAfterAuth, authConfigured, user, isAnonymous]);
 
   function goNext() {
     if (step === 'address') {
@@ -364,9 +401,31 @@ export function CheckoutFlow() {
             redeemedCouponCodes: appliedCoupons.map((a) => a.coupon.code),
           });
           if (!result.ok) {
-            // Non-fatal: localStorage write succeeded; warn for debugging.
-
+            /*
+             * A FAILED SERVER COMMIT MUST NOT RENDER AS A PLACED ORDER.
+             *
+             * This was a console.warn and nothing else, on the reasoning that
+             * the localStorage write had succeeded so the buyer still had
+             * their copy. But `committedRef` stays false, which makes the
+             * `committedRef.current && payment !== 'cod'` guard below skip
+             * Razorpay ENTIRELY — so control fell through to clear() and the
+             * confirmation route. The buyer got an order-placed page rendered
+             * from their own browser storage, was never charged, and the shop
+             * received nothing: no row, no email, no signal. The most likely
+             * trigger was the customers-FK race on a first order, now fixed in
+             * lib/supabase/orders.ts — but ANY commit failure (RLS, network,
+             * outage) produced the same silent fiction, so the fall-through is
+             * closed here rather than only its most common cause.
+             *
+             * Returning keeps the cart intact and reuses this order's id and
+             * number on retry (pendingOrderRef), so nothing duplicates.
+             */
             console.warn('Supabase order commit failed:', result.reason);
+            setPayError(
+              `We could not record order ${order.number}, so nothing has been charged. ` +
+                'Please try again — if it keeps failing, send us the order number on WhatsApp and we will place it for you.',
+            );
+            return;
           } else {
             committedRef.current = true;
             setLockedOrder(order);
@@ -708,6 +767,27 @@ export function CheckoutFlow() {
                       If online payment is unavailable right now, we&rsquo;ll confirm your order
                       and collect payment on delivery or by phone.
                     </p>
+
+                    {/*
+                      SAY IT BEFORE IT HAPPENS. Pressing "Place order" as a
+                      new customer opens a sign-in modal, and arriving at one
+                      unannounced mid-payment reads as "you were supposed to
+                      have an account" — owner feedback 2026-08-11. Shown only
+                      to buyers who will actually meet it.
+                    */}
+                    {authConfigured && (!user || isAnonymous) && (
+                      <div className="bg-surface rounded-md border border-[color:var(--color-border)] p-4">
+                        <p className="field-label">Next: we confirm your email</p>
+                        <p className="text-theme-ink/70 mt-1.5 text-sm leading-relaxed">
+                          When you place the order we&rsquo;ll email a 6-digit code to{' '}
+                          <span className="field-value text-theme-ink">
+                            {address.email || 'your email address'}
+                          </span>
+                          . Entering it confirms the order — and if this is your first order here,
+                          it creates your account at the same time. There is no password to set.
+                        </p>
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </li>
@@ -834,10 +914,17 @@ export function CheckoutFlow() {
       <AuthModal
         open={authOpen}
         onClose={() => setAuthOpen(false)}
+        /*
+         * The modal is raised here mid-purchase, usually at a buyer's FIRST
+         * order — so it explains that the emailed code creates the account
+         * rather than assuming one exists, and it opens on the code tab with
+         * the address email already filled in (owner feedback 2026-08-11).
+         */
+        intent="checkout"
+        defaultEmail={address.email}
         onSuccess={() => {
           setAuthOpen(false);
-          // Re-trigger placeOrder once the new identity is in session.
-          window.setTimeout(placeOrder, 200);
+          setResumeAfterAuth(true);
         }}
       />
     </section>
