@@ -7,7 +7,7 @@ import { CartProvider } from '@/lib/cart/cart-context';
 import { CouponsProvider } from '@/lib/coupons/context';
 import { SupabaseProvider } from '@/lib/supabase/session-context';
 import { SiteContentProvider } from '@/lib/supabase/site-content-context';
-import { DemoSeed } from '@/components/demo-seed';
+import { DemoPurge } from '@/components/demo-purge';
 import { RealtimeThemeBridge } from '@/components/theme/realtime-theme-bridge';
 import { getVisualVersion } from '@/lib/flags/visual-v2';
 import './globals.css';
@@ -248,7 +248,15 @@ export default function RootLayout({
             <CartProvider>
               <CouponsProvider>
                 <LayoutGroup>
-                  <DemoSeed />
+                  {/*
+                    Was <DemoSeed />, which wrote five invented orders into
+                    every visitor's browser so /account "rendered meaningfully
+                    out of the box". On a live shop that meant real customers
+                    seeing delivered orders they never placed. Removed
+                    2026-08-11; this is the cleanup for browsers that already
+                    took the seed.
+                  */}
+                  <DemoPurge />
                   <RealtimeThemeBridge />
                   {/*
                     PageDriftGarnish is retired with the Rose & Cream world.

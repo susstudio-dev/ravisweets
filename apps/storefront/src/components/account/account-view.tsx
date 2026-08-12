@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, LogIn, LogOut, Package, ShoppingBag, Trash2 } from 'lucide-react';
 import { formatMoney } from '@ravisweets/shared';
 import { getOrders } from '@/lib/orders/store';
-import { resetDemoData } from '@/lib/orders/demo-seed';
 import { listMyOrders } from '@/lib/supabase/orders';
 import { getSupabase } from '@/lib/supabase/client';
 import { useSession } from '@/lib/supabase/session-context';
@@ -51,7 +50,11 @@ export function AccountView() {
         );
         setOrders(merged);
       } else {
-        // Anonymous / unconfigured: show local demo only.
+        /*
+         * Signed out: only what this browser genuinely placed. This used to
+         * be the seeded demo set; now an untouched browser correctly shows
+         * the empty state rather than someone else's invented history.
+         */
         setOrders(getOrders());
       }
     }
@@ -67,11 +70,6 @@ export function AccountView() {
         <div className="bg-theme-ink/10 h-10 w-40 animate-pulse rounded-md" />
       </section>
     );
-  }
-
-  function onResetDemo() {
-    resetDemoData();
-    setOrders(getOrders());
   }
 
   async function deleteAccount() {
@@ -100,13 +98,22 @@ export function AccountView() {
         {!isSignedIn && (
           <Reveal>
             <div className="docket mb-10 flex flex-col items-start gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-7">
+              {/*
+                The old banner read "Sign in to see your REAL orders" over
+                "this page shows demo orders so you can preview the layout" —
+                which assumed an account, admitted the records above were
+                invented, and said "demo" to a customer. Both the fiction and
+                the framing are gone: this speaks to someone who may never
+                have ordered here, in the same terms as the checkout modal.
+              */}
               <div>
                 <p className="font-display text-theme-ink text-xl md:text-2xl">
-                  Sign in to see your real orders.
+                  Your orders live here.
                 </p>
                 <p className="text-theme-ink/65 mt-1 text-sm">
-                  Until you sign in, this page shows demo orders so you can preview the layout.
-                  {authConfigured ? '' : ' (Connect Supabase in .env.local to enable real auth.)'}
+                  Ordered from us before? Sign in and we&rsquo;ll bring up your orders. First time
+                  here? You don&rsquo;t need an account — we make one when you place your first
+                  order, using a code we email you.
                 </p>
               </div>
               <button type="button" onClick={() => setAuthOpen(true)} className="stamp shrink-0">
@@ -117,16 +124,11 @@ export function AccountView() {
           </Reveal>
         )}
 
+        {/* "Reset demo data" lived here. It reseeded the five fabricated
+            orders — a developer control on a customer's account page. */}
         <Reveal delay={0.05}>
           <div className="docket-head">
             <h1 className="font-display text-display-md text-theme-ink">Orders</h1>
-            <button
-              type="button"
-              onClick={onResetDemo}
-              className="field-label hover:text-theme-accent py-2 transition-colors"
-            >
-              Reset demo data
-            </button>
           </div>
         </Reveal>
 
