@@ -32,19 +32,25 @@ export function HeroDusk() {
   const { hero } = useSiteContent();
   const { active: theme } = useActiveTheme();
 
+  /*
+   * NOT MOUNTED ANYWHERE (checked 2026-08-12 — nothing imports HeroDusk;
+   * app/page.tsx renders HeroBatch). Same reasoning as hero-still.tsx: the
+   * defaults are kept current because a dead file is where retired copy comes
+   * back from. This one held the most of it — a Telugu eyebrow naming the town,
+   * the locality headline, and the Hyderabadi CTA. If neither dusk hero is
+   * coming back, delete both files and shop-scene.tsx with them.
+   */
   const heroEyebrowIndic =
-    hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'ఖమ్మం';
-  const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Khammam · Telangana';
+    hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'రవి స్వీట్స్';
+  const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Mithai house';
   const heroHeadline =
-    hero?.headline ?? theme?.hero.headline ?? 'The sweetness of Telangana, slow-cooked in Khammam.';
+    hero?.headline ?? theme?.hero.headline ?? 'Made this morning. Nothing added to make it last.';
   const heroBody =
     hero?.body ??
     theme?.hero.body ??
-    'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
-  const primaryCtaLabel =
-    hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? 'Shop Hyderabadi specials';
-  const primaryCtaHref =
-    hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/category/hyderabadi-specials';
+    'Kaju Katli, Gulab Jamun, Motichoor Ladoo — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
+  const primaryCtaLabel = hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? "Shop today's sweets";
+  const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/shop';
   const secondaryCtaLabel = hero?.secondaryCtaLabel ?? 'Corporate gifting';
   const secondaryCtaHref = hero?.secondaryCtaHref ?? '/corporate';
 

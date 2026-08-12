@@ -179,8 +179,8 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
       {
         icon: Gift,
         title: 'For family',
-        body: 'The full Hyderabadi spread in a single box — hand-shipped across India.',
-        href: '/category/hyderabadi-specials',
+        body: 'The full sweet spread in a single box — hand-shipped across India.',
+        href: '/category/sweets',
       },
       {
         icon: Handshake,
@@ -643,7 +643,7 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
         <Reveal>
           <div className="docket-head">
             <h2 id="hampers-heading" className="font-display text-display-md">
-              What our kitchen recommends for {f.title}.
+              What we recommend for {f.title}.
             </h2>
           </div>
         </Reveal>

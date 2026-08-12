@@ -11,8 +11,8 @@ import { Stagger } from '@/components/motion/stagger';
  * /send-sweets-to-india — the diaspora dispatch page.
  *
  * The "sent from home" story lives here. An NRI buyer pays from abroad with
- * the card in their pocket; the box itself never leaves India — made in the
- * family kitchen the morning it ships, delivered to a doorstep at home. The
+ * the card in their pocket; the box itself never leaves India — made the
+ * morning it ships, delivered to a doorstep at home. The
  * page states that arrangement the way this world states everything: as a
  * dispatch docket, ruled rows, recorded values. No countdowns, no invented
  * couriers, no guarantees the shipping policy does not already make.
@@ -82,7 +82,7 @@ const STEPS: { no: string; title: string; body: string }[] = [
     no: '02',
     title: 'Made the morning it ships',
     body:
-      'Your order joins that morning’s batch in the family kitchen. No preservatives — shelf life is marked plainly on every product.',
+      'Your order is made the morning it ships. No preservatives — shelf life is marked plainly on every product.',
   },
   {
     no: '03',
@@ -107,8 +107,8 @@ export default function SendSweetsToIndiaPage() {
               </h1>
               <p className="text-theme-ink/80 mt-5 max-w-[52ch] leading-relaxed">
                 Order from wherever you are, pay in INR with the card in your pocket, and a box
-                is made fresh and dispatched from our family kitchen in Khammam, Telangana to
-                any address in India. You send from abroad; the box travels at home.
+                is made fresh and dispatched from Khammam, Telangana to any address in India.
+                You send from abroad; the box travels at home.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link href="/shop" className="stamp">
@@ -397,9 +397,9 @@ export default function SendSweetsToIndiaPage() {
                   The counter is open, wherever you are.
                 </h2>
                 <p className="text-text-muted mt-4 text-sm leading-relaxed md:text-base">
-                  One kitchen, the same family, since 1983 — now taking orders from abroad.
-                  Sending to a whole office instead of one doorstep? Corporate gifting covers
-                  MOQ pricing and multi-address dispatch.
+                  The same recipes since 1983 — now taking orders from abroad. Sending to a whole
+                  office instead of one doorstep? Corporate gifting covers MOQ pricing and
+                  multi-address dispatch.
                 </p>
               </div>
               <div className="flex flex-col items-start gap-3 md:shrink-0">

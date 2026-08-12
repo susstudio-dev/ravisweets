@@ -35,8 +35,16 @@ interface RailCategory {
   palette: keyof typeof PRODUCT_PALETTES;
 }
 
+/*
+ * "Hyderabadi specials" led this rail until 2026-08-12, when the owner pulled
+ * it out of the navigation. Sweet bites takes the slot and the freed diamond
+ * glyph: at twelve products it is the largest category that was missing from
+ * the rail entirely, where Hyderabadi specials had five. The rail stays EIGHT
+ * tiles — the glyph set below is written for eight and the row is measured for
+ * it. The retired category still exists and is still reachable from /shop.
+ */
 const CATEGORIES: RailCategory[] = [
-  { label: 'Hyderabadi specials', href: '/category/hyderabadi-specials', glyph: 'diamond', palette: 'gulkand' },
+  { label: 'Sweet bites', href: '/category/sweet-bites', glyph: 'diamond', palette: 'gulkand' },
   { label: 'Sweets', href: '/category/sweets', glyph: 'laddoo', palette: 'house' },
   { label: 'Namkeens', href: '/category/namkeens', glyph: 'strands', palette: 'kesar' },
   { label: 'Savouries', href: '/category/savouries', glyph: 'coil', palette: 'kesar' },

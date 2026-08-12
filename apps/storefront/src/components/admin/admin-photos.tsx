@@ -124,14 +124,18 @@ export function AdminPhotos() {
         orientation="The three little photos on the home-page card come from your bestseller products — edit them under Products."
       />
 
-      <Section title="About page" orientation="The two photo dockets on the About page.">
+      <Section title="About page" orientation="The photo dockets on the About page.">
         <div className="grid gap-5 lg:grid-cols-2">
-          {field('about.portrait', 'Founder portrait', {
+          {field('about.portrait', 'Top plate', {
             hint: 'Top docket on the About page',
             kind: 'general',
           })}
-          {field('about.kitchen', 'Kitchen photo', {
+          {field('about.kitchen', 'Second plate', {
             hint: 'Second docket, beside the process story',
+            kind: 'general',
+          })}
+          {field('about.founder', 'Founder photo', {
+            hint: 'His photograph. The founder section stays hidden on the site until this or his story is filled in — under Content → Founder.',
             kind: 'general',
           })}
         </div>

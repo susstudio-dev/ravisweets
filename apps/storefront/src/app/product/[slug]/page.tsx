@@ -57,7 +57,7 @@ const CATEGORY_TITLE_HOOK: Record<string, string> = {
 /** Reads after the word "More" in the related-products heading. */
 const CATEGORY_H2_LABEL: Record<string, string> = {
   'hyderabadi-specials': 'Hyderabadi specials',
-  sweets: 'sweets from the kitchen',
+  sweets: 'sweets from the counter',
   'sweet-bites': 'Sweet Bites flavours',
   'healthy-sweets': 'healthy laddus',
   namkeens: 'namkeens',
@@ -89,7 +89,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = seoTitle(name, descriptor || CATEGORY_TITLE_HOOK[product.category] || '');
   const description = seoDescription(
     product.description,
-    'Made fresh in our Khammam kitchen, without preservatives.',
+    'Made fresh to order, without preservatives.',
     'Delivered across India.',
   );
   // Only a photo that resolves may become an og:image — a 404 there produces a
@@ -304,7 +304,7 @@ export default async function ProductPage({ params }: PageProps) {
                 id="related-heading"
                 className="font-display text-display-md text-theme-ink leading-[1.05]"
               >
-                More {CATEGORY_H2_LABEL[product.category] ?? 'from the kitchen'}, like{' '}
+                More {CATEGORY_H2_LABEL[product.category] ?? 'from the counter'}, like{' '}
                 {product.title}
               </h2>
             </div>

@@ -27,11 +27,11 @@ export const metadata: Metadata = {
  * The homepage, in the Sweet Counter world (warm pivot, owner-directed
  * 2026-08-10). One story, seven beats, product-first:
  * the card (what was made today) → the rail (every aisle, one tap) →
- * the counter (what people take home) → the kitchen rule (four badges,
+ * the counter (what people take home) → the house rules (four badges,
  * three seconds) → festival next → what customers say (real reviews only,
  * absent until they exist) → corporate dispatch.
  *
- * The verbose spec <dl> that carried the kitchen rule moved into
+ * The verbose spec <dl> that carried those rules moved into
  * sections/trust-strip.tsx, compressed to the same claims at a glance —
  * "lots to see, little to read" is the pivot's page rule.
  */
@@ -84,7 +84,7 @@ export default function HomePage() {
         </Stagger>
       </section>
 
-      {/* ── THE KITCHEN RULE ────────────────────────────────────────── */}
+      {/* ── THE HOUSE RULES ─────────────────────────────────────────── */}
       <TrustStrip />
 
       {/* ── FESTIVAL NEXT ───────────────────────────────────────────── */}

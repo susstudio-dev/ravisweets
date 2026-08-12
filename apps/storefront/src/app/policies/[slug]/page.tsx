@@ -66,7 +66,7 @@ const POLICIES: Record<Slug, Policy> = {
         body: [
           'All product prices are in INR and include GST. International pricing is shown separately in the relevant currency.',
           'We reserve the right to cancel an order if a product is mispriced, out of stock, or if we cannot verify the address — we will refund any payment in full within the gateway’s standard window.',
-          'A box leaves our kitchen the day it ships. If the perishable is damaged by a courier delay, please reach out within 48 hours of delivery.',
+          'A box leaves us the day it ships. If the perishable is damaged by a courier delay, please reach out within 48 hours of delivery.',
         ],
       },
       {
@@ -133,7 +133,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'Why we cannot take food back',
         body: [
-          'Once a box of sweets has left our control we have no way to verify how it was stored, and nothing we make contains a preservative to make that guess safe. Reselling returned food would be the one thing genuinely incompatible with how this kitchen works, so we refund or re-ship instead of asking you to send anything back.',
+          'Once a box of sweets has left our control we have no way to verify how it was stored, and nothing we make contains a preservative to make that guess safe. Reselling returned food would be the one thing genuinely incompatible with how we work, so we refund or re-ship instead of asking you to send anything back.',
           'In practice this is the better deal for you: there is no return shipment to arrange, no packaging to keep, and no wait for us to receive the box before the refund is raised.',
         ],
       },
@@ -151,7 +151,7 @@ const POLICIES: Record<Slug, Policy> = {
     title: 'Shipping & delivery',
     eyebrow: 'How your box gets to you',
     intro:
-      'We ship from our Khammam kitchen the morning after your order is placed. Perishable items ship in temperature-controlled packaging with gel packs.',
+      'We ship the morning after your order is placed. Perishable items ship in temperature-controlled packaging with gel packs.',
     sections: [
       {
         heading: 'Coverage',
@@ -188,7 +188,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'Tracking and delivery attempts',
         body: [
-          'A tracking link goes out by email and SMS when the box leaves the kitchen. Corporate orders shipping to many addresses get per-recipient tracking rather than a single consignment number.',
+          'A tracking link goes out by email and SMS when the box is dispatched. Corporate orders shipping to many addresses get per-recipient tracking rather than a single consignment number.',
           'Couriers make up to three delivery attempts. Because these are perishables, an undelivered box cannot be re-dispatched after it is returned to us — so please make sure someone can receive it, particularly for a gift going to an office.',
         ],
       },
@@ -204,7 +204,7 @@ const POLICIES: Record<Slug, Policy> = {
   },
   cancellation: {
     title: 'Cancellation',
-    eyebrow: 'Before your box leaves the kitchen',
+    eyebrow: 'Before your box is dispatched',
     intro:
       'You can cancel an order up until it enters packing. After that, we’ve already committed the ingredients and a cancellation is treated as a return.',
     sections: [

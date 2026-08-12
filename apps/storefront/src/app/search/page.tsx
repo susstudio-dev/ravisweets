@@ -6,7 +6,7 @@ import { Reveal } from '@/components/motion/reveal';
 export const metadata: Metadata = {
   title: 'Search the Ravi Sweets catalogue',
   description:
-    'Search Ravi Sweets by name, ingredient or occasion — mithai, Hyderabadi specials, namkeens, pickles, podis and gift hampers.',
+    'Search Ravi Sweets by name, ingredient or occasion — mithai, sweet bites, namkeens, pickles, podis and gift hampers.',
   /*
    * `?q=` produces an unbounded set of near-identical result pages, which is
    * the classic internal-search crawl trap. The canonical is the bare path and

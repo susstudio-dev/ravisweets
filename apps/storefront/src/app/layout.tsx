@@ -160,6 +160,11 @@ export const metadata: Metadata = {
    * "Family kitchen" retired from the brand voice 2026-08-11 (owner: global
    * brand, large kitchen — the cottage register undersold it). Heritage
    * stays as the year; scale claims stay out entirely.
+   *
+   * Extended 2026-08-12: "batch" and the standalone "our kitchen(s)" went the
+   * same way, sitewide. These three strings were already clean and are the
+   * pattern to copy — they say WHAT is made and WHEN, never how small the
+   * operation is. The DB side is 0020_global_kitchen_voice.sql.
    */
   description:
     'Hand-made Indian sweets, namkeens and gift hampers, made fresh since 1983. No preservatives, delivered fresh across India.',

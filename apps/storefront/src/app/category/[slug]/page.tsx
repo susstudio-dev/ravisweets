@@ -29,9 +29,15 @@ interface PageProps {
  * exist in the HTML rather than only after hydration.
  *
  * Every claim below is already made elsewhere on the site: no preservatives,
- * same-day dispatch from the Khammam kitchen, delivery within India. Nothing
- * here asserts a certification — the licence is disclosed as pending in the
- * footer and this copy does not contradict it.
+ * same-day dispatch, delivery within India. Nothing here asserts a
+ * certification — the licence is disclosed as pending in the footer and this
+ * copy does not contradict it.
+ *
+ * VOICE (owner, 2026-08-12): no "small batch", no "family kitchen", no "our
+ * kitchen(s)". The craft claims stay — hand-shaped, fried at temperature,
+ * ground fresh — because those are about METHOD. What went is the language
+ * that sold SMALLNESS. If you are adding a category below, describe the
+ * technique, not the size of the operation.
  */
 const CATEGORY_META: Record<
   CategorySlug,
@@ -51,7 +57,7 @@ const CATEGORY_META: Record<
     eyebrow: 'Deccan classics',
     body: 'Hyderabadi sweets — Qubani ka Meetha, Double ka Meetha, Badam ki Jali — slow-cooked the old way, the morning they ship.',
     method:
-      'The Nizami sweets are the slowest things we make. Qubani ka Meetha is dried apricots reduced in their own syrup over about four hours, with no thickener and no added colour; Double ka Meetha is bread fried in ghee and then soaked, not sprayed. The recipes came down through the Deccan kitchens rather than out of a manual, and the only way to keep them tasting right is to make them in small quantity and dispatch them the same day.',
+      'The Nizami sweets are the slowest things we make. Qubani ka Meetha is dried apricots reduced in their own syrup over about four hours, with no thickener and no added colour; Double ka Meetha is bread fried in ghee and then soaked, not sprayed. The recipes came down through the Deccan tradition rather than out of a manual, and the only way to keep them tasting right is to make them to order and dispatch them the same day.',
     keeping:
       'This range is milk- and cream-led, so it is the shortest-lived on the site — most of it wants a refrigerator and a week at the outside. It travels in temperature-controlled packaging with gel packs. Serve the apricot and bread sweets cold, the way Hyderabad prefers them; the almond work is best at room temperature.',
   },
@@ -59,7 +65,7 @@ const CATEGORY_META: Record<
     title: 'Sweets',
     titleHook: 'Buy Fresh Indian Mithai Online',
     eyebrow: 'Fresh daily',
-    body: 'Kaju Katli, Gulab Jamun, seasonal ladoos — made fresh in small batches with no preservatives.',
+    body: 'Kaju Katli, Gulab Jamun, seasonal ladoos — made fresh every morning with no preservatives.',
     method:
       'Everything in the mithai range is cooked the morning it is dispatched. The katli is rolled and cut into diamonds by hand, which is why no two pieces weigh exactly the same; the ladoos are bound while the mixture is still warm, because a cooled mixture will not hold. We use ghee rather than vanaspati and cane sugar rather than glucose syrup, and there is no preservative in any of it — which is the whole reason the boxes are made to order rather than kept on a shelf.',
     keeping:
@@ -69,9 +75,9 @@ const CATEGORY_META: Record<
     title: 'Namkeens',
     titleHook: 'Buy Crisp Indian Namkeen Online',
     eyebrow: 'Chai-time favourites',
-    body: 'Crunchy, spiced, and stubbornly moreish. Fried in small batches and sealed the same day.',
+    body: 'Crunchy, spiced, and stubbornly moreish. Fried to order and sealed the same day.',
     method:
-      'Namkeen is a frying problem before it is a spice problem. Ours is fried in small batches so the oil temperature never falls far enough to make the mixture greasy, drained hot, and sealed the same day it is made — an open bag of mixture is stale within hours in Telangana humidity, and no amount of masala hides it. The spicing is done after the fry, off the heat, so the chilli stays bright rather than scorched.',
+      'Namkeen is a frying problem before it is a spice problem. Ours goes into the oil in loads small enough that the temperature never falls far enough to make the mixture greasy, drained hot, and sealed the same day it is made — an open bag of mixture is stale within hours in Telangana humidity, and no amount of masala hides it. The spicing is done after the fry, off the heat, so the chilli stays bright rather than scorched.',
     keeping:
       'Keep the bag closed and the mixture stays crisp for four to six weeks. Once opened, decant into an airtight tin — the pack is a delivery container, not a storage one. If a bag has gone soft in the monsoon, five minutes in a low oven brings it back.',
   },
@@ -149,7 +155,7 @@ const CATEGORY_META: Record<
     title: 'Podis & Powders',
     titleHook: 'Fresh-ground Telugu Podi',
     eyebrow: 'South Indian rice mixes',
-    body: 'Karam podi, kandi podi, sambar podi — fresh-ground in small batches so the aroma is still alive when the bag opens.',
+    body: 'Karam podi, kandi podi, sambar podi — ground fresh so the aroma is still alive when the bag opens.',
     method:
       'Podi is entirely about how recently it was ground. The dals and chillies are dry-roasted separately, because they do not reach their point at the same moment, then cooled and ground in small quantity. Ground warm, a podi cakes and turns bitter within weeks; ground cool and sealed the same day, it still smells like the roasting pan when the bag opens.',
     keeping:
@@ -205,7 +211,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = seoTitle(meta.title, meta.titleHook);
   const description = seoDescription(
     meta.body,
-    'Made fresh in our kitchens since 1983.',
+    'Made fresh since 1983.',
     'Delivered across India.',
   );
 
@@ -264,9 +270,11 @@ export default async function CategoryPage({ params }: PageProps) {
             <p className="text-text-muted mt-4 text-sm leading-relaxed">{meta.body}</p>
           </Reveal>
 
+          {/* The category's UNFILTERED set — the panel measures every chip's
+              count against it, so it must not receive the filtered list. */}
           <div className="mt-6">
             <Suspense fallback={null}>
-              <CategoryFilters categorySlug={slug as CategorySlug} />
+              <CategoryFilters products={products} />
             </Suspense>
           </div>
         </aside>

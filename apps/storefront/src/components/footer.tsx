@@ -6,7 +6,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'Sweets', href: '/category/sweets' },
       { label: 'Namkeens', href: '/category/namkeens' },
-      { label: 'Hyderabadi Specials', href: '/category/hyderabadi-specials' },
+      { label: 'Healthy Sweets', href: '/category/healthy-sweets' },
       { label: 'Gift Hampers', href: '/category/gift-hampers' },
       { label: 'Send Sweets to India', href: '/send-sweets-to-india' },
     ],
@@ -52,9 +52,16 @@ export function Footer() {
               <p className="font-display text-theme-ink text-xl">Ravi Sweets</p>
             </div>
             {/*
-              The footer is the correct home for ONE origin mention — this is
-              the NAP zone, and it is where the locality now lives in the brand
-              voice instead of the hero.
+              NO LOCALITY HERE. This used to be the site's one deliberate origin
+              mention — the NAP zone, where the towns lived after they came off
+              the hero. The owner removed them on 2026-08-12: a global brand does
+              not sign every page with the two towns it happens to cook in.
+
+              Local intent has not been dropped, it has been relocated to the one
+              page that can actually convert it: /stores still carries Khammam and
+              Kondapur in its title, its description and — the part that actually
+              ranks — the LocalBusiness @graph. Do not "restore" the towns here
+              thinking the site lost its local SEO; check app/stores/page.tsx.
 
               "FSSAI-certified" is deliberately gone: it contradicted the
               jurisdiction line ~30 lines below on this same component, which
@@ -62,8 +69,8 @@ export function Footer() {
               PRODUCT.md actually substantiates — composition transparency.
             */}
             <p className="text-theme-ink/70 mt-3 text-sm">
-              Hand-made sweets from our Hyderabad &amp; Khammam kitchens, since 1983. No
-              preservatives. Full ingredient and allergen panel on every product.
+              Hand-made sweets, namkeens and gift hampers since 1983. No preservatives. Full
+              ingredient and allergen panel on every product.
             </p>
             {/* WhatsApp-first contact (brand commitment) — same numbers as the
                 mobile drawer, so the friendly exit exists at every width. */}

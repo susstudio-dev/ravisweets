@@ -15,7 +15,15 @@ import { z } from 'zod';
 export type ImageRef = { assetId: string; alt: string } | null;
 
 export interface PageMedia {
-  about: { portrait: ImageRef; kitchen: ImageRef };
+  /**
+   * `founder` is the grandfather's photograph (added 2026-08-12). It is
+   * separate from `portrait` on purpose: portrait is the About hero plate,
+   * which today holds a product specimen, while this one is a person. The
+   * About page renders the founder section ONLY when this slot or the
+   * `about_founder` copy is filled, so an empty slot ships nothing rather
+   * than a dashed placeholder where a face should be.
+   */
+  about: { portrait: ImageRef; kitchen: ImageRef; founder: ImageRef };
   stores: { storefront: ImageRef };
   corporate: { essence: ImageRef; premium: ImageRef; grande: ImageRef };
   /** Keyed by festival slug (see FESTIVAL_SLUGS). */
@@ -46,9 +54,9 @@ const imageRefSchema = z
 
 const pageMediaSchema = z.object({
   about: z
-    .object({ portrait: imageRefSchema, kitchen: imageRefSchema })
-    .catch({ portrait: null, kitchen: null })
-    .default({ portrait: null, kitchen: null }),
+    .object({ portrait: imageRefSchema, kitchen: imageRefSchema, founder: imageRefSchema })
+    .catch({ portrait: null, kitchen: null, founder: null })
+    .default({ portrait: null, kitchen: null, founder: null }),
   stores: z
     .object({ storefront: imageRefSchema })
     .catch({ storefront: null })
@@ -62,7 +70,7 @@ const pageMediaSchema = z.object({
 });
 
 export const EMPTY_PAGE_MEDIA: PageMedia = {
-  about: { portrait: null, kitchen: null },
+  about: { portrait: null, kitchen: null, founder: null },
   stores: { storefront: null },
   corporate: { essence: null, premium: null, grande: null },
   festivals: {},
@@ -79,6 +87,7 @@ export function parsePageMedia(raw: unknown): PageMedia {
 export type SlotPath =
   | 'about.portrait'
   | 'about.kitchen'
+  | 'about.founder'
   | 'stores.storefront'
   | 'corporate.essence'
   | 'corporate.premium'
@@ -98,6 +107,8 @@ export function getSlot(media: PageMedia, slot: SlotPath): ImageRef {
       return media.about.portrait;
     case 'about.kitchen':
       return media.about.kitchen;
+    case 'about.founder':
+      return media.about.founder;
     case 'stores.storefront':
       return media.stores.storefront;
     case 'corporate.essence':
@@ -124,6 +135,8 @@ export function setSlot(media: PageMedia, slot: SlotPath, ref: ImageRef): PageMe
       return { ...media, about: { ...media.about, portrait: ref } };
     case 'about.kitchen':
       return { ...media, about: { ...media.about, kitchen: ref } };
+    case 'about.founder':
+      return { ...media, about: { ...media.about, founder: ref } };
     case 'stores.storefront':
       return { ...media, stores: { ...media.stores, storefront: ref } };
     case 'corporate.essence':

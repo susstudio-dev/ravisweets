@@ -28,12 +28,18 @@ const FALLBACK_PRESETS: ThemePreset[] = [
       ink: '#161C24',
       grainOpacity: 0.04,
     },
+    /*
+     * Kept in step with 0020_global_kitchen_voice.sql and the hero-batch.tsx
+     * defaults. This is the CLIENT-SIDE FALLBACK preset list — it paints when
+     * theme_presets has not loaded — so retired copy here reaches the screen
+     * for a frame even when the database is correct.
+     */
     hero: {
-      eyebrow: 'Khammam · Telangana',
-      headline: 'The sweetness of Telangana, slow-cooked in Khammam.',
-      body: 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
-      ctaLabel: "Shop today's batch",
-      ctaHref: '/category/hyderabadi-specials',
+      eyebrow: 'Mithai house',
+      headline: 'Made this morning. Nothing added to make it last.',
+      body: 'Kaju Katli, Gulab Jamun, Motichoor Ladoo — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
+      ctaLabel: "Shop today's sweets",
+      ctaHref: '/shop',
       imageUrl: '',
     },
     bannerText: null,

@@ -50,12 +50,12 @@ export function CartView() {
         />
         <h1 className="font-display text-display-md text-theme-ink">Your cart is empty.</h1>
         <p className="text-theme-ink/70 max-w-lg">
-          Nothing in the box yet. Browse our Hyderabadi specials or a curated gift hamper — every
-          sweet is fresh today.
+          Nothing in the box yet. Browse the counter or a curated gift hamper — every sweet is
+          fresh today.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/category/hyderabadi-specials" className="stamp">
-            Shop Hyderabadi specials
+          <Link href="/shop" className="stamp">
+            Shop the catalogue
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link href="/" className="stamp stamp--ghost">

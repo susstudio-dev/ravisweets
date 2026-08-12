@@ -9,7 +9,7 @@ import { Reveal } from '@/components/motion/reveal';
 export const metadata: Metadata = {
   title: 'Shop All Sweets, Namkeens & Hampers',
   description:
-    'The whole Ravi Sweets catalogue — mithai, Hyderabadi specials, namkeens, pickles, podis and gift hampers. Filter by category or search.',
+    'The whole Ravi Sweets catalogue — mithai, sweet bites, namkeens, pickles, podis and gift hampers. Filter by category or search.',
   alternates: { canonical: '/shop' },
 };
 

@@ -26,15 +26,21 @@ export const metadata: Metadata = {
   title: 'Sweet Shop in Khammam & Hyderabad (Kondapur)',
   // Was 181 characters. The locality terms that carry the local-pack intent —
   // Khammam, Kondapur, Hyderabad — all survive inside the 155-char cut.
+  //
+  // THE COUNTS CAME OUT (owner, 2026-08-12), here and in the page body. They
+  // were never quite true: the copy said three counters while the page renders
+  // two, because the second Khammam branch has no confirmed street address yet
+  // (see the commented-out STORES entry below). Naming the towns without
+  // counting the doors is both honest and better local-pack copy.
   description:
-    'Visit Ravi Sweets — two counters in Khammam and one in Kondapur, Hyderabad. Telangana sweets and namkeens, made fresh daily since 1983.',
+    'Visit Ravi Sweets in Khammam and in Kondapur, Hyderabad. Telangana sweets and namkeens, made fresh daily since 1983.',
   alternates: {
     canonical: '/stores',
   },
   openGraph: {
     title: 'Ravi Sweets · Khammam since 1983 + Hyderabad branch',
     description:
-      'Two Khammam stores plus a Kondapur (Hyderabad) branch. Authentic Telangana sweets, fresh daily since 1983.',
+      'Khammam stores plus a Kondapur (Hyderabad) branch. Authentic Telangana sweets, fresh daily since 1983.',
     locale: 'en_IN',
   },
 };
@@ -55,7 +61,7 @@ interface Store {
 const STORES: Store[] = [
   {
     name: 'Ravi Sweets · Khammam Flagship',
-    tagline: 'Where it began — same kitchen since 1983.',
+    tagline: 'Where it began, in 1983.',
     address: 'Door No 10-1-25, Near Mamillagudem, Beside Over Bridge',
     city: 'Khammam',
     state: 'Telangana',
@@ -220,7 +226,7 @@ const CONTACT = [
     label: 'Instagram',
     value: '@ravi__sweets',
     href: 'https://www.instagram.com/ravi__sweets/',
-    note: 'Kitchen stories and seasonal runs',
+    note: 'Behind the counter, and seasonal runs',
   },
 ];
 
@@ -243,7 +249,7 @@ export default function StoresPage() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(LOCAL_BUSINESS_JSONLD) }}
       />
-      {/* Hero — the kitchen's own location sheet, not a lookbook spread. */}
+      {/* Hero — a location sheet, not a lookbook spread. */}
       <section className="border-b border-[color:var(--color-border)]">
         <div className="container-site section-y grid gap-10 md:grid-cols-[1.1fr_1fr] md:items-center">
           <div>
@@ -254,10 +260,9 @@ export default function StoresPage() {
             </Reveal>
             <Reveal delay={0.1}>
               <p className="text-theme-ink/75 mt-6 max-w-xl text-lg leading-relaxed">
-                Three counters, one kitchen. The original Khammam shop has been near Mamillagudem
-                since 1983, with a second Khammam branch nearby. The Hyderabad branch sits in
-                Kondapur, stocked from the same kitchen each morning. Walk in, or call ahead to
-                reserve a seasonal hamper.
+                The original Khammam shop has been near Mamillagudem since 1983, with a second
+                Khammam branch nearby. The Hyderabad branch sits in Kondapur, restocked every
+                morning. Walk in, or call ahead to reserve a seasonal hamper.
               </p>
             </Reveal>
           </div>
@@ -266,23 +271,28 @@ export default function StoresPage() {
               <SlotImage
                 slot="stores.storefront"
                 fallbackUrl={STORE_IMAGE}
-                fallbackAlt="Hand-packed Diwali hamper assortment from the Khammam kitchen"
+                fallbackAlt="Hand-packed Diwali hamper assortment on the counter"
                 sizes="(min-width: 768px) 460px, 90vw"
                 objectFit="contain"
                 className="bg-theme-glow/20 aspect-[4/3] border-b border-[color:var(--color-border)]"
               />
+              {/*
+                The COUNTERS row is gone with the "three counters, one kitchen"
+                line above it (owner, 2026-08-12). It read 3 while this page has
+                only ever rendered 2 store dockets — the second Khammam branch is
+                commented out below pending a confirmed street address — so the
+                sheet was contradicting itself in the same viewport. Cities is
+                the claim that is true either way and does not go stale when the
+                third address lands.
+              */}
               <dl className="p-5">
                 <div className="field-row">
-                  <dt className="field-label">Kitchen</dt>
-                  <dd className="field-value text-theme-ink text-sm">KHAMMAM · TELANGANA</dd>
+                  <dt className="field-label">Cities</dt>
+                  <dd className="field-value text-theme-ink text-sm">KHAMMAM · HYDERABAD</dd>
                 </div>
                 <div className="field-row">
                   <dt className="field-label">Est.</dt>
                   <dd className="field-value text-theme-ink text-sm font-bold">1983</dd>
-                </div>
-                <div className="field-row">
-                  <dt className="field-label">Counters</dt>
-                  <dd className="field-value text-theme-ink text-sm">3</dd>
                 </div>
               </dl>
             </div>
@@ -298,7 +308,7 @@ export default function StoresPage() {
               id="stores-heading"
               className="font-display text-display-md text-theme-ink"
             >
-              Three counters, one kitchen.
+              Where to find us.
             </h2>
           </div>
         </Reveal>

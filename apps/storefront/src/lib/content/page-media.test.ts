@@ -22,6 +22,7 @@ describe('parsePageMedia', () => {
     const parsed = parsePageMedia({ about: { portrait: { assetId: 'a', alt: 'x' } } });
     expect(parsed.about.portrait).toEqual({ assetId: 'a', alt: 'x' });
     expect(parsed.about.kitchen).toBeNull();
+    expect(parsed.about.founder).toBeNull();
     expect(parsed.stores.storefront).toBeNull();
     expect(parsed.corporate).toEqual({ essence: null, premium: null, grande: null });
     expect(parsed.festivals).toEqual({});

@@ -22,6 +22,7 @@ import { listMediaAssets, type MediaAsset } from '@/lib/media/assets';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 import { DEFAULT_CHARGES, loadAllSiteContent, parseCharges } from './site-content';
 import type {
+  AboutFounder,
   ActiveFestival,
   EditorialBandHeading,
   FooterContent,
@@ -33,6 +34,8 @@ import type {
 
 interface SiteContentValue {
   hero: HeroContent | null;
+  /** The grandfather section on /about — null until the owner fills it in. */
+  aboutFounder: AboutFounder | null;
   signatureMoment: SignatureMomentContent | null;
   editorialBandHeading: EditorialBandHeading | null;
   footer: FooterContent | null;
@@ -52,6 +55,7 @@ interface SiteContentValue {
 
 const Ctx = createContext<SiteContentValue>({
   hero: null,
+  aboutFounder: null,
   signatureMoment: null,
   editorialBandHeading: null,
   footer: null,
@@ -84,6 +88,7 @@ type ContentState = Omit<
 export function SiteContentProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ContentState>({
     hero: null,
+    aboutFounder: null,
     signatureMoment: null,
     editorialBandHeading: null,
     footer: null,
@@ -108,6 +113,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       setState({
         hero: all.hero ?? null,
+        aboutFounder: all.about_founder ?? null,
         signatureMoment: all.signature_moment ?? null,
         editorialBandHeading: all.editorial_band_heading ?? null,
         footer: all.footer ?? null,

@@ -23,12 +23,15 @@ interface NavSection {
 const SHOP_SECTIONS: NavSection[] = [
   {
     heading: 'Sweets',
+    /*
+     * "Hyderabadi specials" led this column until 2026-08-12, when the owner
+     * pulled it out of the navigation. The CATEGORY IS NOT RETIRED — its five
+     * products and /category/hyderabadi-specials still exist and still rank —
+     * it is only de-emphasised, so nothing here should 404 and no redirect is
+     * needed. It was replaced rather than simply deleted because this menu is a
+     * three-column grid and a 3/4/4 column reads as a mistake.
+     */
     items: [
-      {
-        label: 'Hyderabadi specials',
-        href: '/category/hyderabadi-specials',
-        tagline: 'Qubani · Double ka Meetha · Badam ki Jali',
-      },
       {
         label: 'Sweets',
         href: '/category/sweets',
@@ -39,6 +42,11 @@ const SHOP_SECTIONS: NavSection[] = [
         label: 'Healthy sweets',
         href: '/category/healthy-sweets',
         tagline: 'Booster · Gondh · Millet laddu',
+      },
+      {
+        label: 'Festival specials',
+        href: '/category/festival-specials',
+        tagline: 'Rakhi thali · Eid box · Pongal set',
       },
     ],
   },

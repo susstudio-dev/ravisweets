@@ -14,7 +14,7 @@ export default function NotFound() {
         <span className="italic text-theme-accent">but we have plenty of sweets.</span>
       </h1>
       <p className="max-w-xl text-theme-ink/70 md:text-lg">
-        The link may be old, mistyped, or we moved something. Head back to the kitchen and start
+        The link may be old, mistyped, or we moved something. Head back to the counter and start
         over, or search for what you&rsquo;re after.
       </p>
       <div className="flex flex-wrap gap-3 pt-2">

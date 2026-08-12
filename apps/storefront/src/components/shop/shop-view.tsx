@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useTransition } from 'react';
+import { useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import type { CategorySlug, Product } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
+import { FilterSheet } from '@/components/catalogue/filter-sheet';
+import { ProductFilters, SortSelect } from '@/components/catalogue/product-filters';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
+import { applyFilters, categoryCounts, sortProducts } from '@/lib/catalogue/filters';
+import { useProductFilters } from '@/lib/catalogue/use-product-filters';
 import { cn } from '@/lib/cn';
 
 const CATEGORY_LABEL: Record<CategorySlug, string> = {
@@ -42,51 +45,30 @@ const CATEGORY_ORDER: CategorySlug[] = [
   'festival-specials',
 ];
 
-type Sort = 'featured' | 'price-asc' | 'price-desc' | 'newest';
-
 /**
- * THE CATALOGUE, in operate mode. The browse surface is a working document:
- * a docket-head for the page title, then a ruled CONTROL STRIP — square-cut
- * category chips, a square sort select, and the result count typed into the
- * record ("SHOWING 24 OF 83") — then the one product grid.
+ * THE CATALOGUE, in operate mode.
+ *
+ * This page used to offer category chips and a sort, and nothing else — while
+ * /category offered dietary tags, in-stock and a sort. Two surfaces, two sets
+ * of semantics, written twice. Both now read one model (lib/catalogue/filters)
+ * and render one panel, so a filter added there appears on both.
+ *
+ * LAYOUT follows /category deliberately: a sticky 260px refine rail beside the
+ * grid. On phones the rail collapses to the FilterSheet trigger, which stacks
+ * above the products rather than burying them under a full-height panel.
+ *
+ * The category strip stays horizontal and stays in the grid column: it is the
+ * catalogue's primary navigation, not one filter among six, and demoting it
+ * into the rail would bury the move most shoppers make first.
  */
 export function ShopView({ products }: { products: Product[] }) {
-  const router = useRouter();
-  const params = useSearchParams();
-  const [, startTransition] = useTransition();
+  const { state, setState } = useProductFilters();
 
-  const activeCategory = params.get('cat') as CategorySlug | null;
-  const sort = (params.get('sort') ?? 'featured') as Sort;
-
-  const filtered = useMemo(() => {
-    let out = activeCategory ? products.filter((p) => p.category === activeCategory) : products;
-    out = [...out]; // copy before sorting
-    if (sort === 'price-asc') {
-      out.sort((a, b) => (a.variants[0]?.price.amount ?? 0) - (b.variants[0]?.price.amount ?? 0));
-    } else if (sort === 'price-desc') {
-      out.sort((a, b) => (b.variants[0]?.price.amount ?? 0) - (a.variants[0]?.price.amount ?? 0));
-    } else if (sort === 'newest') {
-      out.sort((a, b) => Number(b.new) - Number(a.new));
-    } else {
-      out.sort((a, b) => Number(b.featured) - Number(a.featured));
-    }
-    return out;
-  }, [products, activeCategory, sort]);
-
-  function updateParam(name: string, value: string | undefined) {
-    const next = new URLSearchParams(params.toString());
-    if (value === undefined || value === '') next.delete(name);
-    else next.set(name, value);
-    startTransition(() => {
-      router.replace(`/shop${next.toString() ? `?${next.toString()}` : ''}`, { scroll: false });
-    });
-  }
-
-  const totalByCategory = useMemo(() => {
-    const counts = new Map<CategorySlug, number>();
-    for (const p of products) counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
-    return counts;
-  }, [products]);
+  const shown = useMemo(
+    () => sortProducts(applyFilters(products, state), state.sort),
+    [products, state],
+  );
+  const catCounts = useMemo(() => categoryCounts(products, state), [products, state]);
 
   const chipClass = (active: boolean) =>
     cn(
@@ -96,95 +78,105 @@ export function ShopView({ products }: { products: Product[] }) {
         : 'bg-surface text-theme-ink/80 hover:border-theme-accent hover:text-theme-ink border-[color:var(--color-border)]',
     );
 
+  /** Everything the non-category filters leave, whatever aisle you are in. */
+  const totalAcrossCategories = useMemo(
+    () => Array.from(catCounts.values()).reduce((a, b) => a + b, 0),
+    [catCounts],
+  );
+
   return (
     <>
       {/*
-        THE PAGE HEAD HAS MOVED TO app/shop/page.tsx.
+        THE PAGE HEAD LIVES IN app/shop/page.tsx.
 
         This component calls `useSearchParams`, so everything it renders sits
         behind a Suspense boundary and resolves to nothing during the static
-        export — which is why /shop shipped with no <h1> at all in the crawl.
-        The heading is a server concern; the filtering is a client one.
+        export — which is why /shop once shipped with no <h1> at all. The
+        heading is a server concern; the filtering is a client one.
       */}
+      <section
+        aria-label="Browse the catalogue"
+        className="container-site grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10"
+      >
+        <aside aria-label="Filters" className="lg:sticky lg:top-20 lg:self-start">
+          <FilterSheet products={products} state={state} onChange={setState} />
+          <div className="hidden lg:block">
+            <ProductFilters products={products} state={state} onChange={setState} />
+          </div>
+        </aside>
 
-      {/* ── THE CONTROL STRIP ─────────────────────────────────────────── */}
-      <section aria-labelledby="cat-chips" className="container-site">
-        <h2 id="cat-chips" className="sr-only">
-          Filter and sort
-        </h2>
-        <div className="border-y border-[color:var(--color-rule)]">
-          <div className="flex flex-wrap gap-2 py-3">
-            <button
-              type="button"
-              onClick={() => updateParam('cat', undefined)}
-              aria-pressed={activeCategory === null}
-              className={chipClass(activeCategory === null)}
-            >
-              All · {products.length}
-            </button>
-            {CATEGORY_ORDER.map((c) => {
-              const count = totalByCategory.get(c) ?? 0;
-              if (count === 0) return null;
-              const active = activeCategory === c;
-              return (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => updateParam('cat', active ? undefined : c)}
-                  aria-pressed={active}
-                  className={chipClass(active)}
-                >
-                  {CATEGORY_LABEL[c]} · {count}
-                </button>
-              );
-            })}
+        <div>
+          {/* ── CATEGORY STRIP ─────────────────────────────────────────── */}
+          <div className="border-y border-[color:var(--color-rule)]">
+            <h2 className="sr-only">Filter by category</h2>
+            <div className="flex flex-wrap gap-2 py-3">
+              <button
+                type="button"
+                onClick={() => setState({ ...state, cat: null })}
+                aria-pressed={state.cat === null}
+                className={chipClass(state.cat === null)}
+              >
+                All · {totalAcrossCategories}
+              </button>
+              {CATEGORY_ORDER.map((c) => {
+                const count = catCounts.get(c) ?? 0;
+                const active = state.cat === c;
+                // Hidden at zero unless it is the aisle you are standing in —
+                // removing the active chip would strand you with no way back.
+                if (count === 0 && !active) return null;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setState({ ...state, cat: active ? null : c })}
+                    aria-pressed={active}
+                    className={chipClass(active)}
+                  >
+                    {CATEGORY_LABEL[c]} · {count}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] py-2.5">
+              <p className="field-value text-theme-ink text-sm" aria-live="polite">
+                SHOWING {shown.length} OF {products.length}
+                {state.cat ? ` · ${CATEGORY_LABEL[state.cat].toUpperCase()}` : ''}
+              </p>
+              <label className="flex items-center gap-2">
+                <span className="field-label">Sort</span>
+                <SortSelect value={state.sort} onChange={(sort) => setState({ ...state, sort })} />
+              </label>
+            </div>
           </div>
 
-          {/* Result count + sort, on their own ruled line of the strip. */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--color-border)] py-2.5">
-            <p className="field-value text-theme-ink text-sm" aria-live="polite">
-              SHOWING {filtered.length} OF {products.length}
-              {activeCategory ? ` · ${CATEGORY_LABEL[activeCategory].toUpperCase()}` : ''}
-            </p>
-            <label className="flex items-center gap-2">
-              <span className="field-label">Sort</span>
-              <select
-                value={sort}
-                onChange={(e) =>
-                  updateParam('sort', e.target.value === 'featured' ? undefined : e.target.value)
-                }
-                className="bg-surface text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-md border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
+          {/* ── THE GRID ───────────────────────────────────────────────── */}
+          <div className="section-y-tight">
+            {shown.length === 0 ? (
+              <div className="docket flex flex-col items-start gap-3 p-8">
+                <span className="inline-block h-2 w-2 rotate-45 bg-varak-rule" aria-hidden="true" />
+                <p className="font-display text-theme-ink text-lg">
+                  No entries match those filters.
+                </p>
+                <p className="text-text-muted text-sm">
+                  Try removing one — the counts beside each option show what it would leave.
+                </p>
+                <Link href="/shop" className="stamp stamp--ghost mt-1">
+                  Reset filters
+                </Link>
+              </div>
+            ) : (
+              <Stagger
+                gap={60}
+                className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
               >
-                <option value="featured">Featured</option>
-                <option value="price-asc">Price · low → high</option>
-                <option value="price-desc">Price · high → low</option>
-                <option value="newest">Newest</option>
-              </select>
-            </label>
+                {shown.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </Stagger>
+            )}
           </div>
         </div>
-      </section>
-
-      {/* ── THE GRID ──────────────────────────────────────────────────── */}
-      <section aria-label="Products" className="container-site section-y-tight">
-        {filtered.length === 0 ? (
-          <div className="docket flex flex-col items-start gap-3 p-8">
-            <span className="inline-block h-2 w-2 rotate-45 bg-varak-rule" aria-hidden="true" />
-            <p className="font-display text-theme-ink text-lg">No entries match this filter.</p>
-            <Link href="/shop" className="stamp stamp--ghost mt-1">
-              Reset filters
-            </Link>
-          </div>
-        ) : (
-          <Stagger
-            gap={60}
-            className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          >
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </Stagger>
-        )}
       </section>
 
       {/* ── THE INDEX OF COLLECTIONS ──────────────────────────────────── */}
@@ -198,7 +190,9 @@ export function ShopView({ products }: { products: Product[] }) {
         </Reveal>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CATEGORY_ORDER.map((c) => {
-            const count = totalByCategory.get(c) ?? 0;
+            // Unfiltered totals on purpose: this is a directory of the shop,
+            // not a view of the current query.
+            const count = products.filter((p) => p.category === c).length;
             if (count === 0) return null;
             return (
               <Link

@@ -139,7 +139,7 @@ export function AccountView() {
             <p className="text-theme-ink/70 max-w-lg text-sm">
               When you place your first order, it&rsquo;ll appear here with its tracking status.
             </p>
-            <Link href="/category/hyderabadi-specials" className="stamp mt-2">
+            <Link href="/shop" className="stamp mt-2">
               <ShoppingBag className="h-4 w-4" aria-hidden="true" />
               Start shopping
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

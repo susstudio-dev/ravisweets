@@ -5,6 +5,7 @@ import { Save } from 'lucide-react';
 import {
   loadAllSiteContent,
   saveSiteContent,
+  type AboutFounder,
   type EditorialBandHeading,
   type FooterContent,
   type HeroContent,
@@ -16,6 +17,7 @@ import { useSession } from '@/lib/supabase/session-context';
 
 interface AllContent {
   hero: HeroContent;
+  about_founder: AboutFounder;
   signature_moment: SignatureMomentContent;
   editorial_band_heading: EditorialBandHeading;
   footer: FooterContent;
@@ -24,6 +26,7 @@ interface AllContent {
 
 const DEFAULTS: AllContent = {
   hero: {},
+  about_founder: {},
   signature_moment: {},
   editorial_band_heading: {},
   footer: {},
@@ -45,6 +48,7 @@ export function AdminContent() {
           ...DEFAULTS.editorial_band_heading,
           ...(all.editorial_band_heading ?? {}),
         },
+        about_founder: { ...DEFAULTS.about_founder, ...(all.about_founder ?? {}) },
         footer: { ...DEFAULTS.footer, ...(all.footer ?? {}) },
         home_trust: { cards: all.home_trust?.cards ?? [] },
       });
@@ -259,6 +263,65 @@ export function AdminContent() {
             <Input
               value={state.footer.email ?? ''}
               onChange={(v) => setState({ ...state, footer: { ...state.footer, email: v } })}
+            />
+          </Field>
+        </Grid>
+      </Section>
+
+      {/*
+        THE FOUNDER. Empty by design — the owner fills this in. Until `name` or
+        `story` has content the section does not render on /about at all, so
+        saving a blank row is safe and nothing placeholder can reach a visitor.
+      */}
+      <Section
+        title="Founder — the About page"
+        busy={busy === 'about_founder'}
+        saved={saved === 'about_founder'}
+        onSave={() => save('about_founder')}
+      >
+        <p className="text-theme-ink/60 mb-3 text-[12px]">
+          His section on the About page stays hidden until you fill in a name or a story. Add his
+          photograph under Photos → About page → Founder photo.
+        </p>
+        <Grid>
+          <Field label="Name">
+            <Input
+              value={state.about_founder.name ?? ''}
+              onChange={(v) =>
+                setState({ ...state, about_founder: { ...state.about_founder, name: v } })
+              }
+            />
+          </Field>
+          <Field label="How to introduce him (e.g. Our grandfather)">
+            <Input
+              value={state.about_founder.role ?? ''}
+              onChange={(v) =>
+                setState({ ...state, about_founder: { ...state.about_founder, role: v } })
+              }
+            />
+          </Field>
+          <Field label="Years (e.g. 1948 — 2019)" full>
+            <Input
+              value={state.about_founder.years ?? ''}
+              onChange={(v) =>
+                setState({ ...state, about_founder: { ...state.about_founder, years: v } })
+              }
+            />
+          </Field>
+          <Field label="His story — leave a blank line between paragraphs" full>
+            <TextArea
+              value={state.about_founder.story ?? ''}
+              onChange={(v) =>
+                setState({ ...state, about_founder: { ...state.about_founder, story: v } })
+              }
+            />
+          </Field>
+          <Field label="Something he used to say (optional — set as a quote)" full>
+            <TextArea
+              value={state.about_founder.quote ?? ''}
+              onChange={(v) =>
+                setState({ ...state, about_founder: { ...state.about_founder, quote: v } })
+              }
             />
           </Field>
         </Grid>

@@ -1,21 +1,28 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { FounderSection } from '@/components/about/founder-section';
 import { SlotImage } from '@/components/media/slot-image';
 import { Reveal } from '@/components/motion/reveal';
 import { pendingPhoto } from '@/lib/images';
 
+/*
+ * KHAMMAM STAYS ON THIS PAGE. The owner removed the towns from the footer on
+ * 2026-08-12, not from the brand's history — this is the story page, and where
+ * the shop began is the story. What went is the COTTAGE framing: "family
+ * kitchen", "a small kitchen", "one kitchen". Heritage, yes; smallness, no.
+ */
 export const metadata: Metadata = {
-  title: 'Our story — a Khammam family kitchen',
+  title: 'Our story — the slow way, since 1983',
   description:
-    'Ravi Sweets began in one Khammam kitchen and still works the same slow way — hand-cut katli, hand-rolled laddu, no preservatives, since 1983.',
+    'Ravi Sweets began in Khammam in 1983 and still works the same slow way — hand-cut katli, hand-rolled laddu, no preservatives.',
   alternates: { canonical: '/about' },
 };
 
 const TIMELINE = [
   {
     year: 'Generations ago',
-    title: 'A small kitchen in Khammam',
+    title: 'Where it began, in Khammam',
     body: 'The first copper pan, the first recipe card, the first box with a paisley tag. A family ritual becomes a trade.',
   },
   {
@@ -33,11 +40,11 @@ const TIMELINE = [
 const PILLARS = [
   {
     title: 'Nothing rushed.',
-    body: 'Four hours for the qubani, not four minutes. The kitchen’s first rule is the slower way.',
+    body: 'Four hours for the qubani, not four minutes. Our first rule is the slower way.',
   },
   {
     title: 'Nothing substituted.',
-    body: 'Ghee is ghee. Saffron is real. If we can’t find the ingredient we want, the sweet doesn’t leave the kitchen.',
+    body: 'Ghee is ghee. Saffron is real. If we can’t find the ingredient we want, we don’t make the sweet.',
   },
   {
     title: 'Nothing hidden.',
@@ -76,12 +83,12 @@ export default function AboutPage() {
             </Reveal>
             <Reveal delay={0.05}>
               <h1 className="font-display text-display-lg text-theme-ink md:text-display-xl mt-4 leading-[1.02]">
-                A family kitchen, still open.
+                Still made the slow way.
               </h1>
             </Reveal>
             <Reveal delay={0.15}>
               <p className="text-theme-ink/75 mt-6 max-w-xl text-lg leading-relaxed">
-                Ravi Sweets began in a single Khammam kitchen with a copper pan, a recipe card in
+                Ravi Sweets began in Khammam in 1983 with a copper pan, a recipe card in
                 someone&rsquo;s handwriting, and the promise that nothing would be hurried. That
                 promise has outlived everything else we&rsquo;ve had to change.
               </p>
@@ -92,7 +99,7 @@ export default function AboutPage() {
               <SlotImage
                 slot="about.portrait"
                 fallbackUrl={PORTRAIT}
-                fallbackAlt="Premium Kaju Katli — slow-cooked in our Khammam kitchen"
+                fallbackAlt="Premium Kaju Katli — hand-cut to the 1983 recipe"
                 sizes="(min-width: 768px) 460px, 90vw"
                 objectFit="contain"
                 className="bg-theme-glow/20 aspect-[4/3] border-b border-[color:var(--color-border)]"
@@ -103,7 +110,7 @@ export default function AboutPage() {
                   <dd className="field-value text-theme-ink text-sm">KAJU KATLI</dd>
                 </div>
                 <div className="field-row">
-                  <dt className="field-label">Kitchen</dt>
+                  <dt className="field-label">Origin</dt>
                   <dd className="field-value text-theme-ink text-sm">KHAMMAM</dd>
                 </div>
               </dl>
@@ -111,6 +118,14 @@ export default function AboutPage() {
           </Reveal>
         </div>
       </section>
+
+      {/*
+        THE FOUNDER. Sits directly after the hero because he is the beginning
+        of the story the timeline then carries forward. Renders NOTHING until
+        the owner fills in a name or a story from /admin/content → Founder —
+        so on a fresh install the page reads exactly as it did before.
+      */}
+      <FounderSection />
 
       {/* Timeline */}
       <section aria-labelledby="timeline-heading" className="container-site section-y">
@@ -172,7 +187,7 @@ export default function AboutPage() {
                   slower way, and kept choosing it.&rdquo;
                 </blockquote>
                 <figcaption className="text-text-muted mt-4 text-sm">
-                  — Ravi, on the kitchen&rsquo;s first rule
+                  — Ravi, on the first rule
                 </figcaption>
               </figure>
             </Reveal>
@@ -218,12 +233,12 @@ export default function AboutPage() {
               <div className="max-w-2xl">
                 <h2 className="font-display text-display-md">Come taste what we mean.</h2>
                 <p className="text-text-muted mt-2 text-sm md:text-base">
-                  Start with the Hyderabadi specials — Qubani ka Meetha and Badam ki Jali are where
-                  most first-time customers begin.
+                  Start with today&rsquo;s bestsellers — Kaju Katli and Gulab Jamun are where most
+                  first-time customers begin.
                 </p>
               </div>
-              <Link href="/category/hyderabadi-specials" className="stamp shrink-0">
-                Shop Hyderabadi specials
+              <Link href="/shop" className="stamp shrink-0">
+                Shop the catalogue
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>

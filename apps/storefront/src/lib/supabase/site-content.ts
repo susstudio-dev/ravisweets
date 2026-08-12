@@ -17,7 +17,8 @@ export type SiteContentKey =
   | 'home_trust'
   | 'active_festival'
   | 'page_media'
-  | 'charges';
+  | 'charges'
+  | 'about_founder';
 
 export type { PageMedia };
 
@@ -45,6 +46,34 @@ export interface HeroContent {
   primaryCtaHref?: string;
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
+}
+
+/**
+ * THE FOUNDER — the grandfather section on /about (owner request 2026-08-12).
+ *
+ * Every field is optional and the section renders only when `name` or `story`
+ * is present, so an empty row ships NOTHING. That is deliberate: this is a
+ * real person's history, and a placeholder biography is worse than no section
+ * at all. The same rule as reviews — nothing fabricated, ever.
+ *
+ * NO CODE DEFAULT EXISTS YET, unlike `hero`. The owner has the details and
+ * this is the shell they fill. Once the copy is settled it should be promoted
+ * into a fallback in components/about/founder-section.tsx the way the hero
+ * does it — until then this content is client-rendered from the database and
+ * therefore absent from the static HTML, which for a heritage story is a real
+ * SEO cost worth paying only while the words are still being decided.
+ */
+export interface AboutFounder {
+  /** e.g. "Srinivasa Rao Edupalli" */
+  name?: string;
+  /** How he is introduced — "Our grandfather", "Founder". */
+  role?: string;
+  /** e.g. "1948 — 2019", or "Founded the shop in 1983". */
+  years?: string;
+  /** The story, in the owner's words. Blank lines split paragraphs. */
+  story?: string;
+  /** Optional line in his voice, set as a pull quote. */
+  quote?: string;
 }
 
 export interface SignatureMomentContent {
@@ -120,6 +149,7 @@ export function parseCharges(raw: unknown): StoreCharges {
 }
 
 type ContentByKey = {
+  about_founder: AboutFounder;
   hero: HeroContent;
   signature_moment: SignatureMomentContent;
   editorial_band_heading: EditorialBandHeading;

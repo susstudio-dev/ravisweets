@@ -131,7 +131,10 @@ export function AdminProductsNew() {
       unit_mode: unitMode,
       primary_image_url: imageAssetUrl,
       primary_image_alt:
-        imageRef?.alt || asset.alt || `${title.trim()} — photographed at the Khammam kitchen`,
+        // This becomes the PUBLIC alt text on the product photo, so it follows
+        // the same voice rule as the rest of the storefront (owner, 2026-08-12):
+        // no locality, no kitchen. Describe the sweet, not where it was cooked.
+        imageRef?.alt || asset.alt || `${title.trim()} — made fresh at Ravi Sweets`,
       primary_image_width: asset.width ?? 1400,
       primary_image_height: asset.height ?? 1400,
       variant: {

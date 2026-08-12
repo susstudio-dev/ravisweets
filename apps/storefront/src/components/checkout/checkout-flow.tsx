@@ -503,9 +503,9 @@ export function CheckoutFlow() {
         />
         <h1 className="font-display text-display-md text-theme-ink">Your cart is empty.</h1>
         <p className="text-theme-ink/70 max-w-lg">
-          Add something before you check out — our Hyderabadi specials are a good place to start.
+          Add something before you check out — today&rsquo;s bestsellers are a good place to start.
         </p>
-        <Link href="/category/hyderabadi-specials" className="stamp">
+        <Link href="/shop" className="stamp">
           Shop now
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>

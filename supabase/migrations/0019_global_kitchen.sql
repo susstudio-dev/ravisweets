@@ -1,5 +1,16 @@
 -- ─── GLOBAL KITCHEN — retire "Family kitchen" from the brand voice ─────────
 --
+-- ⚠ SUPERSEDED by 0020_global_kitchen_voice.sql. DO NOT PASTE THIS FILE.
+--
+-- It was never applied to production (verified 2026-08-12: site_content.hero
+-- and theme_presets both still read "Family kitchen"), and it has since gone
+-- stale: line 36 sets primaryCtaLabel to 'Shop today''s batch', and the owner
+-- retired "batch" from the brand voice on 2026-08-12. Pasting this would put
+-- the word back on the hero. 0020 carries everything below plus the footer and
+-- home_trust rows this file never covered, with every field set absolutely —
+-- so 0020 alone is sufficient and this file is kept only as the record of what
+-- the 08-11 direction was.
+--
 -- Owner direction 2026-08-11 (krish): "remove family kitchen … we are a
 -- global brand, we have a very huge kitchen." The cottage register undersold
 -- the operation; the eyebrow becomes "Mithai house" and the body drops

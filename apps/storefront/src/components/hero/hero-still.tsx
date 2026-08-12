@@ -37,16 +37,22 @@ export function HeroStill() {
   const heroEyebrowIndic =
     hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'ఖమ్మం';
   const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Khammam · Telangana';
+  /*
+   * THIS COMPONENT IS NOT MOUNTED ANYWHERE (checked 2026-08-12 — nothing
+   * imports HeroStill; app/page.tsx renders HeroBatch). Its defaults are kept
+   * in step with hero-batch.tsx anyway: they were the last copy of the retired
+   * locality-led voice left in the repo, and a dead file is exactly where that
+   * comes back from when someone swaps the hero six months from now. If this
+   * component is not going to be revived, delete it rather than maintain it.
+   */
   const heroHeadline =
-    hero?.headline ?? theme?.hero.headline ?? 'The sweetness of Telangana, slow-cooked in Khammam.';
+    hero?.headline ?? theme?.hero.headline ?? 'Made this morning. Nothing added to make it last.';
   const heroBody =
     hero?.body ??
     theme?.hero.body ??
-    'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
-  const primaryCtaLabel =
-    hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? 'Shop Hyderabadi specials';
-  const primaryCtaHref =
-    hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/category/hyderabadi-specials';
+    'Kaju Katli, Gulab Jamun, Motichoor Ladoo — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.';
+  const primaryCtaLabel = hero?.primaryCtaLabel ?? theme?.hero.ctaLabel ?? "Shop today's sweets";
+  const primaryCtaHref = hero?.primaryCtaHref ?? theme?.hero.ctaHref ?? '/shop';
   const secondaryCtaLabel = hero?.secondaryCtaLabel ?? 'Corporate gifting';
   const secondaryCtaHref = hero?.secondaryCtaHref ?? '/corporate';
 

@@ -131,10 +131,10 @@ export function SearchView() {
                 queries.
               </p>
               <Link
-                href="/category/hyderabadi-specials"
+                href="/shop"
                 className="text-theme-accent text-sm font-semibold hover:underline"
               >
-                Or browse Hyderabadi specials →
+                Or browse the whole catalogue →
               </Link>
             </motion.div>
           ) : results.length === 0 ? (

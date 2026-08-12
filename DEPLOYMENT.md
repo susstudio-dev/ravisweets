@@ -38,6 +38,15 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 10 | `supabase/migrations/0013_media_library.sql` | **Media library**: creates the `media` bucket, `media_assets` registry, and `site_content_versions` + snapshot trigger. `/admin/photos` and `/admin/media` need this. Idempotent |
 | 11 | `supabase/migrations/0014_seed_products.sql` | Seeds 83 products + 165 variants from the bundled catalogue. Every insert is `on conflict do nothing`, so re-running never overwrites admin edits. Product photo edits in `/admin/products` need this |
 | 12 | `supabase/migrations/0015_publish_state.sql` | **Publishing**: creates the single-row `publish_state` table the `publish-site` edge function uses to coalesce rebuild requests. Admin-read only; written solely by that function. Idempotent |
+| 13 | `supabase/migrations/0016_variant_hsn_codes.sql` | Backfills the `variants.hsn_code` values 0014 omitted (165 rows). Idempotent |
+| 14 | `supabase/migrations/0017_coupon_redemptions_insert.sql` | INSERT policy on `coupon_redemptions` — without it every couponed order silently fails to record a redemption. Idempotent (`drop policy if exists`) |
+| 15 | `supabase/migrations/0017_sweet_counter_world.sql` | The warm pivot: activates the Sweet Counter palette on `theme_presets`. Note the **duplicate 0017 prefix** — run the coupon file first. Idempotent |
+| 16 | `supabase/migrations/0018_order_fees.sql` | Adds `orders.fees jsonb` for itemised packing/COD charges. Idempotent |
+| 17 | `supabase/migrations/0020_global_kitchen_voice.sql` | Retires "family kitchen", "batch" and the standalone kitchen mention from `site_content` (`hero`, `footer`, `home_trust`) + `theme_presets`. Idempotent |
+
+> **Skip `0019_global_kitchen.sql`.** It is superseded by 0020 and would reintroduce "Shop today's batch". 0020 is self-sufficient — it does not need 0019 to have run first.
+>
+> **Status as of 2026-08-12** (verified by read-only probe against the live project): 0001–0018 are all applied. **0020 is the only outstanding file**, plus `0017_coupon_redemptions_insert.sql`, whose RLS policy cannot be verified from outside — re-run it, it is idempotent.
 
 Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, `publish_state`, and friends (26 tables total).
 

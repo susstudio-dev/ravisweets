@@ -688,7 +688,7 @@ function ProductDrawer({
                   next[i] = { ...next[i]!, alt: e.target.value };
                   setImages(next);
                 }}
-                placeholder={`${product.title} — photographed at the Khammam kitchen`}
+                placeholder={`${product.title} — made fresh at Ravi Sweets`}
                 className="bg-surface-elevated text-theme-ink focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 rounded-lg border border-[color:var(--color-border)] px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2"
               />
             </label>

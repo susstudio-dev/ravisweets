@@ -1,8 +1,8 @@
-import { Clock4, Leaf, Truck, UtensilsCrossed } from 'lucide-react';
+import { Award, Clock4, Leaf, Truck } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
 
 /**
- * THE KITCHEN RULE, at a glance.
+ * THE HOUSE RULES, at a glance.
  *
  * Replaces the four-row spec <dl> (~85 words of notes) on the home page with
  * four ruled cells a customer reads in three seconds — the warm pivot's
@@ -11,6 +11,14 @@ import { Reveal } from '@/components/motion/reveal';
  *
  * Ruled cells on the ground, not icon cards: the proof-block grammar the
  * hero already uses, widened to section scale.
+ *
+ * THE COTTAGE VOICE IS GONE FROM HERE (owner, 2026-08-12). The third cell read
+ * "One family kitchen / The same family at the kadai since 1983" and the second
+ * said "Morning batch" — family, kitchen and batch all sell smallness, and the
+ * owner's position is that the brand is not small. The CLAIMS themselves are
+ * unchanged in substance: cell three still says "we have been doing this since
+ * 1983", it just no longer says who is holding the ladle. Nothing new is
+ * asserted here that PRODUCT.md does not substantiate; do not add any.
  */
 const CLAIMS = [
   {
@@ -21,12 +29,12 @@ const CLAIMS = [
   {
     icon: Clock4,
     value: 'Same-day dispatch',
-    note: 'Morning batch, on the evening courier.',
+    note: 'Made in the morning, on the evening courier.',
   },
   {
-    icon: UtensilsCrossed,
-    value: 'One family kitchen',
-    note: 'The same family at the kadai since 1983.',
+    icon: Award,
+    value: 'Since 1983',
+    note: 'The same recipes, unchanged.',
   },
   {
     icon: Truck,

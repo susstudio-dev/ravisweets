@@ -6,6 +6,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { type Product } from '@ravisweets/shared';
 import { signatureBestsellers } from '@/lib/signature';
 import { Grain } from '@/components/brand/grain';
+import { shapeForTitle, SpecimenMark } from '@/components/brand/specimen-mark';
 import { HeroAmbient } from '@/components/hero/hero-ambient';
 import { Reveal } from '@/components/motion/reveal';
 import { cn } from '@/lib/cn';
@@ -87,10 +88,24 @@ const FOUNDED = '1983';
  * small-kitchen positioning ("we are a global brand, we have a very huge
  * kitchen"), and the live site_content row — written by 0012 — carries
  * 'Family kitchen' as the eyebrow, so it must fall through to the new
- * defaults until 0019_global_kitchen.sql is pasted. Same quarantine, next
- * ring. Delete each ring only after its migration has run.
+ * defaults. Same quarantine, next ring.
+ *
+ * "today's batch" joined it 2026-08-12: the owner retired BATCH along with the
+ * family framing, and the live rows carry 'Shop today''s batch' as the CTA
+ * label — site_content from 0012 and theme_presets from 0017. Both are now
+ * fixed by 0020_global_kitchen_voice.sql.
+ *
+ * NOTE the pattern is deliberately "today's batch" and "small batch", never a
+ * bare /batch/. This regex disqualifies an ENTIRE ROW on one match, and the
+ * word appears in legitimate copy the owner has not retired — the dispatch
+ * seal's own date line among it. A bare match would quarantine hero rows that
+ * are perfectly current and strand the owner's edits with no visible cause.
+ *
+ * Delete each ring only after its migration has actually run — verify against
+ * the database, not against the presence of the .sql file. 0019 sat unapplied
+ * in this repo for a month while its ring looked safe to remove.
  */
-const RETIRED_COPY = /khammam|telangana|ఖమ్మం|family kitchen/i;
+const RETIRED_COPY = /khammam|telangana|ఖమ్మం|family kitchen|today['’]s batch|small batch/i;
 
 function live<T>(row: T | null | undefined): T | undefined {
   if (row == null) return undefined;
@@ -177,7 +192,7 @@ export function HeroBatch() {
     db?.body ??
     preset?.body ??
     `Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
-  const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's batch";
+  const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's sweets";
   /*
    * Resolved from the SAME admitted source as the label above. Read
    * independently these can desynchronise — one source's wording pointing at
@@ -422,7 +437,7 @@ export function HeroBatch() {
                 Ravi Sweets
               </span>
               <span className="field-label" style={{ color: 'var(--color-brand)' }}>
-                Fresh batch
+                Fresh today
               </span>
               <span className="field-value text-[11px] font-bold" suppressHydrationWarning>
                 {formatDocketDate(now)}
@@ -504,83 +519,6 @@ function FestivalLinework({ slug }: { slug: string }) {
   );
 }
 
-type SpecimenShape = 'diamond' | 'round' | 'coil' | 'scatter';
-
-function shapeFor(product: Product, index: number): SpecimenShape {
-  const t = product.title.toLowerCase();
-  if (/katli|barfi|burfi|jali|chikki|kalakand/.test(t)) return 'diamond';
-  if (/jamun|laddu|ladoo|boondi|pak|peda/.test(t)) return 'round';
-  if (/mixture|sev|chivda|murukku|kaju|badam|almond|pista|nut/.test(t)) return 'scatter';
-  if (/jalebi|halwa|meetha|khurma/.test(t)) return 'coil';
-  return (['diamond', 'round', 'coil', 'scatter'] as const)[index % 4]!;
-}
-
-/** A spec-sheet figure in the product's own flavour ink. */
-function SpecimenMark({
-  shape,
-  color,
-  className,
-}: {
-  shape: SpecimenShape;
-  color: string;
-  className?: string;
-}) {
-  const stroke = { stroke: color, strokeWidth: 2.5, fill: 'none' } as const;
-  return (
-    <svg viewBox="0 0 72 72" className={className} aria-hidden="true">
-      {shape === 'diamond' && (
-        <>
-          <rect
-            x="16"
-            y="16"
-            width="40"
-            height="40"
-            transform="rotate(45 36 36)"
-            strokeLinejoin="round"
-            {...stroke}
-          />
-          <rect
-            x="27"
-            y="27"
-            width="18"
-            height="18"
-            transform="rotate(45 36 36)"
-            fill={color}
-            opacity="0.22"
-          />
-          <rect x="31" y="31" width="10" height="10" transform="rotate(45 36 36)" fill={color} />
-        </>
-      )}
-      {shape === 'round' && (
-        <>
-          <circle cx="36" cy="36" r="21" {...stroke} />
-          <circle cx="36" cy="36" r="13" fill={color} opacity="0.22" />
-          <circle cx="30" cy="33" r="2.4" fill={color} />
-          <circle cx="40" cy="30" r="2.4" fill={color} />
-          <circle cx="37" cy="41" r="2.4" fill={color} />
-        </>
-      )}
-      {shape === 'coil' && (
-        <path
-          d="M36 36 a4 4 0 0 1 8 0 a8 8 0 0 1 -16 0 a12 12 0 0 1 24 0 a16 16 0 0 1 -32 0 a20 20 0 0 1 40 0"
-          strokeLinecap="round"
-          {...stroke}
-        />
-      )}
-      {shape === 'scatter' && (
-        <>
-          <circle cx="24" cy="26" r="5" fill={color} opacity="0.8" />
-          <circle cx="44" cy="20" r="4" fill={color} opacity="0.45" />
-          <circle cx="52" cy="38" r="5.5" fill={color} />
-          <circle cx="33" cy="44" r="4.5" fill={color} opacity="0.6" />
-          <circle cx="20" cy="48" r="3.5" fill={color} opacity="0.35" />
-          <circle cx="44" cy="52" r="4" fill={color} opacity="0.8" />
-        </>
-      )}
-    </svg>
-  );
-}
-
 /**
  * A cutout pinned to the festival card: a small docket chip, gently bobbing.
  * When the product has a usable photo (owner-edited DB overlay first, then
@@ -590,7 +528,7 @@ function SpecimenMark({
 function FestivalCutout({ product, index }: { product: Product; index: number }) {
   const { productImages } = useSiteContent();
   const [imgFailed, setImgFailed] = useState(false);
-  const shape = shapeFor(product, index);
+  const shape = shapeForTitle(product.title, index);
   const pal = product.theme_palette;
   const tilt = [-2.5, 1.5, 3][index % 3];
 

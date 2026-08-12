@@ -16,6 +16,7 @@ export interface UsageHit {
 const SLOT_LABELS: ReadonlyArray<[SlotPath, string]> = [
   ['about.portrait', 'About page — portrait'],
   ['about.kitchen', 'About page — kitchen'],
+  ['about.founder', 'About page — founder photo'],
   ['stores.storefront', 'Stores page — shop front'],
   ['corporate.essence', 'Corporate page — Essence hamper'],
   ['corporate.premium', 'Corporate page — Premium hamper'],
