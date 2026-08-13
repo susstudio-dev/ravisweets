@@ -30,9 +30,9 @@ export const SIGNATURE_MOMENT = {
   copy: {
     eyebrow_indic: 'ఖమ్మం',
     eyebrow_en: 'Our signature',
-    headline: 'Qubani ka Meetha',
-    headline_emphasis: 'slow-cooked the old way.',
-    body: 'Four hours, one copper pan, apricots reduced in their own syrup. A Hyderabadi classic, made the slower way in our Khammam kitchen.',
+    headline: 'Motichoor Ladoo',
+    headline_emphasis: 'made the slower way.',
+    body: 'Tiny boondi pearls, each fried separately and bound in ghee-scented syrup the same morning they leave the counter. Made the slower way in our Khammam kitchen.',
     cta: { label: 'See how we make it', href: '/about' },
   },
 } as const;

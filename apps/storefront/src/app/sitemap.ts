@@ -37,7 +37,6 @@ const STATIC_PATHS = [
 ];
 
 const CATEGORY_SLUGS = [
-  'hyderabadi-specials',
   'sweets',
   'sweet-bites',
   'healthy-sweets',

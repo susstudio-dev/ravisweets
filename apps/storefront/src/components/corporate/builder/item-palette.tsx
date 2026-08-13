@@ -17,7 +17,6 @@ interface ItemPaletteProps {
 }
 
 const CATEGORY_LABEL: Record<CategorySlug, string> = {
-  'hyderabadi-specials': 'Hyderabadi',
   sweets: 'Sweets',
   'sweet-bites': 'Sweet bites',
   'healthy-sweets': 'Healthy',
@@ -33,7 +32,6 @@ const CATEGORY_LABEL: Record<CategorySlug, string> = {
 };
 
 const CATEGORY_ORDER: CategorySlug[] = [
-  'hyderabadi-specials',
   'sweets',
   'sweet-bites',
   'namkeens',

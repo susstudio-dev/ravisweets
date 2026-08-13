@@ -14,7 +14,6 @@ import { useProductFilters } from '@/lib/catalogue/use-product-filters';
 import { cn } from '@/lib/cn';
 
 const CATEGORY_LABEL: Record<CategorySlug, string> = {
-  'hyderabadi-specials': 'Hyderabadi',
   sweets: 'Sweets',
   'sweet-bites': 'Sweet bites',
   'healthy-sweets': 'Healthy sweets',
@@ -30,7 +29,6 @@ const CATEGORY_LABEL: Record<CategorySlug, string> = {
 };
 
 const CATEGORY_ORDER: CategorySlug[] = [
-  'hyderabadi-specials',
   'sweets',
   'sweet-bites',
   'healthy-sweets',
@@ -98,7 +96,22 @@ export function ShopView({ products }: { products: Product[] }) {
         aria-label="Browse the catalogue"
         className="container-site grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10"
       >
-        <aside aria-label="Filters" className="lg:sticky lg:top-20 lg:self-start">
+        {/*
+          THE RAIL SCROLLS INSIDE ITSELF. Sticky alone was a trap: pinned 80px
+          down an 800px viewport, a panel taller than the remaining space had no
+          way to reveal its tail — the page scrolled, the pinned rail did not,
+          and it carried no scrollbar of its own. `Sort by` was unreachable.
+
+          `px-1 -mx-1` is not decoration. Setting overflow-y to anything but
+          `visible` makes the computed overflow-x `auto` too, which clips the
+          `focus-visible:ring-2` painted outside each chip; the padding gives the
+          ring somewhere to land and the negative margin puts the column back
+          where it was.
+        */}
+        <aside
+          aria-label="Filters"
+          className="rail-scroll lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1"
+        >
           <FilterSheet products={products} state={state} onChange={setState} />
           <div className="hidden lg:block">
             <ProductFilters products={products} state={state} onChange={setState} />
@@ -170,8 +183,9 @@ export function ShopView({ products }: { products: Product[] }) {
                 gap={60}
                 className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
               >
-                {shown.map((p) => (
-                  <ProductCard key={p.id} product={p} />
+                {/* Four is the widest first row this grid ever has (xl). */}
+                {shown.map((p, i) => (
+                  <ProductCard key={p.id} product={p} priority={i < 4} />
                 ))}
               </Stagger>
             )}

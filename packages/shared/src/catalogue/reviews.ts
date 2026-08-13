@@ -1,6 +1,6 @@
 /**
- * Curated demo reviews for top-3 products by listing prominence
- * (Qubani ka Meetha, Kaju Katli, Diwali Premium Hamper).
+ * Curated demo reviews for the top products by listing prominence
+ * (Kaju Katli, Diwali Premium Hamper).
  *
  * These render in the product detail page's review block. Voices
  * are stylistically varied — long-form story, short praise, gift
@@ -26,74 +26,6 @@ export interface Review {
 }
 
 const REVIEWS: Review[] = [
-  // ── Qubani ka Meetha ────────────────────────────────────────────────────
-  {
-    id: 'r_qkm_01',
-    productSlug: 'qubani-ka-meetha',
-    rating: 5,
-    title: 'Tastes like my grandmother’s.',
-    body: 'My nani used to make this in Hyderabad in the 80s and the smell of the apricots reducing was the smell of every Eid. This is the closest I have had since. Cold, dense, the syrup just on the right side of jam. Will buy every Eid.',
-    author: 'Aisha K.',
-    city: 'Bangalore',
-    date: '2026-04-02',
-    verified: true,
-  },
-  {
-    id: 'r_qkm_02',
-    productSlug: 'qubani-ka-meetha',
-    rating: 5,
-    title: 'Worth the chill-and-wait.',
-    body: 'Came packed cold, instructions said chill another two hours before serving. Worth it — the apricots had that slow-cooked depth a stovetop hour cannot fake.',
-    author: 'Pradeep S.',
-    city: 'Hyderabad',
-    date: '2026-03-28',
-    verified: true,
-  },
-  {
-    id: 'r_qkm_03',
-    productSlug: 'qubani-ka-meetha',
-    rating: 4,
-    title: 'Excellent — could be a touch less sweet.',
-    body: 'Flavour is spot on. Personal preference — I would have liked the syrup a half-step less sweet so the apricot tartness comes through more. But that is taste, not quality.',
-    author: 'Meera R.',
-    city: 'Pune',
-    date: '2026-03-21',
-    verified: true,
-  },
-  {
-    id: 'r_qkm_04',
-    productSlug: 'qubani-ka-meetha',
-    rating: 5,
-    title: 'Sent as a Eid gift, friend was thrilled.',
-    body: 'Posted to a friend in Delhi. She messaged at 11 pm saying she had eaten half the box straight from the fridge. I think that counts as a five-star.',
-    author: 'Vikrant T.',
-    city: 'Mumbai',
-    date: '2026-03-15',
-    verified: true,
-  },
-  {
-    id: 'r_qkm_05',
-    productSlug: 'qubani-ka-meetha',
-    rating: 5,
-    title: 'The malai on top is the move.',
-    body: 'Tip — let the box sit chilled, then warm a spoonful of the included malai on the stove for 30 seconds and pour it over. Restaurant-grade, at home.',
-    author: 'Sunil G.',
-    city: 'Chennai',
-    date: '2026-03-09',
-    verified: false,
-  },
-  {
-    id: 'r_qkm_06',
-    productSlug: 'qubani-ka-meetha',
-    rating: 5,
-    title: 'Eggless, finally.',
-    body: 'Most "Hyderabadi sweets" labels online have ambiguous ingredient lists. This one is clearly eggless and I trusted it for an Iftar. No issues.',
-    author: 'Fatima Q.',
-    city: 'Lucknow',
-    date: '2026-02-26',
-    verified: true,
-  },
-
   // ── Kaju Katli ──────────────────────────────────────────────────────────
   {
     id: 'r_kk_01',
@@ -190,7 +122,7 @@ const REVIEWS: Review[] = [
     productSlug: 'diwali-premium-hamper',
     rating: 5,
     title: 'Worth every rupee.',
-    body: 'I have ordered Hyderabadi mithai online for years and this is the first time the box itself made me pause before opening it.',
+    body: 'I have ordered mithai online for years and this is the first time the box itself made me pause before opening it.',
     author: 'Arjun K.',
     city: 'Delhi',
     date: '2026-03-22',

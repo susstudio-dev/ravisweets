@@ -8,7 +8,7 @@
  * Scope:
  *  - ONLY path-prefixed hrefs (start with `/`). Anchors (#...), query-only (?...),
  *    mailto/tel/https/http, and relative paths are ignored.
- *  - Dynamic segments are resolved by matching `/category/hyderabadi-specials`
+ *  - Dynamic segments are resolved by matching `/category/sweets`
  *    against `src/app/category/[slug]/page.tsx` + the catalogue's known slugs.
  *  - An inline `// link-check:ignore` comment on the same line OR the preceding
  *    line suppresses a finding.

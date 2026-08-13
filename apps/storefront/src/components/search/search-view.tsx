@@ -13,8 +13,8 @@ import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
 const SUGGESTIONS = [
-  'Qubani ka Meetha',
   'Kaju Katli',
+  'Motichoor Ladoo',
   'Diwali hamper',
   'eggless',
   'namkeens',
@@ -75,7 +75,7 @@ export function SearchView() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Kaju Katli, Hyderabadi, gift hamper…"
+            placeholder="Kaju Katli, mixture, gift hamper…"
             className="bg-surface-elevated text-theme-ink placeholder:text-theme-ink/40 shadow-soft focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-md border border-[color:var(--color-border)] px-14 py-4 text-base transition-colors focus-visible:outline-none focus-visible:ring-2"
             autoComplete="off"
             enterKeyHint="search"

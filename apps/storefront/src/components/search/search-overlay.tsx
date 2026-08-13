@@ -10,7 +10,7 @@ import { searchProducts } from '@/lib/search/score';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
-const SUGGESTIONS = ['Qubani ka Meetha', 'Kaju Katli', 'Diwali hamper', 'eggless', 'gift'];
+const SUGGESTIONS = ['Kaju Katli', 'Motichoor Ladoo', 'Diwali hamper', 'eggless', 'gift'];
 
 interface SearchOverlayProps {
   open: boolean;
@@ -137,7 +137,7 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                 type="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Kaju Katli, Hyderabadi, gift hamper…"
+                placeholder="Kaju Katli, mixture, gift hamper…"
                 className="text-theme-ink placeholder:text-theme-ink/40 flex-1 bg-transparent text-base focus:outline-none"
                 autoComplete="off"
                 enterKeyHint="search"

@@ -67,7 +67,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
       {
         icon: Gift,
         title: 'For family',
-        body: 'Hand-packed hampers with Qubani, Kaju Katli, and a brass diya.',
+        body: 'Hand-packed hampers with Kaju Katli, Motichoor Ladoo, and a brass diya.',
         href: '/category/gift-hampers',
       },
       {
@@ -83,7 +83,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
         href: '/corporate#catalogue',
       },
     ],
-    productSlugs: ['diwali-premium-hamper', 'kaju-katli', 'qubani-ka-meetha', 'badam-ki-jali'],
+    productSlugs: ['diwali-premium-hamper', 'kaju-katli', 'motichoor-ladoo', 'badam-ki-jali'],
   },
   'independence-day': {
     title: 'Independence Day',
@@ -157,14 +157,14 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
         href: '/corporate',
       },
     ],
-    productSlugs: ['kaju-katli', 'badam-ki-jali', 'qubani-ka-meetha', 'double-ka-meetha'],
+    productSlugs: ['kaju-katli', 'badam-ki-jali', 'gulab-jamun', 'double-ka-meetha'],
   },
   eid: {
     title: 'Eid',
     telugu: 'ఈద్',
     tagline: 'A platter worth the long day.',
     eyebrow: 'Eid al-Fitr · 2026',
-    body: 'The Deccan table shines brightest here. Double ka Meetha, Qubani, Badam ki Jali — Hyderabadi classics, plated the slow way.',
+    body: 'The Deccan table shines brightest here. Double ka Meetha, Sheer Khurma, Badam ki Jali — festive classics, plated the slow way.',
     date: '2026-03-30T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
@@ -195,7 +195,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
         href: '/corporate',
       },
     ],
-    productSlugs: ['double-ka-meetha', 'qubani-ka-meetha', 'badam-ki-jali', 'kaju-katli'],
+    productSlugs: ['double-ka-meetha', 'sheer-khurma', 'badam-ki-jali', 'kaju-katli'],
   },
   holi: {
     title: 'Holi',

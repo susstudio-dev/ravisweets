@@ -1180,7 +1180,7 @@ function BrandSection() {
           />
           <PyramidLevel
             label="What we do"
-            body="Slow-cooked Telangana & Hyderabadi sweets, plus a new jaggery + millet range. National + worldwide shipping. Custom corporate hampers."
+            body="Slow-cooked Telangana sweets, plus a new jaggery + millet range. National + worldwide shipping. Custom corporate hampers."
           />
           <PyramidLevel
             label="How we differ"
@@ -1689,7 +1689,7 @@ function SeoSection() {
     { kw: 'Annamayi Laddu', target: '#1', page: 'product page' },
     { kw: 'Khammam famous sweets', target: 'top 3', page: '/' },
     { kw: 'Telugu sweets shop', target: 'top 8', page: '/festivals' },
-    { kw: 'Hyderabadi sweets online', target: 'top 8', page: '/festivals/hyderabadi-specials' },
+    { kw: 'Telangana sweets online', target: 'top 8', page: '/shop' },
     { kw: 'send Diwali sweets to India', target: 'top 8', page: '/send-from-abroad' },
     { kw: 'send Rakhi sweets to India', target: 'top 8', page: '/send-from-abroad' },
   ];
@@ -2636,7 +2636,7 @@ function SpirulinaSection() {
 function LimitedEditionSection() {
   // The Vault 10 — a numbered, serialised limited-edition collection. Ten
   // sweets that do not exist anywhere in the Indian mithai market today,
-  // each grounded in a real technique or Hyderabadi/Andhra heritage cue so
+  // each grounded in a real technique or Telangana/Andhra heritage cue so
   // it reads as craft, not gimmick. Sold as a scarcity "drop", sneaker-style.
   const concept = [
     {
@@ -2663,7 +2663,7 @@ function LimitedEditionSection() {
       name: 'Apricot-Almond Protein Caviar',
       idea: "Reverse-spherified apricot pearls (sweetened only by soaked dates + the fruit's own sugars) that burst over a hung-curd protein cream. No refined sugar, gelatin-free.",
       tech: 'Agar/alginate reverse-spherification (veg, gelatin-free)',
-      heritage: 'Nizami Qubani ka Meetha',
+      heritage: 'Khubani apricot mithai',
       nutrition: '~8 g protein · no refined sugar · gut-friendly curd',
       why: 'Molecular gastronomy + a protein cream base — nobody has done functional spherified mithai.',
     },
@@ -2672,7 +2672,7 @@ function LimitedEditionSection() {
       name: 'Smoked Sattu-Pista Barfi',
       idea: 'A barfi built on sattu (roasted chana, ~20 g protein/100 g) + pista + jaggery, finished with charcoal-ghee dhungar smoke trapped in the pack. No maida, no refined sugar.',
       tech: 'Dhungar smoking + sattu-protein barfi',
-      heritage: 'Hyderabadi dhungar (biryani/haleem finish)',
+      heritage: 'Deccani dhungar (biryani/haleem finish)',
       nutrition: '~11 g protein · high fibre · jaggery-sweetened',
       why: 'Highest-protein barfi in India + a smoke-aroma reveal — a first on both counts.',
     },
@@ -2845,7 +2845,7 @@ function LimitedEditionSection() {
           <span className="text-theme-ink font-semibold"> zero refined sugar</span> (dates · jaggery
           · monk fruit), gut-friendly and low-GI, built on desi superfoods — sattu, makhana, millet,
           black sesame, probiotic cultured milk. Each piece pairs a real technique (spherification,
-          dhungar smoke, probiotic culturing, transparent fruit-glass) with a Hyderabadi/Andhra
+          dhungar smoke, probiotic culturing, transparent fruit-glass) with a Telangana/Andhra
           heritage cue, so it reads as craft + nutrition science, not a powder rolled into a ball.
           Sold sneaker-style: 500 numbered boxes per drop. Sugar-free/diabetic-friendly foods in
           India are a $1.12B → $2.58B market (8.93% CAGR) and incumbents (Artinci, Eat Better Co) do
@@ -2982,7 +2982,7 @@ function LimitedEditionSection() {
             },
             {
               h: 'Craft + science, not a powder ball',
-              b: 'Every piece uses a real technique and a Hyderabadi/Andhra heritage cue. Functional food that is genuinely delicious.',
+              b: 'Every piece uses a real technique and a Telangana/Andhra heritage cue. Functional food that is genuinely delicious.',
             },
             {
               h: 'A 1983 halwai house, not a faceless startup',
@@ -3207,7 +3207,7 @@ function LimitedEditionSection() {
               points: [
                 'Blurred macro teasers — "10 sweets that don\'t exist yet" — drip one cryptic frame/day.',
                 'Open the /vault-10 waitlist with a live "500 boxes only" counter.',
-                'Tease ONE grail piece (e.g. Qubani Caviar) in a 15s slow-mo reel.',
+                'Tease ONE grail piece (e.g. the Apricot-Almond Caviar) in a 15s slow-mo reel.',
                 'WhatsApp broadcast + email capture; Hyderabad WhatsApp groups + foodie communities.',
               ],
             },

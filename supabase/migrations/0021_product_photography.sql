@@ -24,7 +24,7 @@ from (values
     ('kaju-katli', '[{"url":"/products/kaju-katli.webp","alt":"Kaju Katli diamonds fanned into a star on red cloth, one piece leafed with edible silver, whole cashews scattered beside them","width":1400,"height":1400}]'::jsonb),
     ('gulab-jamun', '[{"url":"/products/gulab-jamun.webp","alt":"Three deep-brown Gulab Jamun, each topped with slivered almond, resting close together on a pale dish","width":1400,"height":1400}]'::jsonb),
     ('motichoor-ladoo', '[{"url":"/products/motichoor-ladoo.webp","alt":"Motichoor Ladoos with saffron pearls visible across the surface","width":1400,"height":1400},{"url":"/products/motichoor-ladoo-2.webp","alt":"Four Motichoor Ladoos heaped in a blue-and-white painted bowl against a pink backdrop","width":1400,"height":1400}]'::jsonb),
-    ('hyderabadi-mixture', '[{"url":"/products/navaratna-mixture.webp","alt":"Navaratna Mixture from the Ravi Sweets counter","width":1400,"height":1400}]'::jsonb),
+    ('special-mixture', '[{"url":"/products/navaratna-mixture.webp","alt":"Navaratna Mixture from the Ravi Sweets counter","width":1400,"height":1400}]'::jsonb),
     ('peanut-chivda', '[{"url":"/products/atukula-mixture.webp","alt":"Atukula Mixture from the Ravi Sweets counter","width":1400,"height":1400}]'::jsonb),
     ('besan-sev', '[{"url":"/products/karapusa.webp","alt":"Karapusa — Crispy Karapusa from the Ravi Sweets counter","width":1400,"height":1400}]'::jsonb),
     ('chai-time-combo', '[{"url":"/products/navaratna-mixture.webp","alt":"Navaratna Mixture from the Ravi Sweets counter","width":1400,"height":1400}]'::jsonb),

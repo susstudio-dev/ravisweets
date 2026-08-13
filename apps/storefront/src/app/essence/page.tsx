@@ -69,7 +69,7 @@ const PIECES: EssencePiece[] = [
     name: 'Apricot-Almond Caviar',
     line: 'Hung-curd cream under pearls of apricot, gelatin-free.',
     technique: 'Reverse spherification',
-    heritage: 'Nizami Qubani',
+    heritage: 'Khubani apricot',
     fresh: true,
     ink: '#F2A65A',
     shape: 'scatter',
@@ -79,7 +79,7 @@ const PIECES: EssencePiece[] = [
     name: 'Smoked Sattu-Pista Barfi',
     line: 'Sattu and pista, jaggery only, charcoal-ghee smoke sealed in the pack.',
     technique: 'Dhungar smoke-trap',
-    heritage: 'Hyderabadi dhungar',
+    heritage: 'Deccani dhungar',
     fresh: false,
     ink: '#9CBE5C',
     shape: 'diamond',
@@ -173,27 +173,65 @@ export default function EssencePage() {
       {/* One carbon subtree spans the claim AND the carousel, so the room does
           not change colour halfway down the experience. */}
       <div data-register="carbon" className="bg-theme-base text-theme-ink">
-        <section className="container-site section-y">
+        {/*
+          ── THE TEN OPEN THE PAGE ──────────────────────────────────────────
+          Owner, 2026-08-13: "for me carousel is the main thing". It used to sit
+          fourth — below the headline, a 60-word blurb, the CTA row and the stat
+          table — a full screen of text on a laptop, so the thing the page is
+          FOR was something you had to go looking for.
+
+          Headline and stage now share the first screen. That is what the
+          tightened padding and the one-step-smaller h1 buy: `section-y` plus
+          `display-xl` spent the whole viewport before the carousel began.
+          Everything that explains the drop moved below it — a visitor still
+          reading has already seen the thing they are reading about.
+        */}
+        <section
+          aria-labelledby="pieces-heading"
+          className="container-site pb-10 pt-8 md:pb-14 md:pt-12"
+        >
           <Reveal>
             <p className="flex flex-wrap items-baseline gap-x-2.5">
               <span className="font-indic text-theme-accent text-lg leading-none">ఎసెన్స్</span>
               <span className="field-label">The Essence · Drop {DROP.number}</span>
               <span className="field-label">· {DROP.season}</span>
             </p>
-            <h1 className="font-display text-display-lg md:text-display-xl mt-3 max-w-4xl leading-[1.04]">
+            <h1 className="font-display text-display-md md:text-display-lg mt-3 max-w-4xl leading-[1.04]">
               Ten sweets that exist nowhere else. {DROP.boxes} numbered boxes. Then gone.
             </h1>
           </Reveal>
-          <Reveal delay={0.08}>
-            <p className="text-theme-ink/70 mt-5 max-w-2xl text-lg leading-relaxed">
+
+          {/*
+            Compact by design. The h1 above has already named the drop, so a
+            second display-size heading restated it and cost ~90px of the one
+            screen this section is trying to win. It stays a real <h2> — the
+            section is labelled by it — just set as a record line.
+
+            NOT wrapped in <Reveal>: the carousel establishes its own
+            perspective, and an ancestor mid-transform is the kind of thing that
+            quietly flattens a 3D scene.
+          */}
+          <h2 id="pieces-heading" className="field-label mt-8">
+            Drop {DROP.number} manifest · the ten, in order
+          </h2>
+
+          <div className="mt-4">
+            <EssenceCarousel pieces={PIECES} />
+          </div>
+        </section>
+
+        {/* ── WHAT THE BOX IS, AND HOW TO GET ONE ───────────────────── */}
+        <section className="container-site pb-16 md:pb-20">
+          <Reveal>
+            <p className="text-theme-ink/70 max-w-2xl text-lg leading-relaxed">
               A collector box of ten single-bite pieces — protein-led, free of refined sugar,
-              built on desi superfoods, each pairing a real technique with a Hyderabadi or
+              built on desi superfoods, each pairing a real technique with a Telangana or
               Andhra heritage cue. Eaten in order, 01 to 10. Every season, two or three
               pieces rotate out and the drop is numbered again.
             </p>
           </Reveal>
 
-          <Reveal delay={0.14}>
+          <Reveal delay={0.06}>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
               <a href={WA_HREF} target="_blank" rel="noreferrer" className="stamp">
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
@@ -206,7 +244,7 @@ export default function EssencePage() {
           </Reveal>
 
           {/* The drop's terms, as ruled proof cells — same grammar as the hero. */}
-          <Reveal delay={0.18}>
+          <Reveal delay={0.1}>
             <ul className="mt-9 grid max-w-[36rem] grid-cols-3 border-y border-[color:var(--color-rule)]">
               {[
                 { value: DROP.boxes, label: 'numbered boxes' },
@@ -225,20 +263,6 @@ export default function EssencePage() {
               ))}
             </ul>
           </Reveal>
-        </section>
-
-        {/* ── THE TEN, IN THE ROUND ─────────────────────────────────── */}
-        <section aria-labelledby="pieces-heading" className="container-site pb-16 md:pb-20">
-          <Reveal>
-            <div className="docket-head">
-              <h2 id="pieces-heading" className="font-display text-display-md">
-                The collection, 01 → 10
-              </h2>
-              <p className="field-label">Drop {DROP.number} manifest</p>
-            </div>
-          </Reveal>
-
-          <EssenceCarousel pieces={PIECES} />
         </section>
       </div>
 

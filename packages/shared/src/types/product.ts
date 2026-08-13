@@ -21,8 +21,7 @@ export type CategorySlug =
   | 'healthy-sweets'
   | 'combos'
   | 'gift-hampers'
-  | 'festival-specials'
-  | 'hyderabadi-specials';
+  | 'festival-specials';
 
 export interface ProductImage {
   url: string;

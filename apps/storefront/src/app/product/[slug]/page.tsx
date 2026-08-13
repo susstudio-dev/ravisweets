@@ -39,7 +39,6 @@ export async function generateStaticParams() {
  * clause a person actually types into a search box.
  */
 const CATEGORY_TITLE_HOOK: Record<string, string> = {
-  'hyderabadi-specials': 'Hyderabadi Sweet, Made Fresh',
   sweets: 'Fresh Indian Mithai',
   'sweet-bites': 'Bite-size Mithai Tin',
   'healthy-sweets': 'Sugar-free Laddu',
@@ -56,7 +55,6 @@ const CATEGORY_TITLE_HOOK: Record<string, string> = {
 
 /** Reads after the word "More" in the related-products heading. */
 const CATEGORY_H2_LABEL: Record<string, string> = {
-  'hyderabadi-specials': 'Hyderabadi specials',
   sweets: 'sweets from the counter',
   'sweet-bites': 'Sweet Bites flavours',
   'healthy-sweets': 'healthy laddus',
@@ -170,9 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
           <Reveal>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="field-label text-theme-accent">
-                {product.category === 'hyderabadi-specials'
-                  ? 'Hyderabadi Specials'
-                  : product.category.replace(/-/g, ' ')}
+                {product.category.replace(/-/g, ' ')}
               </p>
               {/* Freshness is the product claim, so it leads the record. */}
               {product.shelf_life_days <= 7 && <span className="live-mark">Made to order</span>}

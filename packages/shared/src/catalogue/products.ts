@@ -11,10 +11,10 @@ import { GULKAND, HOUSE, BADAM, KESAR, HAMPER } from './palettes';
  * at render time) until the production photography shoot lands per the
  * photography-gating requirement in elevate-storefront-visual-experience.
  *
- * Coverage by category (Apr 2026 — 24 total):
- *   hyderabadi-specials    5   (Qubani, Double ka Meetha, Badam ki Jali, Sheer Khurma, Khubani Mithai)
- *   sweets                 4   (Kaju Katli, Gulab Jamun, Motichoor Ladoo, Cardamom Soan Papdi)
- *   namkeens               3   (Hyderabadi Mixture, Peanut Chivda, Besan Sev)
+ * Coverage by category (Apr 2026 seed, revised Aug 2026 — 23 total):
+ *   sweets                 8   (Double ka Meetha, Badam ki Jali, Sheer Khurma, Khubani Mithai,
+ *                               Kaju Katli, Gulab Jamun, Motichoor Ladoo, Cardamom Soan Papdi)
+ *   namkeens               3   (Special Mixture, Peanut Chivda, Besan Sev)
  *   dry-fruits             2   (Roasted Almonds, Saffron Pistachios)
  *   combos                 3   (Chai-time Combo, Festival Essentials, Office Chai Tray)
  *   gift-hampers           4   (Diwali Premium, Classic Gifting Box, Corporate Essentials, Wedding Trousseau Box)
@@ -113,43 +113,14 @@ function photo(slug: string): string {
  * per SKU with `MiniSku.theme_palette`.
  */
 export const HARDCODED_CATALOGUE: Product[] = [
-  // ─── Hyderabadi specials ────────────────────────────────────────────────
-  {
-    id: 'p_qubani',
-    slug: 'qubani-ka-meetha',
-    title: 'Qubani ka Meetha',
-    description:
-      'A Hyderabadi Nizami classic — slow-cooked dried apricots reduced in their own syrup for four hours, finished with almond slivers and a spoonful of malai. Made to a recipe carried down from the royal kitchens, and served cold the way Hyderabad has always preferred.',
-    category: 'hyderabadi-specials',
-    dietary_tags: ['eggless', 'nuts', 'dairy'],
-    ingredients: ['Dried apricots', 'Sugar', 'Almonds', 'Saffron', 'Milk cream', 'Cardamom'],
-    allergens: ['Nuts', 'Dairy'],
-    storage_instructions: 'Refrigerate. Best consumed chilled within 3 days of opening.',
-    shelf_life_days: 7,
-    images: [
-      { url: pendingPhoto('2025/08/booster.webp'), alt: 'Qubani ka Meetha-style apricot dessert with cream and almonds', width: 1400, height: 1400 },
-      { url: pendingPhoto('2025/08/dry-fruit.webp'), alt: 'Close-up showing slivered almonds across the top of the Qubani', width: 1400, height: 1400 },
-    ],
-    variants: [
-      { id: 'v_qubani_250', title: '250 g', weight_grams: 250, price: { amount: 279, currency: 'INR' }, sku: 'RS-QKM-250', stock_available: 32, hsn_code: '2106' },
-      { id: 'v_qubani_500', title: '500 g', weight_grams: 500, price: { amount: 499, currency: 'INR' }, sku: 'RS-QKM-500', stock_available: 24, hsn_code: '2106' },
-      { id: 'v_qubani_1000', title: '1 kg', weight_grams: 1000, price: { amount: 949, currency: 'INR' }, sku: 'RS-QKM-1000', stock_available: 12, hsn_code: '2106' },
-    ],
-    region_availability: ['in'],
-    featured: true, bestseller: true, new: false,
-    theme_palette: GULKAND, // apricot (khubani) reduction
-    garnish: 'saffron',
-    builder_eligible: true,
-    rubric_passed_on: TODAY,
-    source_url: RAVISWEETS_LICENCE,
-  },
+  // ─── House specials (merged into sweets, Aug 2026 — see 0022) ──────────
   {
     id: 'p_double_ka_meetha',
     slug: 'double-ka-meetha',
     title: 'Double ka Meetha',
     description:
-      "Hyderabad's answer to bread pudding — golden-fried bread soaked overnight in saffron-infused rabri, scattered with chopped pistachios and served warm. The slow soak is what gives it the custard interior and the crisp saffron edge.",
-    category: 'hyderabadi-specials',
+      'Golden-fried bread soaked overnight in saffron-infused rabri, scattered with chopped pistachios and served warm. The slow soak is what gives it the custard interior and the crisp saffron edge.',
+    category: 'sweets',
     dietary_tags: ['nuts', 'dairy', 'contains-ghee'],
     ingredients: ['Bread', 'Full-fat milk', 'Sugar', 'Ghee', 'Saffron', 'Pistachios', 'Cardamom'],
     allergens: ['Gluten', 'Nuts', 'Dairy'],
@@ -174,8 +145,8 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'badam-ki-jali',
     title: 'Badam ki Jali',
     description:
-      'Lace-thin almond discs, crisped with sugar and cardamom until they snap like glass. A delicate Hyderabadi gift favourite — arrives in a tissue-lined tin that keeps them intact through a long journey.',
-    category: 'hyderabadi-specials',
+      'Lace-thin almond discs, crisped with sugar and cardamom until they snap like glass. A delicate gift favourite — arrives in a tissue-lined tin that keeps them intact through a long journey.',
+    category: 'sweets',
     dietary_tags: ['eggless', 'nuts', 'gluten-free'],
     ingredients: ['Almonds', 'Sugar', 'Cardamom', 'Ghee'],
     allergens: ['Nuts', 'Dairy'],
@@ -201,7 +172,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     title: 'Sheer Khurma',
     description:
       'The Eid and Ramzan morning ritual — vermicelli simmered in full-fat milk with dates, sliced almonds, pistachios, and a breath of rose. We follow the old Deccan method: slow reduce first, garnish later, so the dates give up their perfume without breaking.',
-    category: 'hyderabadi-specials',
+    category: 'sweets',
     dietary_tags: ['nuts', 'dairy', 'contains-ghee'],
     ingredients: ['Vermicelli', 'Full-fat milk', 'Dates', 'Sugar', 'Almonds', 'Pistachios', 'Rose water', 'Cardamom', 'Ghee'],
     allergens: ['Gluten', 'Nuts', 'Dairy'],
@@ -226,8 +197,8 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'khubani-dry-fruit-mithai',
     title: 'Khubani Dry-Fruit Mithai',
     description:
-      'An opulent cousin of Qubani ka Meetha — apricot paste layered with cashews, almonds, pistachios, and a single thread of edible silver leaf. Cuts cleanly, keeps for weeks, travels well. A Nizami-era trousseau sweet adapted for modern gifting.',
-    category: 'hyderabadi-specials',
+      'Apricot paste layered with cashews, almonds, pistachios, and a single thread of edible silver leaf. Cuts cleanly, keeps for weeks, travels well. A trousseau sweet adapted for modern gifting.',
+    category: 'sweets',
     dietary_tags: ['eggless', 'nuts', 'gluten-free'],
     ingredients: ['Apricots', 'Cashews', 'Almonds', 'Pistachios', 'Sugar', 'Ghee', 'Cardamom', 'Silver leaf'],
     allergens: ['Nuts', 'Dairy'],
@@ -322,7 +293,10 @@ export const HARDCODED_CATALOGUE: Product[] = [
       { id: 'v_mtl_12', title: '12 pieces', weight_grams: 600, price: { amount: 529, currency: 'INR' }, sku: 'RS-MTL-12', stock_available: 24, hsn_code: '2106' },
     ],
     region_availability: ['in'],
-    featured: false, bestseller: false, new: true,
+    // bestseller since 2026-08-13: Motichoor took Qubani's place as the face of
+    // the range (signature moment, hero body, search suggestions), and the
+    // bestseller surfaces read SIGNATURE_ORDER — which ranks it third.
+    featured: false, bestseller: true, new: true,
     theme_palette: HOUSE,
     garnish: 'saffron',
     builder_eligible: true, rubric_passed_on: TODAY, source_url: RAVISWEETS_LICENCE,
@@ -331,8 +305,8 @@ export const HARDCODED_CATALOGUE: Product[] = [
   // ─── Namkeens ───────────────────────────────────────────────────────────
   {
     id: 'p_mixture',
-    slug: 'hyderabadi-mixture',
-    title: 'Hyderabadi Mixture',
+    slug: 'special-mixture',
+    title: 'Special Mixture',
     description:
       'A crunchy medley of gram flour sev, roasted peanuts, curry leaves, and our house masala. Ready for chai and stubbornly moreish. Fried in cold-pressed groundnut oil and sealed the same day.',
     category: 'namkeens',
@@ -386,7 +360,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'besan-sev',
     title: 'Besan Sev',
     description:
-      'Thin gram-flour threads, salted and lightly spiced, pressed through a brass mould and crisped in ghee. Clean, pure, unfussy — the namkeen that lives on every Hyderabadi chai tray.',
+      'Thin gram-flour threads, salted and lightly spiced, pressed through a brass mould and crisped in ghee. Clean, pure, unfussy — the namkeen that lives on every chai tray.',
     category: 'namkeens',
     dietary_tags: ['eggless', 'contains-ghee'],
     ingredients: ['Gram flour', 'Ghee', 'Salt', 'Turmeric', 'Black pepper'],
@@ -491,10 +465,10 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'festival-essentials-combo',
     title: 'Festival Essentials Combo',
     description:
-      'A sweet + savoury pair curated for a festival-week table: 500 g Kaju Katli and 400 g Hyderabadi Mixture. The two most requested SKUs from our corporate desk, now as a single package.',
+      'A sweet + savoury pair curated for a festival-week table: 500 g Kaju Katli and 400 g Special Mixture. The two most requested SKUs from our corporate desk, now as a single package.',
     category: 'combos',
     dietary_tags: ['nuts', 'dairy'],
-    ingredients: ['See component SKUs — Kaju Katli 500g, Hyderabadi Mixture 400g'],
+    ingredients: ['See component SKUs — Kaju Katli 500g, Special Mixture 400g'],
     allergens: ['Nuts', 'Dairy', 'Peanuts'],
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 15,
@@ -515,7 +489,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'diwali-premium-hamper',
     title: 'Diwali Premium Hamper',
     description:
-      'A hand-packed celebration box: Kaju Katli, Badam ki Jali, Qubani ka Meetha, roasted almonds, pistachios, and a small brass diya — wrapped in silk and sealed with a paisley tag. Our bestselling Diwali gift for 2026.',
+      'A hand-packed celebration box: Kaju Katli, Badam ki Jali, Motichoor Ladoo, roasted almonds, pistachios, and a small brass diya — wrapped in silk and sealed with a paisley tag. Our bestselling Diwali gift for 2026.',
     category: 'gift-hampers',
     dietary_tags: ['nuts', 'dairy'],
     ingredients: ['Assorted sweets and dry fruits — see component SKUs for individual details.'],
@@ -560,7 +534,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'corporate-essentials-box',
     title: 'Corporate Essentials Box',
     description:
-      'Built for a team table — 1 kg of mixed sweets (Kaju Katli + Motichoor Ladoo), 400 g Hyderabadi Mixture, 200 g Roasted Almonds. Plain-cream box, no ribbon, no fuss. Logo-printable for orders of 50+.',
+      'Built for a team table — 1 kg of mixed sweets (Kaju Katli + Motichoor Ladoo), 400 g Special Mixture, 200 g Roasted Almonds. Plain-cream box, no ribbon, no fuss. Logo-printable for orders of 50+.',
     category: 'gift-hampers',
     dietary_tags: ['nuts', 'dairy'],
     ingredients: ['Assorted — see component SKUs.'],
@@ -606,7 +580,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     slug: 'eid-signature-box',
     title: 'Eid Signature Box',
     description:
-      'The full Hyderabadi Eid table in one box: 500 g Sheer Khurma, 500 g Double ka Meetha, Khubani Dry-Fruit Mithai, and Saffron-Salt Pistachios. Ships with reheat instructions for the Sheer Khurma.',
+      'The full Eid table in one box: 500 g Sheer Khurma, 500 g Double ka Meetha, Khubani Dry-Fruit Mithai, and Saffron-Salt Pistachios. Ships with reheat instructions for the Sheer Khurma.',
     category: 'festival-specials',
     dietary_tags: ['nuts', 'dairy', 'contains-ghee'],
     ingredients: ['Assorted — see component SKUs.'],
@@ -963,7 +937,7 @@ function sweetBitesGroup(): Product[] {
     { slug: 'mango-crunch-bites', title: 'Mango Crunch Bites', image: photo('kacha-mango-delight'), imageAlt: 'Kacha Mango Delight from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Aam-paste bites with a layer of crispy crunch through the centre. Summer in a bite.' },
     { slug: 'mixed-bites', title: 'Mixed Bites', image: photo('tutti-frutti-bites'), imageAlt: 'Tutti Frutti Bites from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'A sampler box — six flavours in one tin so you can pick a favourite before committing.', bestseller: true },
     { slug: 'oreo-bites', title: 'Oreo Bites', image: photo('oreo-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Crushed-cookie bites bound with milk-fudge — the kid-favourite SKU on our counter.' },
-    { slug: 'pineapple-bites', title: 'Pineapple Bites', image: photo('pineapple-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Tangy pineapple-paste bites with a citrus snap. Refreshing on a Hyderabadi afternoon.' },
+    { slug: 'pineapple-bites', title: 'Pineapple Bites', image: photo('pineapple-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Tangy pineapple-paste bites with a citrus snap. Refreshing on a warm afternoon.' },
     { slug: 'silky-bites', title: 'Silky Bites', image: photo('silky-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cream-and-cardamom bites with a silken set. Melts on the tongue, finishes with cardamom.' },
     { slug: 'strawberry-bites', title: 'Strawberry Bites', image: photo('cranberry-bites'), imageAlt: 'Cranberry Bites from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Strawberry-paste bites with a thin chocolate shell. Sweet meets tart in a clean finish.' },
     { slug: 'tutti-frutti-bites', title: 'Tutti Frutti Bites', image: photo('tutti-frutti-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Candied-fruit bites flecked through soft milk-fudge. The cheerful one in the tin.' },
@@ -1174,7 +1148,7 @@ function friedSweetsGroup(): Product[] {
     { slug: 'jalebi', title: 'Jalebi', image: photo('jalebi'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Fermented batter piped straight into hot ghee and dropped into cardamom syrup while it still hisses. Eaten within the hour, ideally.', bestseller: true },
     { slug: 'paneer-jalebi', title: 'Paneer Jalebi', image: photo('paneer-jalebi'), variantPaiseSmall: 18000, variantPaiseLarge: 72000, description: 'The Bengali-style jalebi — chenna in the batter makes it thicker, softer and less brittle than the classic coil.' },
     { slug: 'badusha', title: 'Badusha', image: photo('badusha'), variantPaiseSmall: 14000, variantPaiseLarge: 56000, description: 'Flaky ghee-short pastry fried slow so it layers, then soaked until the syrup reaches the middle. Crisp rim, soft heart.', bestseller: true },
-    { slug: 'baklava', title: 'Baklava', image: photo('baklava'), variantPaiseSmall: 45000, variantPaiseLarge: 180000, description: 'Filo layered with chopped pistachio and walnut, baked to a deep gold and finished with honey syrup. The Hyderabadi table has claimed it for generations.', theme_palette: BADAM },
+    { slug: 'baklava', title: 'Baklava', image: photo('baklava'), variantPaiseSmall: 45000, variantPaiseLarge: 180000, description: 'Filo layered with chopped pistachio and walnut, baked to a deep gold and finished with honey syrup. The festive table has claimed it for generations.', theme_palette: BADAM },
     { slug: 'bellam-gavvalu', title: 'Bellam Gavvalu', image: photo('bellam-gavvalu'), variantPaiseSmall: 13000, variantPaiseLarge: 52000, description: 'Little ridged shells rolled off a gavvalu board and glazed in jaggery. The ridges are what hold the glaze.' },
     { slug: 'bobbattu', title: 'Bobbattu', image: photo('bobbattu'), variantPaiseSmall: 15000, variantPaiseLarge: 60000, description: 'Chana-dal and jaggery sealed inside a paper-thin wheat round, griddled in ghee. The festival bread-sweet of every Telugu house.', bestseller: true },
     { slug: 'gujiya', title: 'Gujiya', image: photo('gujiya'), variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'Crimped half-moons filled with khoya, coconut and dry fruit, fried and lightly sugared. Holi in a box.' },

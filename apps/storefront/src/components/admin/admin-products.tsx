@@ -33,7 +33,6 @@ import { MediaPickerDialog } from '@/components/admin/media-picker';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
-  { value: 'hyderabadi-specials', label: 'Hyderabadi specials' },
   { value: 'sweets', label: 'Sweets' },
   { value: 'sweet-bites', label: 'Sweet bites' },
   { value: 'healthy-sweets', label: 'Healthy sweets' },

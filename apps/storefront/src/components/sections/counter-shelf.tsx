@@ -18,7 +18,7 @@ const COUNTERS = [
     href: '/category/sweets',
     telugu: 'తీపి',
     title: 'Sweets',
-    blurb: 'Kaju katli, laddus, the Hyderabadi specials — the counter everyone points at first.',
+    blurb: 'Kaju katli, laddus, the house specials — the counter everyone points at first.',
     sweets: ['diamond', 'round', 'square', 'round'] as const,
   },
   {

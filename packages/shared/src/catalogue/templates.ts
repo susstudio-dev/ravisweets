@@ -56,7 +56,7 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     tagline: 'Bestseller',
     startingUnits: 100,
     items: [
-      { lineId: 'p_qubani:v_qubani_500', productId: 'p_qubani', variantId: 'v_qubani_500', qtyPerHamper: 1 },
+      { lineId: 'p_khubani_mithai:v_khm_500', productId: 'p_khubani_mithai', variantId: 'v_khm_500', qtyPerHamper: 1 },
       { lineId: 'p_kaju_katli:v_kaju_500', productId: 'p_kaju_katli', variantId: 'v_kaju_500', qtyPerHamper: 1 },
       { lineId: 'p_badam_ki_jali:v_bkj_250', productId: 'p_badam_ki_jali', variantId: 'v_bkj_250', qtyPerHamper: 1 },
       { lineId: 'p_dry_pistachios:v_pist_200', productId: 'p_dry_pistachios', variantId: 'v_pist_200', qtyPerHamper: 1 },
@@ -66,7 +66,7 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     box: 'lacquered-brass',
     logoPrint: false,
     description:
-      'Our signature corporate hamper — Hyderabadi specials, two dry-fruit tins, lacquered-brass box.',
+      'Our signature corporate hamper — house specials, two dry-fruit tins, lacquered-brass box.',
   },
   grande: {
     id: 'grande',
@@ -74,7 +74,7 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     tagline: 'Signature',
     startingUnits: 25,
     items: [
-      { lineId: 'p_qubani:v_qubani_500', productId: 'p_qubani', variantId: 'v_qubani_500', qtyPerHamper: 1 },
+      { lineId: 'p_khubani_mithai:v_khm_500', productId: 'p_khubani_mithai', variantId: 'v_khm_500', qtyPerHamper: 1 },
       { lineId: 'p_double_ka_meetha:v_dkm_500', productId: 'p_double_ka_meetha', variantId: 'v_dkm_500', qtyPerHamper: 1 },
       { lineId: 'p_kaju_katli:v_kaju_500', productId: 'p_kaju_katli', variantId: 'v_kaju_500', qtyPerHamper: 1 },
       { lineId: 'p_badam_ki_jali:v_bkj_250', productId: 'p_badam_ki_jali', variantId: 'v_bkj_250', qtyPerHamper: 1 },
@@ -87,7 +87,7 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     box: 'silk-wrap',
     logoPrint: true,
     description:
-      'The full Hyderabadi spread in a silk-wrapped box with brass accents. Logo printing included.',
+      'The full festive spread in a silk-wrapped box with brass accents. Logo printing included.',
   },
   blank: {
     id: 'blank',

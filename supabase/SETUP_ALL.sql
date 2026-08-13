@@ -338,9 +338,9 @@ values
     jsonb_build_object(
       'eyebrow', 'Khammam · Telangana',
       'headline', 'The sweetness of Telangana, slow-cooked in Khammam.',
-      'body', 'Qubani ka Meetha, Badam ki Jali, Double ka Meetha — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
-      'ctaLabel', 'Shop Hyderabadi specials',
-      'ctaHref', '/category/hyderabadi-specials',
+      'body', 'Kaju Katli, Gulab Jamun, Motichoor Ladoo — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
+      'ctaLabel', 'Shop today''s sweets',
+      'ctaHref', '/shop',
       'imageUrl', 'https://ravisweets.com/wp-content/uploads/2025/09/badam_pista_kalakand-removebg-preview.png'
     ),
     null

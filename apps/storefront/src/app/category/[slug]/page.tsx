@@ -51,16 +51,6 @@ const CATEGORY_META: Record<
     keeping: string;
   }
 > = {
-  'hyderabadi-specials': {
-    title: 'Hyderabadi Specials',
-    titleHook: 'Buy Nizami Sweets Online',
-    eyebrow: 'Deccan classics',
-    body: 'Hyderabadi sweets — Qubani ka Meetha, Double ka Meetha, Badam ki Jali — slow-cooked the old way, the morning they ship.',
-    method:
-      'The Nizami sweets are the slowest things we make. Qubani ka Meetha is dried apricots reduced in their own syrup over about four hours, with no thickener and no added colour; Double ka Meetha is bread fried in ghee and then soaked, not sprayed. The recipes came down through the Deccan tradition rather than out of a manual, and the only way to keep them tasting right is to make them to order and dispatch them the same day.',
-    keeping:
-      'This range is milk- and cream-led, so it is the shortest-lived on the site — most of it wants a refrigerator and a week at the outside. It travels in temperature-controlled packaging with gel packs. Serve the apricot and bread sweets cold, the way Hyderabad prefers them; the almond work is best at room temperature.',
-  },
   sweets: {
     title: 'Sweets',
     titleHook: 'Buy Fresh Indian Mithai Online',
@@ -184,7 +174,6 @@ const CATEGORY_META: Record<
 };
 
 const ALL_SLUGS: CategorySlug[] = [
-  'hyderabadi-specials',
   'sweets',
   'sweet-bites',
   'healthy-sweets',
@@ -246,7 +235,13 @@ export default async function CategoryPage({ params }: PageProps) {
         aria-labelledby="cat-heading"
         className="container-site grid gap-8 pb-20 pt-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10"
       >
-        <aside className="lg:sticky lg:top-20 lg:self-start">
+        {/*
+          Sticky AND scrollable — see the long note on the same aside in
+          shop-view. This rail is the worse of the two: it carries the back
+          link, the h1, the count and the intro above the panel, so roughly
+          200px of it is spent before a filter appears.
+        */}
+        <aside className="rail-scroll lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1">
           <Link
             href="/"
             className="text-theme-ink hover:text-theme-accent inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium transition-colors"

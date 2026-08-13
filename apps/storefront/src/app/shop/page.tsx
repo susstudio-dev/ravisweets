@@ -28,7 +28,6 @@ function ShopFallback() {
 
 /** Display order and labels for the index — mirrors the client grid's chips. */
 const CATEGORY_LABEL: Record<string, string> = {
-  'hyderabadi-specials': 'Hyderabadi specials',
   sweets: 'Sweets',
   'sweet-bites': 'Sweet Bites',
   'healthy-sweets': 'Healthy sweets',

@@ -1,0 +1,15 @@
+# Cloudflare Pages redirects — copied into the export root by the build.
+#
+# 2026-08-13: Qubani ka Meetha was retired (the shop never made it), the
+# hyderabadi-specials category merged into sweets, and Hyderabadi Mixture was
+# renamed Special Mixture. All three URLs are in Google's index and in the
+# old sitemap, so they 301 to their successors instead of 404ing.
+# Exact-match lines first: on Cloudflare Pages a `/foo/*` splat does not match
+# the bare `/foo`, and with the page assets gone the bare form no longer gets
+# the automatic 308 to the slash form — it must be caught here explicitly.
+/category/hyderabadi-specials /category/sweets/ 301
+/product/qubani-ka-meetha /category/sweets/ 301
+/product/hyderabadi-mixture /product/special-mixture/ 301
+/category/hyderabadi-specials/* /category/sweets/ 301
+/product/qubani-ka-meetha/* /category/sweets/ 301
+/product/hyderabadi-mixture/* /product/special-mixture/ 301

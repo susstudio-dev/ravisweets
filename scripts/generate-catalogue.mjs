@@ -106,7 +106,7 @@ function resolveEnv(key) {
  * order of whatever survives its filter. Sorting the baked catalogue by id —
  * the obvious "deterministic" choice, and what generate-product-seed.mjs does
  * because SQL insert order is invisible — would silently reshuffle the entire
- * shop, opening it on Badam ki Jali instead of the curated Hyderabadi run.
+ * shop, opening it on Badam ki Jali instead of the curated opening run.
  *
  * So the hardcoded array stays the ordering authority: products it knows keep
  * their curated position, and anything the admin has since created lands after
@@ -175,7 +175,6 @@ const CATEGORIES = new Set([
   'combos',
   'gift-hampers',
   'festival-specials',
-  'hyderabadi-specials',
 ]);
 const DIETARY_TAGS = new Set([
   'eggless',
@@ -524,10 +523,15 @@ async function main() {
     warn(`  committed snapshot: ${wasPhotographed} product image(s)`);
     warn(`  database returned:  ${nowPhotographed} product image(s)`);
     warn('');
-    warn('  This almost always means the photography migrations have not been');
-    warn('  applied to this Supabase project yet. Apply them, then rebuild:');
-    warn('    supabase/migrations/0014_seed_products.sql       (adds new products)');
-    warn('    supabase/migrations/0021_product_photography.sql (fills in images)');
+    warn('  This almost always means the catalogue migrations have not been');
+    warn('  applied to this Supabase project yet. Apply them IN THIS ORDER,');
+    warn('  then rebuild:');
+    warn('    1. supabase/migrations/0014_seed_products.sql        (adds new products)');
+    warn('    2. supabase/migrations/0022_retire_qubani_and_hyderabadi_claims.sql');
+    warn('         (archives Qubani, merges hyderabadi-specials into sweets,');
+    warn('          renames the mixture slug)');
+    warn('    3. supabase/migrations/0021_product_photography.sql  (fills in images —');
+    warn('         keys on the slug 0022 renames, so it must run after 0022)');
     warn('');
     warn('  If the database really is correct and the images were removed on');
     warn('  purpose, re-run with ALLOW_CATALOGUE_REGRESSION=true.');

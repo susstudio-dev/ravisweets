@@ -147,7 +147,7 @@ export const BORROWED = [
   { slug: 'onion-ribbon-pakodi', borrows: 'masala-pakodi' },
   { slug: 'dal-mudi-snacks', borrows: 'atukula-mixture' },
   // namkeens
-  { slug: 'hyderabadi-mixture', borrows: 'navaratna-mixture' },
+  { slug: 'special-mixture', borrows: 'navaratna-mixture' },
   { slug: 'peanut-chivda', borrows: 'atukula-mixture' },
   { slug: 'besan-sev', borrows: 'karapusa' },
   // sweet bites
@@ -163,7 +163,7 @@ export const BORROWED = [
   { slug: 'gondh-laddu', borrows: 'annamayya-laddu' },
   { slug: 'high-protein-laddu', borrows: 'booster-laddu' },
   { slug: 'millet-laddu', borrows: 'rava-laddu' },
-  // hyderabadi specials
+  // house specials (merged into sweets, Aug 2026)
   { slug: 'badam-ki-jali', borrows: 'badam-butter-burfi' },
   { slug: 'khubani-dry-fruit-mithai', borrows: 'dry-fruit-halwa' },
   // combos, hampers, festival boxes
@@ -197,7 +197,7 @@ export const STILL_UNSHOT = [
   'badam-almonds', 'kaju-cashew', 'pista-whole', 'salted-pista', 'walnuts',
   'roasted-almonds', 'saffron-pistachios',
   // no shot of these specific sweets
-  'qubani-ka-meetha', 'double-ka-meetha', 'sheer-khurma', 'cardamom-soan-papdi',
+  'double-ka-meetha', 'sheer-khurma', 'cardamom-soan-papdi',
 ];
 
 /** Every photograph in the drop, matched or new. */

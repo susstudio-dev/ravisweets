@@ -181,7 +181,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'How perishables travel',
         body: [
-          'The milk- and cream-led sweets — the Hyderabadi range in particular — ship in insulated packaging with gel packs, and we hold them back rather than dispatch them into a delivery window they will not survive. If your pincode falls outside the transit time a perishable needs, the product page will say so before you order rather than after.',
+          'The milk- and cream-led sweets ship in insulated packaging with gel packs, and we hold them back rather than dispatch them into a delivery window they will not survive. If your pincode falls outside the transit time a perishable needs, the product page will say so before you order rather than after.',
           'The shelf-stable range — barfis, laddoos, mysore pak, namkeens, podis and pickles — travels anywhere in India without special handling, which is why it is the range we recommend for gifting to an address you cannot verify will be occupied.',
         ],
       },

@@ -30,10 +30,10 @@ interface Flavour {
 
 const FLAVOURS: Flavour[] = [
   {
-    id: 'qubani',
-    name: 'Qubani ka Meetha',
-    telugu: 'ఖుబానీ',
-    note: 'Saffron · Apricot · Malai',
+    id: 'gulab',
+    name: 'Gulab Jamun',
+    telugu: 'గులాబ్',
+    note: 'Rose · Saffron · Khoya',
     palette: { accent: PRODUCT_PALETTES.gulkand.accent, glow: PRODUCT_PALETTES.gulkand.glow },
   },
   {
@@ -66,7 +66,7 @@ const FLAVOURS: Flavour[] = [
   },
   {
     id: 'mixture',
-    name: 'Hyderabadi Mixture',
+    name: 'Special Mixture',
     telugu: 'మిక్చర్',
     note: 'Peanut · Curry leaf · Chilli',
     palette: { accent: PRODUCT_PALETTES.kesar.accent, glow: PRODUCT_PALETTES.kesar.glow },
@@ -155,8 +155,8 @@ export function FlavourAtlas() {
         <Reveal delay={0.15}>
           <p className="text-theme-ink/70 md:text-lg">
             {reduced
-              ? 'Each sweet carries its own palette — saffron amber for Qubani, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. (Motion reduced for you.)'
-              : 'Each sweet carries its own palette — saffron amber for Qubani, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. Hover one and the accent colour, paisleys, and call-to-actions retune around it. Move away to return to the house tone.'}
+              ? 'Each sweet carries its own palette — rose amber for Gulab Jamun, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. (Motion reduced for you.)'
+              : 'Each sweet carries its own palette — rose amber for Gulab Jamun, pistachio green for Double ka Meetha, brass-gold for a Diwali hamper. Hover one and the accent colour, paisleys, and call-to-actions retune around it. Move away to return to the house tone.'}
           </p>
         </Reveal>
       </div>

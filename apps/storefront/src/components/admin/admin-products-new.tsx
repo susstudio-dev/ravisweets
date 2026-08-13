@@ -13,7 +13,6 @@ import { mediaPublicUrl } from '@/lib/media/public-url';
 import { useMediaAssets } from '@/lib/supabase/site-content-context';
 
 const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
-  { value: 'hyderabadi-specials', label: 'Hyderabadi specials' },
   { value: 'sweets', label: 'Sweets' },
   { value: 'sweet-bites', label: 'Sweet bites' },
   { value: 'healthy-sweets', label: 'Healthy sweets' },

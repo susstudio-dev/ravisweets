@@ -22,7 +22,9 @@ export const BUILDER_SCHEMA_VERSION = 2;
 
 /** Short-code aliases for frequently-used product IDs (roundtrip stable). */
 const PRODUCT_ALIAS: Record<string, string> = {
-  p_qubani: 'qb',
+  // p_qubani ('qb') was retired 2026-08-13 — the product left the catalogue.
+  // Old URLs carrying qb:… decode to an unknown id, which every consumer
+  // already null-checks against CATALOGUE, so the line simply drops out.
   p_double_ka_meetha: 'dkm',
   p_badam_ki_jali: 'bkj',
   p_sheer_khurma: 'skh',
@@ -51,11 +53,11 @@ const PRODUCT_ALIAS_REVERSE: Record<string, string> = Object.fromEntries(
 
 /** Variant aliases: `productId:variantId` → short code for the variant part. */
 const VARIANT_ALIAS: Record<string, string> = {
-  'p_qubani:v_qubani_500': '500',
   'p_double_ka_meetha:v_dkm_500': '500',
   'p_badam_ki_jali:v_bkj_250': '250',
   'p_sheer_khurma:v_skh_500': '500',
   'p_khubani_mithai:v_khm_300': '300',
+  'p_khubani_mithai:v_khm_500': '500',
   'p_kaju_katli:v_kaju_250': '250',
   'p_kaju_katli:v_kaju_500': '500',
   'p_gulab_jamun:v_gj_500': '500',

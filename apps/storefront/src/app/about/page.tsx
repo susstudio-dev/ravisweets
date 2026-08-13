@@ -40,7 +40,7 @@ const TIMELINE = [
 const PILLARS = [
   {
     title: 'Nothing rushed.',
-    body: 'Four hours for the qubani, not four minutes. Our first rule is the slower way.',
+    body: 'Four hours for the rabri, not four minutes. Our first rule is the slower way.',
   },
   {
     title: 'Nothing substituted.',

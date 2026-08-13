@@ -82,7 +82,7 @@ const HAMPERS = [
     tier: 'Bestseller',
     priceFrom: '₹1,499',
     moq: '50 UNITS',
-    contents: 'Qubani ka Meetha · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
+    contents: 'Khubani Dry-Fruit Mithai · Kaju Katli · Badam ki Jali · Almonds · Pistachios · Brass diya',
     image: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
   },
   {
@@ -91,7 +91,7 @@ const HAMPERS = [
     tier: 'Signature',
     priceFrom: '₹2,499',
     moq: '25 UNITS',
-    contents: 'Full Hyderabadi spread · custom silk wrap · hand-painted brass box',
+    contents: 'Full festive spread · custom silk wrap · hand-painted brass box',
     image: pendingPhoto('2025/09/anjjeer_katli-removebg-preview.png'),
   },
   // `as const` narrows templateId to the literal union, so the owner-photo

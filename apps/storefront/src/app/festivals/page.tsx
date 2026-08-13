@@ -67,7 +67,7 @@ const FESTIVALS: FestivalRow[] = [
     telugu: 'ఈద్',
     date: '2026-03-30',
     monthLabel: 'Mar',
-    blurb: 'A platter worth the long day — Hyderabadi classics, plated.',
+    blurb: 'A platter worth the long day — festive classics, plated.',
     palette: { base: '#fff4e3', accent: '#a56a0f', ink: '#2a1a04' },
   },
   {
