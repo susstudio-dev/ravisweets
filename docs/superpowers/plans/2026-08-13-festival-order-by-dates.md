@@ -57,6 +57,7 @@ will use.
   `defaultOrderByDay(festivalISO: string): string`,
   `formatDocketDate(iso: string): string`,
   `isValidIsoDay(value: unknown): value is string`,
+  `endOfIstDayMs(iso: string): number`,
   `nextFestival(nowMs: number): FestivalEntry`.
 
 - [ ] **Step 1: Write the failing test**
@@ -70,6 +71,7 @@ import {
   FESTIVAL_CALENDAR,
   FESTIVAL_SLUG_LIST,
   defaultOrderByDay,
+  endOfIstDayMs,
   formatDocketDate,
   getFestival,
   isValidIsoDay,
@@ -154,6 +156,17 @@ describe('isValidIsoDay', () => {
     expect(isValidIsoDay(20260812)).toBe(false);
     expect(isValidIsoDay(null)).toBe(false);
     expect(isValidIsoDay(undefined)).toBe(false);
+  });
+});
+
+describe('endOfIstDayMs', () => {
+  it('is the first instant of the next day in IST', () => {
+    expect(endOfIstDayMs('2026-08-12')).toBe(Date.parse('2026-08-13T00:00:00+05:30'));
+  });
+
+  it('does not move with the machine — it is a fixed offset', () => {
+    // 2026-08-12 ends at 18:30Z, which is 14:30 in New York. One instant.
+    expect(endOfIstDayMs('2026-08-12')).toBe(Date.parse('2026-08-12T18:30:00Z'));
   });
 });
 
@@ -317,13 +330,27 @@ export function isValidIsoDay(value: unknown): value is string {
 }
 
 /**
+ * The instant an ISO day ends in IST — i.e. midnight that begins the next day.
+ *
+ * THE ONE PLACE THE +05:30 OFFSET IS WRITTEN. Three callers ask "is this day
+ * over?" (the festival selector, the order-by resolver, the admin's past-date
+ * warning) and all three must agree to the millisecond, because disagreeing
+ * about exactly this is what put a different deadline on the home page than
+ * on the festival page. IST observes no DST, so the fixed 24-hour span is
+ * exact.
+ */
+export function endOfIstDayMs(iso: string): number {
+  return Date.parse(`${iso}T00:00:00+05:30`) + DAY_MS;
+}
+
+/**
  * The soonest festival whose own day has not yet ended in IST; the last entry
  * once the calendar runs out. Selection is by the caller's clock, but the
  * boundary is always IST.
  */
 export function nextFestival(nowMs: number): FestivalEntry {
   return (
-    FESTIVAL_CALENDAR.find((f) => Date.parse(`${f.date}T00:00:00+05:30`) + DAY_MS > nowMs) ??
+    FESTIVAL_CALENDAR.find((f) => endOfIstDayMs(f.date) > nowMs) ??
     FESTIVAL_CALENDAR[FESTIVAL_CALENDAR.length - 1]!
   );
 }
@@ -335,7 +362,7 @@ export function nextFestival(nowMs: number): FestivalEntry {
 cd apps/storefront && pnpm vitest run src/lib/festivals/calendar.test.ts
 ```
 
-Expected: PASS, 14 tests.
+Expected: PASS, 16 tests.
 
 - [ ] **Step 5: Prove the timezone claim**
 
@@ -364,8 +391,8 @@ The owner's overrides, validated on every read. Nothing trusts the raw row.
 - Test: `apps/storefront/src/lib/festivals/festival-dates.test.ts`
 
 **Interfaces:**
-- Consumes: `FESTIVAL_CALENDAR`, `FestivalSlug`, `isValidIsoDay`, `formatDocketDate` from
-  `./calendar` (Task 1).
+- Consumes: `FESTIVAL_CALENDAR`, `FestivalSlug`, `isValidIsoDay`, `formatDocketDate`,
+  `endOfIstDayMs` from `./calendar` (Task 1).
 - Produces: `FestivalDeadline` (`{ orderBy: string }`),
   `FestivalDates` (`Partial<Record<FestivalSlug, FestivalDeadline>>`),
   `EMPTY_FESTIVAL_DATES: FestivalDates`,
@@ -499,6 +526,7 @@ Create `apps/storefront/src/lib/festivals/festival-dates.ts`:
 import { z } from 'zod';
 import {
   FESTIVAL_CALENDAR,
+  endOfIstDayMs,
   formatDocketDate,
   isValidIsoDay,
   type FestivalSlug,
@@ -554,8 +582,6 @@ export function parseFestivalDates(raw: unknown): FestivalDates {
   return out;
 }
 
-const DAY_MS = 86_400_000;
-
 /**
  * Admin-side validation for one date input.
  *
@@ -584,7 +610,7 @@ export function checkOrderByInput(
     };
   }
 
-  const closed = nowMs >= Date.parse(`${trimmed}T00:00:00+05:30`) + DAY_MS;
+  const closed = nowMs >= endOfIstDayMs(trimmed);
   return { error: null, warning: closed ? 'Shows as CLOSED on the site.' : null };
 }
 ```
@@ -616,7 +642,8 @@ feature; everything after it is wiring.
 - Test: `apps/storefront/src/lib/festivals/resolve-order-by.test.ts`
 
 **Interfaces:**
-- Consumes: `defaultOrderByDay`, `formatDocketDate`, `isValidIsoDay` from `./calendar`.
+- Consumes: `defaultOrderByDay`, `formatDocketDate`, `isValidIsoDay`, `endOfIstDayMs` from
+  `./calendar`.
 - Produces: `OrderByState` (`{ day: string; label: string; closed: boolean }`),
   `resolveOrderBy(festivalISO: string, override: string | undefined, nowMs: number): OrderByState`.
 
@@ -708,7 +735,7 @@ Expected: FAIL — `Failed to resolve import "./resolve-order-by"`.
 Create `apps/storefront/src/lib/festivals/resolve-order-by.ts`:
 
 ```ts
-import { defaultOrderByDay, formatDocketDate, isValidIsoDay } from './calendar';
+import { defaultOrderByDay, endOfIstDayMs, formatDocketDate, isValidIsoDay } from './calendar';
 
 /**
  * The order-by decision, as a pure function of (festival, override, clock).
@@ -728,8 +755,6 @@ export interface OrderByState {
   closed: boolean;
 }
 
-const DAY_MS = 86_400_000;
-
 export function resolveOrderBy(
   festivalISO: string,
   override: string | undefined,
@@ -742,7 +767,7 @@ export function resolveOrderBy(
     day,
     label: formatDocketDate(day),
     // IST always. The cutoff belongs to the kitchen, not to the visitor.
-    closed: nowMs >= Date.parse(`${day}T00:00:00+05:30`) + DAY_MS,
+    closed: nowMs >= endOfIstDayMs(day),
   };
 }
 ```
@@ -1928,7 +1953,7 @@ expected output.
 
 **Type consistency:** `FestivalSlug`, `FestivalEntry`, `FESTIVAL_CALENDAR`,
 `FESTIVAL_SLUG_LIST`, `getFestival`, `formatDocketDate`, `defaultOrderByDay`,
-`isValidIsoDay`, `nextFestival`, `FestivalDates`, `FestivalDeadline`,
+`isValidIsoDay`, `endOfIstDayMs`, `nextFestival`, `FestivalDates`, `FestivalDeadline`,
 `EMPTY_FESTIVAL_DATES`, `parseFestivalDates`, `checkOrderByInput`, `OrderByState`,
 `resolveOrderBy`, `useOrderBy`, `OrderByField`, `FestivalActions` — each defined once in
 Tasks 1-5 and used under exactly that name afterwards.
