@@ -20,6 +20,8 @@ import {
 } from '@/lib/content/page-media';
 import { listMediaAssets, type MediaAsset } from '@/lib/media/assets';
 import { mediaPublicUrl } from '@/lib/media/public-url';
+import { EMPTY_FESTIVAL_DATES, parseFestivalDates } from '@/lib/festivals/festival-dates';
+import type { FestivalDates } from '@/lib/festivals/festival-dates';
 import { DEFAULT_CHARGES, loadAllSiteContent, parseCharges } from './site-content';
 import type {
   AboutFounder,
@@ -41,6 +43,8 @@ interface SiteContentValue {
   footer: FooterContent | null;
   homeTrust: HomeTrust | null;
   activeFestival: ActiveFestival | null;
+  /** Owner-set order-by dates — parsed (never raw), empty until loaded. */
+  festivalDates: FestivalDates;
   /** Order-level charges — parsed (never raw), DEFAULT_CHARGES until loaded. */
   charges: StoreCharges;
   /** Owner-assigned page photo slots — parsed (never raw) page_media row. */
@@ -61,6 +65,7 @@ const Ctx = createContext<SiteContentValue>({
   footer: null,
   homeTrust: null,
   activeFestival: null,
+  festivalDates: EMPTY_FESTIVAL_DATES,
   charges: DEFAULT_CHARGES,
   pageMedia: EMPTY_PAGE_MEDIA,
   mediaAssets: [],
@@ -94,6 +99,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     footer: null,
     homeTrust: null,
     activeFestival: null,
+    festivalDates: EMPTY_FESTIVAL_DATES,
     charges: DEFAULT_CHARGES,
     pageMedia: EMPTY_PAGE_MEDIA,
     loading: true,
@@ -119,8 +125,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         footer: all.footer ?? null,
         homeTrust: all.home_trust ?? null,
         activeFestival: all.active_festival ?? null,
-        // Both re-parsed on every refetch — the raw rows are never trusted.
+        // Re-parsed on every refetch — the raw row is never trusted.
         charges: parseCharges(all.charges),
+        festivalDates: parseFestivalDates(all.festival_dates),
         pageMedia: parsePageMedia(all.page_media),
         loading: false,
       });

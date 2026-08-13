@@ -2,6 +2,7 @@
 
 import { getSupabase } from './client';
 import type { PageMedia } from '../content/page-media';
+import type { FestivalDates } from '../festivals/festival-dates';
 
 /**
  * site_content keys — one row per editable surface. Shapes are
@@ -16,11 +17,13 @@ export type SiteContentKey =
   | 'footer'
   | 'home_trust'
   | 'active_festival'
+  | 'festival_dates'
   | 'page_media'
   | 'charges'
   | 'about_founder';
 
 export type { PageMedia };
+export type { FestivalDates };
 
 /**
  * "Active festival" — admin-set in /admin/festivals. When `slug` is set
@@ -156,6 +159,12 @@ type ContentByKey = {
   footer: FooterContent;
   home_trust: HomeTrust;
   active_festival: ActiveFestival;
+  /**
+   * Owner-set dispatch deadlines, keyed by festival slug. Reads must go
+   * through parseFestivalDates — a bad value here tells a customer the wrong
+   * day to order by.
+   */
+  festival_dates: FestivalDates;
   page_media: PageMedia;
   charges: StoreCharges;
 };
