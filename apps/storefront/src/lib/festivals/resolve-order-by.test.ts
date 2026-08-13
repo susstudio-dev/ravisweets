@@ -26,6 +26,12 @@ describe('resolveOrderBy — which date is in force', () => {
   it('falls back when the override lands after the festival', () => {
     expect(resolveOrderBy(INDEPENDENCE_DAY, '2026-08-16', 0).day).toBe('2026-08-12');
   });
+
+  it('accepts a cutoff on the festival day itself — the <= is deliberate', () => {
+    const r = resolveOrderBy(INDEPENDENCE_DAY, '2026-08-15', at('2026-08-01T00:00:00+05:30'));
+    expect(r.day).toBe('2026-08-15');
+    expect(r.label).toBe('15 AUG 2026');
+  });
 });
 
 describe('resolveOrderBy — closed', () => {

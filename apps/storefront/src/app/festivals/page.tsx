@@ -3,7 +3,12 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
-import { formatDocketDate, getFestival, type FestivalSlug } from '@/lib/festivals/calendar';
+import {
+  endOfIstDayMs,
+  formatDocketDate,
+  getFestival,
+  type FestivalSlug,
+} from '@/lib/festivals/calendar';
 import { OrderByField } from '@/components/festivals/order-by-field';
 
 export const metadata: Metadata = {
@@ -134,10 +139,12 @@ export default function FestivalsIndexPage() {
    * evaluated once at build; a festival that passes afterwards stays under
    * "Upcoming" until the next deploy. That is the pre-existing behaviour and
    * the ORDER BY row, which is client-resolved, is the one that self-corrects.
+   * The boundary itself matches `nextFestival`: a festival stays upcoming
+   * through the end of its own day in IST.
    */
   const now = Date.now();
-  const upcoming = sorted.filter((f) => Date.parse(`${festivalDate(f)}T00:00:00+05:30`) > now);
-  const past = sorted.filter((f) => Date.parse(`${festivalDate(f)}T00:00:00+05:30`) <= now);
+  const upcoming = sorted.filter((f) => endOfIstDayMs(festivalDate(f)) > now);
+  const past = sorted.filter((f) => endOfIstDayMs(festivalDate(f)) <= now);
 
   return (
     <>
