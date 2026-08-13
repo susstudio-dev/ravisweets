@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
+import { formatDocketDate, getFestival, type FestivalSlug } from '@/lib/festivals/calendar';
+import { OrderByField } from '@/components/festivals/order-by-field';
 
 export const metadata: Metadata = {
   title: 'Festival Sweet Boxes & Gift Hampers',
@@ -12,24 +14,22 @@ export const metadata: Metadata = {
 };
 
 interface FestivalRow {
-  slug: string;
+  slug: FestivalSlug;
   title: string;
   telugu: string;
-  date: string;
   monthLabel: string;
   blurb: string;
   palette: { base: string; accent: string; ink: string };
 }
 
-// Mirrors the FESTIVALS map in [slug]/page.tsx — kept short so the index can
-// list each one with the right palette + tagline. When you add a new festival
-// in the slug page, add it here too.
+// Presentation only — dates and identity come from lib/festivals/calendar.
+// This array carries what the index card shows on top of them: the month
+// label, the one-line blurb, and the palette the Telugu mark is stamped in.
 const FESTIVALS: FestivalRow[] = [
   {
     slug: 'pongal',
     title: 'Pongal',
     telugu: 'పొంగల్',
-    date: '2027-01-15',
     monthLabel: 'Jan',
     blurb: 'The clay pot, the harvest, the first morning.',
     palette: { base: '#fbf3df', accent: '#9c5a14', ink: '#2a1a08' },
@@ -38,7 +38,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'sankranti',
     title: 'Sankranti',
     telugu: 'సంక్రాంతి',
-    date: '2027-01-14',
     monthLabel: 'Jan',
     blurb: 'Til, gud, and a new year on the kitchen door.',
     palette: { base: '#fbf2dd', accent: '#a04a14', ink: '#2a1604' },
@@ -47,7 +46,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'holi',
     title: 'Holi',
     telugu: 'హోలీ',
-    date: '2027-03-13',
     monthLabel: 'Mar',
     blurb: 'A spread as bright as the colours.',
     palette: { base: '#fff0e8', accent: '#c83a6a', ink: '#3a0a1c' },
@@ -56,7 +54,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'ugadi',
     title: 'Ugadi',
     telugu: 'ఉగాది',
-    date: '2027-03-19',
     monthLabel: 'Mar',
     blurb: 'Six tastes for the Telugu new year.',
     palette: { base: '#fbf2dd', accent: '#7a5612', ink: '#2a1c08' },
@@ -65,7 +62,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'eid',
     title: 'Eid',
     telugu: 'ఈద్',
-    date: '2026-03-30',
     monthLabel: 'Mar',
     blurb: 'A platter worth the long day — festive classics, plated.',
     palette: { base: '#fff4e3', accent: '#a56a0f', ink: '#2a1a04' },
@@ -74,7 +70,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'independence-day',
     title: 'Independence Day',
     telugu: 'స్వాతంత్ర్య దినోత్సవం',
-    date: '2026-08-15',
     monthLabel: 'Aug',
     blurb: 'Tricolour boxes for the office, the school, the society gate.',
     palette: { base: '#f4f9e8', accent: '#3a7a1c', ink: '#122a08' },
@@ -83,7 +78,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'raksha-bandhan',
     title: 'Raksha Bandhan',
     telugu: 'రక్షా బంధన్',
-    date: '2026-08-28',
     monthLabel: 'Aug',
     blurb: 'A hamper tied with a thread — done properly.',
     palette: { base: '#fdf3df', accent: '#c0592b', ink: '#3a1e0c' },
@@ -92,7 +86,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'ganesh-chaturthi',
     title: 'Ganesh Chaturthi',
     telugu: 'వినాయక చవితి',
-    date: '2027-09-15',
     monthLabel: 'Sep',
     blurb: 'Modaks the slow way — and everything for the prasad table.',
     palette: { base: '#fff5d4', accent: '#a85a08', ink: '#2a1404' },
@@ -101,7 +94,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'onam',
     title: 'Onam',
     telugu: 'ഓണം',
-    date: '2027-09-04',
     monthLabel: 'Sep',
     blurb: 'A sadya-sized box for the floor banana leaf.',
     palette: { base: '#f0fae0', accent: '#3a7a1c', ink: '#0a2a04' },
@@ -110,7 +102,6 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'diwali',
     title: 'Diwali',
     telugu: 'దీపావళి',
-    date: '2026-11-08',
     monthLabel: 'Nov',
     blurb: 'Wrapped in brass and silk.',
     palette: { base: '#fff5dc', accent: '#a85a08', ink: '#2a1505' },
@@ -119,46 +110,34 @@ const FESTIVALS: FestivalRow[] = [
     slug: 'christmas',
     title: 'Christmas',
     telugu: 'క్రిస్మస్',
-    date: '2026-12-25',
     monthLabel: 'Dec',
     blurb: 'A South Indian table laid for a Christmas Eve.',
     palette: { base: '#fbf0e8', accent: '#a8222a', ink: '#2a0a0c' },
   },
 ];
 
-/** Dispatch needs three clear days before the festival for the fresh range. */
-const ORDER_BY_LEAD_DAYS = 3;
-
-/*
- * Date maths pinned to the ISO day and formatted in UTC, so the static export
- * renders the same sheet regardless of the build machine's timezone.
+/**
+ * Throws rather than returning a blank: this runs during the static export, so
+ * a slug that has fallen off the calendar fails the BUILD instead of shipping
+ * a card with an empty date where a deadline should be.
  */
-function orderByDay(iso: string): string {
-  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() - ORDER_BY_LEAD_DAYS);
-  return d.toISOString().slice(0, 10);
-}
-
-function formatSheetDate(iso: string): string {
-  return new Date(`${iso.slice(0, 10)}T12:00:00Z`)
-    .toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    })
-    .toUpperCase();
-}
-
-function compareDate(a: FestivalRow, b: FestivalRow): number {
-  return new Date(a.date).getTime() - new Date(b.date).getTime();
+function festivalDate(f: FestivalRow): string {
+  const entry = getFestival(f.slug);
+  if (!entry) throw new Error(`festival card references an unknown slug: ${f.slug}`);
+  return entry.date;
 }
 
 export default function FestivalsIndexPage() {
-  const sorted = [...FESTIVALS].sort(compareDate);
+  const sorted = [...FESTIVALS].sort((a, b) => festivalDate(a).localeCompare(festivalDate(b)));
+  /*
+   * Build-time split. The page is statically exported, so this line is
+   * evaluated once at build; a festival that passes afterwards stays under
+   * "Upcoming" until the next deploy. That is the pre-existing behaviour and
+   * the ORDER BY row, which is client-resolved, is the one that self-corrects.
+   */
   const now = Date.now();
-  const upcoming = sorted.filter((f) => new Date(f.date).getTime() > now);
-  const past = sorted.filter((f) => new Date(f.date).getTime() <= now);
+  const upcoming = sorted.filter((f) => Date.parse(`${festivalDate(f)}T00:00:00+05:30`) > now);
+  const past = sorted.filter((f) => Date.parse(`${festivalDate(f)}T00:00:00+05:30`) <= now);
 
   return (
     <>
@@ -231,7 +210,7 @@ export default function FestivalsIndexPage() {
  * A festival as a small dispatch sheet: name, script, the two dates that
  * matter, and the blurb. The ground never moves — the festival's ink shows
  * only in the stamped Telugu mark, the same docket filed in a different ink.
- * ORDER BY is the festival date minus three clear dispatch days.
+ * ORDER BY is owner-set, and marks itself CLOSED once it has passed.
  */
 function FestivalCard({ f }: { f: FestivalRow }) {
   return (
@@ -249,11 +228,13 @@ function FestivalCard({ f }: { f: FestivalRow }) {
       <dl className="mt-4">
         <div className="field-row">
           <dt className="field-label">Festival</dt>
-          <dd className="field-value text-sm">{formatSheetDate(f.date)}</dd>
+          <dd className="field-value text-sm">{formatDocketDate(festivalDate(f))}</dd>
         </div>
         <div className="field-row">
           <dt className="field-label">Order by</dt>
-          <dd className="field-value text-sm font-bold">{formatSheetDate(orderByDay(f.date))}</dd>
+          <dd className="field-value text-sm font-bold">
+            <OrderByField slug={f.slug} festivalDate={festivalDate(f)} />
+          </dd>
         </div>
       </dl>
 

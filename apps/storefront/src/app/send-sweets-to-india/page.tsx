@@ -6,6 +6,8 @@ import { ProductCard } from '@/components/product-card';
 import { ProductGrid } from '@/components/product-grid';
 import { Reveal } from '@/components/motion/reveal';
 import { Stagger } from '@/components/motion/stagger';
+import { formatDocketDate, getFestival, type FestivalSlug } from '@/lib/festivals/calendar';
+import { OrderByField } from '@/components/festivals/order-by-field';
 
 /*
  * /send-sweets-to-india — the diaspora dispatch page.
@@ -32,42 +34,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * The two festivals the diaspora ships home for first. Dates mirror FESTIVALS
- * in sections/festival-next-band.tsx (which mirrors the /festivals calendar);
- * the 3-day order-by lead is the same constant that band uses.
+ * The two festivals the diaspora ships home for first. Identity and dates come
+ * from the shared calendar; this list is only the choice of which two to show.
  */
-const FESTIVAL_HOOKS = [
-  { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', date: '2026-08-28' },
-  { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', date: '2026-11-08' },
-] as const;
+const FESTIVAL_HOOK_SLUGS = ['raksha-bandhan', 'diwali'] as const;
 
-/** Dispatch needs three clear days before the festival for the fresh range. */
-const ORDER_BY_LEAD_DAYS = 3;
-
-const MONTHS = [
-  'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-  'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
-] as const;
-
-function parseIso(iso: string): { y: number; m: number; d: number } {
-  return {
-    y: Number(iso.slice(0, 4)),
-    m: Number(iso.slice(5, 7)),
-    d: Number(iso.slice(8, 10)),
-  };
-}
-
-/** "2026-08-28" → "28 AUG 2026". Deterministic — no runtime-timezone drift. */
-function formatDocketDate(iso: string): string {
-  const { y, m, d } = parseIso(iso);
-  return `${String(d).padStart(2, '0')} ${MONTHS[m - 1] ?? ''} ${y}`;
-}
-
-function formatOrderBy(iso: string): string {
-  const { y, m, d } = parseIso(iso);
-  const orderBy = new Date(Date.UTC(y, m - 1, d - ORDER_BY_LEAD_DAYS));
-  return formatDocketDate(orderBy.toISOString().slice(0, 10));
-}
+const FESTIVAL_HOOKS = FESTIVAL_HOOK_SLUGS.map((slug) => getFestival(slug)!);
 
 const WHATSAPP_URL = 'https://wa.me/919398859978';
 
@@ -232,7 +204,7 @@ export default function SendSweetsToIndiaPage() {
                   <div className="field-row">
                     <dt className="field-label">Order by</dt>
                     <dd className="field-value text-theme-ink text-sm font-bold">
-                      {formatOrderBy(f.date)}
+                      <OrderByField slug={f.slug as FestivalSlug} festivalDate={f.date} />
                     </dd>
                   </div>
                 </dl>
