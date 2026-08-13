@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, X } from 'lucide-react';
 import { useState } from 'react';
-import { formatMoney, type Product } from '@ravisweets/shared';
+import { formatMoney, isNonVeg, type Product } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { useCoupons } from '@/lib/coupons/context';
 import { useSiteContent } from '@/lib/supabase/site-content-context';
@@ -15,6 +15,7 @@ import { Reveal } from '@/components/motion/reveal';
 import { isUsableImage } from '@/lib/images';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { VegMark } from '@/components/veg-mark';
 
 /**
  * THE ORDER FORM.
@@ -100,12 +101,15 @@ export function CartView() {
                 <div className="flex flex-1 flex-col gap-1.5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <Link
-                        href={`/product/${l.product.slug}`}
-                        className="font-display text-theme-ink hover:text-theme-accent text-base font-semibold leading-snug transition-colors"
-                      >
-                        {l.product.title}
-                      </Link>
+                      <div className="flex items-start gap-1.5">
+                        <VegMark nonVeg={isNonVeg(l.product)} className="mt-0.5" />
+                        <Link
+                          href={`/product/${l.product.slug}`}
+                          className="font-display text-theme-ink hover:text-theme-accent text-base font-semibold leading-snug transition-colors"
+                        >
+                          {l.product.title}
+                        </Link>
+                      </div>
                       <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
                         <span className="field-label">{l.variant.title}</span>
                         <span className="field-value text-text-muted text-xs">

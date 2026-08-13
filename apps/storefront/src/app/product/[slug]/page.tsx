@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
+import { CATALOGUE as SAMPLE_PRODUCTS, isNonVeg } from '@ravisweets/shared';
 import { FlavourScope } from '@/lib/theme/theme-provider';
 import { jsonLdHtml } from '@/lib/seo/json-ld';
 import { seoDescription, seoTitle } from '@/lib/seo/metadata';
@@ -20,6 +20,7 @@ import { Reveal } from '@/components/motion/reveal';
 import { TextKinetic } from '@/components/motion/text-kinetic';
 import { ProductCard } from '@/components/product-card';
 import { ProductGrid } from '@/components/product-grid';
+import { VegMark } from '@/components/veg-mark';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -167,9 +168,12 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="flex flex-col gap-6">
           <Reveal>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="field-label text-theme-accent">
-                {product.category.replace(/-/g, ' ')}
-              </p>
+              <div className="flex items-center gap-2">
+                <VegMark nonVeg={isNonVeg(product)} size="md" />
+                <p className="field-label text-theme-accent">
+                  {product.category.replace(/-/g, ' ')}
+                </p>
+              </div>
               {/* Freshness is the product claim, so it leads the record. */}
               {product.shelf_life_days <= 7 && <span className="live-mark">Made to order</span>}
             </div>

@@ -6,12 +6,13 @@ import { AnimatePresence, motion } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { Check, Plus } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { computeEffectivePrice, formatMoney, type Product } from '@ravisweets/shared';
+import { computeEffectivePrice, formatMoney, isNonVeg, type Product } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { isUsableImage } from '@/lib/images';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 import { useProductImagesOverride } from '@/lib/supabase/site-content-context';
 import { cn } from '@/lib/cn';
+import { VegMark } from '@/components/veg-mark';
 
 interface ProductCardProps {
   product: Product;
@@ -142,6 +143,11 @@ export function ProductCard({ product, quickAdd, priority }: ProductCardProps) {
                 New
               </span>
             )}
+          </div>
+
+          {/* Food-type mark — top-right, clear of the state-badge stack. */}
+          <div className="absolute right-1.5 top-1.5">
+            <VegMark nonVeg={isNonVeg(product)} />
           </div>
         </motion.div>
 

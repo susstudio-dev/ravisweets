@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import { Search as SearchIcon, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CATALOGUE as SAMPLE_PRODUCTS } from '@ravisweets/shared';
+import { CATALOGUE as SAMPLE_PRODUCTS, isNonVeg } from '@ravisweets/shared';
 import { searchProducts } from '@/lib/search/score';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
+import { VegMark } from '@/components/veg-mark';
 
 const SUGGESTIONS = ['Kaju Katli', 'Motichoor Ladoo', 'Diwali hamper', 'eggless', 'gift'];
 
@@ -205,7 +206,10 @@ export function SearchOverlay({ open, onClose }: SearchOverlayProps) {
                         }`}
                       >
                         <span className="flex flex-col gap-0.5">
-                          <span className="font-display text-base">{p.title}</span>
+                          <span className="flex items-center gap-1.5">
+                            <VegMark nonVeg={isNonVeg(p)} />
+                            <span className="font-display text-base">{p.title}</span>
+                          </span>
                           <span className="text-theme-ink/55 text-xs">
                             {p.category.replace(/-/g, ' ')}
                             {' · '}
