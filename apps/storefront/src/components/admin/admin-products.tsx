@@ -55,6 +55,7 @@ const DIETARY_OPTIONS: DietaryTag[] = [
   'nuts',
   'dairy',
   'contains-ghee',
+  'non-veg',
 ];
 import { logAdminAction } from '@/lib/supabase/orders';
 import { useSession } from '@/lib/supabase/session-context';

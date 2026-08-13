@@ -35,6 +35,7 @@ const DIETARY: DietaryTag[] = [
   'nuts',
   'dairy',
   'contains-ghee',
+  'non-veg',
 ];
 
 function slugify(s: string): string {

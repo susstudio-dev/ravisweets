@@ -184,6 +184,7 @@ const DIETARY_TAGS = new Set([
   'nuts',
   'dairy',
   'contains-ghee',
+  'non-veg',
 ]);
 const GARNISHES = new Set(['saffron', 'pistachio', 'silver', 'paisley', 'rose']);
 const REGIONS = new Set(['in', 'us', 'uk', 'ae', 'au', 'ca', 'sg']);
