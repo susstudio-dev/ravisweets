@@ -222,6 +222,21 @@ export function isInStock(product: Product): boolean {
 }
 
 /**
+ * Does this SET actually mix veg and non-veg? A property of the set, not of
+ * any active filter — call it with the surface's UNFILTERED products.
+ *
+ * category-browser's All·Veg·Non-veg tab strip and ProductFilters' Veg /
+ * Non-veg group both gate their own visibility on this exact function
+ * (rather than each writing its own `products.some(...)` check) precisely
+ * because two independently-written versions of "is this shelf mixed" are
+ * how the panel and the strip disagreed before: the panel used to ask a
+ * narrower, filter-honouring question — see the header note on this file.
+ */
+export function mixesVtype(products: Product[]): boolean {
+  return products.some((p) => isNonVeg(p)) && products.some((p) => !isNonVeg(p));
+}
+
+/**
  * Does this product carry the allergen? Reads both declarations and returns
  * true if EITHER says so — see the header note on over-exclusion.
  */

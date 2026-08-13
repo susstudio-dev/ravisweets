@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { isNonVeg, type CategorySlug, type Product } from '@ravisweets/shared';
 import { ProductCard } from '@/components/product-card';
 import { Stagger } from '@/components/motion/stagger';
-import { applyFilters, sortProducts } from '@/lib/catalogue/filters';
+import { applyFilters, mixesVtype, sortProducts } from '@/lib/catalogue/filters';
 import { useProductFilters } from '@/lib/catalogue/use-product-filters';
 import { cn } from '@/lib/cn';
 
@@ -21,9 +21,18 @@ import { cn } from '@/lib/cn';
  *
  * The All·Veg·Non-veg strip appears only when the category's UNFILTERED set
  * actually mixes both types — data-driven, so today that is Pickles alone and
- * any future mixed shelf gets it for free. It writes the same `?type=` param
- * as the refine panel's Veg/Non-veg chips, so the two controls cannot
- * disagree; ticking both chips reads back here as All (OR-bucket semantics).
+ * any future mixed shelf gets it for free. The refine panel's Veg/Non-veg
+ * group calls the very same `mixesVtype(products)` (see filters.ts) to
+ * decide whether IT renders, so the two controls appear and disappear
+ * together — not just "the same signal" recomputed twice and liable to
+ * drift, but one shared function. Both also write the same `?type=` param,
+ * so the STATE they report can never disagree either; ticking both chips
+ * reads back here as All (OR-bucket semantics). Note the strip can still
+ * show a tab at 0 (e.g. "Non-veg 0" when another active filter, say
+ * Eggless, excludes every non-veg product) — that is left as-is: it is
+ * informative rather than confusing once the empty grid it produces offers
+ * "Clear filters", and collapsing it here would just re-introduce the
+ * disagreement in reverse.
  */
 export function CategoryBrowser({
   categorySlug,
@@ -40,10 +49,7 @@ export function CategoryBrowser({
     [products, state],
   );
 
-  const mixed = useMemo(
-    () => products.some((p) => isNonVeg(p)) && products.some((p) => !isNonVeg(p)),
-    [products],
-  );
+  const mixed = useMemo(() => mixesVtype(products), [products]);
 
   // Counts honour every OTHER active filter — the same promise a facet count
   // makes: the number on the tab is what clicking it leaves.

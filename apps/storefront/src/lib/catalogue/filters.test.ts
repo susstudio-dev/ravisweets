@@ -9,6 +9,7 @@ import {
   facetCounts,
   hasAllergen,
   minPrice,
+  mixesVtype,
   parseFilters,
   sortProducts,
   toggleValue,
@@ -523,5 +524,41 @@ describe('veg / non-veg group', () => {
 
   it('adds to the active filter count', () => {
     expect(activeFilterCount(state({ vtype: ['veg'] }))).toBe(1);
+  });
+});
+
+describe('mixesVtype', () => {
+  const veg = product({ id: 'veg' });
+  const nonveg = product({ id: 'nonveg', dietary_tags: ['non-veg'] });
+
+  it('is true when the set has both', () => {
+    expect(mixesVtype([veg, nonveg])).toBe(true);
+  });
+
+  it('is false when the set is all veg', () => {
+    expect(mixesVtype([veg, product({ id: 'veg2' })])).toBe(false);
+  });
+
+  it('is false when the set is all non-veg', () => {
+    expect(mixesVtype([nonveg, product({ id: 'nonveg2', dietary_tags: ['non-veg'] })])).toBe(false);
+  });
+
+  it('is false for an empty set', () => {
+    expect(mixesVtype([])).toBe(false);
+  });
+
+  // This is the exact repro from the panel/strip disagreement: an active
+  // filter (facetCounts, which honours OTHER groups) can zero one side's
+  // count while the set ITSELF still mixes both. mixesVtype is deliberately
+  // blind to that — it is called on the surface's UNFILTERED products, not
+  // on a filtered subset — which is what keeps the refine panel's Veg/
+  // Non-veg group and the tab strip appearing and disappearing together.
+  it('stays true even when a filter would zero one side out', () => {
+    const eggless = product({ id: 'eggless-veg', dietary_tags: ['eggless'] });
+    const nonvegNoEgg = product({ id: 'nonveg-no-egg', dietary_tags: ['non-veg'] });
+    const all = [eggless, nonvegNoEgg];
+    expect(mixesVtype(all)).toBe(true);
+    const counts = facetCounts(all, state({ diet: ['eggless'] }));
+    expect(counts.vtype!.nonveg).toBe(0);
   });
 });

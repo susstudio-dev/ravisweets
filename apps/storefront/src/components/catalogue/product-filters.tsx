@@ -8,6 +8,7 @@ import {
   EMPTY_FILTERS,
   facetCounts,
   FILTER_GROUPS,
+  mixesVtype,
   SORTS,
   stockFacet,
   toggleValue,
@@ -90,6 +91,15 @@ export function ProductFilters({
   const active = activeFilterCount(state);
   const panelId = useId();
 
+  // "Does this shelf sell both veg and non-veg?" is a property of the SHELF,
+  // not of the shopper's other picks, so — unlike `counts`, which honours the
+  // other active filters — this calls mixesVtype on the unfiltered `products`
+  // prop directly, the exact same call category-browser's tab strip makes.
+  // That is what keeps the two surfaces in step: ticking a filter that
+  // zeroes one side's count (e.g. "Eggless" on /category/pickles) must not
+  // make the whole group disappear from here while the strip still shows it.
+  const mixedVtype = mixesVtype(products);
+
   // Initialised once, from the state the panel MOUNTED with — see the header
   // note. Recomputing it per render would slam a group shut the moment its last
   // chip was cleared, with the shopper's cursor still on it.
@@ -150,10 +160,13 @@ export function ProductFilters({
         if (visible.length === 0) return null;
 
         // Veg / non-veg is only a question when the shelf actually mixes
-        // both. One visible side cannot narrow anything, so — same rule as
-        // the stock checkbox — the control is not offered. It stays while
-        // selected so an empty grid can always be undone.
-        if (group.id === 'vtype' && selected.length === 0 && visible.length < 2) return null;
+        // both — measured unfiltered (mixedVtype), NOT from `visible`, which
+        // an active filter (say "Eggless", which every non-veg pickle lacks)
+        // can zero out on one side. A zero count then behaves like any other
+        // zero-count chip below (hidden via `visible`), not like a reason to
+        // drop the whole group. It stays while selected so an empty grid can
+        // always be undone.
+        if (group.id === 'vtype' && selected.length === 0 && !mixedVtype) return null;
 
         const isOpen = open.has(group.id);
         const groupPanel = `${panelId}-${group.id}`;
