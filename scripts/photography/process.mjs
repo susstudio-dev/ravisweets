@@ -26,6 +26,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 import { ALL_SHOTS, BORROWED, STILL_UNSHOT } from './shot-list.mjs';
+import { buildVariants } from './variants.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const OUT_DIR = path.join(ROOT, 'apps', 'storefront', 'public', 'products');
@@ -157,6 +158,19 @@ async function main() {
     ) + '\n',
     'utf8',
   );
+
+  /*
+   * THE RUNGS, IN THE SAME BREATH.
+   *
+   * A master without its narrow variants is worse than no master at all: the
+   * image loader rewrites `/products/x.webp` to `/products/x-400w.webp` for a
+   * phone-sized slot whether or not that file was ever encoded, so a drop
+   * processed without this step 404s at the size most visitors are served
+   * while looking perfectly healthy in the folder. Running it here means the
+   * two can never drift apart by forgetting a command.
+   */
+  const rungs = await buildVariants();
+  say(`Rungs: ${rungs.built} encoded, ${rungs.skipped} already current`);
 
   const mb = (b) => `${(b / 1024 / 1024).toFixed(1)} MB`;
   say(`Encoded ${manifest.length} photographs -> ${path.relative(ROOT, OUT_DIR)}`);

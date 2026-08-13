@@ -54,8 +54,9 @@ export function CategoryBrowser({
         </div>
       ) : (
         <Stagger gap={75} className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {shown.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {/* Four is the widest first row this grid ever has (xl). */}
+          {shown.map((product, i) => (
+            <ProductCard key={product.id} product={product} priority={i < 4} />
           ))}
         </Stagger>
       )}

@@ -17,6 +17,15 @@ interface ProductCardProps {
   product: Product;
   /** Show a quick-add stamp on the card (e.g. on home / shop / category grids). */
   quickAdd?: boolean;
+  /**
+   * Set on the FIRST ROW of a grid only. Drops the lazy attribute and asks for
+   * high fetch priority, because on every browse surface the LCP element is a
+   * product photograph — and lazy-loading the largest contentful paint is a way
+   * of asking the browser to be slow on purpose. Below the fold it is the
+   * opposite: with 140 products, eager everywhere would be the original bug in
+   * a new costume.
+   */
+  priority?: boolean;
 }
 
 /**
@@ -40,7 +49,7 @@ interface ProductCardProps {
  * colour and the only feedback was a 16px glyph swap. Action colour is fixed;
  * only identity varies.
  */
-export function ProductCard({ product, quickAdd }: ProductCardProps) {
+export function ProductCard({ product, quickAdd, priority }: ProductCardProps) {
   // Owner-edited DB images overlay the static catalogue set (spec §6.4).
   const images = useProductImagesOverride(product.id) ?? product.images;
   const primaryImage = images[0];
@@ -89,11 +98,20 @@ export function ProductCard({ product, quickAdd }: ProductCardProps) {
               />
             </div>
           ) : (
+            /*
+             * `sizes` was inert until 2026-08-13. With `images.unoptimized`,
+             * next/image emitted no srcset at all, so every device took the
+             * 1400x1400 master to paint a tile ~170 CSS px wide. A custom
+             * loader (lib/image-loader.ts) now maps these widths onto the
+             * rungs beside each master, and this declaration finally means
+             * something: a phone in the two-column grid takes the 400w file.
+             */
             <Image
               src={primaryImage.url}
               alt={primaryImage.alt}
               fill
               sizes="(min-width: 1280px) 300px, (min-width: 640px) 33vw, 50vw"
+              priority={priority}
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
               onError={() => setImgFailed(true)}
             />

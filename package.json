@@ -18,6 +18,7 @@
     "generate:catalogue": "node --import tsx scripts/generate-catalogue.mjs",
     "bake:catalogue": "node --import tsx scripts/bake-catalogue-from-source.mjs",
     "photography": "node scripts/photography/process.mjs",
+    "photography:variants": "node scripts/photography/variants.mjs",
     "photography:verify": "node --import tsx scripts/photography/verify.mjs"
   },
   "devDependencies": {

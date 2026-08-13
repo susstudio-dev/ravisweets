@@ -56,20 +56,40 @@ export function FilterSheet({
 
   return (
     <div className="lg:hidden">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-expanded={open}
-        className="stamp stamp--ghost w-full justify-center"
-      >
-        <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-        Filters
-        {active > 0 && (
-          <span className="bg-theme-accent ml-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-[color:var(--theme-base)]">
-            {active}
-          </span>
-        )}
-      </button>
+      {/*
+        THE TRIGGER STAYS IN REACH. On /category it sits below the back link,
+        the h1, the count and the intro — roughly 250px of rail — so a phone
+        visitor scrolled it away before the first product and then had no route
+        back to the filters but a scroll to the top. Pinning it under the
+        masthead (header.tsx is `sticky top-0 z-40`; top-16 clears it, z-20 sits
+        beneath) keeps it available for as long as there are products to filter.
+
+        THE STICKY POSITIONING IS ON THIS ROW AND NOT ON THE WRAPPER. `sticky`
+        with a z-index opens a stacking context, and the dialog below is a
+        SIBLING of this row for exactly that reason: inside it, the overlay's
+        z-40 and the sheet's z-50 would be resolved against this row's z-20
+        rather than against the page, and the whole sheet would open behind the
+        masthead.
+
+        `bg-theme-base` and the negative-margin bleed stop grid cards showing
+        through the pinned button as they pass under it.
+      */}
+      <div className="bg-theme-base sticky top-16 z-20 -mx-4 mb-3 px-4 py-2 sm:-mx-6 sm:px-6">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          className="stamp stamp--ghost w-full justify-center"
+        >
+          <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+          Filters
+          {active > 0 && (
+            <span className="bg-theme-accent ml-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-[color:var(--theme-base)]">
+              {active}
+            </span>
+          )}
+        </button>
+      </div>
 
       <AnimatePresence>
         {open && (

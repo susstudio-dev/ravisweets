@@ -541,4 +541,42 @@
       display: none;
     }
   }
+
+  /*
+   * THE REFINE RAIL'S OWN SCROLLBAR.
+   *
+   * The sticky filter rails (/shop, /category) scroll internally, because a
+   * pinned column taller than the viewport can otherwise never reveal its tail.
+   * Left to the platform default that is a grey Windows slab against cream —
+   * loud enough to read as a second page scrollbar. This makes it a hairline in
+   * the house rule colour that only firms up on hover.
+   *
+   * `scrollbar-gutter: stable` reserves the track whether or not it is needed,
+   * so a category whose panel fits does not sit 8px wider than one whose panel
+   * does not.
+   */
+  .rail-scroll {
+    scrollbar-width: thin;
+    /* --color-border is the 14% ink, --color-rule the 26% — idle is the
+       quieter of the two and hover firms it up, not the other way round. */
+    scrollbar-color: var(--color-border) transparent;
+  }
+  @media (min-width: 1024px) {
+    .rail-scroll {
+      scrollbar-gutter: stable;
+    }
+  }
+  .rail-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .rail-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .rail-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+  }
+  .rail-scroll:hover::-webkit-scrollbar-thumb {
+    background: var(--color-rule);
+  }
 }

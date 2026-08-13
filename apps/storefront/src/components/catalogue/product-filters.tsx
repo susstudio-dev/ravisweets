@@ -1,5 +1,7 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
+import { useId, useState } from 'react';
 import type { Product } from '@ravisweets/shared';
 import {
   activeFilterCount,
@@ -29,6 +31,23 @@ import { cn } from '@/lib/cn';
  * The one exception is a chip the shopper has already SELECTED: it stays
  * rendered even at zero, because it may be the only control that can undo an
  * empty result set. Hiding it would strand them.
+ *
+ * ── WHY THE GROUPS COLLAPSE ────────────────────────────────────────────────
+ * Fully open, six groups measure ~1100px, and on /category another ~200px of
+ * title block sits above them in the same rail. Pinned 80px down an 800px
+ * viewport, the tail was simply unreachable: the page scrolled, the pinned rail
+ * did not, and it had no scrollbar of its own. The rail now scrolls internally
+ * (see the asides in shop-view and app/category/[slug]/page), but a 1300px
+ * scroll strip in a 700px window is a poor way to choose a filter even when it
+ * works.
+ *
+ * So each group is a disclosure, and only DEFAULT_OPEN starts expanded. A
+ * collapsed group still states its name and how many of its options are live,
+ * which means six group names are legible at once instead of two.
+ *
+ * A group arriving with a selection opens on mount — a link shared as
+ * `?keeps=fresh` must show the control that can undo it. After that the
+ * shopper's own toggles win; nothing re-opens under their hands.
  */
 interface ProductFiltersProps {
   /** The surface's UNFILTERED set — facet counts are measured against it. */
@@ -41,6 +60,12 @@ interface ProductFiltersProps {
   hideHeading?: boolean;
   className?: string;
 }
+
+/**
+ * Open on first paint. The three a shopper reaches for on almost any visit;
+ * shelf life, pack size and the flags are follow-up questions and start shut.
+ */
+const DEFAULT_OPEN: ReadonlySet<string> = new Set(['diet', 'free', 'price']);
 
 export function filterChipClass(active: boolean) {
   return cn(
@@ -62,6 +87,22 @@ export function ProductFilters({
   const counts = facetCounts(products, state);
   const stock = stockFacet(products, state);
   const active = activeFilterCount(state);
+  const panelId = useId();
+
+  // Initialised once, from the state the panel MOUNTED with — see the header
+  // note. Recomputing it per render would slam a group shut the moment its last
+  // chip was cleared, with the shopper's cursor still on it.
+  const [open, setOpen] = useState<ReadonlySet<string>>(
+    () => new Set(FILTER_GROUPS.filter((g) => DEFAULT_OPEN.has(g.id) || state[g.id].length > 0).map((g) => g.id)),
+  );
+
+  function toggleGroup(id: string) {
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
 
   function toggle(group: FilterGroup['id'], value: string) {
     onChange({ ...state, [group]: toggleValue(state[group], value) });
@@ -107,36 +148,75 @@ export function ProductFilters({
         // empty "Pack size" heading is noise, not information.
         if (visible.length === 0) return null;
 
+        const isOpen = open.has(group.id);
+        const groupPanel = `${panelId}-${group.id}`;
+
         return (
-          <fieldset
+          <div
             key={group.id}
-            className="mb-5 border-b border-[color:var(--color-border)] pb-5 last:mb-0 last:border-b-0 last:pb-0"
+            className="border-b border-[color:var(--color-border)] last:border-b-0"
           >
-            <legend className="field-label mb-2">{group.legend}</legend>
-            {group.hint && (
-              <p className="text-text-muted mb-2.5 text-[11px] leading-snug">{group.hint}</p>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {visible.map((o) => {
-                const on = selected.includes(o.value);
-                const n = counts[group.id]?.[o.value] ?? 0;
-                return (
-                  <button
-                    key={o.value}
-                    type="button"
-                    onClick={() => toggle(group.id, o.value)}
-                    aria-pressed={on}
-                    className={filterChipClass(on)}
-                  >
-                    {o.label}
-                    <span className={cn('field-value text-[10px]', on ? 'opacity-80' : 'opacity-55')}>
-                      {n}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
+            {/*
+              The disclosure header sits OUTSIDE the fieldset rather than inside
+              its <legend>. A legend is laid out as a special box by every
+              browser — width, padding and float behave unlike a normal child —
+              and a full-width flex button inside one renders inconsistently.
+              The fieldset keeps an sr-only legend so the grouping survives.
+            */}
+            <button
+              type="button"
+              onClick={() => toggleGroup(group.id)}
+              aria-expanded={isOpen}
+              aria-controls={groupPanel}
+              className="focus-visible:ring-theme-accent group/disc flex min-h-[44px] w-full items-center justify-between gap-2 rounded-md py-2 text-left focus-visible:outline-none focus-visible:ring-2"
+            >
+              <span className="field-label">{group.legend}</span>
+              <span className="flex shrink-0 items-center gap-2">
+                {/* A collapsed group must still say it is doing something. */}
+                {selected.length > 0 && (
+                  <span className="bg-theme-accent field-value rounded-md px-1.5 py-0.5 text-[10px] font-bold text-[color:var(--theme-base)]">
+                    {selected.length}
+                  </span>
+                )}
+                <ChevronDown
+                  aria-hidden="true"
+                  className={cn(
+                    'text-theme-ink/45 group-hover/disc:text-theme-ink h-4 w-4 transition-transform duration-200',
+                    isOpen && 'rotate-180',
+                  )}
+                />
+              </span>
+            </button>
+
+            <fieldset id={groupPanel} className={cn('pb-5', isOpen ? 'block' : 'hidden')}>
+              <legend className="sr-only">{group.legend}</legend>
+              {group.hint && (
+                <p className="text-text-muted mb-2.5 text-[11px] leading-snug">{group.hint}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {visible.map((o) => {
+                  const on = selected.includes(o.value);
+                  const n = counts[group.id]?.[o.value] ?? 0;
+                  return (
+                    <button
+                      key={o.value}
+                      type="button"
+                      onClick={() => toggle(group.id, o.value)}
+                      aria-pressed={on}
+                      className={filterChipClass(on)}
+                    >
+                      {o.label}
+                      <span
+                        className={cn('field-value text-[10px]', on ? 'opacity-80' : 'opacity-55')}
+                      >
+                        {n}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          </div>
         );
       })}
 
@@ -144,7 +224,9 @@ export function ProductFilters({
           in view is in stock, the control cannot change the result, so it is
           not offered. It stays while checked so it can always be undone. */}
       {(stock.matching < stock.total || state.inStock) && (
-        <fieldset className="mb-5 border-b border-[color:var(--color-border)] pb-5">
+        /* Not a disclosure: it is one checkbox, and hiding one control behind
+           another control costs more than it saves. */
+        <fieldset className="border-b border-[color:var(--color-border)] py-4">
           <legend className="field-label mb-2">Availability</legend>
           <label className="text-theme-ink/85 flex min-h-[36px] items-center gap-2 text-sm">
             <input
@@ -160,7 +242,7 @@ export function ProductFilters({
       )}
 
       {showSort && (
-        <fieldset>
+        <fieldset className="pt-4">
           <legend className="field-label mb-2">Sort by</legend>
           <SortSelect
             value={state.sort}

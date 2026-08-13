@@ -6,7 +6,11 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  # payment=() denied the Payment Request API to Razorpay's own checkout iframe
+  # (2026-08-13 review). The allowlist now grants it to self + Razorpay's
+  # checkout/API origins; camera/mic/geolocation stay fully denied.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(self "https://checkout.razorpay.com" "https://api.razorpay.com"), interest-cohort=()
   # A Next.js static export injects inline bootstrap scripts and inline styles
   # and has no server to mint per-request nonces, so script-src/style-src must
   # allow 'unsafe-inline'. The CSP still adds real value: it locks base-uri,
@@ -29,7 +33,24 @@
   # static.cloudflareinsights.com is the Web Analytics beacon that Cloudflare
   # Pages injects automatically; without it the beacon is blocked on every page
   # and collects nothing.
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://api.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://ravisweets.com https://*.supabase.co https://cdn.razorpay.com; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.razorpay.com https://cloudflareinsights.com; frame-src https://*.razorpay.com
+  # Hosts pinned to the actual Supabase project rather than *.supabase.co
+  # (2026-08-13 review): a wildcard let any Supabase tenant serve as an
+  # image/exfiltration endpoint. Dead hosts removed: res.cloudinary.com
+  # (unused), ravisweets.com (the retired WordPress host, already refused at
+  # render time). images.unsplash.com is retained only for legacy seed rows.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://api.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://ufxzgsygsgyxaxvknpjv.supabase.co https://cdn.razorpay.com; font-src 'self' data:; connect-src 'self' https://ufxzgsygsgyxaxvknpjv.supabase.co wss://ufxzgsygsgyxaxvknpjv.supabase.co https://*.razorpay.com https://cloudflareinsights.com; frame-src https://*.razorpay.com
+
+# CATALOGUE PHOTOGRAPHY. Cloudflare Pages serves static assets with a
+# revalidating default, so every repeat visit paid a round trip per image — on
+# an Indian mobile connection that is the latency of a 24-tile grid, twice.
+# These files change only when the owner re-runs the photography pipeline.
+#
+# Thirty days, and deliberately NOT `immutable`: the filenames carry no content
+# hash (kaju-katli.webp, kaju-katli-400w.webp), so a re-shot photograph has to
+# be able to win eventually. If the set starts changing often, hash the rung
+# filenames in scripts/photography/variants.mjs and raise this to a year.
+/products/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
 
 /admin
   X-Robots-Tag: noindex, nofollow

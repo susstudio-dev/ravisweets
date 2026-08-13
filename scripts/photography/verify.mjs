@@ -14,7 +14,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { HARDCODED_CATALOGUE } from '../../packages/shared/src/catalogue/products.ts';
+import { CUTOUT_BASES } from '../../apps/storefront/src/lib/cutouts.generated.ts';
 import { STILL_UNSHOT } from './shot-list.mjs';
+import { isCutout, isRung, rungName, RUNGS } from './variants.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PUBLIC_PRODUCTS = path.join(ROOT, 'apps', 'storefront', 'public', 'products');
@@ -62,9 +64,65 @@ for (const p of HARDCODED_CATALOGUE) {
 
 // ── every shipped file must be referenced ─────────────────────────────────
 // An orphan is 150 kB of repo and bandwidth that reaches no page.
-const onDisk = readdirSync(PUBLIC_PRODUCTS).filter((f) => f.endsWith('.webp'));
+//
+// THREE KINDS OF FILE LIVE IN THIS FOLDER, and only one is named by a product:
+//
+//   masters   kaju-katli.webp        the catalogue's images[].url
+//   rungs     kaju-katli-400w.webp   derived at render by lib/image-loader.ts
+//   cutouts   kaju-katli-cutout.webp derived at render by lib/cutouts.ts
+//
+// Neither derived kind is ever written into the catalogue, so both would trip
+// the orphan rule. Each therefore gets its own check below, against the thing
+// that actually decides whether it is reachable.
+const allWebp = readdirSync(PUBLIC_PRODUCTS).filter((f) => f.endsWith('.webp'));
+const onDisk = allWebp.filter((f) => !isRung(f) && !isCutout(f));
+const rungsOnDisk = new Set(allWebp.filter(isRung));
+const cutoutsOnDisk = allWebp.filter(isCutout);
 for (const f of onDisk) {
   if (!referenced.has(f)) fail(`public/products/${f} is shipped but no product references it`);
+}
+
+// ── every master must carry every rung ────────────────────────────────────
+// THE FAILURE THIS PREVENTS. The loader rewrites `/products/x.webp` to
+// `/products/x-400w.webp` unconditionally for a 400px slot — it cannot know
+// whether that file was encoded. A master added without running
+// `pnpm photography:variants` therefore does not fall back to the full-size
+// image; it 404s at the size most visitors are served, and the catalogue looks
+// fine in every check that only asks whether the master exists.
+for (const f of onDisk) {
+  for (const w of RUNGS) {
+    const rung = rungName(f, w);
+    if (!rungsOnDisk.has(rung)) {
+      fail(`public/products/${rung} is missing — run \`pnpm photography:variants\``);
+    }
+    rungsOnDisk.delete(rung);
+  }
+}
+// Whatever is left belongs to no master — a rename or a deleted photograph.
+// Cutouts deliberately have NO rungs (see the note in variants.mjs), so a
+// `*-cutout-400w.webp` turning up here means someone removed that guard.
+for (const f of rungsOnDisk) {
+  fail(`public/products/${f} is a rung of a master that no longer exists`);
+}
+
+// ── every cutout must be a cutout OF something, and be registered ─────────
+// `cutoutFor` consults CUTOUT_BASES rather than the filesystem, so the two can
+// disagree in both directions: a file the registry has never heard of is dead
+// weight, and a registry entry with no file renders a broken silhouette on the
+// home shelf. cutouts.py writes both; this is what catches it writing one.
+for (const f of cutoutsOnDisk) {
+  const base = f.replace(/-cutout\.webp$/i, '');
+  if (!CUTOUT_BASES.has(base)) {
+    fail(`public/products/${f} is not in CUTOUT_BASES — re-run scripts/photography/cutouts.py`);
+  }
+  if (!referenced.has(`${base}.webp`)) {
+    fail(`public/products/${f} is a cutout of ${base}.webp, which no product references`);
+  }
+}
+for (const base of CUTOUT_BASES) {
+  if (!cutoutsOnDisk.includes(`${base}-cutout.webp`)) {
+    fail(`CUTOUT_BASES lists '${base}', but ${base}-cutout.webp is not on disk`);
+  }
 }
 
 // ── the unshot list must still be unshot ──────────────────────────────────
@@ -89,7 +147,11 @@ for (const p of HARDCODED_CATALOGUE) {
 // ── report ────────────────────────────────────────────────────────────────
 console.log(`catalogue: ${HARDCODED_CATALOGUE.length} products, ${seenSku.size} SKUs`);
 console.log(`photographed: ${withPhoto}   placeholder: ${HARDCODED_CATALOGUE.length - withPhoto}`);
-console.log(`files: ${onDisk.length} webp in public/products/, ${referenced.size} referenced`);
+console.log(
+  `files: ${onDisk.length} masters in public/products/, ${referenced.size} referenced, ` +
+    `${allWebp.length - onDisk.length - cutoutsOnDisk.length} rungs ` +
+    `(${RUNGS.map((w) => `${w}w`).join('/')}), ${cutoutsOnDisk.length} cutouts`,
+);
 
 if (problems.length) {
   console.error(`\n${problems.length} PROBLEM(S):`);
