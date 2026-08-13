@@ -15,7 +15,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,mdx,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,mdx,css}\"",
     "generate:seed": "node --import tsx scripts/generate-product-seed.mjs",
-    "generate:catalogue": "node --import tsx scripts/generate-catalogue.mjs"
+    "generate:catalogue": "node --import tsx scripts/generate-catalogue.mjs",
+    "bake:catalogue": "node --import tsx scripts/bake-catalogue-from-source.mjs",
+    "photography": "node scripts/photography/process.mjs",
+    "photography:verify": "node --import tsx scripts/photography/verify.mjs"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

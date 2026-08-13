@@ -43,10 +43,33 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 15 | `supabase/migrations/0017_sweet_counter_world.sql` | The warm pivot: activates the Sweet Counter palette on `theme_presets`. Note the **duplicate 0017 prefix** — run the coupon file first. Idempotent |
 | 16 | `supabase/migrations/0018_order_fees.sql` | Adds `orders.fees jsonb` for itemised packing/COD charges. Idempotent |
 | 17 | `supabase/migrations/0020_global_kitchen_voice.sql` | Retires "family kitchen", "batch" and the standalone kitchen mention from `site_content` (`hero`, `footer`, `home_trust`) + `theme_presets`. Idempotent |
+| 18 | `supabase/migrations/0014_seed_products.sql` | **Re-run.** Regenerated 2026-08-13 — now 140 products / 279 variants, adding the 57 counter-range sweets that came with the photography. Every statement is `on conflict do nothing`, so re-running cannot touch a row the admin has edited; it only inserts what is missing |
+| 19 | `supabase/migrations/0021_product_photography.sql` | Fills `products.images` for the 111 photographed products. Guarded to skip any row that already has a usable image URL, so an `/admin` upload always wins. Idempotent |
 
 > **Skip `0019_global_kitchen.sql`.** It is superseded by 0020 and would reintroduce "Shop today's batch". 0020 is self-sufficient — it does not need 0019 to have run first.
 >
 > **Status as of 2026-08-12** (verified by read-only probe against the live project): 0001–0018 are all applied. **0020 is the only outstanding file**, plus `0017_coupon_redemptions_insert.sql`, whose RLS policy cannot be verified from outside — re-run it, it is idempotent.
+
+#### The photography (0014 re-run + 0021) — read before deploying
+
+The 2026-08-13 photography is committed to the repo: 83 encoded images in
+`apps/storefront/public/products/`, 140 products in `products.ts`, and a matching
+`products.generated.ts`. **The database has none of it until 0014 and 0021 are
+applied**, and that matters more than usual here, because `build:cloudflare` runs
+`generate:catalogue` *before* `next build` — it reads Supabase and rewrites
+`products.generated.ts` from what it finds.
+
+So a deploy against an un-migrated database would regenerate the snapshot back to
+83 products with zero images and ship that, reporting success the whole way. That
+is not a guess: it happened once during this change, which is why
+`generate-catalogue.mjs` now **refuses to write a snapshot with fewer photographs
+than the committed one** and prints the two files to apply. The build continues
+with the committed catalogue, so the photography still ships — but the message in
+the build log is the signal that Supabase is behind the repo.
+
+Order matters: run `0014` first (it inserts the new products), then `0021` (it
+fills images on rows that already exist). After both, `pnpm run generate:catalogue`
+should report 140 products and write cleanly with no refusal.
 
 Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, `publish_state`, and friends (26 tables total).
 

@@ -40,9 +40,13 @@ export function HeroDusk() {
    * the locality headline, and the Hyderabadi CTA. If neither dusk hero is
    * coming back, delete both files and shop-scene.tsx with them.
    */
+  /* `||` not `??` on the Indic mark: the preset's `eyebrow` is now normally
+     BLANK, and `??` would pass that empty string through and drop the Telugu.
+     See the fuller note in hero-batch.tsx. */
   const heroEyebrowIndic =
-    hero?.eyebrowIndic ?? theme?.hero.eyebrow?.split('·')[0]?.trim() ?? 'రవి స్వీట్స్';
-  const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? 'Mithai house';
+    hero?.eyebrowIndic || theme?.hero.eyebrow?.split('·')[0]?.trim() || 'రవి స్వీట్స్';
+  /* No English descriptor — owner, 2026-08-12. */
+  const heroEyebrowEn = hero?.eyebrowEn ?? theme?.hero.eyebrow ?? '';
   const heroHeadline =
     hero?.headline ?? theme?.hero.headline ?? 'Made this morning. Nothing added to make it last.';
   const heroBody =

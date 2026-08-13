@@ -35,7 +35,9 @@ const FALLBACK_PRESETS: ThemePreset[] = [
      * for a frame even when the database is correct.
      */
     hero: {
-      eyebrow: 'Mithai house',
+      // Blank on purpose — the hero's eyebrow is the Telugu mark and the year,
+      // with no self-applied English label (owner, 2026-08-12).
+      eyebrow: '',
       headline: 'Made this morning. Nothing added to make it last.',
       body: 'Kaju Katli, Gulab Jamun, Motichoor Ladoo — plus a full line of sweets, namkeens, and gift hampers. Hand-made, preservative-free, delivered across India.',
       ctaLabel: "Shop today's sweets",

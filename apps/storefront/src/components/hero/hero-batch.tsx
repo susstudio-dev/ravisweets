@@ -90,6 +90,12 @@ const FOUNDED = '1983';
  * 'Family kitchen' as the eyebrow, so it must fall through to the new
  * defaults. Same quarantine, next ring.
  *
+ * "mithai house" joined it 2026-08-12 as well: the owner retired the phrase
+ * that replaced "family kitchen" only a day earlier ("it is making the product
+ * unprofessional"), so the eyebrow now resolves to NO English descriptor at
+ * all. The ring matters because 0019 — should anyone paste it despite its
+ * superseded header — writes 'Mithai house' into exactly this field.
+ *
  * "today's batch" joined it 2026-08-12: the owner retired BATCH along with the
  * family framing, and the live rows carry 'Shop today''s batch' as the CTA
  * label — site_content from 0012 and theme_presets from 0017. Both are now
@@ -105,11 +111,18 @@ const FOUNDED = '1983';
  * the database, not against the presence of the .sql file. 0019 sat unapplied
  * in this repo for a month while its ring looked safe to remove.
  */
-const RETIRED_COPY = /khammam|telangana|ఖమ్మం|family kitchen|today['’]s batch|small batch/i;
+const RETIRED_COPY =
+  /khammam|telangana|ఖమ్మం|family kitchen|mithai house|today['’]s batch|small batch/i;
 
 function live<T>(row: T | null | undefined): T | undefined {
   if (row == null) return undefined;
   return RETIRED_COPY.test(JSON.stringify(row)) ? undefined : row;
+}
+
+/** Blank and whitespace-only are ABSENT, not values — see heroEyebrowIndic. */
+function nonEmpty(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
 }
 
 /** Mirrors the calendar in festival-next-band.tsx (shared module is phase 4b). */
@@ -171,14 +184,30 @@ export function HeroBatch() {
   const db = live(hero);
   const preset = live(theme?.hero);
 
-  const heroEyebrowIndic =
-    db?.eyebrowIndic ?? preset?.eyebrow?.split('·')[0]?.trim() ?? 'రవి స్వీట్స్';
   /*
-   * "Mithai house", not "Family kitchen" — owner direction 2026-08-11: the
-   * brand is global and the kitchen is large; the cottage register undersold
-   * it. House-of-mithai keeps the heritage note without the smallness.
+   * `??` is not enough on the Indic mark. The theme preset's `eyebrow` is ONE
+   * string that this line splits for the Telugu and reads whole for the
+   * English, so the moment that field is blank — which is now its resting
+   * state — `''.split('·')[0].trim()` yields '' and `??` passes it straight
+   * through, taking the Telugu brand mark off the hero with it. Empty must be
+   * treated as ABSENT here, not as a value.
    */
-  const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? 'Mithai house';
+  const heroEyebrowIndic =
+    nonEmpty(db?.eyebrowIndic) ?? nonEmpty(preset?.eyebrow?.split('·')[0]) ?? 'రవి స్వీట్స్';
+  /*
+   * NO ENGLISH DESCRIPTOR AT ALL — owner, 2026-08-12: "we don't have to say
+   * this, it is making the product unprofessional". This slot has now been
+   * "Khammam · Telangana" (too local), "Family kitchen" (too small) and
+   * "Mithai house" (too twee); the through-line is that a self-applied label
+   * reads as a brand explaining itself. The line is stronger as the Telugu
+   * mark and the year: రవి స్వీట్స్ · EST 1983.
+   *
+   * `??` and NOT `||`, deliberately: an empty string from the database means
+   * the owner cleared the field and must be honoured, while undefined means
+   * "not set" and falls through. The render below drops the span when blank,
+   * so no stray separator is left behind.
+   */
+  const heroEyebrowEn = db?.eyebrowEn ?? preset?.eyebrow ?? '';
   const heroHeadline =
     db?.headline ?? preset?.headline ?? 'Made this morning. Nothing added to make it last.';
   /*
@@ -242,7 +271,7 @@ export function HeroBatch() {
    * on the deadline chip, which is the only thing here that is urgent.
    */
   const proof = [
-    { value: FOUNDED, label: 'mithai house' },
+    { value: FOUNDED, label: 'established' },
     { value: 'NIL', label: 'preservatives' },
     { value: 'Same-day', label: 'dispatch' },
   ];
@@ -271,11 +300,14 @@ export function HeroBatch() {
       <div className="container-site relative z-10 grid gap-8 pb-8 pt-4 md:pb-10 md:pt-6 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14">
         {/* ── THE WORD ─────────────────────────────────────────────────── */}
         <div>
+          {/* The English descriptor is optional and normally absent — the mark
+              and the year carry this line. `· EST` keeps its leading separator
+              only when something precedes it. */}
           <p className="flex flex-wrap items-baseline gap-x-2.5">
             <span className="font-indic text-theme-accent text-lg leading-none">
               {heroEyebrowIndic}
             </span>
-            <span className="field-label">{heroEyebrowEn}</span>
+            {heroEyebrowEn.trim() && <span className="field-label">{heroEyebrowEn}</span>}
             <span className="field-label">· EST {FOUNDED}</span>
           </p>
 

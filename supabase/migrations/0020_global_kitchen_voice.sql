@@ -50,7 +50,15 @@ begin;
 update public.site_content
 set data = data
   || jsonb_build_object(
-       'eyebrowEn',       'Mithai house',
+       -- EMPTY, not a phrase. This slot has been "Khammam · Telangana" (too
+       -- local), "Family kitchen" (too small) and "Mithai house" (retired
+       -- 2026-08-12: "it is making the product unprofessional"). The hero's
+       -- eyebrow is now the Telugu mark and the year — రవి స్వీట్స్ · EST 1983
+       -- — and the component drops the span entirely when this is blank.
+       -- Empty string, NOT null: the code reads it with `??`, so '' is an
+       -- honoured value meaning "no descriptor" while null would fall through
+       -- to the theme preset and put a phrase back.
+       'eyebrowEn',       '',
        'body',            'Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.',
        'primaryCtaLabel', 'Shop today''s sweets',
        'primaryCtaHref',  '/shop'
@@ -64,7 +72,7 @@ where key = 'hero';
 update public.theme_presets
 set hero = hero
   || jsonb_build_object(
-       'eyebrow',  'Mithai house',
+       'eyebrow',  '',
        'body',     'Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since 1983. Order from anywhere; delivered fresh to any address in India.',
        'ctaLabel', 'Shop today''s sweets',
        'ctaHref',  '/shop'
@@ -77,12 +85,13 @@ where id = 'batch-card';
 update public.theme_presets
 set hero = hero
   || jsonb_build_object(
-       'eyebrow',  'Mithai house',
+       'eyebrow',  '',
        'ctaLabel', 'Shop today''s sweets'
      )
 where id <> 'batch-card'
   and (
     hero->>'eyebrow'  ilike '%family kitchen%'
+    or hero->>'eyebrow' ilike '%mithai house%'
     or hero->>'ctaLabel' ilike '%batch%'
   );
 
@@ -125,12 +134,14 @@ where key = 'home_trust';
 commit;
 
 -- ─── VERIFY ────────────────────────────────────────────────────────────────
--- Expect 'Mithai house' and a body with no "family":
+-- Expect an EMPTY eyebrowEn and "Shop today's sweets":
 --   select data->>'eyebrowEn', data->>'primaryCtaLabel' from public.site_content where key = 'hero';
 --
 -- Expect ZERO rows from each of these three:
 --   select id from public.theme_presets
---    where hero->>'eyebrow' ilike '%family kitchen%' or hero->>'ctaLabel' ilike '%batch%';
+--    where hero->>'eyebrow' ilike '%family kitchen%'
+--       or hero->>'eyebrow' ilike '%mithai house%'
+--       or hero->>'ctaLabel' ilike '%batch%';
 --   select key from public.site_content
 --    where key in ('hero','footer') and data::text ilike '%khammam%';
 --   select key from public.site_content

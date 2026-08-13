@@ -45,9 +45,41 @@ const RAVISWEETS_LICENCE = 'https://ravisweets.com';
  * shoot lands the mapping is still here. Point this at
  * `/products/<file>` once the files exist in public/, and every component,
  * the OG tag and the structured data light up with no other change.
+ *
+ * THE SHOOT LANDED — 2026-08-13. 83 photographs arrived from the Khammam
+ * kitchen and 80 products now call `photo()` below instead. This helper is
+ * kept, not deleted, because 29 SKUs are still genuinely unphotographed: the
+ * drop contained no jar of pickle, no heap of podi and no bowl of loose nuts.
+ * Those keep the placeholder rather than borrow a picture of a different
+ * foodstuff. See scripts/photography/shot-list.mjs (STILL_UNSHOT) — that list
+ * is the brief for the next shoot.
  */
 function pendingPhoto(_file: string): string {
   return '';
+}
+
+/**
+ * A photograph that EXISTS, in apps/storefront/public/products/.
+ *
+ * Encoded from the owner's drop by scripts/photography/process.mjs — one
+ * 1400×1400 webp per slug, which is why the argument is a slug and not a
+ * filename: the processor derives the filename from the same slug, so a name
+ * cannot drift out of sync between the two files. Extra gallery angles are
+ * `<slug>-2`, `<slug>-3`, … and are passed here in full.
+ *
+ * Root-relative on purpose. `isUsableImage` accepts any `/`-leading URL
+ * unconditionally (it ships with the build, so it always resolves), while the
+ * retired ravisweets.com WordPress host stays rejected.
+ *
+ * BORROWED STAND-INS. Some SKUs pass a slug that is not their own — a product
+ * from the same family whose photograph stands in until their own is shot.
+ * That is deliberate and owner-approved; every instance is recorded in
+ * scripts/photography/shot-list.mjs (BORROWED) and in the generated
+ * public/products/manifest.json, and carries alt text describing what the
+ * picture actually shows rather than claiming to be the SKU.
+ */
+function photo(slug: string): string {
+  return `/products/${slug}.webp`;
 }
 
 /**
@@ -150,7 +182,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container away from humidity.',
     shelf_life_days: 21,
     images: [
-      { url: pendingPhoto('2025/09/badam_butter_burfi-removebg-preview.png'), alt: 'Badam ki Jali almond discs arranged in a fan, lace-thin', width: 1400, height: 1400 },
+      { url: photo('badam-butter-burfi'), alt: 'Badam Butter Burfi from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_bkj_250', title: '250 g', weight_grams: 250, price: { amount: 549, currency: 'INR' }, sku: 'RS-BKJ-250', stock_available: 40, hsn_code: '2106' },
@@ -202,7 +234,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container in a cool, dry place.',
     shelf_life_days: 30,
     images: [
-      { url: pendingPhoto('2025/09/anjjeer_katli-removebg-preview.png'), alt: 'Khubani Dry-Fruit Mithai diamonds layered with nuts and silver leaf', width: 1400, height: 1400 },
+      { url: photo('dry-fruit-halwa'), alt: 'Dry Fruit Halwa from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_khm_300', title: '300 g', weight_grams: 300, price: { amount: 649, currency: 'INR' }, sku: 'RS-KHM-300', stock_available: 28, hsn_code: '2106' },
@@ -230,7 +262,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container in a cool, dry place.',
     shelf_life_days: 15,
     images: [
-      { url: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'), alt: 'Premium Kaju Katli diamonds arranged on a plate, dusted with edible silver leaf', width: 1400, height: 1400 },
+      { url: photo('kaju-katli'), alt: 'Kaju Katli diamonds fanned into a star on red cloth, one piece leafed with edible silver, whole cashews scattered beside them', width: 1400, height: 1400 },
       { url: pendingPhoto('2025/09/kaju_kalakand-removebg-preview.png'), alt: 'Cashew Kalakand squares stacked beside the Kaju Katli', width: 1400, height: 1400 },
     ],
     variants: [
@@ -256,7 +288,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Refrigerate. Warm gently before serving.',
     shelf_life_days: 10,
     images: [
-      { url: pendingPhoto('2025/08/gulabilu.webp'), alt: 'Gulab Jamun-style amber spheres glossy with syrup', width: 1400, height: 1400 },
+      { url: photo('gulab-jamun'), alt: 'Three deep-brown Gulab Jamun, each topped with slivered almond, resting close together on a pale dish', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_gj_500', title: '500 g (12 pieces)', weight_grams: 500, price: { amount: 399, currency: 'INR' }, sku: 'RS-GJ-500', stock_available: 32, hsn_code: '2106' },
@@ -282,8 +314,8 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container at room temperature.',
     shelf_life_days: 7,
     images: [
-      { url: pendingPhoto('2025/09/boondi_laddu-removebg-preview.png'), alt: 'Motichoor Ladoos with saffron pearls visible across the surface', width: 1400, height: 1400 },
-      { url: pendingPhoto('2025/09/besan_laddu-removebg-preview.png'), alt: 'A pair of besan laddus stacked next to the boondi ladoo', width: 1400, height: 1400 },
+      { url: photo('motichoor-ladoo'), alt: 'Motichoor Ladoos with saffron pearls visible across the surface', width: 1400, height: 1400 },
+      { url: photo('motichoor-ladoo-2'), alt: 'Four Motichoor Ladoos heaped in a blue-and-white painted bowl against a pink backdrop', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_mtl_6', title: '6 pieces', weight_grams: 300, price: { amount: 279, currency: 'INR' }, sku: 'RS-MTL-6', stock_available: 40, hsn_code: '2106' },
@@ -310,7 +342,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container.',
     shelf_life_days: 30,
     images: [
-      { url: pendingPhoto('2025/08/mixture.webp'), alt: 'Hyderabadi Mixture — crunchy savoury medley with curry leaves', width: 1400, height: 1400 },
+      { url: photo('navaratna-mixture'), alt: 'Navaratna Mixture from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_mix_200', title: '200 g', weight_grams: 200, price: { amount: 139, currency: 'INR' }, sku: 'RS-MIX-200', stock_available: 200, hsn_code: '2106' },
@@ -336,7 +368,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container.',
     shelf_life_days: 60,
     images: [
-      { url: pendingPhoto('2025/08/atukula-mixture-400x400.jpg'), alt: 'Peanut Chivda — flattened rice with peanuts, cashews, curry leaves', width: 1400, height: 1400 },
+      { url: photo('atukula-mixture'), alt: 'Atukula Mixture from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_pc_150', title: '150 g', weight_grams: 150, price: { amount: 109, currency: 'INR' }, sku: 'RS-PC-150', stock_available: 200, hsn_code: '2106' },
@@ -362,7 +394,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in an airtight container.',
     shelf_life_days: 45,
     images: [
-      { url: pendingPhoto('2025/08/karapusa.webp'), alt: 'Fine Besan Sev threads piled high', width: 1400, height: 1400 },
+      { url: photo('karapusa'), alt: 'Karapusa — Crispy Karapusa from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [
       { id: 'v_bs_250', title: '250 g', weight_grams: 250, price: { amount: 169, currency: 'INR' }, sku: 'RS-BS-250', stock_available: 80, hsn_code: '2106' },
@@ -444,7 +476,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 45,
     images: [
-      { url: pendingPhoto('2025/08/dalmudi.webp'), alt: 'Chai-time combo box with three compartments of savoury snacks', width: 1400, height: 1400 },
+      { url: photo('navaratna-mixture'), alt: 'Navaratna Mixture from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_cc_750', title: 'Box (750 g total)', weight_grams: 750, price: { amount: 649, currency: 'INR' }, sku: 'RS-CC-750', stock_available: 30, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -467,7 +499,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 15,
     images: [
-      { url: pendingPhoto('2025/09/cashew_mithai-removebg-preview.png'), alt: 'Festival combo with silver-leaf Kaju Katli and a bowl of mixture', width: 1400, height: 1400 },
+      { url: photo('dussehra-gift-box'), alt: 'Dussehra Gift Box from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_fc_900', title: 'Box (900 g total)', weight_grams: 900, price: { amount: 999, currency: 'INR' }, sku: 'RS-FC-900', stock_available: 40, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -491,7 +523,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 7,
     images: [
-      { url: pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png'), alt: 'Open Diwali hamper box with assorted sweets, a brass diya, and silk wrap', width: 1400, height: 1400 },
+      { url: photo('diwali-premium-hamper'), alt: 'A woven gift basket packed with a tray of assorted sweet bites, dry-fruit pouches, painted clay diyas and wrapped chocolate bars', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_diwali_premium', title: 'Premium box', weight_grams: 1500, price: { amount: 2499, currency: 'INR' }, sku: 'RS-GH-DIWALI-P', stock_available: 60, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -514,7 +546,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 10,
     images: [
-      { url: pendingPhoto('2025/09/kaju_rolls-removebg-preview.png'), alt: 'Classic matte-cream gifting box tied with a ribbon', width: 1400, height: 1400 },
+      { url: photo('dry-fruits-gift-hamper'), alt: 'Dry Fruits Gift Hamper from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_cgb_1', title: 'Box', weight_grams: 1200, price: { amount: 1499, currency: 'INR' }, sku: 'RS-GH-CLASSIC', stock_available: 50, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -536,7 +568,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Follow storage instructions on each enclosed item.',
     shelf_life_days: 10,
     images: [
-      { url: pendingPhoto('2025/09/kaju_kissmish-removebg-preview.png'), alt: 'Corporate essentials box with labelled compartments', width: 1400, height: 1400 },
+      { url: photo('dry-fruits-gift-hamper'), alt: 'Dry Fruits Gift Hamper from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_ceb_1', title: 'Box', weight_grams: 1600, price: { amount: 1799, currency: 'INR' }, sku: 'RS-GH-CORP', stock_available: 75, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -560,7 +592,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in a cool, dry place.',
     shelf_life_days: 14,
     images: [
-      { url: pendingPhoto('2025/09/kaju_mysorepak-removebg-preview.png'), alt: 'Raksha Bandhan thali with sweets and a rakhi thread on a brass plate', width: 1400, height: 1400 },
+      { url: photo('raksha-bandhan-thali'), alt: 'An open green gift box holding a beaded rakhi, wrapped sweets and foil-wrapped chocolates, staged on a mother-of-pearl tray', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_rt_1', title: 'Thali', weight_grams: 800, price: { amount: 999, currency: 'INR' }, sku: 'RS-FS-RAKHI', stock_available: 45, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -582,7 +614,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Refrigerate perishable items on arrival. Follow per-item instructions.',
     shelf_life_days: 5,
     images: [
-      { url: pendingPhoto('2025/09/dryfruit_pootharekulu-removebg-preview.png'), alt: 'Eid signature box with sheer khurma, double ka meetha, and dry fruits', width: 1400, height: 1400 },
+      { url: photo('diwali-premium-hamper'), alt: 'Diwali Premium Hamper from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_es_1', title: 'Box', weight_grams: 2000, price: { amount: 1799, currency: 'INR' }, sku: 'RS-FS-EID', stock_available: 35, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -628,7 +660,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in a cool, dry place. Refrigerate after opening if room temperature exceeds 28°C.',
     shelf_life_days: 30,
     images: [
-      { url: pendingPhoto('2025/09/badam_katli-removebg-preview.png'), alt: 'Wedding Trousseau Box wrapped in silk with a paisley tag, two-tier presentation', width: 1400, height: 1400 },
+      { url: photo('diwali-premium-hamper'), alt: 'Diwali Premium Hamper from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_wt_1', title: 'Two-tier box', weight_grams: 2200, price: { amount: 2999, currency: 'INR' }, sku: 'RS-GH-WED', stock_available: 25, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -650,7 +682,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Sachet keeps 60 days unopened. Pot is gift-only.',
     shelf_life_days: 60,
     images: [
-      { url: pendingPhoto('2025/08/booster.webp'), alt: 'Pongal pot set with a clay vessel, sachet, and dried banana leaf on a brass tray', width: 1400, height: 1400 },
+      { url: photo('dussehra-gift-box'), alt: 'Dussehra Gift Box from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_pp_1', title: 'Pot + sachet', weight_grams: 900, price: { amount: 799, currency: 'INR' }, sku: 'RS-FS-PONGAL', stock_available: 40, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -672,7 +704,7 @@ export const HARDCODED_CATALOGUE: Product[] = [
     storage_instructions: 'Store in a cool, dry place. Reseal each pouch after use.',
     shelf_life_days: 45,
     images: [
-      { url: pendingPhoto('2025/08/karapusa.webp'), alt: 'Office chai tray with namkeens, ladoos, and almonds arranged on a wooden serving board', width: 1400, height: 1400 },
+      { url: photo('karapusa'), alt: 'Karapusa — Crispy Karapusa from the Ravi Sweets counter', width: 1400, height: 1400 },
     ],
     variants: [{ id: 'v_oct_1', title: 'Office tray', weight_grams: 1400, price: { amount: 999, currency: 'INR' }, sku: 'RS-CB-OCT', stock_available: 50, hsn_code: '2106' }],
     region_availability: ['in'],
@@ -696,6 +728,17 @@ export const HARDCODED_CATALOGUE: Product[] = [
   ...healthySweetsGroup(),
   // ─── Biscuits ───────────────────────────────────────────────────────────
   ...biscuitsGroup(),
+
+  // ─── THE COUNTER RANGE (added 2026-08-13, with the photography) ─────────
+  // 57 sweets that the shop has always sold and this catalogue had never
+  // carried. They arrived as photographs, not as a price list — see
+  // PRICING-REVIEW.md for every rupee figure below and who has to confirm it.
+  ...milkSweetsGroup(),
+  ...friedSweetsGroup(),
+  ...setSweetsGroup(),
+  ...halwaGroup(),
+  ...ladduGroup(),
+  ...counterHampersGroup(),
 ];
 
 /**
@@ -753,6 +796,32 @@ interface MiniSku {
   slug: string;
   title: string;
   image: string;
+  /**
+   * Overrides the generated alt text.
+   *
+   * Set this whenever `image` points at ANOTHER product's photograph — the
+   * owner-approved family stand-ins listed in scripts/photography/shot-list.mjs
+   * (BORROWED). The default alt names this SKU, which for a stand-in would tell
+   * a screen-reader user the picture is something it is not; the override names
+   * what the photograph actually shows.
+   */
+  imageAlt?: string;
+  /**
+   * Additional gallery angles, as `photo('<slug>-2')` paths. Only the product
+   * page gallery renders these; the card, hero and OG tag all use `image`.
+   */
+  extraImages?: string[];
+  /**
+   * Overrides the group's dietary tags and allergens.
+   *
+   * A group default is a convenience, but a dietary tag is a CLAIM: the
+   * biscuits group is declared `vegan`, which is true of the atta-and-Bournvita
+   * original and false of the butter shortbreads added beside it. Inheriting
+   * the default there would print "vegan" under a butter biscuit. Anything
+   * whose ingredients differ from its neighbours' states them here instead.
+   */
+  dietary_tags?: DietaryTag[];
+  allergens?: string[];
   /** Min/max paise — most ravisweets categories sell 250 g + 1 kg variants. */
   variantPaiseSmall: number;
   variantPaiseLarge: number;
@@ -798,12 +867,20 @@ function makeProduct(
     title: s.title,
     description: s.description,
     category,
-    dietary_tags: defaults.dietary_tags,
+    dietary_tags: s.dietary_tags ?? defaults.dietary_tags,
     ingredients: ['See pack label.'],
-    allergens: defaults.allergens,
+    allergens: s.allergens ?? defaults.allergens,
     storage_instructions: defaults.storage_instructions,
     shelf_life_days: defaults.shelf_life_days,
-    images: [{ url: s.image, alt: `${s.title} — photographed at the Khammam kitchen`, width: 1400, height: 1400 }],
+    images: [
+      { url: s.image, alt: s.imageAlt ?? `${s.title} — photographed at the Khammam kitchen`, width: 1400, height: 1400 },
+      ...(s.extraImages ?? []).map((url, i) => ({
+        url,
+        alt: `${s.title} — additional view ${i + 2}`,
+        width: 1400,
+        height: 1400,
+      })),
+    ],
     variants: [
       // Bug fix 2026-05-06: data is stored in paise (matching the field name)
       // but Money.amount is rupees and formatMoney prints it as such. Without
@@ -840,21 +917,29 @@ function makeProduct(
 
 function savouriesGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'atukula-mixture', title: 'Atukula Mixture', image: pendingPhoto('2025/08/atukula-mixture-400x400.jpg'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Crisp poha-based mixture with peanuts, curry leaves, and a mild chilli kick — the chai-trolley favourite from our Khammam counter.', bestseller: true },
-    { slug: 'chegodilu', title: 'Chegodilu — Crispy Chegodilu', image: pendingPhoto('2025/08/chegodilu.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Andhra ring-shaped rice-flour crisps, hand-tied and fried in cold-pressed oil. Snap when you bite, never go soggy in the box.' },
-    { slug: 'chekkalu', title: 'Chekkalu — Crunchy Rice Crackers', image: pendingPhoto('2025/08/chekkalu.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Thin rice-flour crackers studded with chana dal and ajwain — the Andhra answer to a savoury cookie.' },
-    { slug: 'cornflakes-mixture', title: 'Cornflakes Mixture', image: pendingPhoto('2025/08/cornflakes-mivture.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Crisp cornflakes tossed with curry leaves, cashew halves, and a saffron tempering. Lighter than the standard mixture.' },
-    { slug: 'dal-mudi-snacks', title: 'Dal Mudi Snacks', image: pendingPhoto('2025/08/dalmudi.webp'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Puffed rice and split-dal mix, lightly spiced and ready for a chai pour. A house staple since the eighties.', bestseller: true },
-    { slug: 'janthikalu', title: 'Janthikalu', image: pendingPhoto('2025/08/janthikalu.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral rice-and-gram-flour twirls pressed through a brass mould — the Andhra-style janthikalu we still hand-press each morning.' },
-    { slug: 'kara-boondhi', title: 'Kara Boondhi', image: pendingPhoto('2025/08/7-1-400x400.jpg'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spicy gram-flour pearls tempered with curry leaves and dried red chilli. Pairs with curd-rice or stands alone with chai.' },
-    { slug: 'karapusa', title: 'Karapusa — Crispy Karapusa', image: pendingPhoto('2025/08/karapusa.webp'), variantPaiseSmall: 11000, variantPaiseLarge: 43000, description: 'Salted gram-flour sev pressed thin and crisped in ghee. Clean, sharp, the namkeen on every Telugu chai tray.' },
-    { slug: 'masala-kaju', title: 'Masala Kaju — Spicy Cashew', image: pendingPhoto('2025/08/masala-kaju.webp'), variantPaiseSmall: 37000, variantPaiseLarge: 148000, description: 'A-grade cashews tossed in our house masala — chilli, garlic, lime — and slow-roasted. Premium cocktail-hour snack.', bestseller: true },
-    { slug: 'masala-palli', title: 'Masala Palli — Spicy Peanut Masala', image: pendingPhoto('2025/08/masala-palli.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Roasted peanuts coated in a thin spiced gram-flour batter. The standard-bearer of an Andhra evening.' },
-    { slug: 'murukulu', title: 'Murukulu', image: pendingPhoto('2025/08/murukullu.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Concentric rice-flour spirals — South India\'s favourite tea-time twist. Crisp at the edge, tender at the centre.' },
-    { slug: 'onion-ribbon-pakodi', title: 'Onion Ribbon Pakodi', image: pendingPhoto('2025/08/onion-ribbon-pakoda.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Wide gram-flour ribbons fried with caramelised onion shards. Sweet-savoury, addictive.' },
-    { slug: 'palli-pakodi', title: 'Palli Pakodi — Crispy Peanut Pakodi', image: pendingPhoto('2025/08/palli-pakoda.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Bite-sized peanut clusters in a gram-flour batter. The travel-snack we sell most by weight.' },
-    { slug: 'pappu-chekkalu', title: 'Pappu Chekkalu — Chekkalu with Chana Dal', image: pendingPhoto('2025/08/pappu-chekkalu.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Chekkalu loaded with chana dal for a heartier crunch. Stays good for a month in the tin.' },
-    { slug: 'pappu-chekodi', title: 'Pappu Chekodi', image: pendingPhoto('2025/08/pappu-chekodi.webp'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral chegodilu enriched with chana dal — extra crunch, extra protein, same Andhra recipe.' },
+    { slug: 'atukula-mixture', title: 'Atukula Mixture', image: photo('atukula-mixture'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Crisp poha-based mixture with peanuts, curry leaves, and a mild chilli kick — the chai-trolley favourite from our Khammam counter.', bestseller: true },
+    { slug: 'chegodilu', title: 'Chegodilu — Crispy Chegodilu', image: photo('chegodilu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Andhra ring-shaped rice-flour crisps, hand-tied and fried in cold-pressed oil. Snap when you bite, never go soggy in the box.' },
+    { slug: 'chekkalu', title: 'Chekkalu — Crunchy Rice Crackers', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Thin rice-flour crackers studded with chana dal and ajwain — the Andhra answer to a savoury cookie.' },
+    { slug: 'cornflakes-mixture', title: 'Cornflakes Mixture', image: photo('cornflakes-mixture'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Crisp cornflakes tossed with curry leaves, cashew halves, and a saffron tempering. Lighter than the standard mixture.' },
+    { slug: 'dal-mudi-snacks', title: 'Dal Mudi Snacks', image: photo('atukula-mixture'), imageAlt: 'Atukula Mixture from the Ravi Sweets counter', variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Puffed rice and split-dal mix, lightly spiced and ready for a chai pour. A house staple since the eighties.', bestseller: true },
+    { slug: 'janthikalu', title: 'Janthikalu', image: photo('murukulu'), imageAlt: 'Murukulu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral rice-and-gram-flour twirls pressed through a brass mould — the Andhra-style janthikalu we still hand-press each morning.' },
+    { slug: 'kara-boondhi', title: 'Kara Boondhi', image: photo('navaratna-mixture'), imageAlt: 'Navaratna Mixture from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spicy gram-flour pearls tempered with curry leaves and dried red chilli. Pairs with curd-rice or stands alone with chai.' },
+    { slug: 'karapusa', title: 'Karapusa — Crispy Karapusa', image: photo('karapusa'), variantPaiseSmall: 11000, variantPaiseLarge: 43000, description: 'Salted gram-flour sev pressed thin and crisped in ghee. Clean, sharp, the namkeen on every Telugu chai tray.' },
+    { slug: 'masala-kaju', title: 'Masala Kaju — Spicy Cashew', image: photo('masala-kaju'), variantPaiseSmall: 37000, variantPaiseLarge: 148000, description: 'A-grade cashews tossed in our house masala — chilli, garlic, lime — and slow-roasted. Premium cocktail-hour snack.', bestseller: true },
+    { slug: 'masala-palli', title: 'Masala Palli — Spicy Peanut Masala', image: photo('palli-pakodi'), imageAlt: 'Palli Pakodi — Crispy Peanut Pakodi from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Roasted peanuts coated in a thin spiced gram-flour batter. The standard-bearer of an Andhra evening.' },
+    { slug: 'murukulu', title: 'Murukulu', image: photo('murukulu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Concentric rice-flour spirals — South India\'s favourite tea-time twist. Crisp at the edge, tender at the centre.' },
+    { slug: 'onion-ribbon-pakodi', title: 'Onion Ribbon Pakodi', image: photo('masala-pakodi'), imageAlt: 'Masala Pakodi from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Wide gram-flour ribbons fried with caramelised onion shards. Sweet-savoury, addictive.' },
+    { slug: 'palli-pakodi', title: 'Palli Pakodi — Crispy Peanut Pakodi', image: photo('palli-pakodi'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Bite-sized peanut clusters in a gram-flour batter. The travel-snack we sell most by weight.' },
+    { slug: 'pappu-chekkalu', title: 'Pappu Chekkalu — Chekkalu with Chana Dal', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Chekkalu loaded with chana dal for a heartier crunch. Stays good for a month in the tin.' },
+    { slug: 'pappu-chekodi', title: 'Pappu Chekodi', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral chegodilu enriched with chana dal — extra crunch, extra protein, same Andhra recipe.' },
+    // ── added 2026-08-13 with the photography (see PRICING-REVIEW.md) ──
+    { slug: 'navaratna-mixture', title: 'Navaratna Mixture', image: photo('navaratna-mixture'), variantPaiseSmall: 13000, variantPaiseLarge: 52000, description: 'Nine components in one tin — sev, boondi, peanut, cashew, curry leaf, raisin, dal, poha and chip. The mixture people compare all the others against.', bestseller: true },
+    { slug: 'masala-pakodi', title: 'Masala Pakodi', image: photo('masala-pakodi'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Ragged gram-flour pakodi thrown with onion, chilli and ajwain, fried dark. Craggy edges hold the masala.' },
+    { slug: 'kaju-pakodi', title: 'Kaju Pakodi', image: photo('kaju-pakodi'), variantPaiseSmall: 22500, variantPaiseLarge: 90000, description: 'Whole cashews jacketed in a thin spiced batter and fried until the nut inside toasts. The premium end of the pakodi tray.' },
+    { slug: 'gorumitulu', title: 'Gorumitulu', image: photo('gorumitulu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Knuckle-sized rice-flour nuggets, salted and fried hard — the Andhra snack that keeps a month and never softens.' },
+    { slug: 'kachuralu', title: 'Kachuralu', image: photo('kachuralu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Twisted ribbons of spiced rice dough, fried to a deep crunch. Eaten by the fistful with evening chai.' },
+    { slug: 'sanagalu', title: 'Sanagalu', image: photo('sanagalu'), variantPaiseSmall: 11500, variantPaiseLarge: 46000, description: 'Roasted chana tossed with salt, chilli and curry leaf. The plainest thing on the shelf and the one that empties fastest.' },
+    { slug: 'vamu-poosa', title: 'Vamu Poosa', image: photo('vamu-poosa'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Ajwain-heavy sev pressed fine — carom seed is the whole point, and it settles a heavy meal.' },
   ];
   return items.map((s) =>
     makeProduct('savouries', 'sav', s, {
@@ -870,18 +955,25 @@ function savouriesGroup(): Product[] {
 
 function sweetBitesGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'butterscotch-bites', title: 'Butterscotch Bites', image: pendingPhoto('2025/08/BUTTERSCOTCH-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Caramel-toffee bites with a crackle of butterscotch. Sized for a single bite, packed for sharing.' },
-    { slug: 'choco-bites', title: 'Choco Bites', image: pendingPhoto('2025/08/CHOCO-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Dark-chocolate truffle bites rolled in cocoa nibs. Made with single-origin cacao, set firm.' },
-    { slug: 'kaju-bites', title: 'Kaju Bites', image: pendingPhoto('2025/08/KAJU-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cashew-paste bites finished with a touch of cardamom. The little-cousin of our Kaju Katli.', bestseller: true, theme_palette: BADAM },
-    { slug: 'kesar-bites', title: 'Kesar Bites', image: pendingPhoto('2025/08/KESAR-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Saffron-perfumed milk-fudge bites with slivered pistachios on top. A festive favourite.' },
-    { slug: 'khajoor-bites', title: 'Khajoor Bites', image: pendingPhoto('2025/08/KHAJOOR-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Date-paste bites bound with cashew and almond — no added sugar, all the natural sweetness of khajoor.', theme_palette: GULKAND },
-    { slug: 'mango-crunch-bites', title: 'Mango Crunch Bites', image: pendingPhoto('2025/08/MANGO-CRUNCH-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Aam-paste bites with a layer of crispy crunch through the centre. Summer in a bite.' },
-    { slug: 'mixed-bites', title: 'Mixed Bites', image: pendingPhoto('2025/08/MIXED-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'A sampler box — six flavours in one tin so you can pick a favourite before committing.', bestseller: true },
-    { slug: 'oreo-bites', title: 'Oreo Bites', image: pendingPhoto('2025/08/OREO-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Crushed-cookie bites bound with milk-fudge — the kid-favourite SKU on our counter.' },
-    { slug: 'pineapple-bites', title: 'Pineapple Bites', image: pendingPhoto('2025/08/PINEAPPLE-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Tangy pineapple-paste bites with a citrus snap. Refreshing on a Hyderabadi afternoon.' },
-    { slug: 'silky-bites', title: 'Silky Bites', image: pendingPhoto('2025/08/SILKY-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cream-and-cardamom bites with a silken set. Melts on the tongue, finishes with cardamom.' },
-    { slug: 'strawberry-bites', title: 'Strawberry Bites', image: pendingPhoto('2025/08/STRAWBERRY-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Strawberry-paste bites with a thin chocolate shell. Sweet meets tart in a clean finish.' },
-    { slug: 'tutti-frutti-bites', title: 'Tutti Frutti Bites', image: pendingPhoto('2025/08/TRUTI-FRUTI-BITES.webp'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Candied-fruit bites flecked through soft milk-fudge. The cheerful one in the tin.' },
+    { slug: 'butterscotch-bites', title: 'Butterscotch Bites', image: photo('butterscotch-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Caramel-toffee bites with a crackle of butterscotch. Sized for a single bite, packed for sharing.' },
+    { slug: 'choco-bites', title: 'Choco Bites', image: photo('choco-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Dark-chocolate truffle bites rolled in cocoa nibs. Made with single-origin cacao, set firm.' },
+    { slug: 'kaju-bites', title: 'Kaju Bites', image: photo('kaju-bites'), extraImages: [photo('kaju-bites-2')], variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cashew-paste bites finished with a touch of cardamom. The little-cousin of our Kaju Katli.', bestseller: true, theme_palette: BADAM },
+    { slug: 'kesar-bites', title: 'Kesar Bites', image: photo('mango-delight'), imageAlt: 'Mango Delight from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Saffron-perfumed milk-fudge bites with slivered pistachios on top. A festive favourite.' },
+    { slug: 'khajoor-bites', title: 'Khajoor Bites', image: photo('royal-nutty-dates'), imageAlt: 'Royal Nutty Dates from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Date-paste bites bound with cashew and almond — no added sugar, all the natural sweetness of khajoor.', theme_palette: GULKAND },
+    { slug: 'mango-crunch-bites', title: 'Mango Crunch Bites', image: photo('kacha-mango-delight'), imageAlt: 'Kacha Mango Delight from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Aam-paste bites with a layer of crispy crunch through the centre. Summer in a bite.' },
+    { slug: 'mixed-bites', title: 'Mixed Bites', image: photo('tutti-frutti-bites'), imageAlt: 'Tutti Frutti Bites from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'A sampler box — six flavours in one tin so you can pick a favourite before committing.', bestseller: true },
+    { slug: 'oreo-bites', title: 'Oreo Bites', image: photo('oreo-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Crushed-cookie bites bound with milk-fudge — the kid-favourite SKU on our counter.' },
+    { slug: 'pineapple-bites', title: 'Pineapple Bites', image: photo('pineapple-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Tangy pineapple-paste bites with a citrus snap. Refreshing on a Hyderabadi afternoon.' },
+    { slug: 'silky-bites', title: 'Silky Bites', image: photo('silky-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Cream-and-cardamom bites with a silken set. Melts on the tongue, finishes with cardamom.' },
+    { slug: 'strawberry-bites', title: 'Strawberry Bites', image: photo('cranberry-bites'), imageAlt: 'Cranberry Bites from the Ravi Sweets counter', variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Strawberry-paste bites with a thin chocolate shell. Sweet meets tart in a clean finish.' },
+    { slug: 'tutti-frutti-bites', title: 'Tutti Frutti Bites', image: photo('tutti-frutti-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Candied-fruit bites flecked through soft milk-fudge. The cheerful one in the tin.' },
+    // ── added 2026-08-13 with the photography (see PRICING-REVIEW.md) ──
+    { slug: 'anjeer-bites', title: 'Anjeer Bites', image: photo('anjeer-bites'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Dried figs minced and pressed with pistachio into a dense bite. No added sugar — the fig carries it.', theme_palette: GULKAND },
+    { slug: 'cranberry-bites', title: 'Cranberry Bites', image: photo('cranberry-bites'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Dried cranberry worked through a cashew base — tart against sweet, and the pink runs right through.', theme_palette: GULKAND },
+    { slug: 'mango-delight', title: 'Mango Delight', image: photo('mango-delight'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Ripe mango pulp set firm with khoya and cut into squares. Made only while the Banganapalle season runs.' },
+    { slug: 'kacha-mango-delight', title: 'Kacha Mango Delight', image: photo('kacha-mango-delight'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'The green-mango version — sharper, more sour, finished with a pinch of salt. Divides the counter down the middle.' },
+    { slug: 'pan-shots', title: 'Pan Shots', image: photo('pan-shots'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Betel-leaf, gulkand and fennel set into a single cool bite — the paan you would be handed after dinner, without the leaf to fold.', bestseller: true, theme_palette: GULKAND },
+    { slug: 'royal-nutty-dates', title: 'Royal Nutty Dates', image: photo('royal-nutty-dates'), variantPaiseSmall: 35000, variantPaiseLarge: 140000, description: 'Whole dates stoned and stuffed with almond, cashew and pistachio. Sweetened by nothing but the fruit.', theme_palette: GULKAND },
   ];
   return items.map((s) =>
     makeProduct('sweet-bites', 'bite', s, {
@@ -902,9 +994,9 @@ function sweetBitesGroup(): Product[] {
 
 function dryFruitsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: pendingPhoto('2025/08/ANJEER.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.', theme_palette: GULKAND },
+    { slug: 'anjeer-whole', title: 'Anjeer — Premium Dried Figs', image: photo('anjeer-bites'), imageAlt: 'Anjeer Bites from the Ravi Sweets counter', variantPaiseSmall: 32500, variantPaiseLarge: 260000, description: 'A-grade dried figs, soft-set and naturally sweet. Our most-asked-for dry fruit at the Kondapur counter.', theme_palette: GULKAND },
     { slug: 'badam-almonds', title: 'Badam — Whole Almonds', image: pendingPhoto('2025/08/BADAM.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 160000, description: 'Whole California almonds, hand-sorted and sealed the same week. Zero broken pieces, no chaff.', bestseller: true },
-    { slug: 'cranberry', title: 'Cranberry', image: pendingPhoto('2025/08/CRANBERRY.webp'), variantPaiseSmall: 25000, variantPaiseLarge: 200000, description: 'Sweet-tart dried cranberries — perfect on a granola plate or stirred into your morning yogurt.', theme_palette: GULKAND },
+    { slug: 'cranberry', title: 'Cranberry', image: photo('cranberry-bites'), imageAlt: 'Cranberry Bites from the Ravi Sweets counter', variantPaiseSmall: 25000, variantPaiseLarge: 200000, description: 'Sweet-tart dried cranberries — perfect on a granola plate or stirred into your morning yogurt.', theme_palette: GULKAND },
     { slug: 'kaju-cashew', title: 'Kaju — Whole Cashews', image: pendingPhoto('2025/08/WhatsApp-Image-2023-08-11-at-4.46.50-PM-400x400.jpeg'), variantPaiseSmall: 25500, variantPaiseLarge: 180000, description: 'Premium W240 cashews — whole, plump, no splits. Sealed in nitrogen pouches for a six-month shelf life.', bestseller: true },
     { slug: 'pista-whole', title: 'Pista — Whole Pistachios', image: pendingPhoto('2025/08/PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'Iranian pistachios with a generous shell-split. Snack-grade, crunch-grade, gift-grade.' },
     { slug: 'salted-pista', title: 'Salted Pista', image: pendingPhoto('2025/08/SALTED-PISTA.webp'), variantPaiseSmall: 40000, variantPaiseLarge: 320000, description: 'The same Iranian pistachios, dry-roasted and lightly salted. Travel-tin packaging.' },
@@ -980,12 +1072,12 @@ function powdersGroup(): Product[] {
 
 function healthySweetsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'booster-laddu', title: 'Booster Laddu — Energy Dry-Fruit Laddu', image: pendingPhoto('2025/08/booster.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Pre-workout / new-mother / school-tiffin laddu — dates, almond, cashew, gondh, ghee. No refined sugar.', bestseller: true, theme_palette: GULKAND },
-    { slug: 'dry-fruit-laddu', title: 'Dry Fruit Laddu — Protein-Rich', image: pendingPhoto('2025/08/dry-fruit.webp'), variantPaiseSmall: 20000, variantPaiseLarge: 80500, description: 'A bound-fruit-and-nut laddu sweetened only with dates and jaggery. Travel-friendly tin pack.', theme_palette: GULKAND },
-    { slug: 'gondh-laddu', title: 'Gondh Laddu — Calcium-Rich Traditional', image: pendingPhoto('2025/08/gondh.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Edible-gum laddu the way the elders made it for new mothers — strengthens bones and joints.' },
-    { slug: 'high-protein-laddu', title: 'High Protein Laddu', image: pendingPhoto('2025/08/protien.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: '14 g of plant protein per laddu — sprouted moong, almonds, dates. The gym-bag laddu.' },
-    { slug: 'millet-laddu', title: 'Millet Laddu — Iron-Rich', image: pendingPhoto('2025/08/millet.webp'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Foxtail and ragi millets bound with jaggery and ghee. Iron-rich, low-GI, kid-friendly.' },
-    { slug: 'nuvvula-laddu', title: 'Nuvvula Laddu — Bone-Strengthening Sesame Laddu', image: pendingPhoto('2025/08/11-2-400x400.jpg'), variantPaiseSmall: 16300, variantPaiseLarge: 65000, description: 'Roasted sesame and jaggery — the Telugu winter laddu, packed with calcium.' },
+    { slug: 'booster-laddu', title: 'Booster Laddu — Energy Dry-Fruit Laddu', image: photo('booster-laddu'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Pre-workout / new-mother / school-tiffin laddu — dates, almond, cashew, gondh, ghee. No refined sugar.', bestseller: true, theme_palette: GULKAND },
+    { slug: 'dry-fruit-laddu', title: 'Dry Fruit Laddu — Protein-Rich', image: photo('dry-fruit-laddu'), variantPaiseSmall: 20000, variantPaiseLarge: 80500, description: 'A bound-fruit-and-nut laddu sweetened only with dates and jaggery. Travel-friendly tin pack.', theme_palette: GULKAND },
+    { slug: 'gondh-laddu', title: 'Gondh Laddu — Calcium-Rich Traditional', image: photo('annamayya-laddu'), imageAlt: 'Annamayya Laddu from the Ravi Sweets counter', variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Edible-gum laddu the way the elders made it for new mothers — strengthens bones and joints.' },
+    { slug: 'high-protein-laddu', title: 'High Protein Laddu', image: photo('booster-laddu'), imageAlt: 'Booster Laddu — Energy Dry-Fruit Laddu from the Ravi Sweets counter', variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: '14 g of plant protein per laddu — sprouted moong, almonds, dates. The gym-bag laddu.' },
+    { slug: 'millet-laddu', title: 'Millet Laddu — Iron-Rich', image: photo('rava-laddu'), imageAlt: 'Rava Laddu from the Ravi Sweets counter', variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Foxtail and ragi millets bound with jaggery and ghee. Iron-rich, low-GI, kid-friendly.' },
+    { slug: 'nuvvula-laddu', title: 'Nuvvula Laddu — Bone-Strengthening Sesame Laddu', image: photo('nuvvula-laddu'), variantPaiseSmall: 16300, variantPaiseLarge: 65000, description: 'Roasted sesame and jaggery — the Telugu winter laddu, packed with calcium.' },
   ];
   return items.map((s) =>
     makeProduct('healthy-sweets', 'hs', s, {
@@ -1003,7 +1095,12 @@ function healthySweetsGroup(): Product[] {
 
 function biscuitsGroup(): Product[] {
   const items: MiniSku[] = [
-    { slug: 'bournvita-biscuits', title: 'Bournvita Biscuits', image: pendingPhoto('2025/08/4-3-400x400.jpg'), variantPaiseSmall: 10800, variantPaiseLarge: 43000, description: 'House-baked biscuits in our Bournvita flavour — no preservatives, no raising agents, just butter, atta, and Bournvita. The chai-time vegan biscuit.' },
+    { slug: 'bournvita-biscuits', title: 'Bournvita Biscuits', image: photo('bournvita-biscuits'), variantPaiseSmall: 10800, variantPaiseLarge: 43000, description: 'House-baked biscuits in our Bournvita flavour — no preservatives, no raising agents, just butter, atta, and Bournvita. The chai-time vegan biscuit.' },
+    // ── added 2026-08-13 with the photography (see PRICING-REVIEW.md) ──
+    // These three are butter-based, so they do NOT inherit the group's `vegan`.
+    { slug: 'coconut-biscuits', title: 'Coconut Biscuits', image: photo('coconut-biscuits'), variantPaiseSmall: 10800, variantPaiseLarge: 43000, description: 'Desiccated coconut through a short butter dough, baked until the edges catch. Sandy, not snappy.', dietary_tags: ['eggless', 'dairy'], allergens: ['Gluten', 'Dairy'] },
+    { slug: 'kaju-biscuits', title: 'Kaju Biscuits', image: photo('kaju-biscuits'), variantPaiseSmall: 18000, variantPaiseLarge: 72000, description: 'Cashew-meal biscuits with a whole split kaju pressed into each one. The bakery-counter biscuit people buy by the kilo.', bestseller: true, dietary_tags: ['eggless', 'dairy', 'nuts'], allergens: ['Gluten', 'Dairy', 'Nuts'] },
+    { slug: 'moon-biscuits', title: 'Moon Biscuits', image: photo('moon-biscuits'), variantPaiseSmall: 11000, variantPaiseLarge: 44000, description: 'Crescent-cut shortbread dusted in icing sugar — the shape is the name, and the tea-time habit of a generation.', dietary_tags: ['eggless', 'dairy'], allergens: ['Gluten', 'Dairy'] },
   ];
   return items.map((s) =>
     makeProduct('biscuits', 'bsk', s, {
@@ -1017,4 +1114,206 @@ function biscuitsGroup(): Product[] {
       largeGrams: 1000,
     }),
   );
+}
+
+// ─── THE COUNTER RANGE ───────────────────────────────────────────────────────
+// Added 2026-08-13 alongside the photography drop.
+//
+// WHY THESE WERE MISSING. The catalogue was assembled from the retired
+// WooCommerce export, which only ever listed the packaged/giftable SKUs. The
+// glass counter in Khammam sells a great deal more than that — six kalakands,
+// four kovas, the kaja bench, the burelu, the halwas — and none of it was on
+// the site. The photography drop is what surfaced the gap: 57 of the 83
+// photographs were of sweets with no product to attach to.
+//
+// PRICES ARE PROVISIONAL. The drop contained photographs, not a price list.
+// Every figure in this section was derived from the per-kilo rate of the
+// nearest comparable SKU already in the catalogue, NOT supplied by the shop.
+// They are listed one-by-one in PRICING-REVIEW.md for the owner to confirm or
+// correct in a single pass. Treat them as placeholders that happen to be
+// plausible, and do not assume any of them is the counter price.
+
+/**
+ * Milk-solid sweets — the kalakand and kova bench, plus peda and the set
+ * burfis. Everything here is khoya-based, so it shares a fridge instruction
+ * and the shortest shelf life on the site.
+ */
+function milkSweetsGroup(): Product[] {
+  const items: MiniSku[] = [
+    { slug: 'plain-kalakand', title: 'Plain Kalakand', image: photo('plain-kalakand'), variantPaiseSmall: 19000, variantPaiseLarge: 76000, description: 'Fresh chenna caught at the grainy stage and set overnight — the plain kalakand the counter has sold longest. Milky, barely sweet, faintly caramelised at the edge.', bestseller: true },
+    { slug: 'loose-kalakand', title: 'Loose Kalakand', image: photo('loose-kalakand'), variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'The same kalakand set softer and sold by scoop rather than cut into blocks. Spoonable, and the one regulars ask for warm.' },
+    { slug: 'ajmer-kalakand', title: 'Ajmer Kalakand', image: photo('ajmer-kalakand'), variantPaiseSmall: 22500, variantPaiseLarge: 90000, description: 'The Rajasthani style — reduced longer until the grain coarsens and the colour deepens, then finished with a dusting of powdered sugar.' },
+    { slug: 'badam-pista-kalakand', title: 'Badam Pista Kalakand', image: photo('badam-pista-kalakand'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Kalakand layered with slivered almond and pistachio through the set, not merely scattered on top. Cuts to show the nuts in section.', theme_palette: BADAM },
+    { slug: 'bournvita-kalakand', title: 'Bournvita Kalakand', image: photo('bournvita-kalakand'), variantPaiseSmall: 22500, variantPaiseLarge: 90000, description: 'A house invention that stuck: malted Bournvita folded into the chenna before setting. Children order it by name.' },
+    { slug: 'kaju-kalakand', title: 'Kaju Kalakand', image: photo('kaju-kalakand'), variantPaiseSmall: 32500, variantPaiseLarge: 130000, description: 'Cashew paste worked into the kalakand for a denser, richer set, then topped with a whole split kaju.', theme_palette: BADAM },
+    { slug: 'chitti-kova', title: 'Chitti Kova', image: photo('chitti-kova'), variantPaiseSmall: 20000, variantPaiseLarge: 80000, description: 'Small hand-rolled kova drops — the everyday Telugu milk sweet, reduced slowly in an iron kadai until it pulls from the sides.' },
+    { slug: 'special-kova', title: 'Special Kova', image: photo('special-kova'), variantPaiseSmall: 22500, variantPaiseLarge: 90000, description: 'A longer reduction than the chitti, finished with cardamom and a heavier hand of ghee. Darker, chewier, richer.', bestseller: true },
+    { slug: 'kova-billalu', title: 'Kova Billalu', image: photo('kova-billalu'), variantPaiseSmall: 21500, variantPaiseLarge: 85000, description: 'Kova pressed into flat discs and lightly griddled so each one carries a toasted face. A Khammam counter regular.' },
+    { slug: 'peda', title: 'Peda', image: photo('peda'), variantPaiseSmall: 19500, variantPaiseLarge: 78000, description: 'Classic milk peda, thumb-pressed and marked with a single pistachio. The temple-offering sweet, made fresh each morning.', bestseller: true },
+    { slug: 'mango-cream', title: 'Mango Cream', image: photo('mango-cream'), variantPaiseSmall: 20500, variantPaiseLarge: 82000, description: 'Seasonal mango pulp folded through sweetened cream and set soft. Served cold, and only while the fruit is good.' },
+    { slug: 'badam-butter-burfi', title: 'Badam Butter Burfi', image: photo('badam-butter-burfi'), variantPaiseSmall: 31500, variantPaiseLarge: 125000, description: 'Ground almond and butter cooked to a short, fudgy set that melts rather than crumbles. The richest square on the counter.', theme_palette: BADAM },
+  ];
+  return items.map((s) =>
+    makeProduct('sweets', 'milk', s, {
+      dietary_tags: ['eggless', 'dairy'],
+      allergens: ['Dairy', 'Nuts'],
+      storage_instructions: 'Refrigerate. Best within 4 days; bring to room temperature before serving.',
+      shelf_life_days: 7,
+      theme_palette: HOUSE,
+      garnish: 'silver',
+    }),
+  );
+}
+
+/**
+ * The fried and syrup-soaked bench — kaja, burelu, jalebi, gavvalu and the
+ * kajjikayalu. Long keepers, all of them, which is why they travel best.
+ */
+function friedSweetsGroup(): Product[] {
+  const items: MiniSku[] = [
+    { slug: 'jalebi', title: 'Jalebi', image: photo('jalebi'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Fermented batter piped straight into hot ghee and dropped into cardamom syrup while it still hisses. Eaten within the hour, ideally.', bestseller: true },
+    { slug: 'paneer-jalebi', title: 'Paneer Jalebi', image: photo('paneer-jalebi'), variantPaiseSmall: 18000, variantPaiseLarge: 72000, description: 'The Bengali-style jalebi — chenna in the batter makes it thicker, softer and less brittle than the classic coil.' },
+    { slug: 'badusha', title: 'Badusha', image: photo('badusha'), variantPaiseSmall: 14000, variantPaiseLarge: 56000, description: 'Flaky ghee-short pastry fried slow so it layers, then soaked until the syrup reaches the middle. Crisp rim, soft heart.', bestseller: true },
+    { slug: 'baklava', title: 'Baklava', image: photo('baklava'), variantPaiseSmall: 45000, variantPaiseLarge: 180000, description: 'Filo layered with chopped pistachio and walnut, baked to a deep gold and finished with honey syrup. The Hyderabadi table has claimed it for generations.', theme_palette: BADAM },
+    { slug: 'bellam-gavvalu', title: 'Bellam Gavvalu', image: photo('bellam-gavvalu'), variantPaiseSmall: 13000, variantPaiseLarge: 52000, description: 'Little ridged shells rolled off a gavvalu board and glazed in jaggery. The ridges are what hold the glaze.' },
+    { slug: 'bobbattu', title: 'Bobbattu', image: photo('bobbattu'), variantPaiseSmall: 15000, variantPaiseLarge: 60000, description: 'Chana-dal and jaggery sealed inside a paper-thin wheat round, griddled in ghee. The festival bread-sweet of every Telugu house.', bestseller: true },
+    { slug: 'gujiya', title: 'Gujiya', image: photo('gujiya'), variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'Crimped half-moons filled with khoya, coconut and dry fruit, fried and lightly sugared. Holi in a box.' },
+    { slug: 'kajjikayalu', title: 'Kajjikayalu', image: photo('kajjikayalu'), variantPaiseSmall: 16000, variantPaiseLarge: 64000, description: 'The Andhra gujiya — a drier coconut-and-sesame filling, folded and sealed by hand along a rope edge.' },
+    { slug: 'kova-kajjikayalu', title: 'Kova Kajjikayalu', image: photo('kova-kajjikayalu'), variantPaiseSmall: 19500, variantPaiseLarge: 78000, description: 'Kajjikayalu filled with reduced kova instead of coconut. Heavier, softer, and the version made for weddings.' },
+    { slug: 'gottam-kaja', title: 'Gottam Kaja', image: photo('gottam-kaja'), variantPaiseSmall: 15500, variantPaiseLarge: 62000, description: 'Hollow tube kaja from Tapeswaram — fried until it holds air, then filled with syrup so it floods when bitten.' },
+    { slug: 'madatha-kaja', title: 'Madatha Kaja', image: photo('madatha-kaja'), variantPaiseSmall: 16000, variantPaiseLarge: 64000, description: 'The folded kaja: dough laminated, folded and fried so it opens into leaves, each one syrup-soaked.' },
+    { slug: 'poornalu', title: 'Poornalu', image: photo('poornalu'), variantPaiseSmall: 15500, variantPaiseLarge: 62000, description: 'Sweet chana-jaggery balls jacketed in a rice-and-urad batter and fried. Crisp shell, warm dense centre.' },
+    { slug: 'sajja-burelu', title: 'Sajja Burelu', image: photo('sajja-burelu'), variantPaiseSmall: 14500, variantPaiseLarge: 58000, description: 'Pearl-millet burelu sweetened with jaggery — the winter sweet from the dry belt, nuttier than its rice cousin.' },
+    { slug: 'kobbari-burelu', title: 'Kobbari Burelu', image: photo('kobbari-burelu'), variantPaiseSmall: 15000, variantPaiseLarge: 60000, description: 'Fresh coconut and jaggery bound and fried into soft rounds. Made the day the coconuts are broken.' },
+    { slug: 'pootharekulu', title: 'Pootharekulu', image: photo('pootharekulu'), variantPaiseSmall: 27500, variantPaiseLarge: 110000, description: 'The paper sweet of Atreyapuram — rice-starch films lifted off an inverted pot, layered with ghee and powdered sugar. It dissolves rather than chews.', bestseller: true },
+    { slug: 'sweet-boondi', title: 'Sweet Boondi', image: photo('sweet-boondi'), variantPaiseSmall: 13000, variantPaiseLarge: 52000, description: 'Gram-flour pearls dropped through a jhara and turned in saffron syrup. Loose, not pressed into laddu.' },
+  ];
+  return items.map((s) =>
+    makeProduct('sweets', 'fry', s, {
+      dietary_tags: ['eggless', 'contains-ghee'],
+      allergens: ['Gluten', 'Dairy', 'Nuts'],
+      storage_instructions: 'Store in an airtight container at room temperature.',
+      shelf_life_days: 15,
+      theme_palette: KESAR,
+      garnish: 'paisley',
+    }),
+  );
+}
+
+/**
+ * Set sweets cut from a tray — mysore pak and the cashew bench. Grouped
+ * separately from the milk sweets because these are sugar-set and keep for
+ * weeks rather than days.
+ */
+function setSweetsGroup(): Product[] {
+  const items: MiniSku[] = [
+    { slug: 'mysore-pak', title: 'Mysore Pak', image: photo('mysore-pak'), variantPaiseSmall: 19500, variantPaiseLarge: 78000, description: 'Gram flour, sugar and ghee beaten to the porous set — the firm Mysore pak that snaps clean and dissolves slowly.', bestseller: true },
+    { slug: 'ghee-mysore-pak', title: 'Ghee Mysore Pak', image: photo('ghee-mysore-pak'), variantPaiseSmall: 25000, variantPaiseLarge: 100000, description: 'The soft, dripping version — far more ghee, pulled off the heat early so it stays molten-textured. Eat with a spoon.', bestseller: true },
+    { slug: 'kaju-bullets', title: 'Kaju Bullets', image: photo('kaju-bullets'), variantPaiseSmall: 37500, variantPaiseLarge: 150000, description: 'Cashew fudge rolled into short cylinders and finished with edible silver. The gifting shape of kaju katli.', theme_palette: BADAM },
+    { slug: 'kaju-chikki', title: 'Kaju Chikki', image: photo('kaju-chikki'), variantPaiseSmall: 30000, variantPaiseLarge: 120000, description: 'Whole cashews suspended in a thin jaggery-sugar brittle, rolled while hot and cracked into shards.', theme_palette: BADAM },
+  ];
+  return items.map((s) =>
+    makeProduct('sweets', 'set', s, {
+      dietary_tags: ['eggless', 'contains-ghee'],
+      allergens: ['Nuts', 'Dairy'],
+      storage_instructions: 'Store in an airtight container at room temperature.',
+      shelf_life_days: 21,
+      theme_palette: HOUSE,
+      garnish: 'silver',
+    }),
+  );
+}
+
+/** The halwa tray — spoon sweets, sold by weight, cut warm. */
+function halwaGroup(): Product[] {
+  const items: MiniSku[] = [
+    { slug: 'bombay-halwa', title: 'Bombay Halwa', image: photo('bombay-halwa'), variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'The translucent cornflour halwa — jewel-bright, elastic, studded with cashew. Karachi halwa by its other name.' },
+    { slug: 'pineapple-halwa', title: 'Pineapple Halwa', image: photo('pineapple-halwa'), variantPaiseSmall: 18000, variantPaiseLarge: 72000, description: 'The same set worked with pineapple, which cuts the sweetness with a clean acidity. Sold in slabs.' },
+    { slug: 'dry-fruit-halwa', title: 'Dry Fruit Halwa', image: photo('dry-fruit-halwa'), variantPaiseSmall: 26500, variantPaiseLarge: 105000, description: 'Loaded with almond, cashew, pistachio and raisin until the halwa is more fruit than base. The one that gets gifted.', bestseller: true, theme_palette: GULKAND },
+  ];
+  return items.map((s) =>
+    makeProduct('sweets', 'hlw', s, {
+      dietary_tags: ['eggless', 'nuts', 'contains-ghee'],
+      allergens: ['Nuts', 'Dairy'],
+      storage_instructions: 'Store in an airtight container. Refrigerate in summer.',
+      shelf_life_days: 15,
+      theme_palette: KESAR,
+      garnish: 'saffron',
+    }),
+  );
+}
+
+/**
+ * The counter laddus. Distinct from healthySweetsGroup, which is the
+ * no-refined-sugar range — these are the festival and temple laddus.
+ */
+function ladduGroup(): Product[] {
+  const items: MiniSku[] = [
+    { slug: 'besan-laddu', title: 'Besan Laddu', image: photo('besan-laddu'), variantPaiseSmall: 18000, variantPaiseLarge: 72000, description: 'Gram flour roasted in ghee to the point the whole kitchen smells of it, then bound with powdered sugar and cardamom.', bestseller: true },
+    { slug: 'rava-laddu', title: 'Rava Laddu', image: photo('rava-laddu'), variantPaiseSmall: 16500, variantPaiseLarge: 66000, description: 'Semolina roasted with ghee, cashew and raisin, bound just firm enough to hold. Crumbles as you bite.' },
+    { slug: 'ganesh-laddu', title: 'Ganesh Laddu', image: photo('ganesh-laddu'), extraImages: [photo('ganesh-laddu-2')], variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'The boondi laddu made for Vinayaka Chavithi — saffron-tinted, generous with cashew, pressed large by hand.', bestseller: true },
+    { slug: 'annamayya-laddu', title: 'Annamayya Laddu', image: photo('annamayya-laddu'), variantPaiseSmall: 17500, variantPaiseLarge: 70000, description: 'The temple-style boondi laddu — coarser pearls, heavier syrup, cardamom and clove through it. Made to the Tirupati proportions.' },
+  ];
+  return items.map((s) =>
+    makeProduct('sweets', 'ldu', s, {
+      dietary_tags: ['eggless', 'nuts', 'contains-ghee'],
+      allergens: ['Nuts', 'Dairy', 'Gluten'],
+      storage_instructions: 'Store in an airtight container at room temperature.',
+      shelf_life_days: 15,
+      theme_palette: KESAR,
+      garnish: 'saffron',
+    }),
+  );
+}
+
+/**
+ * The two hampers the drop photographed that the catalogue had never listed.
+ * Sized in grams like every other SKU so the shipping-weight maths the cart
+ * already does keeps working.
+ */
+function counterHampersGroup(): Product[] {
+  const dryFruits: MiniSku = {
+    slug: 'dry-fruits-gift-hamper',
+    title: 'Dry Fruits Gift Hamper',
+    image: photo('dry-fruits-gift-hamper'),
+    variantPaiseSmall: 149900,
+    variantPaiseLarge: 279900,
+    description: 'Almond, cashew, pistachio, anjeer and raisin portioned into a lined tray with a ribbon and a card. The hamper the office orders by the dozen.',
+    builder_eligible: false,
+  };
+  const dussehra: MiniSku = {
+    slug: 'dussehra-gift-box',
+    title: 'Dussehra Gift Box',
+    image: photo('dussehra-gift-box'),
+    variantPaiseSmall: 119900,
+    variantPaiseLarge: 219900,
+    description: 'A Dussehra assortment — laddu, kaja, kalakand and a savoury, boxed with a marigold band. Built the week before Vijayadashami.',
+    builder_eligible: false,
+  };
+  return [
+    makeProduct('gift-hampers', 'gh', dryFruits, {
+      dietary_tags: ['eggless', 'nuts'],
+      allergens: ['Nuts', 'Dairy'],
+      storage_instructions: 'Store in a cool, dry place away from direct sunlight.',
+      shelf_life_days: 90,
+      theme_palette: HAMPER,
+      garnish: 'silver',
+      smallGrams: 1000,
+      largeGrams: 2000,
+      smallTitle: '1 kg hamper',
+      largeTitle: '2 kg hamper',
+    }),
+    makeProduct('festival-specials', 'fsx', dussehra, {
+      dietary_tags: ['eggless', 'nuts', 'contains-ghee'],
+      allergens: ['Nuts', 'Dairy', 'Gluten'],
+      storage_instructions: 'Store in a cool, dry place. Refrigerate the milk sweets if kept beyond three days.',
+      shelf_life_days: 15,
+      theme_palette: HAMPER,
+      garnish: 'saffron',
+      smallGrams: 1000,
+      largeGrams: 2000,
+      smallTitle: '1 kg box',
+      largeTitle: '2 kg box',
+    }),
+  ];
 }
