@@ -136,6 +136,20 @@ export function endOfIstDayMs(iso: string): number {
 }
 
 /**
+ * The ISO day (IST) that a millisecond clock falls on.
+ *
+ * Shifts the instant by the same +05:30 written in `endOfIstDayMs` and reads
+ * the UTC day off the result — the standard trick for reading a fixed offset
+ * without ever touching the machine's own timezone. Agrees with
+ * `endOfIstDayMs` at the boundary by construction: `endOfIstDayMs(istDayOf(t))`
+ * is always strictly greater than `t`.
+ */
+export function istDayOf(nowMs: number): string {
+  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+  return new Date(nowMs + IST_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+/**
  * The soonest festival whose own day has not yet ended in IST; the last entry
  * once the calendar runs out. Selection is by the caller's clock, but the
  * boundary is always IST.

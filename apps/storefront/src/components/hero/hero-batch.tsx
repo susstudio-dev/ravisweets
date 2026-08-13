@@ -11,6 +11,8 @@ import { Reveal } from '@/components/motion/reveal';
 import { useCart } from '@/lib/cart/cart-context';
 import { cn } from '@/lib/cn';
 import { cutoutFor } from '@/lib/cutouts';
+import { formatDocketDate, istDayOf, nextFestival } from '@/lib/festivals/calendar';
+import { useOrderBy } from '@/lib/festivals/use-order-by';
 import { isUsableImage } from '@/lib/images';
 import { useSiteContent } from '@/lib/supabase/site-content-context';
 import { useActiveTheme } from '@/lib/theme/active-theme-context';
@@ -96,39 +98,6 @@ function nonEmpty(value: string | undefined): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-/** Mirrors the calendar in festival-next-band.tsx (shared module is phase 4b). */
-const FESTIVALS = [
-  {
-    slug: 'independence-day',
-    title: 'Independence Day',
-    telugu: 'స్వాతంత్ర్య దినోత్సవం',
-    date: '2026-08-15',
-  },
-  { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', date: '2026-08-28' },
-  { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', date: '2026-11-08' },
-  { slug: 'christmas', title: 'Christmas', telugu: 'క్రిస్మస్', date: '2026-12-25' },
-  { slug: 'sankranti', title: 'Sankranti', telugu: 'సంక్రాంతి', date: '2027-01-14' },
-  { slug: 'holi', title: 'Holi', telugu: 'హోలీ', date: '2027-03-13' },
-  { slug: 'ugadi', title: 'Ugadi', telugu: 'ఉగాది', date: '2027-03-19' },
-] as const;
-
-/** Dispatch needs three clear days before the festival for the fresh range. */
-const ORDER_BY_LEAD_DAYS = 3;
-
-function formatDocketDate(d: Date): string {
-  return d
-    .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-    .toUpperCase();
-}
-
-function nextFestival(now: Date) {
-  const t = now.getTime();
-  return (
-    FESTIVALS.find((f) => new Date(`${f.date}T23:59:59+05:30`).getTime() > t) ??
-    FESTIVALS[FESTIVALS.length - 1]!
-  );
-}
-
 export function HeroBatch() {
   const { hero } = useSiteContent();
   const { active: theme } = useActiveTheme();
@@ -136,16 +105,17 @@ export function HeroBatch() {
   /*
    * Client-resolved date: the static export's prerendered date goes stale the
    * next morning; the build date paints first (no LCP flash), the real date
-   * corrects it within a frame.
+   * corrects it within a frame. Seeded with Date.now(), not 0 — festival
+   * *selection* must never be empty, unlike useOrderBy's internal 0 seed,
+   * which only governs closure.
    */
-  const [now, setNow] = useState<Date>(() => new Date());
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
   useEffect(() => {
-    setNow(new Date());
+    setNowMs(Date.now());
   }, []);
 
-  const fest = nextFestival(now);
-  const orderBy = new Date(`${fest.date}T00:00:00+05:30`);
-  orderBy.setDate(orderBy.getDate() - ORDER_BY_LEAD_DAYS);
+  const fest = nextFestival(nowMs);
+  const orderBy = useOrderBy(fest.slug, fest.date);
 
   /*
    * Each source is admitted or rejected WHOLE, so the two never interleave
@@ -305,7 +275,12 @@ export function HeroBatch() {
               <span aria-hidden="true" className="opacity-40">
                 ·
               </span>
-              <span>ORDER BY {formatDocketDate(orderBy)}</span>
+              <span>
+                ORDER BY {orderBy.label}
+                {orderBy.closed && (
+                  <span className="text-text-muted font-normal"> · CLOSED</span>
+                )}
+              </span>
             </p>
           </div>
 
@@ -328,7 +303,7 @@ export function HeroBatch() {
         {/* ── TODAY'S No.1 PLATE ───────────────────────────────────────── */}
         {heroProduct && (
           <Reveal delay={0.1} direction="none">
-            <NoOnePlate product={heroProduct} today={formatDocketDate(now)} />
+            <NoOnePlate product={heroProduct} today={formatDocketDate(istDayOf(nowMs))} />
           </Reveal>
         )}
       </div>

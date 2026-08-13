@@ -8,6 +8,7 @@ import {
   formatDocketDate,
   getFestival,
   isValidIsoDay,
+  istDayOf,
   nextFestival,
 } from './calendar';
 
@@ -100,6 +101,38 @@ describe('endOfIstDayMs', () => {
   it('does not move with the machine — it is a fixed offset', () => {
     // 2026-08-12 ends at 18:30Z, which is 14:30 in New York. One instant.
     expect(endOfIstDayMs('2026-08-12')).toBe(Date.parse('2026-08-12T18:30:00Z'));
+  });
+});
+
+describe('istDayOf', () => {
+  it('reads the IST day at midday', () => {
+    expect(istDayOf(Date.parse('2026-08-13T12:00:00+05:30'))).toBe('2026-08-13');
+  });
+
+  it('reads the IST day at the first instant of the day', () => {
+    expect(istDayOf(Date.parse('2026-08-13T00:00:00+05:30'))).toBe('2026-08-13');
+  });
+
+  it('reads the IST day at the last instant of the day', () => {
+    expect(istDayOf(Date.parse('2026-08-12T23:59:59.999+05:30'))).toBe('2026-08-12');
+  });
+
+  it('reads IST, not the machine — still 12 Aug in New York, but 13 Aug in IST', () => {
+    // 2026-08-12T19:00:00Z is 2026-08-13T00:30 IST and 2026-08-12T15:00 in
+    // New York (UTC-4 in August). Only the IST reading gives 13 Aug.
+    expect(istDayOf(Date.parse('2026-08-12T19:00:00Z'))).toBe('2026-08-13');
+  });
+
+  it('agrees with the existing IST boundary: the day it names has not yet ended', () => {
+    const instants = [
+      Date.parse('2026-08-13T12:00:00+05:30'),
+      Date.parse('2026-08-13T00:00:00+05:30'),
+      Date.parse('2026-08-12T23:59:59.999+05:30'),
+      Date.parse('2026-08-12T19:00:00Z'),
+    ];
+    for (const t of instants) {
+      expect(endOfIstDayMs(istDayOf(t))).toBeGreaterThan(t);
+    }
   });
 });
 
