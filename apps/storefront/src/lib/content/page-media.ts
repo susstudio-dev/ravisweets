@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FESTIVAL_SLUG_LIST } from '../festivals/calendar';
 
 /**
  * Owner-editable page photo slots — the `page_media` row in site_content.
@@ -31,19 +32,16 @@ export interface PageMedia {
   brand: { logo: ImageRef };
 }
 
-/** Festival pages that get an editable hero slot in /admin/photos. */
-export const FESTIVAL_SLUGS: readonly string[] = [
-  'diwali',
-  'raksha-bandhan',
-  'eid',
-  'holi',
-  'pongal',
-  'sankranti',
-  'ugadi',
-  'onam',
-  'ganesh-chaturthi',
-  'christmas',
-];
+/**
+ * Festival pages that get an editable hero slot in /admin/photos.
+ *
+ * Derived, because the hand-maintained copy of this list had drifted: it held
+ * ten slugs and the one it omitted was `independence-day`, so that festival's
+ * page had no hero slot in the admin at all. `festivals` below is an open
+ * z.record, so adding the eleventh is purely additive — existing rows parse
+ * unchanged and media/usage.ts already tolerates extra keys.
+ */
+export const FESTIVAL_SLUGS: readonly string[] = FESTIVAL_SLUG_LIST;
 
 /** A slot degrades to null on any malformed value — one bad slot never sinks the row. */
 const imageRefSchema = z

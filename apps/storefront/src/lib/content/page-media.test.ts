@@ -57,9 +57,10 @@ describe('getSlot / setSlot', () => {
 });
 
 describe('FESTIVAL_SLUGS', () => {
-  it('carries the ten festival pages', () => {
+  it('carries all eleven festival pages, including the one the hand-kept list dropped', () => {
     expect(FESTIVAL_SLUGS).toContain('diwali');
     expect(FESTIVAL_SLUGS).toContain('raksha-bandhan');
-    expect(FESTIVAL_SLUGS).toHaveLength(10);
+    expect(FESTIVAL_SLUGS).toContain('independence-day');
+    expect(FESTIVAL_SLUGS).toHaveLength(11);
   });
 });
