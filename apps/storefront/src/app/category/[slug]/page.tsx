@@ -135,7 +135,7 @@ const CATEGORY_META: Record<
     title: 'Pickles',
     titleHook: 'Andhra Achaar in Sesame Oil',
     eyebrow: 'Andhra-style achaar',
-    body: 'Gongura, allam, chintakaya, mamidikaya — small-batch Andhra pickles in cold-pressed sesame oil.',
+    body: 'Gongura, allam, chintakaya, mamidikaya — small-batch Andhra pickles in cold-pressed sesame oil, alongside a non-veg shelf of slow-cooked chicken, mutton, prawn and fish jars.',
     method:
       'Andhra pickle is a preserving tradition, so this is the one range where keeping quality is built into the recipe rather than added to it — cold-pressed sesame oil, salt and chilli, in the proportions that have always done the work. The gongura is cooked down the day the leaf arrives. We do not add a chemical preservative on top of a method that already is one.',
     keeping:
