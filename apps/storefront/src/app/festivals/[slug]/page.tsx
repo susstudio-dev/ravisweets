@@ -15,19 +15,14 @@ import {
   SAMPLE_HAMPER_GLB,
   SAMPLE_HAMPER_USDZ,
 } from '@/components/ar/hamper-ar-preview';
-
-export type FestivalSlug =
-  | 'diwali'
-  | 'independence-day'
-  | 'raksha-bandhan'
-  | 'eid'
-  | 'holi'
-  | 'pongal'
-  | 'sankranti'
-  | 'ugadi'
-  | 'onam'
-  | 'ganesh-chaturthi'
-  | 'christmas';
+import {
+  FESTIVAL_SLUG_LIST,
+  formatDocketDate,
+  getFestival,
+  type FestivalSlug,
+} from '@/lib/festivals/calendar';
+import { OrderByField } from '@/components/festivals/order-by-field';
+import { FestivalActions } from '@/components/festivals/festival-actions';
 
 interface Festival {
   title: string;
@@ -35,7 +30,6 @@ interface Festival {
   tagline: string;
   eyebrow: string;
   body: string;
-  date: string; // ISO
   heroImage: string;
   theme: { base: string; accent: string; glow: string; ink: string; grainOpacity: number };
   gifteeFor: { icon: typeof Gift; title: string; body: string; href: string }[];
@@ -49,7 +43,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'Wrapped in brass and silk.',
     eyebrow: 'Festival of light · 2026',
     body: 'Six hampers, three price bands, logo-ready for corporate runs. Priority list opens to earlier customers and corporate accounts first.',
-    date: '2026-11-08T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/dry_fruit_chikki-removebg-preview.png'),
     // 2026-05-06: festival palettes retuned to harmonise with the site-wide
@@ -91,7 +84,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'The tricolour on the sweet box.',
     eyebrow: '15 August · 2026',
     body: 'Office runs, school functions, society celebrations — mithai in tricolour packing, dispatched the morning the flag goes up.',
-    date: '2026-08-15T00:00:00+05:30',
     heroImage: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
     theme: {
       base: '#f4f7e8',
@@ -128,7 +120,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'For the ones who remember the small promises.',
     eyebrow: 'Brothers & sisters · 2026',
     body: 'A hamper tied with a thread — the traditional signifier, done properly. Compact boxes for courier and weighted boxes for hand-delivery.',
-    date: '2026-08-28T00:00:00+05:30',
     heroImage: pendingPhoto('2025/09/kaju_katli-removebg-preview.png'),
     theme: {
       base: '#f9eee2',
@@ -165,7 +156,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A platter worth the long day.',
     eyebrow: 'Eid al-Fitr · 2026',
     body: 'The Deccan table shines brightest here. Double ka Meetha, Sheer Khurma, Badam ki Jali — festive classics, plated the slow way.',
-    date: '2026-03-30T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
@@ -203,7 +193,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A spread as bright as the colours.',
     eyebrow: 'Festival of colours · 2027',
     body: 'Gujiya-style boxes, jaggery-led laddus, and cooling mithai for the post-rang plate. Colour-coded gift sleeves so the box is a celebration before the lid even opens.',
-    date: '2027-03-13T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
@@ -241,7 +230,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'The clay pot, the harvest, the first morning.',
     eyebrow: 'Harvest festival · 2027',
     body: 'Our Pongal Pot Set arrives with a hand-thrown clay pot, a sealed sachet of jaggery-rice-moong-ghee mix, and a sprig of dried banana leaf. Boil milk, tip it in — Pongal in fifteen minutes.',
-    date: '2027-01-15T00:00:00+05:30',
     heroImage: pendingPhoto('2025/08/booster.webp'),
     theme: {
       base: '#f6efd8',
@@ -278,7 +266,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'Til, gud, and a new year on the kitchen door.',
     eyebrow: 'Makar Sankranti · 2027',
     body: 'Sesame-and-jaggery laddus pressed by hand, plus the Telugu Sankranti spread — Ariselu, Bobbatlu, Sajja Burelu. Fly the kite, share the box.',
-    date: '2027-01-14T00:00:00+05:30',
     heroImage: pendingPhoto('2025/08/11-2-400x400.jpg'),
     theme: {
       base: '#fbf0d8',
@@ -315,7 +302,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A Telugu new year, on the right note.',
     eyebrow: 'Telugu new year · 2027',
     body: 'The first taste of the year sets the tone. Our Ugadi box pairs Bellam Gavvalu, Sajja Burelu, and a small jar of Mango Pickle — six tastes, one new year.',
-    date: '2027-03-19T00:00:00+05:30',
     heroImage: pendingPhoto('2025/08/booster.webp'),
     theme: {
       base: '#f3efde',
@@ -352,7 +338,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A sadya-sized box for the floor banana leaf.',
     eyebrow: 'Onam · 2027',
     body: 'Payasam-set kits, flaky Soan Papdi, and Kerala-style banana chips. Sized for the family seated cross-legged, served on the leaf.',
-    date: '2027-09-04T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/badam_pista_kalakand-removebg-preview.png'),
     theme: {
@@ -390,7 +375,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'Modaks the slow way — and everything else for the prasad table.',
     eyebrow: 'Vinayaka Chavithi · 2027',
     body: 'Steamed modak kits, Bellam Sunnundalu, Bobbatlu — the prasad-tier sweets the elders trust. Boxes sized for the modak count you need.',
-    date: '2027-09-15T00:00:00+05:30',
     heroImage:
       pendingPhoto('2025/09/boondi_laddu-removebg-preview.png'),
     theme: {
@@ -428,7 +412,6 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
     tagline: 'A South Indian table laid for a Christmas Eve.',
     eyebrow: 'Christmas · 2026',
     body: 'Soft-set kalakand, ghee-rich shortbread biscuits, and our Sweet Bites in twelve flavours — a Christmas Eve box that fits a Telangana table just as well.',
-    date: '2026-12-25T00:00:00+05:30',
     heroImage: pendingPhoto('2025/08/STRAWBERRY-BITES.webp'),
     theme: {
       base: '#fbeae6',
@@ -461,7 +444,7 @@ const FESTIVALS: Record<FestivalSlug, Festival> = {
   },
 };
 
-const SLUGS = Object.keys(FESTIVALS) as FestivalSlug[];
+const SLUGS = FESTIVAL_SLUG_LIST;
 
 export function generateStaticParams() {
   return SLUGS.map((slug) => ({ slug }));
@@ -499,35 +482,13 @@ export async function generateMetadata({
   };
 }
 
-/** Dispatch needs three clear days before the festival for the fresh range. */
-const ORDER_BY_LEAD_DAYS = 3;
-
-/*
- * Date maths pinned to the ISO day and formatted in UTC, so the static export
- * renders the same sheet regardless of the build machine's timezone. Festival
- * dates themselves are untouched.
- */
-function orderByDay(iso: string): string {
-  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() - ORDER_BY_LEAD_DAYS);
-  return d.toISOString().slice(0, 10);
-}
-
-function formatSheetDate(iso: string): string {
-  return new Date(`${iso.slice(0, 10)}T12:00:00Z`)
-    .toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    })
-    .toUpperCase();
-}
-
 export default async function FestivalPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const f = FESTIVALS[slug as FestivalSlug];
   if (!f) notFound();
+
+  const entry = getFestival(slug);
+  if (!entry) notFound();
 
   const curated = f.productSlugs
     .map((s) => SAMPLE_PRODUCTS.find((p) => p.slug === s))
@@ -541,7 +502,9 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
           The festival as the kitchen records it: the name, the script, and
           the two dates that matter. The retired gradient hero, its decor
           layer and the ticking countdown are replaced by the sheet itself —
-          ORDER BY is the festival date minus three clear dispatch days. */}
+          ORDER BY is owner-set in /admin/festivals, defaulting to three clear
+          dispatch days before the festival, and marks itself CLOSED once it
+          has passed. */}
       <section className="container-site section-y">
         <Reveal>
           <article className="docket overflow-hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
@@ -559,33 +522,30 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
                 </div>
                 <div className="field-row">
                   <dt className="field-label">Festival</dt>
-                  <dd className="field-value text-sm">{formatSheetDate(f.date)}</dd>
+                  <dd className="field-value text-sm">{formatDocketDate(entry.date)}</dd>
                 </div>
                 <div className="field-row">
                   <dt className="field-label">Order by</dt>
                   <dd className="field-value text-sm font-bold">
-                    {formatSheetDate(orderByDay(f.date))}
+                    <OrderByField slug={slug as FestivalSlug} festivalDate={entry.date} />
                   </dd>
                 </div>
               </dl>
 
               <p className="text-theme-ink/80 max-w-2xl leading-relaxed">{f.body}</p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Link href="#hampers" className="stamp">
-                  See the collection
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <Link href="/corporate#enquiry" className="stamp stamp--ghost">
-                  Corporate enquiry
-                </Link>
+              <FestivalActions
+                slug={slug as FestivalSlug}
+                festivalDate={entry.date}
+                title={f.title}
+              >
                 <HamperARPreview
                   glb={SAMPLE_HAMPER_GLB}
                   usdz={SAMPLE_HAMPER_USDZ}
                   caption={`${f.title} hamper`}
                   bg={f.theme.base}
                 />
-              </div>
+              </FestivalActions>
             </div>
 
             {/* THE PLATE. A flavour-wash slot, owner-editable from
