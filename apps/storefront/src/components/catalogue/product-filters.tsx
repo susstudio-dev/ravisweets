@@ -62,8 +62,9 @@ interface ProductFiltersProps {
 }
 
 /**
- * Open on first paint. The three a shopper reaches for on almost any visit;
- * shelf life, pack size and the flags are follow-up questions and start shut.
+ * Open on first paint. The four a shopper reaches for on almost any visit,
+ * veg/non-veg leading; shelf life, pack size and the flags are follow-up
+ * questions and start shut.
  */
 const DEFAULT_OPEN: ReadonlySet<string> = new Set(['vtype', 'diet', 'free', 'price']);
 

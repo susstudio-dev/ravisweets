@@ -10,9 +10,10 @@ import { useProductFilters } from '@/lib/catalogue/use-product-filters';
 import { cn } from '@/lib/cn';
 
 /**
- * Grid column ONLY — the filters live in the page's title rail
- * (CategoryFilters). Both read the same URL params, so they stay in step with
- * no shared state and no props between them.
+ * The product grid, plus — where the shelf is mixed — the All·Veg·Non-veg
+ * tab strip; the rest of the filters live in the page's title rail
+ * (CategoryFilters). Both surfaces read the same URL params independently,
+ * so they stay in step with no shared state and no props between them.
  *
  * `cat` is forced null for the same reason as in CategoryFilters: the route
  * has already selected the category, and honouring a stray `?cat=` would
