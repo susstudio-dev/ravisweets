@@ -34,13 +34,13 @@ const POLICIES: Record<Slug, Policy> = {
         body: [
           'Name, phone, email, shipping and billing address — required to fulfil your order.',
           'Order history — retained so you can re-order and so we can offer warranty-style support if a box is damaged in transit.',
-          'Only essential, first-party cookies needed to keep you signed in and hold your cart. We do not run third-party analytics or advertising trackers; if that ever changes, we will ask for your consent first.',
+          'Only essential, first-party cookies needed to keep you signed in and hold your cart. For traffic measurement we use Cloudflare Web Analytics, which is cookieless: it counts page views without setting cookies, without tracking you across other sites, and without building an advertising profile. We run no third-party advertising trackers.',
         ],
       },
       {
         heading: 'What we don’t',
         body: [
-          'We never store card numbers, CVV, UPI PINs, or netbanking credentials. When online payments go live, they will be processed by a PCI-DSS-compliant payment gateway and card data will never touch our servers.',
+          'We never store card numbers, CVV, UPI PINs, or netbanking credentials. Online payments are processed by Razorpay, a PCI-DSS-compliant payment gateway — those details are entered on the gateway and never touch our servers.',
           'We don’t sell your data. We don’t share it with brands for retargeting. The only third parties that see order data are the payment gateway, the shipping courier, and our transactional email service.',
         ],
       },
@@ -49,11 +49,11 @@ const POLICIES: Record<Slug, Policy> = {
         body: [
           'Request a copy of your data at privacy@ravisweets.com.',
           'Ask us to delete your account and we anonymise your orders (we retain statutory records for the period required by Indian law).',
-          'Because we run no non-essential trackers, there is nothing extra to opt out of today. If we introduce analytics, you will be able to reject it before it loads.',
+          'Our analytics (Cloudflare Web Analytics) is cookieless and collects no personal data, so there is no advertising profile to opt out of. If we ever introduce a tracker that requires consent, you will be able to reject it before it loads.',
         ],
       },
     ],
-    updated: '2026-04-22',
+    updated: '2026-08-13',
   },
   terms: {
     title: 'Terms of service',
@@ -64,7 +64,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'Orders and fulfilment',
         body: [
-          'All product prices are in INR and include GST. International pricing is shown separately in the relevant currency.',
+          'All product prices are in INR, shown inclusive of any applicable taxes. International pricing is shown separately in the relevant currency.',
           'We reserve the right to cancel an order if a product is mispriced, out of stock, or if we cannot verify the address — we will refund any payment in full within the gateway’s standard window.',
           'A box leaves us the day it ships. If the perishable is damaged by a courier delay, please reach out within 48 hours of delivery.',
         ],
@@ -72,7 +72,7 @@ const POLICIES: Record<Slug, Policy> = {
       {
         heading: 'Pricing and taxes',
         body: [
-          'All prices include GST at the rate mandated for the relevant HSN. A GST-compliant invoice is issued for every order shipping within India.',
+          'All prices are in INR and shown inclusive of any applicable taxes. Where GST applies to an order, the tax and HSN codes are reflected on the invoice for that order.',
           'Shipping charges, if any, are shown at checkout.',
         ],
       },
@@ -104,7 +104,7 @@ const POLICIES: Record<Slug, Policy> = {
         ],
       },
     ],
-    updated: '2026-04-22',
+    updated: '2026-08-13',
   },
   returns: {
     title: 'Returns & refunds',

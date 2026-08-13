@@ -92,6 +92,9 @@ function template(args: {
   total: number;
   address: { line1: string; line2?: string; city: string; state: string; pincode: string };
   trackingUrl?: string;
+  /** Real FSSAI licence from store settings. The line is omitted when unset —
+   *  a receipt must never print a fabricated food-safety licence number. */
+  fssai?: string;
 }): string {
   const linesHtml = args.lines
     .map(
@@ -115,7 +118,7 @@ function template(args: {
     <div style="text-align:center;margin-bottom:24px;">
       <div style="font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:700;color:#1f0c02;">Ravi Sweets</div>
       <div style="font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#8a5a0e;margin-top:4px;">
-        Khammam · Since 1985
+        Since 1983
       </div>
     </div>
     <div style="background:#fff8e6;border:1px solid #e8d8a8;border-radius:16px;padding:28px;">
@@ -169,7 +172,7 @@ function template(args: {
     </div>
     <p style="font-size:11px;color:#1f0c02aa;text-align:center;margin:20px 0 0;line-height:1.6;">
       Questions? WhatsApp +91 93988 59978 — we reply within 30 minutes.<br/>
-      Ravi Sweets · Khammam · Telangana · FSSAI 21218180001234
+      Ravi Sweets · Made fresh in India${args.fssai ? ` · FSSAI ${esc(args.fssai)}` : ''}
     </p>
   </div>
 </body></html>`;
@@ -234,6 +237,17 @@ serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: 'no email on order' }), { status: 400 });
     }
 
+    // Real FSSAI licence from store settings — the receipt prints it only when
+    // one is set, never a placeholder. (Service role read; owner_profile is not
+    // client-readable.)
+    const { data: settings } = await supa
+      .from('store_settings')
+      .select('owner_profile')
+      .eq('id', 'singleton')
+      .maybeSingle();
+    const fssai =
+      (settings?.owner_profile as { fssaiNumber?: string } | null)?.fssaiNumber?.trim() || undefined;
+
     const html = template({
       kind: body.kind,
       number: order.number,
@@ -261,6 +275,7 @@ serve(async (req: Request) => {
       total: order.total,
       address,
       trackingUrl: safeHttpUrl(body.trackingUrl),
+      fssai,
     });
 
     const r = await fetch('https://api.resend.com/emails', {

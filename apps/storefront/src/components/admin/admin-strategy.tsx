@@ -1489,7 +1489,10 @@ function GlobalSection() {
                   className="text-theme-accent mt-0.5 h-3.5 w-3.5 shrink-0"
                   aria-hidden="true"
                 />
-                <span dangerouslySetInnerHTML={{ __html: pt }} />
+                {/* Plain text, auto-escaped by React. Was dangerouslySetInnerHTML
+                    — a latent stored-XSS sink if `points` ever came from the DB
+                    (2026-08-13 review, finding 32). The strings carry no markup. */}
+                <span>{pt}</span>
               </li>
             ))}
           </ul>

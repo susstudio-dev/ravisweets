@@ -16,7 +16,13 @@ export function AdminLogin() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const from = params.get('from') ?? '/admin';
+  // Open-redirect guard (2026-08-13 review): `from` is attacker-supplied via
+  // the query string and is fed straight to router.replace, so an absolute or
+  // protocol-relative URL would bounce a freshly-authenticated admin to another
+  // site. Only an internal /admin path is honoured; anything else falls back.
+  const rawFrom = params.get('from') ?? '/admin';
+  const from =
+    rawFrom.startsWith('/admin') && !rawFrom.startsWith('//') ? rawFrom : '/admin';
   const reason = params.get('reason');
 
   useEffect(() => {

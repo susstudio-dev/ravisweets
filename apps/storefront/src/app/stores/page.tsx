@@ -438,6 +438,53 @@ export default function StoresPage() {
         </div>
       </section>
 
+      {/*
+        Grievance officer — Consumer Protection (E-Commerce) Rules 2020 require
+        an online seller to publish the name, contact and designation of a
+        grievance officer, who must acknowledge a complaint within 48 hours and
+        resolve it within one month. Added on the 2026-08-13 review (finding 16).
+        Swap in the officer's name once assigned; the contact and timelines are
+        the compliant defaults.
+      */}
+      <section className="container-site section-y-tight">
+        <Reveal>
+          <div className="docket p-6 md:p-8">
+            <h2 className="font-display text-heading text-theme-ink">Grievance officer</h2>
+            <p className="text-theme-ink/70 mt-2 max-w-2xl text-sm leading-relaxed">
+              For any complaint about an order, a product, or how we handle your data, contact our
+              grievance officer. Under the Consumer Protection (E-Commerce) Rules 2020 we acknowledge
+              every complaint within 48 hours and work to resolve it within one month.
+            </p>
+            <dl className="mt-4 grid max-w-xl gap-x-8 gap-y-2 sm:grid-cols-2">
+              <div className="field-row">
+                <dt className="field-label">Officer</dt>
+                <dd className="field-value text-theme-ink text-sm">Grievance Officer, Ravi Sweets</dd>
+              </div>
+              <div className="field-row">
+                <dt className="field-label">Email</dt>
+                <dd className="field-value text-sm">
+                  <a className="hover:text-theme-accent" href="mailto:grievance@ravisweets.com">
+                    grievance@ravisweets.com
+                  </a>
+                </dd>
+              </div>
+              <div className="field-row">
+                <dt className="field-label">Phone</dt>
+                <dd className="field-value text-sm">
+                  <a className="hover:text-theme-accent" href="tel:+919398859978">
+                    +91 93988 59978
+                  </a>
+                </dd>
+              </div>
+              <div className="field-row">
+                <dt className="field-label">Hours</dt>
+                <dd className="field-value text-theme-ink text-sm">Mon–Sat · 9 am–9 pm IST</dd>
+              </div>
+            </dl>
+          </div>
+        </Reveal>
+      </section>
+
       {/* Bottom CTA */}
       <section className="container-site section-y-tight">
         <Reveal>

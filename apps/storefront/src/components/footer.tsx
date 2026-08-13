@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FooterComplianceLine } from '@/components/footer-compliance';
 
 const FOOTER_COLUMNS = [
   {
@@ -113,7 +114,7 @@ export function Footer() {
             text is the last thing that should sit under a floating widget. */}
         <div className="text-theme-ink/60 mt-10 flex flex-col items-start justify-between gap-2 border-t border-[color:var(--color-border)] pb-16 pt-6 text-xs sm:flex-row sm:items-center sm:pb-10">
           <p>© {new Date().getFullYear()} Ravi Sweets. All rights reserved.</p>
-          <p>FSSAI · Telangana — pending. GSTIN — Telangana series, pending.</p>
+          <FooterComplianceLine />
         </div>
       </div>
     </footer>

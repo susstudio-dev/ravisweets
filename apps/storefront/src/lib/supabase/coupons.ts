@@ -59,22 +59,28 @@ function toRow(c: Coupon): CouponRow {
 }
 
 /**
- * Checkout-side lookup by code. RLS ("anyone reads active coupons") exposes
- * only active, unexpired rows to customers, so a CONFIRMED miss (null) means
- * the code is unknown, disabled, or expired. A query failure THROWS instead
- * of returning null — conflating "network blip" with "no such coupon" would
- * reject valid codes and let revalidation strip legitimately applied ones.
+ * Checkout-side lookup by exact code, via the `preview_coupon` SECURITY DEFINER
+ * RPC. The `coupons` table is no longer publicly readable (2026-08-13 security
+ * fix — a `select *` let anyone harvest every code, value and cap); the RPC
+ * returns a single row for a code the caller already knows and cannot be used
+ * to enumerate. A CONFIRMED miss (null) means unknown/disabled/expired; a query
+ * failure THROWS rather than conflating "network blip" with "no such coupon",
+ * which would reject valid codes and strip legitimately applied ones.
+ *
+ * The discount this yields is INDICATIVE — the razorpay-order edge function
+ * re-derives and bounds it server-side before charging.
  */
 export async function fetchCouponByCode(code: string): Promise<Coupon | null> {
   const supa = await getSupabase();
   if (!supa) return null;
-  const { data, error } = await supa
-    .from('coupons')
-    .select('*')
-    .eq('code', code.trim().toUpperCase())
-    .maybeSingle();
+  const { data, error } = await supa.rpc('preview_coupon', {
+    p_code: code.trim().toUpperCase(),
+  });
   if (error) throw new Error(error.message);
-  return data ? fromRow(data as CouponRow) : null;
+  // A function returning a single composite row can surface as the object
+  // itself or a one-element array depending on PostgREST — handle both.
+  const row = Array.isArray(data) ? data[0] : data;
+  return row ? fromRow(row as CouponRow) : null;
 }
 
 /**

@@ -131,6 +131,10 @@ export function CompositionPanel({ product }: { product: Product }) {
               <dd className="field-value text-right text-sm">{product.storage_instructions}</dd>
             </div>
             <div className="field-row">
+              <dt className="field-label">Country of origin</dt>
+              <dd className="field-value text-right text-sm">India</dd>
+            </div>
+            <div className="field-row">
               <dt className="field-label">FSSAI</dt>
               <dd className="field-value text-right text-sm">Licence no. on every box</dd>
             </div>

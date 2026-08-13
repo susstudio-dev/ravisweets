@@ -181,16 +181,34 @@ insert into storage.buckets (id, name, public)
 values ('review-photos', 'review-photos', true)
 on conflict (id) do nothing;
 
+-- HARDENED to match 0010 (2026-08-13 review, finding 11). The earlier version
+-- here re-opened uploads to `with check (bucket_id = 'review-photos')` — any
+-- authenticated session, INCLUDING anonymous ones, could write any file — which
+-- silently undid 0010's hardening whenever this aggregate script was re-run.
+-- Constrain to a per-user folder, block anonymous identities, cap size/MIME.
+update storage.buckets
+  set file_size_limit = 5242880,  -- 5 MB
+      allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+  where id = 'review-photos';
+
 drop policy if exists "any signed-in user uploads review photo" on storage.objects;
+drop policy if exists "verified user uploads own review photo" on storage.objects;
 drop policy if exists "anyone reads review photos" on storage.objects;
-create policy "any signed-in user uploads review photo"
-  on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'review-photos');
+create policy "verified user uploads own review photo"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'review-photos'
+    and coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) = false
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
 create policy "anyone reads review photos"
   on storage.objects for select
   to public
   using (bucket_id = 'review-photos');
+drop policy if exists "admin deletes review photo" on storage.objects;
+create policy "admin deletes review photo"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'review-photos' and public.is_admin());
 
 -- ───────────────────────────────────────────────────────────────────────
 -- 5. Team management (from 0006)

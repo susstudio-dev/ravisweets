@@ -429,9 +429,12 @@ export function CheckoutFlow() {
           } else {
             committedRef.current = true;
             setLockedOrder(order);
-            // Fire the order-confirmation email. No-ops silently if Resend
-            // isn't yet wired up in Supabase secrets.
-            void sendOrderEmail(order.id, 'placed');
+            // COD is confirmed the moment it is placed (paid on delivery), so
+            // its email goes now. An ONLINE order is not really "placed" until
+            // the payment verifies — sending "order placed" before then emails a
+            // confirmation for money that was never taken (2026-08-13 review,
+            // finding 24). The online email is fired below, on verified capture.
+            if (payment === 'cod') void sendOrderEmail(order.id, 'placed');
           }
         }
 
@@ -458,6 +461,9 @@ export function CheckoutFlow() {
             };
             pendingOrderRef.current = paid;
             saveOrder(paid);
+            // Payment verified — NOW the online order is confirmed, so send the
+            // "order placed" email (deferred from the commit step above).
+            void sendOrderEmail(order.id, 'placed');
           }
           /*
            * 'unavailable' used to fall through here and confirm the order, on
