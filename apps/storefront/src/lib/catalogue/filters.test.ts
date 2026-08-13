@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATALOGUE, type Product, type ProductVariant } from '@ravisweets/shared';
+import { CATALOGUE, isNonVeg, type Product, type ProductVariant } from '@ravisweets/shared';
 import {
   FILTER_GROUPS,
   activeFilterCount,
@@ -470,5 +470,18 @@ describe('the real catalogue', () => {
       expect(inPrice.length, `${p.slug} price bands`).toBe(1);
       expect(inKeeps.length, `${p.slug} shelf bands`).toBe(1);
     }
+  });
+});
+
+/* ── VEG / NON-VEG ──────────────────────────────────────────────────────── */
+
+describe('isNonVeg', () => {
+  it('reads the tag', () => {
+    expect(isNonVeg(product({ dietary_tags: ['non-veg'] }))).toBe(true);
+  });
+
+  it('veg is the absence of the tag — a mithai house defaults vegetarian', () => {
+    expect(isNonVeg(product())).toBe(false);
+    expect(isNonVeg(product({ dietary_tags: ['eggless', 'dairy'] }))).toBe(false);
   });
 });

@@ -7,7 +7,8 @@ export type DietaryTag =
   | 'gluten-free'
   | 'nuts'
   | 'dairy'
-  | 'contains-ghee';
+  | 'contains-ghee'
+  | 'non-veg';
 
 export type CategorySlug =
   | 'sweets'
@@ -170,4 +171,15 @@ export function computeEffectivePrice(
     percentOff,
     label: product.sale_label,
   };
+}
+
+/**
+ * Vegetarian is the DEFAULT — this is a mithai house — so veg is the absence
+ * of the tag and only the exceptions carry 'non-veg'. Every surface that
+ * splits veg from non-veg (the FSSAI mark, the filter model, the category
+ * tabs) derives from this one check; nothing may re-derive it from slugs or
+ * titles, because an admin-created product would then pass as veg.
+ */
+export function isNonVeg(product: Pick<Product, 'dietary_tags'>): boolean {
+  return product.dietary_tags.includes('non-veg');
 }
