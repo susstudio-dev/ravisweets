@@ -34,6 +34,13 @@ The festival calendar itself (slug, title, Telugu, date) is duplicated across th
 files. The code already admits this: *"Mirrors the calendar in festival-next-band.tsx
 (shared module is phase 4b)"*. Nothing in `/admin` can change either.
 
+There is a sixth copy with a live consequence. `page-media.ts:35` declares its own
+`FESTIVAL_SLUGS` list of **ten** slugs, and the one it omits is `independence-day` — the
+very page in the report. `/admin/photos` renders its festival hero slots from that list, so
+today the owner cannot set a hero photo for Independence Day at all. The `festivals` record
+is an open `z.record`, so the storefront falls back silently and nothing errors; the row
+is simply missing from the admin UI.
+
 Three clear days is also the wrong model for the business. A Diwali corporate run of 200
 logo-printed hampers is not the same lead time as a tray of barfi for an office on the 15th.
 
@@ -153,6 +160,11 @@ is told about when their sweets arrive.
 export function parseFestivalDates(raw: unknown): FestivalDates;
 ```
 
+Implemented with Zod `.record()` + `.catch()`, following `page-media.ts` — the closest
+precedent in the codebase, and Zod is already in the client bundle through it. The
+cross-field rule (cutoff after the festival) runs as a post-parse pass, because it needs
+the calendar and Zod's record schema does not see sibling keys.
+
 Each entry is dropped — falling back to `defaultOrderByDay` — when any of the following
 hold. Dropping is per-entry, never whole-document: one bad row must not blank ten good ones.
 
@@ -165,7 +177,14 @@ hold. Dropping is per-entry, never whole-document: one bad row must not blank te
 
 An `orderBy` in the past is **valid** and kept — that is the closed state, not an error.
 
-### 3. `src/lib/festivals/use-order-by.ts` — resolution and closed state
+### 3. Resolution and closed state — a pure function plus a thin hook
+
+`vitest.config.ts` runs `environment: 'node'` and includes only `src/**/*.test.ts`. There
+is no DOM and no `.tsx` test support, and all nine existing test files are pure `lib`
+modules. So the logic lives in a pure function that takes its clock as an argument, and the
+hook is a wrapper thin enough to need no test of its own.
+
+**`src/lib/festivals/resolve-order-by.ts`** — pure, fully tested:
 
 ```ts
 export interface OrderByState {
@@ -177,8 +196,22 @@ export interface OrderByState {
   closed: boolean;
 }
 
+export function resolveOrderBy(
+  festivalISO: string,
+  override: string | undefined,
+  nowMs: number,
+): OrderByState;
+```
+
+**`src/lib/festivals/use-order-by.ts`** — the React binding:
+
+```ts
 export function useOrderBy(slug: FestivalSlug, festivalISO: string): OrderByState;
 ```
+
+It reads `festivalDates[slug]` from `useSiteContent()`, holds `now` in state seeded to
+`0` and set to `Date.now()` in an effect, and returns `resolveOrderBy(...)`. A `nowMs` of
+`0` yields `closed: false`, which is exactly the first-paint contract below.
 
 **Closed is an IST fact, not a visitor fact.** The kitchen's cutoff does not move with the
 customer's timezone — that is precisely the bug in fault 2. Orders are accepted through
@@ -233,7 +266,8 @@ directly.
 | --- | --- |
 | `src/lib/festivals/calendar.ts` | New. Shared calendar and date maths. |
 | `src/lib/festivals/festival-dates.ts` | New. `FestivalDates` type and `parseFestivalDates`. |
-| `src/lib/festivals/use-order-by.ts` | New. Resolution hook. |
+| `src/lib/festivals/resolve-order-by.ts` | New. Pure resolution with an injected clock. |
+| `src/lib/festivals/use-order-by.ts` | New. React binding over `resolveOrderBy`. |
 | `src/components/festivals/order-by-field.tsx` | New. Client field component. |
 | `src/lib/supabase/site-content.ts` | Add `'festival_dates'` to `SiteContentKey` and `ContentByKey`. |
 | `src/lib/supabase/site-content-context.tsx` | Expose `festivalDates`, parsed on every refetch (as `charges` and `pageMedia` already are). |
@@ -243,8 +277,14 @@ directly.
 | `src/components/hero/hero-batch.tsx` | Drop local calendar and constant; call `useOrderBy`. |
 | `src/components/sections/festival-next-band.tsx` | Drop local calendar and constant; call `useOrderBy`. Fixes the off-by-one. |
 | `src/components/admin/admin-festivals.tsx` | New "Dispatch deadlines" card. |
+| `src/lib/content/page-media.ts` | Derive `FESTIVAL_SLUGS` from the calendar — gives Independence Day its missing photo slot. |
+| `src/lib/content/page-media.test.ts` | `toHaveLength(10)` → `11`. |
 
 No database migration. No change to `active_festival`, themes, or the publish flow.
+
+Deriving `FESTIVAL_SLUGS` is additive and safe: `festivals` is an open `z.record`, existing
+rows keep parsing unchanged, and `media/usage.ts` already tolerates extra keys. It adds one
+row to `/admin/photos`.
 
 ## The closed state
 
@@ -342,13 +382,14 @@ Vitest, alongside the existing `publish.test.ts` and `parseCharges` precedents.
 - **Keeps** an `orderBy` in the past.
 - One bad entry does not discard the good ones.
 
-**`use-order-by.test.ts`**
+**`resolve-order-by.test.ts`**
 - Override wins over the computed default.
 - Invalid override falls back to the computed default.
 - Closed boundary: `23:59:59.999 IST` on the cutoff day is open; `00:00:00 IST` the next
-  day is closed — asserted with a fixed injected clock, not `Date.now()`.
-- A visitor clock set to `America/New_York` produces the same `closed` verdict as one set
-  to IST for the same instant.
+  day is closed — asserted with the injected `nowMs`, never `Date.now()`.
+- The same `nowMs` gives the same `closed` verdict under `TZ=America/New_York` and
+  `TZ=Asia/Kolkata`.
+- `nowMs: 0` (the first-paint seed) is never closed.
 
 **`festival-sources.test.ts`** (guard)
 - No file outside `src/lib/festivals/` declares `ORDER_BY_LEAD_DAYS` or its own festival
