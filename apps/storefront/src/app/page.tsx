@@ -1,12 +1,9 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { signatureBestsellers } from '@/lib/signature';
-import { ProductCard } from '@/components/product-card';
-import { ProductGrid } from '@/components/product-grid';
 import { Reveal } from '@/components/motion/reveal';
-import { Stagger } from '@/components/motion/stagger';
 import { HeroBatch } from '@/components/hero/hero-batch';
 import type { Metadata } from 'next';
+import { TrendingShelf } from '@/components/sections/trending-shelf';
 import { CategoryRail } from '@/components/sections/category-rail';
 import { FestivalNextBand } from '@/components/sections/festival-next-band';
 import { ReviewsBand } from '@/components/sections/reviews-band';
@@ -24,65 +21,60 @@ export const metadata: Metadata = {
 };
 
 /*
- * The homepage, in the Sweet Counter world (warm pivot, owner-directed
- * 2026-08-10). One story, seven beats, product-first:
- * the card (what was made today) → the rail (every aisle, one tap) →
- * the counter (what people take home) → the house rules (four badges,
- * three seconds) → festival next → what customers say (real reviews only,
- * absent until they exist) → corporate dispatch.
+ * The homepage, in the Sweet Counter world (warm pivot 2026-08-10; product-
+ * first half-hero, owner-directed 2026-08-13). Six beats, product before word:
+ * today's No.1 plate in the hero (order it without scrolling) → the ranked
+ * trending shelf (the counter's front row, sweets cut out and plated) → every
+ * aisle, one tap → the house rules (four badges, three seconds) → festival next
+ * → what customers say (real reviews only, absent until they exist) → corporate.
  *
- * The verbose spec <dl> that carried those rules moved into
- * sections/trust-strip.tsx, compressed to the same claims at a glance —
- * "lots to see, little to read" is the pivot's page rule.
+ * DECLUTTER PASS (owner: "make sure it doesn't look cluttered", 2026-08-13).
+ * The old boxed "Today's bestsellers" grid was folded INTO the trending shelf —
+ * one strong product section beside the hero instead of a grid AND a rail that
+ * drew from the same ranking. Fewer sections, one product surface, more air.
  */
+
+/**
+ * How deep the ranked front row goes. The hero plate is No.1; the shelf shows
+ * the next twelve (No.2–No.13), so this fetches thirteen distinct-photo
+ * bestsellers and the hero and shelf split them without overlap.
+ */
+const RANKED_DEPTH = 13;
 
 export default function HomePage() {
   /*
-   * Signature-ranked, not catalogue-ordered: raw order led with whatever
-   * row the DB inserted first (Qubani), which the owner flagged as the
-   * wrong face for the shop (2026-08-11). See lib/signature.ts.
+   * Signature-ranked, not catalogue-ordered: raw order led with whatever row
+   * the DB inserted first (Qubani), which the owner flagged as the wrong face
+   * for the shop (2026-08-11). See lib/signature.ts.
+   *
+   * De-duplicated by photograph: several SKUs borrow a family stand-in's photo
+   * (spec: BORROWED), so an un-deduped top-12 can show the same cut-out sweet
+   * twice under two names — which reads as clutter. Keep the first, ranked
+   * higher, and skip any later SKU that would repeat its image.
    */
-  const bestsellers = signatureBestsellers().slice(0, 8);
+  const seenImages = new Set<string>();
+  const ranked = signatureBestsellers()
+    .filter((p) => {
+      const url = p.images[0]?.url;
+      if (!url || seenImages.has(url)) return false;
+      seenImages.add(url);
+      return true;
+    })
+    .slice(0, RANKED_DEPTH);
+
+  // The hero renders No.1 itself (signatureBestsellers()[0]); the shelf carries
+  // the rest, its stamps starting at No.2 so the two never show the same sweet.
+  const shelf = ranked.slice(1);
 
   return (
     <>
       <HeroBatch />
 
+      {/* ── THE COUNTER'S FRONT ROW ─────────────────────────────────── */}
+      <TrendingShelf products={shelf} startRank={2} />
+
       {/* ── THE RAIL ────────────────────────────────────────────────── */}
       <CategoryRail />
-
-      {/* ── THE COUNTER ─────────────────────────────────────────────── */}
-      <section aria-labelledby="bestsellers-heading" className="container-site section-y">
-        <Reveal>
-          {/*
-            No eyebrow above the heading. `.field-label` earns its place when
-            it is the printed caption of a real label:value pair — BATCH NO. /
-            KH-0208-026. Used as a kicker over a heading it is the category's
-            decorative eyebrow wearing this world's costume, and the heading
-            carries itself without one.
-          */}
-          <div className="docket-head">
-            <div>
-              <h2 id="bestsellers-heading" className="font-display text-display-md">
-                Today&rsquo;s bestsellers
-              </h2>
-            </div>
-            <Link
-              href="/shop"
-              className="text-theme-ink hover:text-theme-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-            >
-              Shop the catalogue <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </Reveal>
-        <Stagger gap={40}>
-          <ProductGrid>
-            {bestsellers.map((p) => (
-              <ProductCard key={p.id} product={p} quickAdd />
-            ))}
-          </ProductGrid>
-        </Stagger>
-      </section>
 
       {/* ── THE HOUSE RULES ─────────────────────────────────────────── */}
       <TrustStrip />
