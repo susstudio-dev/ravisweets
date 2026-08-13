@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
-import type { FestivalSlug } from '@/app/festivals/[slug]/page';
+import type { FestivalSlug } from '@/lib/festivals/calendar';
 
 /**
  * Animated SVG decoration layer for festival hero sections.
