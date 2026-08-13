@@ -1,5 +1,6 @@
 import {
   computeEffectivePrice,
+  isNonVeg,
   type CategorySlug,
   type DietaryTag,
   type Product,
@@ -39,10 +40,12 @@ import {
 
 export type SortKey = 'featured' | 'price-asc' | 'price-desc' | 'newest';
 
-export type GroupId = 'cat' | 'diet' | 'free' | 'price' | 'keeps' | 'pack' | 'flags' | 'stock';
+export type GroupId = 'cat' | 'vtype' | 'diet' | 'free' | 'price' | 'keeps' | 'pack' | 'flags' | 'stock';
 
 export interface FilterState {
   cat: CategorySlug | null;
+  /** Veg / non-veg — buckets of one axis, OR. Veg = the tag's absence. */
+  vtype: string[];
   /** Positive dietary claims — AND. */
   diet: string[];
   /** Allergens to exclude — AND. */
@@ -61,6 +64,7 @@ export interface FilterState {
 
 export const EMPTY_FILTERS: FilterState = {
   cat: null,
+  vtype: [],
   diet: [],
   free: [],
   price: [],
@@ -74,6 +78,7 @@ export const EMPTY_FILTERS: FilterState = {
 /** URL parameter names. `flags` is `tag` for brevity in a shared link. */
 export const PARAM: Record<GroupId, string> = {
   cat: 'cat',
+  vtype: 'type',
   diet: 'diet',
   free: 'free',
   price: 'price',
@@ -104,6 +109,14 @@ export interface FilterGroup {
  * "Sugar-free" as if both were desirable was the old panel's real flaw.
  */
 export const FILTER_GROUPS: FilterGroup[] = [
+  {
+    id: 'vtype',
+    legend: 'Veg / Non-veg',
+    options: [
+      { value: 'veg', label: 'Veg' },
+      { value: 'nonveg', label: 'Non-veg' },
+    ],
+  },
   {
     id: 'diet',
     legend: 'Suitable for',
@@ -294,6 +307,8 @@ function hasFlag(product: Product, flag: string): boolean {
 /** Does one option, on its own, match? Used for both filtering and counting. */
 export function matchesOption(product: Product, group: FilterGroup['id'], value: string): boolean {
   switch (group) {
+    case 'vtype':
+      return value === 'nonveg' ? isNonVeg(product) : !isNonVeg(product);
     case 'diet':
       return product.dietary_tags.includes(value as DietaryTag);
     case 'free':
@@ -313,10 +328,10 @@ export function matchesOption(product: Product, group: FilterGroup['id'], value:
 
 /* ── GROUPS ─────────────────────────────────────────────────────────────── */
 
-const ALL_GROUPS: GroupId[] = ['cat', 'diet', 'free', 'price', 'keeps', 'pack', 'flags', 'stock'];
+const ALL_GROUPS: GroupId[] = ['cat', 'vtype', 'diet', 'free', 'price', 'keeps', 'pack', 'flags', 'stock'];
 
 /** AND groups narrow on every pick; OR groups are buckets of one axis. */
-const OR_GROUPS = new Set<string>(['price', 'keeps', 'pack']);
+const OR_GROUPS = new Set<string>(['vtype', 'price', 'keeps', 'pack']);
 
 function passesGroup(product: Product, group: GroupId, state: FilterState): boolean {
   if (group === 'cat') return state.cat === null || product.category === state.cat;
@@ -431,6 +446,7 @@ export function parseFilters(params: ParamReader): FilterState {
   const sort = params.get('sort');
   return {
     cat: (params.get(PARAM.cat) as CategorySlug | null) || null,
+    vtype: readList(params, PARAM.vtype, VALID.vtype),
     diet: readList(params, PARAM.diet, VALID.diet),
     free: readList(params, PARAM.free, VALID.free),
     price: readList(params, PARAM.price, VALID.price),
@@ -454,6 +470,7 @@ export function writeFilters(current: URLSearchParams, state: FilterState): URLS
     else next.delete(name);
   };
   set(PARAM.cat, state.cat ?? '');
+  set(PARAM.vtype, state.vtype.join(','));
   set(PARAM.diet, state.diet.join(','));
   set(PARAM.free, state.free.join(','));
   set(PARAM.price, state.price.join(','));
@@ -472,6 +489,7 @@ export function toggleValue(list: string[], value: string): string[] {
 /** Chips only — sort is not a filter and must not show a "clear" affordance. */
 export function activeFilterCount(state: FilterState): number {
   return (
+    state.vtype.length +
     state.diet.length +
     state.free.length +
     state.price.length +

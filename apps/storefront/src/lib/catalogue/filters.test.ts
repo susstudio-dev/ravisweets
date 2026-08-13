@@ -316,11 +316,12 @@ describe('sortProducts', () => {
 describe('parseFilters', () => {
   it('reads every group', () => {
     const p = new URLSearchParams(
-      'cat=sweets&diet=vegan,eggless&free=nuts&price=u250&keeps=travels&pack=s&tag=new&stock=in&sort=price-asc',
+      'cat=sweets&type=nonveg&diet=vegan,eggless&free=nuts&price=u250&keeps=travels&pack=s&tag=new&stock=in&sort=price-asc',
     );
     const s = parseFilters(p);
     expect(s).toEqual({
       cat: 'sweets',
+      vtype: ['nonveg'],
       diet: ['vegan', 'eggless'],
       free: ['nuts'],
       price: ['u250'],
@@ -483,5 +484,44 @@ describe('isNonVeg', () => {
   it('veg is the absence of the tag — a mithai house defaults vegetarian', () => {
     expect(isNonVeg(product())).toBe(false);
     expect(isNonVeg(product({ dietary_tags: ['eggless', 'dairy'] }))).toBe(false);
+  });
+});
+
+describe('veg / non-veg group', () => {
+  const veg = product({ id: 'veg' });
+  const nonveg = product({ id: 'nonveg', dietary_tags: ['non-veg'] });
+  const all = [veg, nonveg];
+
+  it('veg means the tag is absent', () => {
+    expect(applyFilters(all, state({ vtype: ['veg'] })).map((p) => p.id)).toEqual(['veg']);
+  });
+
+  it('nonveg means the tag is present', () => {
+    expect(applyFilters(all, state({ vtype: ['nonveg'] })).map((p) => p.id)).toEqual(['nonveg']);
+  });
+
+  it('is a bucket group — both ticked is the same as none', () => {
+    expect(applyFilters(all, state({ vtype: ['veg', 'nonveg'] }))).toHaveLength(2);
+    expect(applyFilters(all, state({ vtype: [] }))).toHaveLength(2);
+  });
+
+  it('round-trips through the URL as ?type=', () => {
+    const qs = writeFilters(new URLSearchParams(), state({ vtype: ['nonveg'] }));
+    expect(qs.get('type')).toBe('nonveg');
+    expect(parseFilters(qs).vtype).toEqual(['nonveg']);
+  });
+
+  it('drops unknown type values rather than carrying an invisible filter', () => {
+    expect(parseFilters(new URLSearchParams('type=beef')).vtype).toEqual([]);
+  });
+
+  it('counts each side against the other groups', () => {
+    const counts = facetCounts(all, state());
+    expect(counts.vtype!.veg).toBe(1);
+    expect(counts.vtype!.nonveg).toBe(1);
+  });
+
+  it('adds to the active filter count', () => {
+    expect(activeFilterCount(state({ vtype: ['veg'] }))).toBe(1);
   });
 });
