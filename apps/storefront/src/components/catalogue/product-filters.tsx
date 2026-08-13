@@ -65,7 +65,7 @@ interface ProductFiltersProps {
  * Open on first paint. The three a shopper reaches for on almost any visit;
  * shelf life, pack size and the flags are follow-up questions and start shut.
  */
-const DEFAULT_OPEN: ReadonlySet<string> = new Set(['diet', 'free', 'price']);
+const DEFAULT_OPEN: ReadonlySet<string> = new Set(['vtype', 'diet', 'free', 'price']);
 
 export function filterChipClass(active: boolean) {
   return cn(
@@ -147,6 +147,12 @@ export function ProductFilters({
         // A group whose every option leads nowhere is not shown at all — an
         // empty "Pack size" heading is noise, not information.
         if (visible.length === 0) return null;
+
+        // Veg / non-veg is only a question when the shelf actually mixes
+        // both. One visible side cannot narrow anything, so — same rule as
+        // the stock checkbox — the control is not offered. It stays while
+        // selected so an empty grid can always be undone.
+        if (group.id === 'vtype' && selected.length === 0 && visible.length < 2) return null;
 
         const isOpen = open.has(group.id);
         const groupPanel = `${panelId}-${group.id}`;
