@@ -541,6 +541,49 @@ async function main() {
     return;
   }
 
+  /*
+   * REGRESSION GUARD — a build must not un-mark a non-veg product as
+   * vegetarian.
+   *
+   * Same shape as the photography guard above, and for the same reason: the
+   * dangerous case is not a failure, it is a SUCCESS against a database that
+   * has not caught up. Here the photography guard cannot help — the six
+   * non-veg pickles carry no `/products/` images at all, so a database still
+   * holding chicken-pickle's original ['eggless'] tag (0024 not yet pasted)
+   * sails through that check untouched, and this generator bakes it in as
+   * vegetarian. The green veg dot then ships on a chicken product across the
+   * card, the detail page, the cart line and the Veg tab — the exact failure
+   * this feature exists to prevent. See
+   * supabase/migrations/0024_nonveg_pickles.sql.
+   */
+  const countNonVeg = (text) => (text.match(/'non-veg'/g) ?? []).length;
+  const wasNonVeg = countNonVeg(committed);
+  const nowNonVeg = products.filter((p) => p.dietary_tags.includes('non-veg')).length;
+  if (wasNonVeg > nowNonVeg && process.env.ALLOW_CATALOGUE_REGRESSION !== 'true') {
+    warn('');
+    warn('  REFUSING TO WRITE — the database has fewer non-veg products than the repo.');
+    warn(`  committed snapshot: ${wasNonVeg} non-veg product(s)`);
+    warn(`  database returned:  ${nowNonVeg} non-veg product(s)`);
+    warn('');
+    warn('  This almost always means the pickle non-veg migrations have not been');
+    warn('  applied to this Supabase project yet. Apply them IN THIS ORDER,');
+    warn('  then rebuild:');
+    warn('    1. supabase/migrations/0014_seed_products.sql        (adds the non-veg range)');
+    warn('    2. supabase/migrations/0022_retire_qubani_and_hyderabadi_claims.sql');
+    warn('         (archives Qubani, merges hyderabadi-specials into sweets,');
+    warn('          renames the mixture slug)');
+    warn('    3. supabase/migrations/0021_product_photography.sql  (fills in images —');
+    warn('         keys on the slug 0022 renames, so it must run after 0022)');
+    warn('    4. supabase/migrations/0024_nonveg_pickles.sql       (retags chicken-pickle');
+    warn('         non-veg — without it a chicken product ships wearing the veg mark)');
+    warn('');
+    warn('  If the database really is correct and a non-veg product was removed on');
+    warn('  purpose, re-run with ALLOW_CATALOGUE_REGRESSION=true.');
+    warn('');
+    warn(`  Keeping the committed ${path.relative(ROOT, OUT_FILE)} as-is.`);
+    return;
+  }
+
   writeFileSync(OUT_FILE, renderModule(products), 'utf8');
   const variantCount = products.reduce((n, p) => n + p.variants.length, 0);
   say(

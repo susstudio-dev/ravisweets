@@ -47,3 +47,13 @@ update public.products
    set builder_eligible = false
  where slug = 'chicken-pickle'
    and builder_eligible = true;
+
+-- ─── VERIFY ────────────────────────────────────────────────────────────────
+-- Both updates above are guarded on their old value, so either can match zero
+-- rows (a deliberate prior admin edit, or a second run) while the paste still
+-- reports success. This shows the row's actual resulting state instead of
+-- trusting the update counts.
+-- Resulting state of the row (expect dietary_tags = {non-veg} and
+-- builder_eligible = false — if either differs, the row never left its stale
+-- default and the guard on the earlier statement did not match):
+--   select slug, dietary_tags, builder_eligible from public.products where slug = 'chicken-pickle';

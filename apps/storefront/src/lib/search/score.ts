@@ -13,7 +13,15 @@ export function scoreProduct(product: Product, query: string): number {
   const title = product.title.toLowerCase();
   const desc = product.description.toLowerCase();
   const category = product.category.replace(/-/g, ' ').toLowerCase();
-  const tags = product.dietary_tags.join(' ').toLowerCase();
+  // 'non-veg' is dropped before joining: it contains 'veg' as a substring, so
+  // a shopper searching "veg" would otherwise substring-match every non-veg
+  // pickle and surface meat under a vegetarian query. Vegetarian is the tag's
+  // ABSENCE (see isNonVeg), so no product ever needs 'non-veg' to win a veg
+  // search — dropping it from the blob costs nothing a veg search should win.
+  const tags = product.dietary_tags
+    .filter((t) => t !== 'non-veg')
+    .join(' ')
+    .toLowerCase();
   const ingredients = product.ingredients.join(' ').toLowerCase();
 
   let score = 0;

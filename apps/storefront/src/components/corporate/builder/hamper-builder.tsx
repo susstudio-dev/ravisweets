@@ -11,6 +11,7 @@ import {
   computePrice,
   BUILDER_MOQ,
   formatMoney,
+  isNonVeg,
   type HamperConfig,
   type Product,
   type TemplateId,
@@ -35,7 +36,12 @@ import { TierCelebration } from './tier-celebration';
 import { DURATION, EASE } from '@/lib/motion/constants';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 
-const ELIGIBLE_PRODUCTS: Product[] = CATALOGUE.filter((p) => p.builder_eligible);
+// builder_eligible alone is admin-editable in /admin — an admin ticking
+// "hamper eligible" on a non-veg product would otherwise put meat into a
+// corporate gift hamper at the next bake. isNonVeg is not admin-editable in
+// isolation (it derives from dietary_tags), so this belt-and-braces keeps the
+// "corporate hampers stay veg" rule structural, not just a data-hygiene fact.
+const ELIGIBLE_PRODUCTS: Product[] = CATALOGUE.filter((p) => p.builder_eligible && !isNonVeg(p));
 
 function isStep(s: string | null): s is BuilderStep {
   return s !== null && (STEP_ORDER as string[]).includes(s);
