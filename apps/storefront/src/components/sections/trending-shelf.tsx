@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { ArrowRight, Check, Plus } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { computeEffectivePrice, formatMoney, type Product } from '@ravisweets/shared';
+import { computeEffectivePrice, formatMoney, isNonVeg, type Product } from '@ravisweets/shared';
 import { useCart } from '@/lib/cart/cart-context';
 import { cutoutFor } from '@/lib/cutouts';
 import { isUsableImage } from '@/lib/images';
 import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
 import { Reveal } from '@/components/motion/reveal';
+import { VegMark } from '@/components/veg-mark';
 import { cn } from '@/lib/cn';
 
 /**
@@ -180,6 +181,11 @@ function ShelfCard({
                 {effective.label ?? (effective.percentOff ? `${effective.percentOff}% off` : 'Sale')}
               </span>
             )}
+
+            {/* Food-type mark — right corner; rank stamp owns the left. */}
+            <span className="absolute right-2 top-2 z-10">
+              <VegMark nonVeg={isNonVeg(product)} />
+            </span>
           </div>
 
           {/* THE RECORD — the counter edge, then the two facts a buyer compares. */}

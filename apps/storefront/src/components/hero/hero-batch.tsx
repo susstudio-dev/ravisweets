@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { Check, Plus } from 'lucide-react';
 import { Fragment, useEffect, useState, useTransition } from 'react';
-import { computeEffectivePrice, formatMoney, type Product } from '@ravisweets/shared';
+import { computeEffectivePrice, formatMoney, isNonVeg, type Product } from '@ravisweets/shared';
 import { signatureBestsellers } from '@/lib/signature';
 import { Grain } from '@/components/brand/grain';
 import { HeroAmbient } from '@/components/hero/hero-ambient';
 import { Reveal } from '@/components/motion/reveal';
+import { VegMark } from '@/components/veg-mark';
 import { useCart } from '@/lib/cart/cart-context';
 import { cn } from '@/lib/cn';
 import { cutoutFor } from '@/lib/cutouts';
@@ -351,6 +352,11 @@ function NoOnePlate({ product, today }: { product: Product; today: string }) {
         {/* The rank stamp — the visible rendering of "today's No.1". */}
         <span className="font-mono text-theme-accent absolute left-1 top-3 z-20 -rotate-3 rounded-md border-[1.5px] border-current bg-[color:var(--theme-base)] px-2.5 py-1 text-xs font-bold">
           No.1 today
+        </span>
+
+        {/* Food-type mark — bottom-left; both top corners are spoken for. */}
+        <span className="absolute bottom-3 left-1 z-20">
+          <VegMark nonVeg={isNonVeg(product)} size="md" />
         </span>
 
         {/* The cutout sweet, plated. */}
