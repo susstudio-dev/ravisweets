@@ -1,64 +1,40 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/motion/reveal';
+import { formatDocketDate, nextFestival } from '@/lib/festivals/calendar';
+import { useOrderBy } from '@/lib/festivals/use-order-by';
 
 /**
  * Festival next — a carbon-register band that always sells the urgent thing:
- * whichever festival is coming up soonest. Dates mirror the calendar on
- * /festivals; when that page is rebuilt in phase 4b both will read one shared
- * module.
+ * whichever festival is coming up soonest, taken from the shared calendar.
  *
- * The live countdown was removed with the retired world. A ticking
- * seconds digit re-rendered this section once per second forever, and it is
- * flash-sale theatre: a kitchen records an order-by date, it does not run a
- * clock. The urgency now comes from the deadline itself.
+ * This component used to hold its own eight-festival list and its own date
+ * maths, and the maths was wrong: it built an IST-midnight Date and then read
+ * `.toISOString()`, which shifts the instant back into the previous UTC day.
+ * The band rendered 11 AUG against the festival page's 12 AUG in IST, and
+ * 10 AUG in a UTC browser. The order-by date is now resolved by the same
+ * function every other surface calls.
+ *
+ * The live countdown was removed with the retired world. A ticking seconds
+ * digit re-rendered this section once per second forever, and it is flash-sale
+ * theatre: a kitchen records an order-by date, it does not run a clock.
  */
-
-const FESTIVALS = [
-  {
-    slug: 'independence-day',
-    title: 'Independence Day',
-    telugu: 'స్వాతంత్ర్య దినోత్సవం',
-    date: '2026-08-15',
-  },
-  { slug: 'raksha-bandhan', title: 'Raksha Bandhan', telugu: 'రక్షా బంధన్', date: '2026-08-28' },
-  { slug: 'diwali', title: 'Diwali', telugu: 'దీపావళి', date: '2026-11-08' },
-  { slug: 'christmas', title: 'Christmas', telugu: 'క్రిస్మస్', date: '2026-12-25' },
-  { slug: 'sankranti', title: 'Sankranti', telugu: 'సంక్రాంతి', date: '2027-01-14' },
-  { slug: 'pongal', title: 'Pongal', telugu: 'పొంగల్', date: '2027-01-15' },
-  { slug: 'holi', title: 'Holi', telugu: 'హోలీ', date: '2027-03-13' },
-  { slug: 'ugadi', title: 'Ugadi', telugu: 'ఉగాది', date: '2027-03-19' },
-] as const;
-
-/** Dispatch needs three clear days before the festival for the fresh range. */
-const ORDER_BY_LEAD_DAYS = 3;
-
-function formatBandDate(iso: string): string {
-  return new Date(`${iso}T00:00:00+05:30`)
-    .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-    .toUpperCase();
-}
-
 export function FestivalNextBand() {
-  const next = useMemo(() => {
-    const today = Date.now();
-    return (
-      FESTIVALS.find((f) => new Date(`${f.date}T23:59:59+05:30`).getTime() > today) ??
-      FESTIVALS[FESTIVALS.length - 1]
-    );
+  /*
+   * Seeded at render and re-read after mount: the static export bakes the
+   * build-time choice into the HTML, and the browser corrects it. Same reason
+   * hero-batch resolves its date client-side.
+   */
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    setNowMs(Date.now());
   }, []);
 
-  const orderBy = useMemo(() => {
-    if (!next) return '';
-    const d = new Date(`${next.date}T00:00:00+05:30`);
-    d.setDate(d.getDate() - ORDER_BY_LEAD_DAYS);
-    return d.toISOString().slice(0, 10);
-  }, [next]);
-
-  if (!next) return null;
+  const next = nextFestival(nowMs);
+  const orderBy = useOrderBy(next.slug, next.date);
 
   return (
     <section
@@ -94,11 +70,16 @@ export function FestivalNextBand() {
             <dl className="mt-5 max-w-sm">
               <div className="field-row">
                 <dt className="field-label">Festival</dt>
-                <dd className="field-value text-sm">{formatBandDate(next.date)}</dd>
+                <dd className="field-value text-sm">{formatDocketDate(next.date)}</dd>
               </div>
               <div className="field-row">
                 <dt className="field-label">Order by</dt>
-                <dd className="field-value text-sm font-bold">{formatBandDate(orderBy)}</dd>
+                <dd className="field-value text-sm font-bold">
+                  {orderBy.label}
+                  {orderBy.closed && (
+                    <span className="text-text-muted font-normal"> · CLOSED</span>
+                  )}
+                </dd>
               </div>
             </dl>
           </Reveal>
