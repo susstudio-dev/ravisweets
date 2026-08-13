@@ -5,6 +5,7 @@ import { ChevronDown, Menu, Search, ShoppingBag, Sparkles, X } from 'lucide-reac
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { formatMoney } from '@ravisweets/shared';
 import { BrandLogo } from '@/components/brand/logo';
 import { ScrollProgress } from '@/components/motion/scroll-progress';
 import { SearchOverlay } from '@/components/search/search-overlay';
@@ -100,10 +101,9 @@ const FLAT_NAV = [
 const BANNER_DISMISS_KEY = 'ravi.banner.dismissed.v1';
 
 export function Header() {
-  const { lineCount } = useCart();
+  const { lineCount, subtotal } = useCart();
   const { active: theme } = useActiveTheme();
   const reduced = useReducedMotion();
-  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -215,48 +215,74 @@ export function Header() {
 
           {/* Action cluster */}
           <div className="flex items-center gap-1.5">
+            {/*
+              SPEED-TO-ORDER SEARCH. The retired header hid search behind an
+              icon; on a 140-SKU catalogue the fastest path to an order is
+              typing the sweet's name, so on wide screens the affordance is an
+              inviting FIELD (it still just opens the same overlay and Ctrl+K
+              still works). Below xl the field would crowd the nav, so it
+              collapses back to the icon. Owner ask 2026-08-13: "how fast can we
+              make people order."
+            */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search · Ctrl+K"
+              title="Search · Ctrl+K"
+              className="text-theme-ink/50 hover:border-theme-accent/50 hover:text-theme-ink hidden h-9 min-w-[13rem] items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] px-3.5 text-[13px] transition-colors xl:flex"
+            >
+              <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">Search sweets &amp; hampers</span>
+            </button>
             <IconButton
               ariaLabel="Search · Ctrl+K"
               title="Search · Ctrl+K"
+              className="xl:hidden"
               onClick={() => setSearchOpen(true)}
             >
               <Search className="h-4 w-4" aria-hidden="true" />
             </IconButton>
             <UserMenu />
+            {/*
+              THE CART PILL. Was an icon with a corner count. It now carries the
+              running subtotal beside the count the moment the cart is non-empty
+              — the shopper always sees what they are about to spend and that
+              checkout is one tap away, without opening the cart. Empty, it
+              stays the quiet 36px icon so it does not shout at a first visit.
+            */}
             <Link
               href="/cart"
-              aria-label={`Cart — ${lineCount} ${lineCount === 1 ? 'item' : 'items'}`}
-              className="text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink relative inline-flex h-9 w-9 items-center justify-center rounded-md transition-all duration-200"
+              aria-label={
+                lineCount > 0
+                  ? `Cart — ${lineCount} ${lineCount === 1 ? 'item' : 'items'}, ${formatMoney(subtotal)}`
+                  : 'Cart — empty'
+              }
+              className={cn(
+                'text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink relative inline-flex h-9 items-center justify-center transition-all duration-200',
+                lineCount > 0
+                  ? 'bg-theme-accent gap-2 rounded-full px-3 text-[color:var(--theme-base)] hover:bg-[color:var(--color-field-deep)] hover:text-[color:var(--theme-base)]'
+                  : 'w-9 rounded-md',
+              )}
             >
-              <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+              <ShoppingBag className="h-4 w-4 shrink-0" aria-hidden="true" />
               {/*
-                THE ONE LINK ON THE SITE WITH NO ANCHOR TEXT.
-
-                An `aria-label` names a link for a screen reader but it is not
-                the link's text, so a crawler reads this as an outlink with an
-                empty anchor — which is why "Internal Outlinks With No Anchor
-                Text" came back at 100% of pages: it is in the header, so it is
-                on all of them. An `sr-only` span is real text in the DOM,
-                visually hidden, and it is what search engines read as the
-                anchor. The label stays for assistive tech, which prefers it
-                over the text node.
+                THE ONE LINK ON THE SITE WITH NO ANCHOR TEXT (when it is the
+                icon). An `sr-only` span is real text in the DOM a crawler reads
+                as the anchor; the `aria-label` stays for assistive tech.
               */}
-              <span className="sr-only">Cart</span>
-              <AnimatePresence mode="popLayout">
-                {lineCount > 0 && (
-                  <motion.span
-                    key={lineCount}
-                    initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.4 }}
-                    animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.4 }}
-                    transition={{ duration: DURATION.quick, ease: EASE.emphasised }}
+              {lineCount > 0 ? (
+                <span className="flex items-center gap-1.5 text-[13px] font-semibold tabular-nums">
+                  <span aria-hidden="true">{formatMoney(subtotal)}</span>
+                  <span
                     aria-hidden="true"
-                    className="text-theme-accent ring-theme-accent absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-[color:var(--theme-base)] px-1 text-[10px] font-semibold tabular-nums shadow-soft ring-1"
+                    className="text-theme-accent flex h-4 min-w-4 items-center justify-center rounded-full bg-[color:var(--theme-base)] px-1 text-[10px] font-bold"
                   >
                     {lineCount}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+                  </span>
+                </span>
+              ) : (
+                <span className="sr-only">Cart</span>
+              )}
             </Link>
             <button
               type="button"
@@ -308,11 +334,13 @@ function IconButton({
   onClick,
   ariaLabel,
   title,
+  className,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   ariaLabel: string;
   title?: string;
+  className?: string;
 }) {
   return (
     <button
@@ -320,7 +348,10 @@ function IconButton({
       onClick={onClick}
       aria-label={ariaLabel}
       title={title}
-      className="text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 items-center justify-center rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2"
+      className={cn(
+        'text-theme-ink/75 hover:bg-theme-glow/25 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 items-center justify-center rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2',
+        className,
+      )}
     >
       {children}
     </button>
