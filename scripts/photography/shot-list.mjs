@@ -189,6 +189,9 @@ export const STILL_UNSHOT = [
   // no pickle jar in the drop
   'allam-pickle', 'amla-pickle', 'chicken-pickle', 'chintakaya-pickle',
   'gongura-pickle', 'kakarakaya-pickle', 'lemon-pickle', 'masala-mango-pickle',
+  // non-veg range added 2026-08-14 — never photographed
+  'mutton-pickle', 'gongura-mutton-pickle', 'gongura-chicken-pickle',
+  'prawn-pickle', 'fish-pickle',
   // no podi/powder in the drop
   'kandi-podi', 'karam-podi', 'karivepaku-podi', 'kobbari-karam-podi',
   'nalla-karam-podi', 'nuvvula-karam-podi', 'palli-karam-podi', 'rasam-podi',

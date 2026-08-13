@@ -53,6 +53,20 @@ document matches what the site is charging.
 | --- | --- | --- | --- | --- |
 | Dry Fruits Gift Hamper | 1 kg hamper — **₹1,499** | 2 kg hamper — **₹2,799** | ₹1,400/kg | ☐ |
 
+### pickles
+
+<!-- Hand-added 2026-08-14 (non-veg pickle range). emit-pricing-review.mjs only
+     covers the photography-drop slugs and rewrites this whole file on re-run —
+     if you regenerate, re-add this section. -->
+
+| Product | Small | Large | Implied rate | ✔ |
+| --- | --- | --- | --- | --- |
+| Chepala Pickle — Fish Pickle | 200 g — **₹325** | 1 kg — **₹1,300** | ₹1,300/kg | ☐ |
+| Gongura Chicken Pickle | 200 g — **₹275** | 1 kg — **₹1,100** | ₹1,100/kg | ☐ |
+| Gongura Mutton Pickle | 200 g — **₹425** | 1 kg — **₹1,700** | ₹1,700/kg | ☐ |
+| Mutton Pickle | 200 g — **₹400** | 1 kg — **₹1,600** | ₹1,600/kg | ☐ |
+| Royyala Pickle — Prawn Pickle | 200 g — **₹375** | 1 kg — **₹1,500** | ₹1,500/kg | ☐ |
+
 ### savouries
 
 | Product | Small | Large | Implied rate | ✔ |
