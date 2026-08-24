@@ -14,10 +14,13 @@ import { pendingPhoto } from '@/lib/images';
  *
  * The buyer here is an HR or admin team comparing vendors on capability and
  * compliance, so the page reads as the paperwork they would file: a carbon
- * capability sheet up top, a ruled rate card for the tiers, a numbered
- * process spec, and a square-cut enquiry form. Every claim below (MOQ, CSV
- * dispatch, GST/HSN/PO invoicing, printed proofs, 24-hour quotes) already
- * existed on this page — only the presentation changed.
+ * cover sheet up top, the three tiers as feature cards (owner, 2026-08-24:
+ * the builder and its tiers are the page's main feature — the builder CTA
+ * wears the site's one gradient, the capability docket moved down beside
+ * the enquiry form), a numbered process spec, and a square-cut enquiry
+ * form. Every claim below (MOQ, CSV dispatch, GST/HSN/PO invoicing, printed
+ * proofs, 24-hour quotes) already existed on this page — only the
+ * presentation changed.
  */
 
 export const metadata: Metadata = {
@@ -147,62 +150,45 @@ const FAQS = [
 export default function CorporatePage() {
   return (
     <>
-      {/* ── THE CAPABILITY SHEET ─────────────────────────────────────────
-          Carbon register: the corporate desk's carbon copy. Sells dispatch
-          capability and GST compliance, nothing else. */}
+      {/* ── THE COVER SHEET ──────────────────────────────────────────────
+          Carbon register: the corporate desk's carbon copy. A single slim
+          column since 2026-08-24 — the capability docket that used to fill
+          the right half moved down beside the enquiry form, so the tier
+          cards land at the fold. The builder leads the CTA row wearing the
+          site's one gradient: the owner named it the key feature. */}
       <section
         aria-labelledby="corporate-hero-heading"
         data-register="carbon"
         className="bg-theme-base text-theme-ink relative isolate overflow-hidden border-b border-[color:var(--color-border)]"
       >
         <div className="container-site section-y relative z-10">
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-12">
-            <div>
-              <Reveal>
-                <h1
-                  id="corporate-hero-heading"
-                  className="font-display text-display-lg text-balance"
-                >
-                  Two hundred addresses. One invoice.
-                </h1>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <p className="text-text-muted mt-5 max-w-[52ch] leading-relaxed md:text-lg">
-                  Corporate gifting for HR and admin teams: MOQ-based pricing, logo-printed
-                  packaging, multi-address delivery from a single CSV, GST-compliant invoices
-                  carrying your PO number — and one account manager, one phone number, one box
-                  arriving exactly when it should.
-                </p>
-              </Reveal>
-              <Reveal delay={0.16}>
-                <div className="mt-7 flex flex-wrap items-center gap-3">
-                  <a href="#enquiry" className="stamp">
-                    Request a quote
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </a>
-                  <Link href="/corporate/builder?t=premium" className="stamp stamp--ghost">
-                    Build your own hamper
-                  </Link>
-                </div>
-              </Reveal>
+          <Reveal>
+            <h1
+              id="corporate-hero-heading"
+              className="font-display text-display-lg max-w-3xl text-balance"
+            >
+              Two hundred addresses. One invoice.
+            </h1>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="text-text-muted mt-5 max-w-[52ch] leading-relaxed md:text-lg">
+              Corporate gifting for HR and admin teams: MOQ-based pricing, logo-printed
+              packaging, multi-address delivery from a single CSV, GST-compliant invoices
+              carrying your PO number — and one account manager, one phone number, one box
+              arriving exactly when it should.
+            </p>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link href="/corporate/builder?t=premium" className="stamp stamp--feature">
+                Build your own hamper
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <a href="#enquiry" className="stamp stamp--ghost">
+                Request a quote
+              </a>
             </div>
-
-            <Reveal delay={0.12}>
-              <div className="docket">
-                <div className="border-b border-[color:var(--color-rule)] px-5 py-2.5">
-                  <h2 className="field-label">Capability sheet</h2>
-                </div>
-                <dl className="px-5 pb-2 pt-1">
-                  {CAPABILITIES.map((row) => (
-                    <div key={row.label} className="field-row">
-                      <dt className="field-label">{row.label}</dt>
-                      <dd className="field-value text-sm">{row.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </Reveal>
-          </div>
+          </Reveal>
         </div>
         <Grain />
       </section>
@@ -227,84 +213,49 @@ export default function CorporatePage() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.08}>
-          <div className="docket overflow-x-auto">
-            <table className="w-full min-w-[40rem] text-left">
-              <caption className="sr-only">
-                Hamper tiers with starting price and minimum order quantity
-              </caption>
-              <thead>
-                <tr className="border-b-2 border-[color:var(--color-rule)]">
-                  <th scope="col" className="px-4 py-3">
-                    <span className="field-label">Tier</span>
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    <span className="field-label">Contents</span>
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    <span className="field-label">From</span>
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    <span className="field-label">MOQ</span>
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    <span className="sr-only">Open in builder</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {HAMPERS.map((h) => (
-                  <tr
-                    key={h.templateId}
-                    className="border-b border-[color:var(--color-border)] last:border-b-0"
-                  >
-                    <td className="px-4 py-4 align-middle">
-                      <div className="flex items-center gap-3">
-                        {/*
-                          The tier thumb is an owner-editable slot. Fallback:
-                          the catalogue URL, which still points at the retired
-                          host — SlotImage decides at render so the dead URL
-                          is never requested and the specimen mark stands in.
-                          The [&_span] variant shrinks SlotImage's stock
-                          placeholder diamond to fit the 44px frame.
-                        */}
-                        <SlotImage
-                          slot={`corporate.${h.templateId}`}
-                          fallbackUrl={h.image}
-                          fallbackAlt=""
-                          sizes="44px"
-                          className="bg-theme-glow/20 h-11 w-11 shrink-0 overflow-hidden rounded-md [&_span]:h-6 [&_span]:w-6"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-display text-base font-semibold">{h.title}</p>
-                          <p className="field-label mt-0.5">{h.tier}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="text-text-muted px-4 py-4 align-middle text-[13px] leading-relaxed">
-                      {h.contents}
-                    </td>
-                    <td className="field-value whitespace-nowrap px-4 py-4 text-right align-middle text-sm font-bold">
-                      {h.priceFrom}
-                    </td>
-                    <td className="field-value whitespace-nowrap px-4 py-4 text-right align-middle text-sm">
-                      {h.moq}
-                    </td>
-                    <td className="px-4 py-4 text-right align-middle">
-                      <Link
-                        href={`/corporate/builder?t=${h.templateId}`}
-                        className="field-label text-theme-accent hover:text-theme-ink whitespace-nowrap transition-colors"
-                        aria-label={`Build from the ${h.title} template`}
-                      >
-                        Build →
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Reveal>
+        {/*
+          Cards, not table rows (owner, 2026-08-24: "Three tiers, endlessly
+          customisable — show these as a main feature"). Each tier is a
+          docket card with its slot image at card scale, so the section
+          reads as the page's product, not its paperwork.
+        */}
+        <Stagger gap={70} className="mt-2 grid gap-4 md:grid-cols-3">
+          {HAMPERS.map((h) => (
+            <div key={h.templateId} className="docket flex flex-col overflow-hidden">
+              {/*
+                The tier image is an owner-editable slot. Fallback: the
+                catalogue URL, which still points at the retired host —
+                SlotImage decides at render so the dead URL is never
+                requested and the specimen mark stands in.
+              */}
+              <SlotImage
+                slot={`corporate.${h.templateId}`}
+                fallbackUrl={h.image}
+                fallbackAlt=""
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className="bg-theme-glow/10 aspect-[4/3] w-full overflow-hidden"
+              />
+              <div className="flex flex-1 flex-col border-t border-[color:var(--color-rule)] p-5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-display text-heading font-semibold">{h.title}</h3>
+                  <p className="field-label">{h.tier}</p>
+                </div>
+                <p className="text-text-muted mt-2 text-[13px] leading-relaxed">{h.contents}</p>
+                <div className="mt-auto flex items-baseline justify-between gap-3 pt-4">
+                  <p className="field-value text-sm font-bold">FROM {h.priceFrom}</p>
+                  <p className="field-value text-theme-ink/60 text-xs">MOQ {h.moq}</p>
+                </div>
+                <Link
+                  href={`/corporate/builder?t=${h.templateId}`}
+                  className="stamp stamp--ghost mt-4 self-start"
+                  aria-label={`Build from the ${h.title} template`}
+                >
+                  Build this box
+                </Link>
+              </div>
+            </div>
+          ))}
+        </Stagger>
 
         <Reveal delay={0.15}>
           <p className="text-text-muted mt-6 max-w-2xl text-sm">
@@ -376,6 +327,24 @@ export default function CorporatePage() {
                   </div>
                 ))}
               </dl>
+            </Reveal>
+
+            {/* The capability sheet — lived in the hero until 2026-08-24;
+                it belongs beside the form it substantiates. */}
+            <Reveal delay={0.22}>
+              <div className="docket mt-8">
+                <div className="border-b border-[color:var(--color-rule)] px-5 py-2.5">
+                  <h3 className="field-label">Capability sheet</h3>
+                </div>
+                <dl className="px-5 pb-2 pt-1">
+                  {CAPABILITIES.map((row) => (
+                    <div key={row.label} className="field-row">
+                      <dt className="field-label">{row.label}</dt>
+                      <dd className="field-value text-sm">{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             </Reveal>
           </div>
 

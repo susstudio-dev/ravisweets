@@ -55,7 +55,9 @@ interface ProductFiltersProps {
   products: Product[];
   state: FilterState;
   onChange: (next: FilterState) => void;
-  /** Rendered inside the panel on mobile, beside the results on desktop. */
+  /** Renders the sort control at the TOP of the panel (owner, 2026-08-24:
+   *  sorting belongs in the left panel with the filters, in reach). /shop
+   *  desktop keeps its own sort beside the results and omits this. */
   showSort?: boolean;
   /** The sheet supplies its own dialog title, so the panel's would duplicate it. */
   hideHeading?: boolean;
@@ -148,6 +150,19 @@ export function ProductFilters({
             </button>
           )}
         </div>
+      )}
+
+      {/* Sort leads the panel: ordering is the first decision on a shelf,
+          and at the bottom it sat under the rail's internal scroll fold. */}
+      {showSort && (
+        <fieldset className="border-b border-[color:var(--color-border)] pb-5">
+          <legend className="field-label mb-2">Sort by</legend>
+          <SortSelect
+            value={state.sort}
+            onChange={(sort) => onChange({ ...state, sort })}
+            className="w-full"
+          />
+        </fieldset>
       )}
 
       {FILTER_GROUPS.map((group) => {
@@ -245,8 +260,9 @@ export function ProductFilters({
           not offered. It stays while checked so it can always be undone. */}
       {(stock.matching < stock.total || state.inStock) && (
         /* Not a disclosure: it is one checkbox, and hiding one control behind
-           another control costs more than it saves. */
-        <fieldset className="border-b border-[color:var(--color-border)] py-4">
+           another control costs more than it saves. Last in the panel since
+           sort moved to the top, so no bottom rule of its own. */
+        <fieldset className="py-4">
           <legend className="field-label mb-2">Availability</legend>
           <label className="text-theme-ink/85 flex min-h-[36px] items-center gap-2 text-sm">
             <input
@@ -261,16 +277,6 @@ export function ProductFilters({
         </fieldset>
       )}
 
-      {showSort && (
-        <fieldset className="pt-4">
-          <legend className="field-label mb-2">Sort by</legend>
-          <SortSelect
-            value={state.sort}
-            onChange={(sort) => onChange({ ...state, sort })}
-            className="w-full"
-          />
-        </fieldset>
-      )}
     </div>
   );
 }

@@ -56,10 +56,10 @@ const config: Config = {
       },
       fontSize: {
         /*
-         * Fluid scale via clamp(). Poppins is a geometric with round, open
-         * counters — it wants gentler tracking and a touch more leading than
-         * the retired condensed grotesque, or descenders clip and headlines
-         * knit together.
+         * Fluid scale via clamp(). Bricolage Grotesque (display, 2026-08-24)
+         * has generous curves and open counters — it wants gentler tracking
+         * and a touch more leading than a condensed grotesque, or descenders
+         * clip and headlines knit together. The scale set for Poppins holds.
          */
         'display-xl': [
           'clamp(2.75rem, 2rem + 3.4vw, 5rem)',

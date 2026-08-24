@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Anek_Telugu, Courier_Prime, Poppins } from 'next/font/google';
+import { Anek_Telugu, Bricolage_Grotesque, Courier_Prime, Figtree } from 'next/font/google';
 import { SiteChrome } from '@/components/site-chrome';
 import { LayoutGroup } from '@/components/motion/layout-group';
 import { CartProvider } from '@/lib/cart/cart-context';
@@ -13,23 +13,35 @@ import { getVisualVersion } from '@/lib/flags/visual-v2';
 import './globals.css';
 
 /*
- * POPPINS carries the whole interface — display and body both.
+ * BRICOLAGE GROTESQUE sets the display lines; FIGTREE sets the body.
  *
- * Owner decision 2026-08-10 (krish): after studying Food on Farm (Poppins)
- * and Sweet Karam Coffee (Jost), the interface moves to a friendly geometric
- * sans. Archivo's condensed-grotesque register read as office kit; a
- * customer buying sweets should meet the same warmth the counter has.
- * Hierarchy now comes from size and weight (400/500/600/700) — Poppins has
- * no width axis, and the wdth-based hierarchy retired with it.
+ * Owner decision 2026-08-24 (krish): Poppins — the 2026-08-10 pivot's single
+ * face — read as "too boxy". Poppins is a monoline geometric: perfect
+ * circles, uniform strokes, wide flat caps, and at 600/700 in a headline
+ * that uniformity IS the boxiness. The fix is a humanist skeleton, not a
+ * serif: Bricolage's varied proportions, tight apertures and ink traps give
+ * headlines curve and character, and Figtree's soft terminals keep body and
+ * UI text friendly at small sizes.
  *
- * A display serif is still refused: warm serif over cream is the arrangement
- * every Indian sweets brand ships. The geometric sans keeps us modern-warm
- * rather than heritage-nostalgic.
+ * A display serif is STILL refused (decision of 2026-08-10 stands): warm
+ * serif over cream is the arrangement every Indian sweets brand ships. Two
+ * sans voices keep us modern-warm rather than heritage-nostalgic.
+ *
+ * `opsz` is requested on Bricolage so display sizes draw the display optical
+ * cut rather than a scaled text cut.
  */
-const poppins = Poppins({
+const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: 'variable',
+  axes: ['opsz'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const figtree = Figtree({
+  subsets: ['latin'],
+  weight: 'variable',
+  variable: '--font-body',
   display: 'swap',
 });
 
@@ -97,9 +109,10 @@ const DIRECTION_CONTRACT = `<!--
   2026-08-10 over reference-site orange), gummed manila label #EBC77E, ember
   #E2571F for live state only, kumkum red #CC0000 as celebration/
   certification ink - never interactive, never a flood. Burnt jaggery
-  #2B2620 is the dark register. Poppins 400-700 carries display and body;
-  Courier Prime is what was typed into the form. Sweet-box paper: radii
-  6-24px, pill CTAs, elevation is contact not float.
+  #2B2620 is the dark register. Bricolage Grotesque carries the display
+  lines, Figtree the body (owner 2026-08-24: Poppins read too boxy); Courier
+  Prime is what was typed into the form. Sweet-box paper: radii 6-24px, pill
+  CTAs, elevation is contact not float.
 
   STORY: The visitor lands on a warm counter: the festival card stamped for
   dispatch, a rail of categories one tap away, today's bestsellers, the
@@ -107,10 +120,12 @@ const DIRECTION_CONTRACT = `<!--
   see, little to read.
 
   FIRST VIEWPORT (the Festival Batch, unchanged in structure): headline
-  word-groups rise, the calendar-resolved festival line in kumkum, body, both
-  CTAs in the fold, the ruled proof row; right side the manila festival card
-  with tape corners, bobbing product cutouts and the red dispatch seal. One
-  authored motion sequence, then stillness; no carousels, no tickers.
+  word-groups rise, body, both CTAs in the fold, the calendar-resolved
+  deadline line in kumkum closing the column (the proof claims live in the
+  TrustStrip section, not the hero — owner declutter, 2026-08-24); right side
+  the manila festival card with tape corners, bobbing product cutouts and the
+  red dispatch seal. One authored motion sequence, then stillness; no
+  carousels, no tickers.
 
   FORM: The kitchen batch card re-expressed at the owner's direction as the
   Sweet Counter: the record frames, the warmth fills. Product photography is
@@ -228,7 +243,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme={getVisualVersion()}
-      className={`${poppins.variable} ${courierPrime.variable} ${anekTelugu.variable}`}
+      className={`${bricolage.variable} ${figtree.variable} ${courierPrime.variable} ${anekTelugu.variable}`}
       suppressHydrationWarning
     >
       <body

@@ -81,8 +81,8 @@
     /* The ruled line on a form — heavier than a border, always horizontal. */
     --color-rule: color-mix(in oklab, var(--theme-ink) 26%, transparent);
 
-    --font-display: 'Poppins', system-ui, sans-serif;
-    --font-body: 'Poppins', system-ui, sans-serif;
+    --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --font-body: 'Figtree', system-ui, sans-serif;
     --font-mono: 'Courier Prime', ui-monospace, monospace;
     --font-indic: 'Anek Telugu', var(--font-body);
   }
@@ -150,16 +150,16 @@
   }
 
   /*
-   * Display lines are set in Poppins — a friendly geometric, weight-led.
-   * (Archivo's wdth axis is retired with the cool-paper world; Poppins has
-   * no width axis, so hierarchy comes from size and weight.)
+   * Display lines are set in Bricolage Grotesque — a humanist grotesque with
+   * curve and character where the retired Poppins had rigid geometry (owner,
+   * 2026-08-24: "too boxy"). Weight-led hierarchy stays.
    */
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
-    /* Poppins carries hierarchy on weight; utilities still override per-site. */
+    /* Hierarchy rides on weight; utilities still override per-site. */
     font-weight: 600;
   }
   .font-display {
@@ -329,7 +329,8 @@
    * THE STAMP. The primary action. Softened to a pill on the owner's warm
    * pivot (2026-08-10) — the reference stores both run pill CTAs, and on the
    * cream counter a pill reads as a boiled sweet rather than office kit.
-   * Still a flat fill, never a gradient.
+   * Still a flat fill, never a gradient — with ONE sanctioned exception,
+   * .stamp--feature below.
    */
   .stamp {
     display: inline-flex;
@@ -364,6 +365,27 @@
   }
   .stamp--ghost:active {
     transform: translateY(1px);
+  }
+
+  /*
+   * THE FEATURE STAMP. The one gradient the flat-fill rule permits (owner,
+   * 2026-08-24: "build your hamper should be highlighted with a gradient —
+   * it is a key feature"). Reserved for the hamper builder entry point and
+   * nothing else — a second use demotes the first. Fixed stamp-blue ink on
+   * purpose: it must read identically on cream and on the carbon register,
+   * so it does not ride the theme tokens.
+   */
+  .stamp--feature {
+    background-color: #2046c8; /* flat fallback if gradients are unavailable */
+    background-image: linear-gradient(135deg, #2f5be8 0%, #2046c8 55%, #16328f 100%);
+    color: #fffdf5;
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--theme-ink) 22%, transparent),
+      0 0 0 1px color-mix(in oklab, #16328f 35%, transparent);
+  }
+  .stamp--feature:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 0 1px color-mix(in oklab, #16328f 35%, transparent);
   }
 
   /*

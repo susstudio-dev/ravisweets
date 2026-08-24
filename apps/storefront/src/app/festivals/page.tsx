@@ -148,29 +148,21 @@ export default function FestivalsIndexPage() {
 
   return (
     <>
-      {/* Hero — no kicker, no paisley: the heading carries itself. */}
-      <section className="container-site section-y">
-        <Reveal>
-          <h1 className="font-display text-display-lg md:text-display-xl text-theme-ink max-w-4xl">
-            A year of festivals, one kitchen.
-          </h1>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p className="text-theme-ink/75 mt-6 max-w-2xl text-lg leading-relaxed">
-            From the Pongal clay pot in January to the Christmas Eve tin in December — every
-            edition is curated, slow-cooked, and dispatched the morning it ships.
-          </p>
-        </Reveal>
-      </section>
-
-      {/* Upcoming */}
+      {/*
+        No hero. The "A year of festivals, one kitchen" intro went on the
+        owner's word (2026-08-24): the page opens on the upcoming editions
+        themselves, so its heading is promoted to the h1. If the calendar
+        ever runs dry of upcoming entries at build time the page would open
+        on "Recent editions" with no h1 — the calendar carries explicit
+        dates through 2027, so extend it before that becomes real.
+      */}
       {upcoming.length > 0 && (
-        <section aria-labelledby="upcoming-heading" className="container-site section-y-tight">
+        <section aria-labelledby="upcoming-heading" className="container-site section-y">
           <Reveal>
             <div className="docket-head">
-              <h2 id="upcoming-heading" className="font-display text-display-md">
+              <h1 id="upcoming-heading" className="font-display text-display-lg">
                 Upcoming editions
-              </h2>
+              </h1>
               <p className="text-text-muted text-[13px]">
                 Reserve early — priority list opens 6 weeks ahead
               </p>

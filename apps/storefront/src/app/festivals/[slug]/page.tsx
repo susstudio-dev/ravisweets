@@ -610,7 +610,7 @@ export default async function FestivalPage({ params }: { params: Promise<{ slug:
 
         <Stagger gap={80} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {curated.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} quickAdd />
           ))}
         </Stagger>
       </section>

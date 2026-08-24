@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { PRODUCT_PALETTES } from '@/lib/theme/tokens';
 import { Reveal } from '@/components/motion/reveal';
+import { CategoryGlyph, type GlyphName } from '@/components/category/category-switcher';
 
 /**
  * THE CATEGORY RAIL — every aisle of the shop, one tap from the hero.
@@ -16,17 +17,11 @@ import { Reveal } from '@/components/motion/reveal';
  * cards use — with a drawn line glyph standing in until category photography
  * exists. When photos land, swap the <CategoryGlyph> for an <Image> inside
  * the same circle; the rail's grammar does not change.
+ *
+ * The glyph set moved to components/category/category-switcher (2026-08-24)
+ * when the category pages grew their own switcher bar — one icon set, two
+ * surfaces. This rail keeps its own curated tile list.
  */
-
-type GlyphName =
-  | 'diamond'
-  | 'laddoo'
-  | 'strands'
-  | 'coil'
-  | 'jar'
-  | 'nut'
-  | 'duo'
-  | 'gift';
 
 interface RailCategory {
   label: string;
@@ -40,8 +35,9 @@ interface RailCategory {
  * it out of the navigation. Sweet bites takes the slot and the freed diamond
  * glyph: at twelve products it is the largest category that was missing from
  * the rail entirely, where Hyderabadi specials had five. The rail stays EIGHT
- * tiles — the glyph set below is written for eight and the row is measured for
- * it. The retired category still exists and is still reachable from /shop.
+ * tiles — the row is measured for it; the shared glyph set (in
+ * category-switcher) covers all twelve for the category pages' bar. The
+ * retired category still exists and is still reachable from /shop.
  */
 const CATEGORIES: RailCategory[] = [
   { label: 'Sweet bites', href: '/category/sweet-bites', glyph: 'diamond', palette: 'gulkand' },
@@ -53,68 +49,6 @@ const CATEGORIES: RailCategory[] = [
   { label: 'Combos', href: '/category/combos', glyph: 'duo', palette: 'house' },
   { label: 'Gift hampers', href: '/category/gift-hampers', glyph: 'gift', palette: 'hamper' },
 ];
-
-/** One consistent 2.25px stroke across all eight glyphs — an icon set, not clip art. */
-function CategoryGlyph({ name, color }: { name: GlyphName; color: string }) {
-  const s = { stroke: color, strokeWidth: 2.25, fill: 'none', strokeLinecap: 'round' } as const;
-  return (
-    <svg viewBox="0 0 48 48" className="h-9 w-9 md:h-11 md:w-11" aria-hidden="true">
-      {name === 'diamond' && (
-        <>
-          <rect x="14" y="14" width="20" height="20" transform="rotate(45 24 24)" strokeLinejoin="round" {...s} />
-          <rect x="20" y="20" width="8" height="8" transform="rotate(45 24 24)" fill={color} opacity="0.3" />
-        </>
-      )}
-      {name === 'laddoo' && (
-        <>
-          <circle cx="24" cy="24" r="13" {...s} />
-          <circle cx="19" cy="21" r="1.6" fill={color} />
-          <circle cx="27" cy="19" r="1.6" fill={color} />
-          <circle cx="24" cy="28" r="1.6" fill={color} />
-          <circle cx="30" cy="26" r="1.6" fill={color} />
-        </>
-      )}
-      {name === 'strands' && (
-        <>
-          <path d="M10 18 C 16 14, 22 22, 28 18 S 38 14, 38 18" {...s} />
-          <path d="M10 25 C 16 21, 22 29, 28 25 S 38 21, 38 25" {...s} />
-          <path d="M10 32 C 16 28, 22 36, 28 32 S 38 28, 38 32" {...s} />
-        </>
-      )}
-      {name === 'coil' && (
-        <path
-          d="M24 24 a3 3 0 0 1 6 0 a6 6 0 0 1 -12 0 a9 9 0 0 1 18 0 a12 12 0 0 1 -24 0 a15 15 0 0 1 30 0"
-          {...s}
-        />
-      )}
-      {name === 'jar' && (
-        <>
-          <path d="M17 14 h14 M16 18 h16 v16 a4 4 0 0 1 -4 4 h-8 a4 4 0 0 1 -4 -4 z" strokeLinejoin="round" {...s} />
-          <path d="M20 26 c 1.5 -2, 3 2, 4.5 0 s 3 2, 3.5 0" {...s} />
-        </>
-      )}
-      {name === 'nut' && (
-        <>
-          <path d="M24 12 C 31 16, 33 26, 28 33 C 25 37, 21 37, 19 33 C 14 26, 17 16, 24 12 Z" strokeLinejoin="round" {...s} />
-          <path d="M24 17 C 26 21, 26 28, 24 32" {...s} />
-        </>
-      )}
-      {name === 'duo' && (
-        <>
-          <rect x="11" y="19" width="17" height="17" rx="3" {...s} />
-          <rect x="22" y="12" width="15" height="15" rx="3" {...s} fill="var(--color-surface-elevated)" />
-        </>
-      )}
-      {name === 'gift' && (
-        <>
-          <rect x="12" y="20" width="24" height="17" rx="2" {...s} />
-          <path d="M12 26 h24 M24 20 v17" {...s} />
-          <path d="M24 20 c -6 0, -8 -7, -3 -7 c 3 0, 3 4, 3 7 c 0 -3, 0 -7, 3 -7 c 5 0, 3 7, -3 7" strokeLinejoin="round" {...s} />
-        </>
-      )}
-    </svg>
-  );
-}
 
 export function CategoryRail() {
   return (

@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { CATALOGUE, type CategorySlug } from '@ravisweets/shared';
 import { Reveal } from '@/components/motion/reveal';
 import { CategoryBrowser } from '@/components/category/category-browser';
 import { CategoryFilters } from '@/components/category/category-filters';
+import { CategorySwitcher } from '@/components/category/category-switcher';
 import { seoDescription, seoTitle } from '@/lib/seo/metadata';
 
 interface PageProps {
@@ -222,61 +222,53 @@ export default async function CategoryPage({ params }: PageProps) {
   return (
     <>
       {/*
-        THE TITLE RAIL. The head used to run full-width — back link, a
-        display-lg title, the intro — and spent the whole first viewport
-        before a single product appeared (owner screenshot, 2026-08-11).
-        Everything that introduced the range now stands in a sticky left
-        rail beside the grid, so the products start directly below the
-        masthead. The h1 and intro stay OUTSIDE the Suspense boundary:
-        they are server-rendered and must remain in the static HTML — the
-        grid behind useSearchParams contributes nothing to the export.
+        THE SWITCHER, THEN THE COUNTER (owner, 2026-08-24). Two rounds of the
+        same feedback shaped this head. 2026-08-11 moved the title into a
+        sticky left rail so products started below the masthead; 2026-08-24
+        finished the thought: the aisles themselves become the header (a
+        switcher bar over everything, active tile marked), the left rail
+        carries ONLY the refine panel, and the title stands directly over the
+        grid's SHOWING strip — "gift hampers near the showing 5 of 5". The
+        h1 and switcher stay OUTSIDE the Suspense boundary: they are
+        server-rendered and must remain in the static HTML — the grid behind
+        useSearchParams contributes nothing to the export.
       */}
-      <section
-        aria-labelledby="cat-heading"
-        className="container-site grid gap-8 pb-20 pt-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10"
-      >
-        {/*
-          Sticky AND scrollable — see the long note on the same aside in
-          shop-view. This rail is the worse of the two: it carries the back
-          link, the h1, the count and the intro above the panel, so roughly
-          200px of it is spent before a filter appears.
-        */}
-        <aside className="rail-scroll lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1">
-          <Link
-            href="/"
-            className="text-theme-ink hover:text-theme-accent inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium transition-colors"
+      <section aria-labelledby="cat-heading" className="container-site pb-20 pt-6">
+        <CategorySwitcher active={slug as CategorySlug} />
+
+        <div className="mt-6 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
+          {/*
+            Sticky AND scrollable — see the long note on the same aside in
+            shop-view. Since 2026-08-24 the rail is the refine panel and
+            nothing else, so every pixel of it is a filter. aria-label
+            because the h1 it used to be labelled by now heads the grid
+            column instead. The category's UNFILTERED set goes in — the
+            panel measures every chip's count against it, so it must not
+            receive the filtered list.
+          */}
+          <aside
+            aria-label="Refine products"
+            className="rail-scroll lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Back to home
-          </Link>
-
-          <Reveal>
-            <h1
-              id="cat-heading"
-              className="font-display text-display-md text-theme-ink mt-3"
-            >
-              {meta.title}
-            </h1>
-            <p className="field-value text-theme-ink mt-2 text-sm">
-              {products.length} {products.length === 1 ? 'PRODUCT' : 'PRODUCTS'}
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="text-text-muted mt-4 text-sm leading-relaxed">{meta.body}</p>
-          </Reveal>
-
-          {/* The category's UNFILTERED set — the panel measures every chip's
-              count against it, so it must not receive the filtered list. */}
-          <div className="mt-6">
             <Suspense fallback={null}>
               <CategoryFilters products={products} />
             </Suspense>
-          </div>
-        </aside>
+          </aside>
 
-        <Suspense fallback={<div />}>
-          <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />
-        </Suspense>
+          <div>
+            <Reveal>
+              <p className="field-label">{meta.eyebrow}</p>
+              <h1 id="cat-heading" className="font-display text-display-md text-theme-ink mt-1">
+                {meta.title}
+              </h1>
+            </Reveal>
+            <div className="mt-4">
+              <Suspense fallback={<div />}>
+                <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />
+              </Suspense>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/*
@@ -336,7 +328,12 @@ export default async function CategoryPage({ params }: PageProps) {
             Inside the {meta.title} range
           </h2>
         </Reveal>
-        <Reveal delay={0.06}>
+        <Reveal delay={0.04}>
+          {/* The range intro — it fronted the left rail until 2026-08-24,
+              when the rail went filters-only; the copy leads the prose now. */}
+          <p className="text-theme-ink mt-3 max-w-3xl font-medium leading-relaxed">{meta.body}</p>
+        </Reveal>
+        <Reveal delay={0.08}>
           <p className="text-theme-ink/80 mt-3 max-w-3xl leading-relaxed">{meta.method}</p>
         </Reveal>
 

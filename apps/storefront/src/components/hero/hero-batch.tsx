@@ -22,8 +22,8 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * THE HALF HERO — the first viewport, product-first.
  *
  * The system frames, the product fills. The left column carries the voice
- * (eyebrow, headline, body, actions, the festival deadline chip, a compact
- * proof strip); the right column is TODAY'S No.1 PLATE — the top-ranked sweet
+ * (eyebrow, headline, one-line body, actions, the festival deadline line);
+ * the right column is TODAY'S No.1 PLATE — the top-ranked sweet
  * cut out of its photograph and set on a soft glow, plated on the cream rather
  * than boxed in a photo, with its own one-tap add. A visitor can order the
  * day's best sweet without scrolling at all, and the trending shelf's first
@@ -37,12 +37,14 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * "<festival> hampers" action, and the whole right column now does one job —
  * sell the No.1 sweet — instead of three.
  *
- * SECOND DECLUTTER PASS (owner, 2026-08-24: "the header and the left side
- * area looks really cluttered"). The column now frames exactly two objects —
- * the pill CTAs. The deadline lost its box and became a red ruled-in line;
- * the proof strip lost its display numerals and became one quiet label row.
- * Everything the column claimed, it still claims, in half the visual weight.
- * The same pass added the out-of-focus counter backdrop (see below) and fixed
+ * SECOND DECLUTTER PASS (owner, 2026-08-24, in two rounds). Morning: the
+ * deadline lost its box and became a red ruled-in line, the proof strip
+ * collapsed to one quiet label row. Afternoon ("looking very cluttery —
+ * make it more cleaner"): the proof row left the hero for the TrustStrip
+ * section which already states the same claims, and the body shrank to one
+ * sentence. The column now frames exactly two objects — the pill CTAs — and
+ * ends on the deadline line.
+ * The morning pass added the out-of-focus counter backdrop (see below) and fixed
  * the No.1 cutout itself: the kaju katli master was shot on red cloth and the
  * cutout carried the red bounce — scripts/photography/despill.py is the
  * documented pixel fix, applied 2026-08-24.
@@ -164,7 +166,10 @@ export function HeroBatch() {
   const heroBody =
     db?.body ??
     preset?.body ??
-    `Kaju Katli, Gulab Jamun, Motichoor Ladoo — sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED}. Order from anywhere; delivered fresh to any address in India.`;
+    // One sentence since 2026-08-24 (owner: the left side still read as
+    // cluttered). The product names went — the No.1 plate beside this copy
+    // already SHOWS the signature sweet, which beats listing three.
+    `Sweets, namkeens and gift hampers made fresh every morning since ${FOUNDED} — delivered fresh to any address in India.`;
   const primaryCtaLabel = db?.primaryCtaLabel ?? preset?.ctaLabel ?? "Shop today's sweets";
   /*
    * Resolved from the SAME admitted source as the label above. Read
@@ -191,14 +196,14 @@ export function HeroBatch() {
     );
 
   /*
-   * THE PROOF LINE. This was a three-cell grid of display-size numerals
-   * (1983 / NIL / Same-day) — a second set of big type competing with the
-   * headline, and the sixth stacked block in the column. Owner, 2026-08-24:
-   * the left side reads as cluttered. The claims survive; the theatre does
-   * not: one quiet ruled line, in the label voice. "Est 1983" is dropped from
-   * it because the eyebrow two lines up already states it.
+   * THE PROOF LINE IS GONE FROM THE HERO. It shrank twice on the same day:
+   * the morning pass (2026-08-24) collapsed a three-cell grid of display
+   * numerals into one ruled row; the owner's second look said the column
+   * still read as cluttered, and the row was the remaining framed object.
+   * The claims themselves lose nothing — the TrustStrip section carries all
+   * of them two beats below the hero. The column now ends on the deadline
+   * line, the one thing here a shopper can act on today.
    */
-  const proof = ['Nil preservatives', 'Same-day dispatch', 'Pan-India delivery'];
 
   /*
    * TODAY'S No.1 — the same signature ranking the trending shelf uses, so the
@@ -258,7 +263,7 @@ export function HeroBatch() {
 
           {/*
             Half-hero cap: the lg ceiling is lowered to 3.4rem (from 4rem) so
-            the headline + body + actions + proof clear a 768px viewport with
+            the headline + body + actions + deadline clear a 768px viewport with
             the shelf's first cards visible beneath. The no-orphan sentence
             blocks above still hold at this size.
           */}
@@ -284,7 +289,7 @@ export function HeroBatch() {
             {heroBody}
           </p>
 
-          {/* CTAs before the proof — the actions must sit above the fold. */}
+          {/* CTAs before the deadline — the actions must sit above the fold. */}
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
             <Link href={primaryCtaHref} className="stamp">
               {primaryCtaLabel}
@@ -315,21 +320,6 @@ export function HeroBatch() {
             </span>
           </p>
 
-          {/* The proof line — the same claims, one quiet ruled row. Still a
-              real list: the ul's numerals went, not its semantics — a screen
-              reader gets three bounded items, not one unpunctuated run-on. */}
-          <ul className="fb-tick field-label mt-5 flex max-w-[27rem] list-none flex-wrap items-center border-y border-[color:var(--color-rule)] py-2.5">
-            {proof.map((item, i) => (
-              <li key={item} className="flex items-center">
-                {i > 0 && (
-                  <span aria-hidden="true" className="mx-2 opacity-40">
-                    ·
-                  </span>
-                )}
-                {item}
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* ── TODAY'S No.1 PLATE ───────────────────────────────────────── */}

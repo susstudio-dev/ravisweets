@@ -311,7 +311,7 @@ export default async function ProductPage({ params }: PageProps) {
           </Reveal>
           <ProductGrid>
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} quickAdd />
             ))}
           </ProductGrid>
         </section>
