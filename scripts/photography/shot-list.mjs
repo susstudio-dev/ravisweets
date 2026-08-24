@@ -44,7 +44,11 @@ export const MATCHED = [
   { file: 'Oreo crunchy bar.jpg', slug: 'oreo-bites', role: 'primary' },
   { file: 'Palli pakodi.jpg', slug: 'palli-pakodi', role: 'primary' },
   { file: 'Pineapple fusion_.jpg', slug: 'pineapple-bites', role: 'primary' },
-  { file: 'Ragi murukulu_.jpg', slug: 'murukulu', role: 'primary' },
+  // Superseded 2026-08-23: the namkeen drop brought a plain Murukulu shot and a
+  // Ragi Murukulu product of its own. Kept so the folder guard still demands
+  // the file, but `supersededBy` makes process.mjs skip it — re-running this
+  // drop must not put the ragi photograph back under murukulu.webp.
+  { file: 'Ragi murukulu_.jpg', slug: 'murukulu', role: 'primary', supersededBy: 'namkeen' },
   { file: 'Rakshabandhan hampers.jpg', slug: 'raksha-bandhan-thali', role: 'primary' },
   { file: 'Silky bar.jpg', slug: 'silky-bites', role: 'primary' },
   { file: 'Tutti frutti bites.jpg', slug: 'tutti-frutti-bites', role: 'primary' },
@@ -137,14 +141,12 @@ export const NEW = [
  * line for a real shot as it arrives and the stand-in disappears.
  */
 export const BORROWED = [
-  // savouries
+  // savouries (janthikalu, pappu-chekodi and onion-ribbon-pakodi left this list
+  // on 2026-08-23 — the namkeen drop photographed all three)
   { slug: 'chekkalu', borrows: 'chegodilu' },
   { slug: 'pappu-chekkalu', borrows: 'chegodilu' },
-  { slug: 'pappu-chekodi', borrows: 'chegodilu' },
-  { slug: 'janthikalu', borrows: 'murukulu' },
   { slug: 'kara-boondhi', borrows: 'navaratna-mixture' },
   { slug: 'masala-palli', borrows: 'palli-pakodi' },
-  { slug: 'onion-ribbon-pakodi', borrows: 'masala-pakodi' },
   { slug: 'dal-mudi-snacks', borrows: 'atukula-mixture' },
   // namkeens
   { slug: 'special-mixture', borrows: 'navaratna-mixture' },
@@ -203,8 +205,69 @@ export const STILL_UNSHOT = [
   'double-ka-meetha', 'sheer-khurma', 'cardamom-soan-papdi',
 ];
 
-/** Every photograph in the drop, matched or new. */
-export const ALL_SHOTS = [...MATCHED, ...NEW];
+/**
+ * THE NAMKEEN DROP — 2026-08-23.
+ *
+ * A second folder from the owner (`Downloads/dry`), eleven namkeens with a
+ * product spec for each (title, copy, 250 g price, 20/30-day shelf life). Four
+ * light up products the catalogue already carried on a stand-in; seven are new.
+ * Processed on its own — `process.mjs "<folder>" --drop namkeen` — because the
+ * folder guards are per-folder. Output names follow the same `<slug>.webp`
+ * rule, and a slug re-shot here marks its first-drop entry `supersededBy`.
+ */
+export const NAMKEEN_DROP = [
+  // ── already in the catalogue (were borrowing, or had the ragi shot) ──
+  { file: 'Murukulu.jpeg', slug: 'murukulu', role: 'primary' },
+  { file: 'Janthikalu.jpeg', slug: 'janthikalu', role: 'primary' },
+  { file: 'Pappu chekodi.jpeg', slug: 'pappu-chekodi', role: 'primary' },
+  { file: 'Onion ribbon pakodi.jpeg', slug: 'onion-ribbon-pakodi', role: 'primary' },
+  // ── new products (see namkeensGroup in products.ts) ──
+  { file: 'Karvepaku poosa.jpeg', slug: 'karvepaku-poosa', role: 'primary' },
+  { file: 'Ragi murukulu.jpeg', slug: 'ragi-murukulu', role: 'primary' },
+  { file: 'Munaga aku chekkalu.jpeg', slug: 'munaga-aku-chekkalu', role: 'primary' },
+  { file: 'Thotakura chekkalu.jpeg', slug: 'thotakura-chekkalu', role: 'primary' },
+  { file: 'Small chekodi.jpeg', slug: 'small-chekodi', role: 'primary' },
+  { file: 'Jawar poosa.jpeg', slug: 'jawar-poosa', role: 'primary' },
+  { file: 'Tomato ribbon pakodi.jpeg', slug: 'tomato-ribbon-pakodi', role: 'primary' },
+];
+
+/**
+ * Photographs in the namkeen drop that were NOT given a product spec, so they
+ * are deliberately left unencoded rather than shipped as a product nobody has
+ * priced or described. Listed so the folder guard stays strict (a misspelt
+ * filename is still fatal) and so the next spec sheet knows what is waiting.
+ *
+ *   Beetroot poosa.jpeg         new product — needs a spec
+ *   Karivepaku chekkalu.jpeg    new product — needs a spec (distinct from the poosa)
+ *   almods.jpeg / cashew.jpeg / pista.jpeg / pista2.jpeg
+ *                               loose nuts — the STILL_UNSHOT dry-fruit SKUs
+ *                               (badam-almonds, kaju-cashew, pista-whole …)
+ *                               could take these once the owner confirms which
+ *   rasp.jpeg                   unidentified — ask the owner what it is
+ */
+export const NAMKEEN_DROP_UNMATCHED = [
+  'Beetroot poosa.jpeg',
+  'Karivepaku chekkalu.jpeg',
+  'almods.jpeg',
+  'cashew.jpeg',
+  'pista.jpeg',
+  'pista2.jpeg',
+  'rasp.jpeg',
+];
+
+/**
+ * Every drop the processor knows, by the name passed to `--drop`. `shots` is
+ * what gets encoded; `unmatched` is what is allowed to sit in the folder
+ * without an entry. The first drop's folder was exhaustively matched, so its
+ * unmatched list is empty — any stray file there is still an error.
+ */
+export const DROPS = {
+  khammam: { shots: [...MATCHED, ...NEW], unmatched: [] },
+  namkeen: { shots: NAMKEEN_DROP, unmatched: NAMKEEN_DROP_UNMATCHED },
+};
+
+/** Every photograph in the first drop, matched or new. */
+export const ALL_SHOTS = DROPS.khammam.shots;
 
 /** slug -> public path. Borrowed slugs resolve to the lender's file. */
 export function publicPath(slug) {

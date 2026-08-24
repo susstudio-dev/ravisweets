@@ -69,7 +69,7 @@ const CATEGORY_META: Record<
     method:
       'Namkeen is a frying problem before it is a spice problem. Ours goes into the oil in loads small enough that the temperature never falls far enough to make the mixture greasy, drained hot, and sealed the same day it is made — an open bag of mixture is stale within hours in Telangana humidity, and no amount of masala hides it. The spicing is done after the fry, off the heat, so the chilli stays bright rather than scorched.',
     keeping:
-      'Keep the bag closed and the mixture stays crisp for four to six weeks. Once opened, decant into an airtight tin — the pack is a delivery container, not a storage one. If a bag has gone soft in the monsoon, five minutes in a low oven brings it back.',
+      'Keep the bag closed and a mixture stays crisp for four to six weeks; the hand-pressed namkeens — murukulu, janthikalu, chekkalu — keep three to four, and each product page states its own. Once opened, decant into an airtight tin — the pack is a delivery container, not a storage one. If a bag has gone soft in the monsoon, five minutes in a low oven brings it back.',
   },
   'dry-fruits': {
     title: 'Dry Fruits',
@@ -113,11 +113,11 @@ const CATEGORY_META: Record<
   },
   savouries: {
     title: 'Savouries',
-    titleHook: 'Andhra Chegodilu & Janthikalu',
+    titleHook: 'Andhra Chegodilu & Karapusa',
     eyebrow: 'Andhra-style chai-time',
-    body: 'Chegodilu, Janthikalu, Karapusa, Murukulu — Andhra savoury classics fried in cold-pressed oil, sealed the same day.',
+    body: 'Chegodilu, Chekkalu, Karapusa, Kachuralu — Andhra savoury classics fried in cold-pressed oil, sealed the same day.',
     method:
-      'The Andhra savouries are shaped by hand, one at a time. Chegodilu are rolled and tied into rings; janthikalu are pressed through a brass mould that has been in the kitchen longer than most of the staff. They are fried in cold-pressed oil at a temperature that sets the shape before the inside cooks, which is what makes them snap instead of bend. None of it is machine-extruded.',
+      'The Andhra savouries are shaped by hand, one at a time. Chegodilu are rolled and tied into rings; kachuralu are twisted by hand; karapusa is pressed through a brass mould that has been in the kitchen longer than most of the staff. They are fried in cold-pressed oil at a temperature that sets the shape before the inside cooks, which is what makes them snap instead of bend. None of it is machine-extruded.',
     keeping:
       'Sealed, these hold their snap for about a month. They are more sensitive to humidity than to time — a tin on the counter in July will go soft faster than a sealed bag in the cupboard in January. Store airtight, and refresh in a low oven if they lose their edge.',
   },

@@ -2,7 +2,12 @@
 // Crop, resize and encode the owner's photography drop into
 // apps/storefront/public/products/.
 //
-//   node scripts/photography/process.mjs "<path to the drop folder>"
+//   node scripts/photography/process.mjs "<path to the drop folder>" [--drop <name>]
+//
+// `--drop` names which shot list the folder is checked against (see DROPS in
+// shot-list.mjs); it defaults to the first, 2026-08-13 Khammam drop. Later
+// drops are processed on their own and MERGED into manifest.json — the record
+// of the first drop is not rewritten by the second.
 //
 // WHY THE OUTPUT IS COMMITTED. The storefront is a static export served by
 // Cloudflare Pages (`output: 'export'`, `images.unoptimized`). There is no
@@ -25,7 +30,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
-import { ALL_SHOTS, BORROWED, STILL_UNSHOT } from './shot-list.mjs';
+import { BORROWED, DROPS, STILL_UNSHOT } from './shot-list.mjs';
 import { buildVariants } from './variants.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -51,12 +56,21 @@ if (!sharp) {
 
 const say = (m) => console.log(`[photography] ${m}`);
 
-const SRC = process.argv[2];
+const argv = process.argv.slice(2);
+const dropFlag = argv.indexOf('--drop');
+const DROP_NAME = dropFlag >= 0 ? argv[dropFlag + 1] : 'khammam';
+const SRC = argv.find((a, i) => !a.startsWith('--') && (dropFlag < 0 || i !== dropFlag + 1));
 if (!SRC || !existsSync(SRC)) {
   console.error(`[photography] Source folder not found: ${SRC ?? '(none given)'}`);
-  console.error('  usage: node scripts/photography/process.mjs "<drop folder>"');
+  console.error('  usage: node scripts/photography/process.mjs "<drop folder>" [--drop <name>]');
   process.exit(1);
 }
+const DROP = DROPS[DROP_NAME];
+if (!DROP) {
+  console.error(`[photography] Unknown drop "${DROP_NAME}" — known: ${Object.keys(DROPS).join(', ')}`);
+  process.exit(1);
+}
+const SHOTS = DROP.shots;
 
 // ─── the encode ──────────────────────────────────────────────────────────────
 // 1400px square matches the width/height the catalogue already declares, so
@@ -92,9 +106,14 @@ async function main() {
   // ── guard: the shot list and the folder must agree ─────────────────────
   // A typo in a filename would otherwise silently produce a product with no
   // photograph, which is exactly the failure this whole change is fixing.
-  const listed = new Set(ALL_SHOTS.map((s) => s.file));
+  // A drop may declare files it deliberately leaves unencoded (a photograph
+  // with no product spec yet); those may sit in the folder, but anything else
+  // unlisted is still fatal.
+  const listed = new Set(SHOTS.map((s) => s.file));
+  const allowed = new Set(DROP.unmatched);
   const missing = [...listed].filter((f) => !present.has(f));
-  const orphaned = [...present].filter((f) => !listed.has(f));
+  const orphaned = [...present].filter((f) => !listed.has(f) && !allowed.has(f));
+  const skipped = [...present].filter((f) => allowed.has(f));
   if (missing.length) {
     console.error(`[photography] ${missing.length} shot-list file(s) not in the drop:`);
     for (const f of missing) console.error(`    ${f}`);
@@ -107,14 +126,21 @@ async function main() {
     process.exit(1);
   }
 
-  // ── guard: one primary per slug ────────────────────────────────────────
+  // ── guard: one primary per slug, within a drop ─────────────────────────
+  // Across drops a later primary SUPERSEDES an earlier one (the namkeen drop
+  // re-shot murukulu), so uniqueness is checked per drop and the borrow guard
+  // below looks at the union.
   const primaries = new Map();
-  for (const s of ALL_SHOTS.filter((s) => s.role === 'primary')) {
-    if (primaries.has(s.slug)) {
-      console.error(`[photography] two primaries for ${s.slug}: ${primaries.get(s.slug)} / ${s.file}`);
-      process.exit(1);
+  for (const [name, d] of Object.entries(DROPS)) {
+    const inThisDrop = new Map();
+    for (const s of d.shots.filter((s) => s.role === 'primary' && !s.supersededBy)) {
+      if (inThisDrop.has(s.slug)) {
+        console.error(`[photography] two primaries for ${s.slug} in drop "${name}": ${inThisDrop.get(s.slug)} / ${s.file}`);
+        process.exit(1);
+      }
+      inThisDrop.set(s.slug, s.file);
+      primaries.set(s.slug, s.file);
     }
-    primaries.set(s.slug, s.file);
   }
   for (const b of BORROWED) {
     if (!primaries.has(b.borrows)) {
@@ -128,20 +154,49 @@ async function main() {
   }
 
   // ── encode ─────────────────────────────────────────────────────────────
+  // The previous manifest is read BEFORE encoding for two reasons: the merge
+  // below keeps every record this drop does not rewrite, and secondary-angle
+  // numbering must continue from what earlier drops already shipped — the
+  // Khammam drop wrote `kaju-bites-2.webp`, so a later angle for kaju-bites
+  // must become `-3`, not overwrite `-2`.
+  const previous = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : { shots: [] };
   const seen = new Map();
+  for (const m of previous.shots ?? []) {
+    if (m.role !== 'secondary' || (m.drop ?? 'khammam') === DROP_NAME) continue;
+    const n = Number(/-(\d+)\.webp$/.exec(m.file ?? '')?.[1] ?? 1);
+    seen.set(m.slug, Math.max(seen.get(m.slug) ?? 1, n));
+  }
   const manifest = [];
   let srcBytes = 0;
   let outBytes = 0;
 
-  for (const shot of ALL_SHOTS) {
+  for (const shot of SHOTS) {
+    // A shot a LATER drop re-took stays in the list (so the folder guard still
+    // demands the file) but is never encoded again — otherwise re-running this
+    // drop would quietly put the old photograph back under the new one's name.
+    if (shot.supersededBy) {
+      say(`${shot.file} -> ${shot.slug}: superseded by drop "${shot.supersededBy}", not encoded`);
+      continue;
+    }
     const srcFile = path.join(SRC, shot.file);
     const name = outputName(shot.slug, shot.role, seen);
     const outFile = path.join(OUT_DIR, name);
     await encode(srcFile, outFile);
     srcBytes += statSync(srcFile).size;
     outBytes += statSync(outFile).size;
-    manifest.push({ source: shot.file, slug: shot.slug, role: shot.role, file: `/products/${name}` });
+    manifest.push({ source: shot.file, slug: shot.slug, role: shot.role, file: `/products/${name}`, drop: DROP_NAME });
   }
+  if (skipped.length) {
+    say(`${skipped.length} photo(s) listed as unmatched in drop "${DROP_NAME}" left unencoded:`);
+    for (const f of skipped) say(`    ${f}`);
+  }
+
+  // ── manifest: merge, never rewrite another drop's record ───────────────
+  // An output file is owned by whichever drop encoded it last, so an earlier
+  // entry for the same file is dropped (murukulu.webp moved from the Khammam
+  // drop's ragi shot to the namkeen drop's own). Everything else is kept.
+  const rewritten = new Set(manifest.map((m) => m.file));
+  const kept = (previous.shots ?? []).filter((m) => !rewritten.has(m.file));
 
   writeFileSync(
     MANIFEST,
@@ -149,7 +204,7 @@ async function main() {
       {
         note: 'Generated by scripts/photography/process.mjs — the record of which delivered photograph became which catalogue image.',
         encoded: `${EDGE}x${EDGE} webp q${QUALITY}, smart-cropped`,
-        shots: manifest,
+        shots: [...kept, ...manifest],
         borrowed: BORROWED,
         stillUnshot: STILL_UNSHOT,
       },
@@ -173,7 +228,7 @@ async function main() {
   say(`Rungs: ${rungs.built} encoded, ${rungs.skipped} already current`);
 
   const mb = (b) => `${(b / 1024 / 1024).toFixed(1)} MB`;
-  say(`Encoded ${manifest.length} photographs -> ${path.relative(ROOT, OUT_DIR)}`);
+  say(`Encoded ${manifest.length} photographs from drop "${DROP_NAME}" -> ${path.relative(ROOT, OUT_DIR)}`);
   say(`  ${mb(srcBytes)} of source becomes ${mb(outBytes)} shipped (${Math.round((1 - outBytes / srcBytes) * 100)}% smaller)`);
   say(`  ${primaries.size} products photographed, ${BORROWED.length} using a family stand-in, ${STILL_UNSHOT.length} still unshot`);
 }

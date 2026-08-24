@@ -533,6 +533,9 @@ async function main() {
     warn('          renames the mixture slug)');
     warn('    3. supabase/migrations/0021_product_photography.sql  (fills in images —');
     warn('         keys on the slug 0022 renames, so it must run after 0022)');
+    warn('    4. supabase/migrations/0024_nonveg_pickles.sql        (retags chicken-pickle)');
+    warn('    5. supabase/migrations/0025_namkeen_counter.sql       (the 2026-08-23 namkeens:');
+    warn('         7 new products, 4 moved to namkeens with their own photo + price)');
     warn('');
     warn('  If the database really is correct and the images were removed on');
     warn('  purpose, re-run with ALLOW_CATALOGUE_REGRESSION=true.');

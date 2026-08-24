@@ -1,4 +1,4 @@
-import type { CategorySlug, DietaryTag, GarnishMark, Product } from '../types/product';
+import type { CategorySlug, DietaryTag, GarnishMark, Product, ProductVariant } from '../types/product';
 import { GENERATED_CATALOGUE } from './products.generated';
 import { GULKAND, HOUSE, BADAM, KESAR, HAMPER } from './palettes';
 
@@ -15,6 +15,7 @@ import { GULKAND, HOUSE, BADAM, KESAR, HAMPER } from './palettes';
  *   sweets                 8   (Double ka Meetha, Badam ki Jali, Sheer Khurma, Khubani Mithai,
  *                               Kaju Katli, Gulab Jamun, Motichoor Ladoo, Cardamom Soan Papdi)
  *   namkeens               3   (Special Mixture, Peanut Chivda, Besan Sev)
+ *                              + 11 from namkeensGroup() since 2026-08-23
  *   dry-fruits             2   (Roasted Almonds, Saffron Pistachios)
  *   combos                 3   (Chai-time Combo, Festival Essentials, Office Chai Tray)
  *   gift-hampers           4   (Diwali Premium, Classic Gifting Box, Corporate Essentials, Wedding Trousseau Box)
@@ -690,6 +691,8 @@ export const HARDCODED_CATALOGUE: Product[] = [
 
   // ─── Savouries (Andhra-style chai-time, from ravisweets.com) ────────────
   ...savouriesGroup(),
+  // ─── Namkeens — the 2026-08-23 counter (owner spec sheet + photographs) ──
+  ...namkeensGroup(),
   // ─── Sweet bites (small-batch flavour bites) ────────────────────────────
   ...sweetBitesGroup(),
   // ─── Dry fruits (whole nuts and dried fruit) ────────────────────────────
@@ -798,8 +801,29 @@ interface MiniSku {
   allergens?: string[];
   /** Min/max paise — most ravisweets categories sell 250 g + 1 kg variants. */
   variantPaiseSmall: number;
-  variantPaiseLarge: number;
+  /**
+   * Omit to sell the small pack only. The owner's 2026-08-23 namkeen spec
+   * sheet priced one 250 g pack per product and nothing larger; inventing a
+   * 1 kg figure from it is exactly what PRICING-REVIEW.md exists to stop.
+   */
+  variantPaiseLarge?: number;
   description: string;
+  /**
+   * Overrides the group's shelf life. A shelf life is a CLAIM printed on the
+   * product page, and within one range it genuinely differs — the leaf-based
+   * namkeens (curry leaf, moringa, amaranth) keep 20 days, the plain fried
+   * ones 30.
+   */
+  shelf_life_days?: number;
+  /**
+   * Overrides the group's id/SKU prefix for a product that MOVED groups.
+   *
+   * The id is a database primary key and the SKU is `unique`, and both are
+   * already in order history, so a product that changes category must keep
+   * them. Janthikalu, Murukulu, Pappu Chekodi and Onion Ribbon Pakodi moved
+   * from savouries to namkeens on 2026-08-23 and keep `sav` for that reason.
+   */
+  idPrefix?: string;
   bestseller?: boolean;
   isNew?: boolean;
   builder_eligible?: boolean;
@@ -813,7 +837,7 @@ interface MiniSku {
 
 function makeProduct(
   category: CategorySlug,
-  prefix: string,
+  groupPrefix: string,
   s: MiniSku,
   defaults: {
     dietary_tags: DietaryTag[];
@@ -828,8 +852,12 @@ function makeProduct(
     largeGrams?: number;
     /** 'weight' (default) — variants are 250 g / 1 kg etc. 'quantity' — variants are pack-counts. */
     unit_mode?: 'weight' | 'quantity';
+    /** Opening stock per variant; the April seed's 60 / 40 unless the spec says otherwise. */
+    smallStock?: number;
+    largeStock?: number;
   },
 ): Product {
+  const prefix = s.idPrefix ?? groupPrefix;
   const id = `p_${prefix}_${s.slug.replace(/-/g, '_')}`;
   const smallGrams = defaults.smallGrams ?? 250;
   const largeGrams = defaults.largeGrams ?? 1000;
@@ -845,7 +873,7 @@ function makeProduct(
     ingredients: ['See pack label.'],
     allergens: s.allergens ?? defaults.allergens,
     storage_instructions: defaults.storage_instructions,
-    shelf_life_days: defaults.shelf_life_days,
+    shelf_life_days: s.shelf_life_days ?? defaults.shelf_life_days,
     images: [
       { url: s.image, alt: s.imageAlt ?? `${s.title} — photographed at the Khammam kitchen`, width: 1400, height: 1400 },
       ...(s.extraImages ?? []).map((url, i) => ({
@@ -873,8 +901,10 @@ function makeProduct(
       // The whole slug is used now. Slugs are unique across the catalogue, so
       // `RS-<GROUP>-<SLUG>-<SIZE>` is unique by construction rather than by
       // luck. Regenerate the seed after touching this: `pnpm run generate:seed`.
-      { id: `${id}_s`, title: smallTitle, weight_grams: smallGrams, price: { amount: Math.round(s.variantPaiseSmall / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase()}-S`, stock_available: 60, hsn_code: '2106' },
-      { id: `${id}_l`, title: largeTitle, weight_grams: largeGrams, price: { amount: Math.round(s.variantPaiseLarge / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase()}-L`, stock_available: 40, hsn_code: '2106' },
+      { id: `${id}_s`, title: smallTitle, weight_grams: smallGrams, price: { amount: Math.round(s.variantPaiseSmall / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase()}-S`, stock_available: defaults.smallStock ?? 60, hsn_code: '2106' },
+      ...(s.variantPaiseLarge === undefined
+        ? []
+        : [{ id: `${id}_l`, title: largeTitle, weight_grams: largeGrams, price: { amount: Math.round(s.variantPaiseLarge / 100), currency: 'INR' }, sku: `RS-${prefix.toUpperCase()}-${s.slug.toUpperCase()}-L`, stock_available: defaults.largeStock ?? 40, hsn_code: '2106' } satisfies ProductVariant]),
     ],
     region_availability: ['in'],
     featured: false,
@@ -890,22 +920,21 @@ function makeProduct(
 }
 
 function savouriesGroup(): Product[] {
+  // Janthikalu, Murukulu, Pappu Chekodi and Onion Ribbon Pakodi lived here
+  // until 2026-08-23; they are in namkeensGroup now (the owner's spec sheet
+  // filed all eleven under Namkeens) and keep their `p_sav_*` ids there.
   const items: MiniSku[] = [
     { slug: 'atukula-mixture', title: 'Atukula Mixture', image: photo('atukula-mixture'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Crisp poha-based mixture with peanuts, curry leaves, and a mild chilli kick — the chai-trolley favourite from our Khammam counter.', bestseller: true },
     { slug: 'chegodilu', title: 'Chegodilu — Crispy Chegodilu', image: photo('chegodilu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Andhra ring-shaped rice-flour crisps, hand-tied and fried in cold-pressed oil. Snap when you bite, never go soggy in the box.' },
     { slug: 'chekkalu', title: 'Chekkalu — Crunchy Rice Crackers', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Thin rice-flour crackers studded with chana dal and ajwain — the Andhra answer to a savoury cookie.' },
     { slug: 'cornflakes-mixture', title: 'Cornflakes Mixture', image: photo('cornflakes-mixture'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Crisp cornflakes tossed with curry leaves, cashew halves, and a saffron tempering. Lighter than the standard mixture.' },
     { slug: 'dal-mudi-snacks', title: 'Dal Mudi Snacks', image: photo('atukula-mixture'), imageAlt: 'Atukula Mixture from the Ravi Sweets counter', variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Puffed rice and split-dal mix, lightly spiced and ready for a chai pour. A house staple since the eighties.', bestseller: true },
-    { slug: 'janthikalu', title: 'Janthikalu', image: photo('murukulu'), imageAlt: 'Murukulu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral rice-and-gram-flour twirls pressed through a brass mould — the Andhra-style janthikalu we still hand-press each morning.' },
     { slug: 'kara-boondhi', title: 'Kara Boondhi', image: photo('navaratna-mixture'), imageAlt: 'Navaratna Mixture from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spicy gram-flour pearls tempered with curry leaves and dried red chilli. Pairs with curd-rice or stands alone with chai.' },
     { slug: 'karapusa', title: 'Karapusa — Crispy Karapusa', image: photo('karapusa'), variantPaiseSmall: 11000, variantPaiseLarge: 43000, description: 'Salted gram-flour sev pressed thin and crisped in ghee. Clean, sharp, the namkeen on every Telugu chai tray.' },
     { slug: 'masala-kaju', title: 'Masala Kaju — Spicy Cashew', image: photo('masala-kaju'), variantPaiseSmall: 37000, variantPaiseLarge: 148000, description: 'A-grade cashews tossed in our house masala — chilli, garlic, lime — and slow-roasted. Premium cocktail-hour snack.', bestseller: true },
     { slug: 'masala-palli', title: 'Masala Palli — Spicy Peanut Masala', image: photo('palli-pakodi'), imageAlt: 'Palli Pakodi — Crispy Peanut Pakodi from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Roasted peanuts coated in a thin spiced gram-flour batter. The standard-bearer of an Andhra evening.' },
-    { slug: 'murukulu', title: 'Murukulu', image: photo('murukulu'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Concentric rice-flour spirals — South India\'s favourite tea-time twist. Crisp at the edge, tender at the centre.' },
-    { slug: 'onion-ribbon-pakodi', title: 'Onion Ribbon Pakodi', image: photo('masala-pakodi'), imageAlt: 'Masala Pakodi from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Wide gram-flour ribbons fried with caramelised onion shards. Sweet-savoury, addictive.' },
     { slug: 'palli-pakodi', title: 'Palli Pakodi — Crispy Peanut Pakodi', image: photo('palli-pakodi'), variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Bite-sized peanut clusters in a gram-flour batter. The travel-snack we sell most by weight.' },
     { slug: 'pappu-chekkalu', title: 'Pappu Chekkalu — Chekkalu with Chana Dal', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Chekkalu loaded with chana dal for a heartier crunch. Stays good for a month in the tin.' },
-    { slug: 'pappu-chekodi', title: 'Pappu Chekodi', image: photo('chegodilu'), imageAlt: 'Chegodilu — Crispy Chegodilu from the Ravi Sweets counter', variantPaiseSmall: 12000, variantPaiseLarge: 48000, description: 'Spiral chegodilu enriched with chana dal — extra crunch, extra protein, same Andhra recipe.' },
     // ── added 2026-08-13 with the photography (see PRICING-REVIEW.md) ──
     { slug: 'navaratna-mixture', title: 'Navaratna Mixture', image: photo('navaratna-mixture'), variantPaiseSmall: 13000, variantPaiseLarge: 52000, description: 'Nine components in one tin — sev, boondi, peanut, cashew, curry leaf, raisin, dal, poha and chip. The mixture people compare all the others against.', bestseller: true },
     { slug: 'masala-pakodi', title: 'Masala Pakodi', image: photo('masala-pakodi'), variantPaiseSmall: 12500, variantPaiseLarge: 50000, description: 'Ragged gram-flour pakodi thrown with onion, chilli and ajwain, fried dark. Craggy edges hold the masala.' },
@@ -923,6 +952,55 @@ function savouriesGroup(): Product[] {
       shelf_life_days: 60,
       theme_palette: KESAR,
       garnish: 'pistachio',
+    }),
+  );
+}
+
+/**
+ * THE NAMKEEN COUNTER — 2026-08-23.
+ *
+ * Eleven Andhra namkeens from the owner's spec sheet, each with its own
+ * photograph (scripts/photography/shot-list.mjs, NAMKEEN_DROP). Unlike the
+ * 2026-08-13 counter range these arrived WITH prices — one 250 g pack each,
+ * owner-supplied, so none of them is in PRICING-REVIEW.md.
+ *
+ * Four were already in the catalogue under savouries, on borrowed photographs
+ * and April copy; they move here with the spec's copy, price and photograph
+ * and keep their `sav` ids (see MiniSku.idPrefix). Their old ₹480 1 kg variant
+ * is not on the spec sheet and is retired by 0025_namkeen_counter.sql.
+ *
+ * ALLERGENS ARE A PLACEHOLDER, NOT A DECLARATION. The spec sheet listed none,
+ * and an empty array is not "unknown" to the storefront — it reads as "none":
+ * `hasAllergen` would pass every Free-from filter ("Recipe excludes it") and
+ * the composition panel would hide the advisory, on products whose own
+ * photographs show sesame. The repo's rule (filters.ts) is that over-exclusion
+ * is the safe direction, so the whole counter carries the savouries line plus
+ * Sesame until the owner states each product's real declaration in /admin.
+ */
+function namkeensGroup(): Product[] {
+  const moved: Pick<MiniSku, 'idPrefix'> = { idPrefix: 'sav' };
+  const items: MiniSku[] = [
+    { slug: 'karvepaku-poosa', title: 'Karvepaku Poosa', image: photo('karvepaku-poosa'), imageAlt: 'Karvepaku Poosa — short, thick sev strands flecked with curry leaf, heaped in a white bowl', variantPaiseSmall: 29900, shelf_life_days: 20, description: 'A fragrant Andhra-style savoury made with crisp, delicate strands infused with the earthy aroma of fresh curry leaves. Each batch is carefully prepared and fried to achieve a light, crunchy texture with a balanced savoury flavour. The curry leaves add a distinctive South Indian character, making this a wonderfully addictive tea-time snack.' },
+    { ...moved, slug: 'murukulu', title: 'Murukulu', image: photo('murukulu'), imageAlt: 'Murukulu — five orange-gold rice-flour spirals, ridged from the press, in a white bowl', variantPaiseSmall: 24900, description: 'A classic South Indian favourite, Murukulu are spirals of seasoned dough carefully pressed and fried until perfectly crisp. Their satisfying crunch and lightly spiced, savoury flavour make them an irresistible companion for tea, coffee, or festive gatherings. Traditionally crafted in small batches for that unmistakable homemade texture.' },
+    { slug: 'ragi-murukulu', title: 'Ragi Murukulu', image: photo('ragi-murukulu'), imageAlt: 'Ragi Murukulu — dark, ridged ragi strands with sesame showing, piled in a white bowl', variantPaiseSmall: 27900, description: 'A wholesome twist on the traditional Murukulu, made with nourishing ragi blended into a delicately seasoned dough. Each spiral is carefully pressed and fried to develop a deep, earthy flavour and a wonderfully crisp bite. Rustic, savoury, and satisfying, it brings the goodness of ragi into a much-loved South Indian snack.' },
+    { slug: 'munaga-aku-chekkalu', title: 'Munaga Aku Chekkalu', image: photo('munaga-aku-chekkalu'), imageAlt: 'Munaga Aku Chekkalu — thin golden rice discs flecked with moringa leaf and sesame, stacked in a white bowl', variantPaiseSmall: 29900, shelf_life_days: 20, description: 'Crisp Andhra-style Chekkalu made special with the earthy, distinctive flavour of fresh moringa leaves. The dough is seasoned with traditional spices, shaped into thin discs, and fried carefully until golden and crunchy. Every bite brings together the rustic taste of moringa with the satisfying crackle of a classic homemade snack.' },
+    { ...moved, slug: 'pappu-chekodi', title: 'Pappu Chekodi', image: photo('pappu-chekodi'), imageAlt: 'Pappu Chekodi — orange twisted chekodi strands studded with whole chana dal, in a white bowl', variantPaiseSmall: 26900, description: 'Crunchy, golden Chekodi made with a generous touch of lentils for an extra savoury bite. Each ring is carefully shaped and fried until crisp on the outside while retaining a wonderfully satisfying texture. Lightly seasoned and deeply comforting, this traditional snack is made for leisurely tea-time munching.' },
+    { slug: 'thotakura-chekkalu', title: 'Thotakura Chekkalu', image: photo('thotakura-chekkalu'), imageAlt: 'Thotakura Chekkalu — rustic green-brown rice discs flecked with amaranth leaf and chana dal, in a white bowl', variantPaiseSmall: 29900, shelf_life_days: 20, description: 'A traditional Chekkalu given a distinctive Andhra touch with thotakura, or amaranth leaves. Thin rounds of seasoned dough are carefully shaped and fried until beautifully crisp, bringing together the earthy flavour of greens and the unmistakable crunch of homemade Chekkalu. A rustic snack with plenty of character.' },
+    { slug: 'small-chekodi', title: 'Small Chekodi', image: photo('small-chekodi'), imageAlt: 'Small Chekodi — bite-sized orange rice-flour rings with sesame, piled in a white bowl', variantPaiseSmall: 24900, description: 'Bite-sized versions of the beloved South Indian Chekodi, made for easy snacking and sharing. Each little ring is carefully shaped and fried until golden, crisp, and delightfully crunchy. With its classic savoury seasoning and satisfying texture, Small Chekodi is the kind of snack that keeps you reaching for just one more.' },
+    { ...moved, slug: 'janthikalu', title: 'Janthikalu', image: photo('janthikalu'), imageAlt: 'Janthikalu — loose orange-gold ribbed spirals pressed through a mould, heaped in a white bowl', variantPaiseSmall: 24900, description: 'A traditional Andhra favourite, Janthikalu are delicately shaped savoury spirals with a wonderfully crisp and crunchy texture. Made from seasoned dough and fried in small batches, they carry the comforting flavour of a homemade festive snack. Perfect alongside hot tea or simply enjoyed straight from the box.' },
+    { slug: 'jawar-poosa', title: 'Jawar Poosa', image: photo('jawar-poosa'), imageAlt: 'Jawar Poosa — fine orange jowar sev strands mounded in a white bowl', variantPaiseSmall: 29900, shelf_life_days: 20, description: 'A delicate savoury snack crafted with jowar for a rustic, earthy flavour and a wonderfully light crunch. The carefully prepared mixture is shaped into fine strands and fried until crisp, creating a snack that is both delicate and deeply satisfying. A traditional-inspired treat for mindful everyday munching.' },
+    { slug: 'tomato-ribbon-pakodi', title: 'Tomato Ribbon Pakodi', image: photo('tomato-ribbon-pakodi'), imageAlt: 'Tomato Ribbon Pakodi — flat red-orange ribbon crisps with sesame seeds, in a white bowl', variantPaiseSmall: 26900, shelf_life_days: 20, description: 'Crisp ribbon-shaped Pakodi with the tangy, savoury flavour of ripe tomato and a carefully balanced blend of spices. The dough is pressed into delicate ribbons and fried until light, golden, and wonderfully crunchy. Tangy, spicy, and irresistibly crisp, this is a modern twist on a classic Indian tea-time snack.' },
+    { ...moved, slug: 'onion-ribbon-pakodi', title: 'Onion Ribbon Pakodi', image: photo('onion-ribbon-pakodi'), imageAlt: 'Onion Ribbon Pakodi — pale golden ribbon crisps with onion flecks, in a white bowl', variantPaiseSmall: 26900, shelf_life_days: 20, description: 'Thin, golden ribbons of crispy Pakodi layered with the savoury sweetness of onion and aromatic spices. Carefully pressed and fried in small batches, each piece delivers an irresistible crunch with a delicious onion-forward flavour. A classic tea-time favourite with the perfect balance of crispness and seasoning.' },
+  ];
+  return items.map((s) =>
+    makeProduct('namkeens', 'nam', s, {
+      dietary_tags: ['eggless', 'sugar-free'],
+      allergens: ['Gluten', 'Peanuts', 'Sesame'],
+      storage_instructions: 'Store in an airtight container in a cool, dry place.',
+      shelf_life_days: 30,
+      theme_palette: KESAR,
+      garnish: 'pistachio',
+      smallStock: 40,
     }),
   );
 }

@@ -75,6 +75,18 @@ export function VariantSelector({ product }: VariantSelectorProps) {
         </AnimatePresence>
       </div>
 
+      {/* One variant: no chips, but the pack size must still be stated — the
+          chips were the only place the page printed it, and a ₹249 with no
+          "250 g" beside it is a price without a net quantity (Legal Metrology
+          wants one on the listing; a shopper landing from search needs one to
+          compare). Boxes and thalis with no unit_mode keep their old look. */}
+      {product.variants.length === 1 && product.unit_mode && (
+        <p className="field-label">
+          {product.unit_mode === 'quantity' ? 'Pack' : 'Size'}
+          <span className="text-theme-ink ml-2 normal-case tracking-normal">{active.title}</span>
+        </p>
+      )}
+
       {/* Variant chips (hidden if only one) — square-cut, filled when selected. */}
       {product.variants.length > 1 && (
         <div>

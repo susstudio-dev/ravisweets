@@ -45,6 +45,7 @@ Browser ──► Cloudflare Pages (static HTML/JS/CSS)
 | 17 | `supabase/migrations/0020_global_kitchen_voice.sql` | Retires "family kitchen", "batch" and the standalone kitchen mention from `site_content` (`hero`, `footer`, `home_trust`) + `theme_presets`. Idempotent |
 | 18 | `supabase/migrations/0014_seed_products.sql` | **Re-run.** Regenerated 2026-08-13 — now 140 products / 279 variants, adding the 57 counter-range sweets that came with the photography. Every statement is `on conflict do nothing`, so re-running cannot touch a row the admin has edited; it only inserts what is missing |
 | 19 | `supabase/migrations/0021_product_photography.sql` | Fills `products.images` for the 111 photographed products. Guarded to skip any row that already has a usable image URL, so an `/admin` upload always wins. Idempotent |
+| 20 | `supabase/migrations/0025_namkeen_counter.sql` | The 2026-08-23 namkeen counter — seven new products and four moved from savouries to namkeens with the owner's copy, price and photograph (one 250 g pack each; the four ₹480 1 kg placeholders are retired). Self-contained and guarded; run its two pre-paste checks first, then paste and **Publish in the same sitting**. Paste it AFTER 0024 and never re-paste 0014 between it and the Publish — the file's header says why |
 
 > **Skip `0019_global_kitchen.sql`.** It is superseded by 0020 and would reintroduce "Shop today's batch". 0020 is self-sufficient — it does not need 0019 to have run first.
 >
@@ -67,9 +68,11 @@ than the committed one** and prints the two files to apply. The build continues
 with the committed catalogue, so the photography still ships — but the message in
 the build log is the signal that Supabase is behind the repo.
 
-Order matters: run `0014` first (it inserts the new products), then `0021` (it
-fills images on rows that already exist). After both, `pnpm run generate:catalogue`
-should report 140 products and write cleanly with no refusal.
+Order matters: run `0014` first (it inserts the new products), then `0022`, then
+`0021` (it fills images on rows that already exist and keys on the slug 0022
+renames), then `0024`, then `0025` (the 2026-08-23 namkeen counter — its header
+carries the same list). After all of them, `pnpm run generate:catalogue` should
+report 151 products and write cleanly with no refusal.
 
 Verify in **Table Editor**: you should see `customers`, `products`, `variants`, `orders`, `coupons`, `theme_presets`, `store_settings`, `reviews`, `support_threads`, `promotions`, `team_invitations`, `media_assets`, `site_content_versions`, `publish_state`, and friends (26 tables total).
 

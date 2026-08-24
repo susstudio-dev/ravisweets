@@ -95,6 +95,15 @@ lines.push(
   '  dairy and/or nuts, which is the safe direction, but a genuinely nut-free line',
   '  should be corrected so the filter is useful.',
   '',
+  '## Not in this list on purpose',
+  '',
+  '- The **eleven namkeens of 23 Aug 2026** (Karvepaku Poosa, Murukulu, Ragi Murukulu,',
+  '  Munaga Aku Chekkalu, Pappu Chekodi, Thotakura Chekkalu, Small Chekodi, Janthikalu,',
+  '  Jawar Poosa, Tomato Ribbon Pakodi, Onion Ribbon Pakodi) arrived WITH a spec sheet',
+  '  — one 250 g pack each, priced by the owner — so nothing about them was invented',
+  '  here. Four of them (Janthikalu, Murukulu, Pappu Chekodi, Onion Ribbon Pakodi) had',
+  '  carried April placeholder prices until then; 0025_namkeen_counter.sql replaces those.',
+  '',
 );
 
 writeFileSync(OUT, lines.join('\n'), 'utf8');

@@ -54,11 +54,12 @@ const SHOP_SECTIONS: NavSection[] = [
   {
     heading: 'Savoury',
     items: [
-      { label: 'Namkeens', href: '/category/namkeens', tagline: 'Mixture · Chivda · Sev' },
+      // Janthikalu and Murukulu moved here from Savouries on 2026-08-23 (0025).
+      { label: 'Namkeens', href: '/category/namkeens', tagline: 'Mixture · Murukulu · Janthikalu' },
       {
         label: 'Savouries',
         href: '/category/savouries',
-        tagline: 'Chegodilu · Janthikalu · Karapusa',
+        tagline: 'Chegodilu · Karapusa · Kachuralu',
       },
       { label: 'Pickles', href: '/category/pickles', tagline: 'Gongura · Allam · Mamidikaya' },
       { label: 'Podis & powders', href: '/category/powders', tagline: 'Karam · Kandi · Sambar' },
