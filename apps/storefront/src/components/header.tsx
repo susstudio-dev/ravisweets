@@ -84,7 +84,15 @@ const SHOP_SECTIONS: NavSection[] = [
   },
 ];
 
-const FLAT_NAV = [
+/*
+ * The masthead earns its keep per link. Owner, 2026-08-24: the header reads
+ * as cluttered — seven top-level items plus the search field left "Gift
+ * hampers" wrapping onto two lines against the search box. The two links that
+ * sell nothing directly (Stores, About) came off the desktop bar: both remain
+ * one tap away in the footer ("Stores & Contact", "Our Story") and in the
+ * mobile drawer, which has vertical room to spare.
+ */
+const DESKTOP_NAV = [
   // The Essence — the ten-piece rotating drop (VAULT_10_PLAN). Sits right
   // after Shop: it is the brand's flagship statement, not a utility link.
   { label: 'Essence', href: '/essence' },
@@ -95,6 +103,10 @@ const FLAT_NAV = [
   // ten — the owner asked for "all the festivals by default" (2026-08-11).
   { label: 'Festivals', href: '/festivals' },
   { label: 'Corporate', href: '/corporate' },
+];
+
+const DRAWER_NAV = [
+  ...DESKTOP_NAV,
   { label: 'Stores', href: '/stores' },
   { label: 'About', href: '/about' },
 ];
@@ -212,7 +224,7 @@ export function Header() {
           </Link>
 
           {/* Primary nav — refined typography, animated underline */}
-          <ShopMegaMenu sections={SHOP_SECTIONS} flatNav={FLAT_NAV} />
+          <ShopMegaMenu sections={SHOP_SECTIONS} flatNav={DESKTOP_NAV} />
 
           {/* Action cluster */}
           <div className="flex items-center gap-1.5">
@@ -321,7 +333,7 @@ export function Header() {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         sections={SHOP_SECTIONS}
-        flatNav={FLAT_NAV}
+        flatNav={DRAWER_NAV}
       />
 
       <ScrollProgress />
@@ -480,7 +492,9 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       href={href}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'group relative inline-flex items-center px-2.5 py-1.5 text-[13px] font-semibold transition-colors',
+        // whitespace-nowrap: a two-word label ("Gift hampers") must never
+        // wrap into a two-line tab when the search field squeezes the nav.
+        'group relative inline-flex items-center whitespace-nowrap px-2.5 py-1.5 text-[13px] font-semibold transition-colors',
         active ? 'text-theme-accent' : 'text-theme-ink/85 hover:text-theme-accent',
       )}
     >
@@ -572,7 +586,7 @@ function MobileDrawer({ open, onClose, sections, flatNav }: MobileDrawerProps) {
             {/* Drawer header */}
             <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
               <div className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rotate-45 bg-varak-rule" aria-hidden="true" />
+                <span className="bg-varak-rule inline-block h-2 w-2 rotate-45" aria-hidden="true" />
                 <span className="font-display text-lg">Ravi Sweets</span>
               </div>
               <button

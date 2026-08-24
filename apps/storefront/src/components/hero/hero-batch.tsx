@@ -37,6 +37,16 @@ import { useActiveTheme } from '@/lib/theme/active-theme-context';
  * "<festival> hampers" action, and the whole right column now does one job —
  * sell the No.1 sweet — instead of three.
  *
+ * SECOND DECLUTTER PASS (owner, 2026-08-24: "the header and the left side
+ * area looks really cluttered"). The column now frames exactly two objects —
+ * the pill CTAs. The deadline lost its box and became a red ruled-in line;
+ * the proof strip lost its display numerals and became one quiet label row.
+ * Everything the column claimed, it still claims, in half the visual weight.
+ * The same pass added the out-of-focus counter backdrop (see below) and fixed
+ * the No.1 cutout itself: the kaju katli master was shot on red cloth and the
+ * cutout carried the red bounce — scripts/photography/despill.py is the
+ * documented pixel fix, applied 2026-08-24.
+ *
  * CALENDAR-AWARE, NEVER A CAROUSEL. The festival slot resolves from the date
  * (Rakhi window now, Diwali later); the deadline chip counts to it. Nothing
  * auto-rotates.
@@ -181,15 +191,14 @@ export function HeroBatch() {
     );
 
   /*
-   * THE PROOF STRIP. Three ruled cells; numerals carry it in the display face,
-   * labels stay quiet. Not red: brand red appears exactly once in this column,
-   * on the deadline chip.
+   * THE PROOF LINE. This was a three-cell grid of display-size numerals
+   * (1983 / NIL / Same-day) — a second set of big type competing with the
+   * headline, and the sixth stacked block in the column. Owner, 2026-08-24:
+   * the left side reads as cluttered. The claims survive; the theatre does
+   * not: one quiet ruled line, in the label voice. "Est 1983" is dropped from
+   * it because the eyebrow two lines up already states it.
    */
-  const proof = [
-    { value: FOUNDED, label: 'established' },
-    { value: 'NIL', label: 'preservatives' },
-    { value: 'Same-day', label: 'dispatch' },
-  ];
+  const proof = ['Nil preservatives', 'Same-day dispatch', 'Pan-India delivery'];
 
   /*
    * TODAY'S No.1 — the same signature ranking the trending shelf uses, so the
@@ -202,6 +211,26 @@ export function HeroBatch() {
       aria-label="Hero"
       className="bg-theme-base text-theme-ink relative isolate -mt-16 overflow-hidden pt-16"
     >
+      {/*
+        THE COUNTER, OUT OF FOCUS (owner, 2026-08-24: "add a bg image which
+        can make the app more realistic"). A single 6KB webp baked by
+        scratchpad bake_backdrop.py from the owner's OWN photography — mysore
+        pak, jalebi, motichoor — diffused past recognition into pools of warm
+        counter light and graded toward the house cream, hardest over the text
+        column and the bottom edge so contrast never moves. Real pixels, not
+        stock: the 2021 legacy images stay retired (owner rejected borrowed
+        shots, 2026-08-13). Decorative: empty alt, and the cream is baked in,
+        so the Cool Ground Rule's base token never changes.
+      */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/hero-counter.webp"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full select-none object-cover"
+      />
       <HeroAmbient />
       {/*
         items-center, not stretch: the plate is a fixed round object, not a
@@ -265,37 +294,39 @@ export function HeroBatch() {
             </Link>
           </div>
 
-          {/* THE DEADLINE CHIP — the one urgent thing, boxed like a stamp. */}
-          <div className="mt-3">
-            <p
-              className="fb-tick field-value inline-flex flex-wrap items-baseline gap-x-2 border border-current px-2.5 py-1.5 text-[11px] font-bold tracking-[0.08em]"
-              style={{ color: 'var(--color-brand)' }}
-              suppressHydrationWarning
-            >
-              <span>{fest.title.toUpperCase()}</span>
-              <span aria-hidden="true" className="opacity-40">
-                ·
-              </span>
-              <span>
-                ORDER BY {orderBy.label}
-                {orderBy.closed && (
-                  <span className="text-text-muted font-normal"> · CLOSED</span>
-                )}
-              </span>
-            </p>
-          </div>
+          {/*
+            THE DEADLINE LINE — the one urgent thing. It used to sit in its own
+            bordered box, which made it the fourth framed object in this column
+            (two pills, a box, a ruled grid). Unboxed it keeps the red ink and
+            the urgency but stops shouting over the CTAs above it.
+          */}
+          <p
+            className="fb-tick field-value mt-3 flex flex-wrap items-baseline gap-x-2 text-[11px] font-bold tracking-[0.08em]"
+            style={{ color: 'var(--color-brand)' }}
+            suppressHydrationWarning
+          >
+            <span>{fest.title.toUpperCase()}</span>
+            <span aria-hidden="true" className="opacity-40">
+              ·
+            </span>
+            <span>
+              ORDER BY {orderBy.label}
+              {orderBy.closed && <span className="text-text-muted font-normal"> · CLOSED</span>}
+            </span>
+          </p>
 
-          {/* The proof strip — the docket's field rows, given room to count. */}
-          <ul className="fb-tick mt-5 grid max-w-[27rem] grid-cols-3 border-y border-[color:var(--color-rule)]">
+          {/* The proof line — the same claims, one quiet ruled row. Still a
+              real list: the ul's numerals went, not its semantics — a screen
+              reader gets three bounded items, not one unpunctuated run-on. */}
+          <ul className="fb-tick field-label mt-5 flex max-w-[27rem] list-none flex-wrap items-center border-y border-[color:var(--color-rule)] py-2.5">
             {proof.map((item, i) => (
-              <li
-                key={item.label}
-                className={cn('py-2.5', i > 0 && 'border-l border-[color:var(--color-rule)] pl-4')}
-              >
-                <span className="font-display block text-xl leading-none md:text-2xl">
-                  {item.value}
-                </span>
-                <span className="field-label mt-1.5 block">{item.label}</span>
+              <li key={item} className="flex items-center">
+                {i > 0 && (
+                  <span aria-hidden="true" className="mx-2 opacity-40">
+                    ·
+                  </span>
+                )}
+                {item}
               </li>
             ))}
           </ul>
@@ -350,7 +381,7 @@ function NoOnePlate({ product, today }: { product: Product; today: string }) {
         />
 
         {/* The rank stamp — the visible rendering of "today's No.1". */}
-        <span className="font-mono text-theme-accent absolute left-1 top-3 z-20 -rotate-3 rounded-md border-[1.5px] border-current bg-[color:var(--theme-base)] px-2.5 py-1 text-xs font-bold">
+        <span className="text-theme-accent absolute left-1 top-3 z-20 -rotate-3 rounded-md border-[1.5px] border-current bg-[color:var(--theme-base)] px-2.5 py-1 font-mono text-xs font-bold">
           No.1 today
         </span>
 
@@ -381,7 +412,7 @@ function NoOnePlate({ product, today }: { product: Product; today: string }) {
               alt={primaryImage?.alt ?? product.title}
               loading="eager"
               decoding="async"
-              className="h-[68%] w-[68%] rounded-full object-cover shadow-lifted"
+              className="shadow-lifted h-[68%] w-[68%] rounded-full object-cover"
               onError={() => setImgFailed(true)}
             />
           ) : (
@@ -399,7 +430,7 @@ function NoOnePlate({ product, today }: { product: Product; today: string }) {
           same position, same animation.
         */}
         <div
-          className="fb-seal absolute right-0 top-2 z-20 flex h-[5.5rem] w-[5.5rem] flex-col items-center justify-center gap-0.5 rounded-md border-2 bg-[color:var(--theme-base)]/85 text-center"
+          className="fb-seal bg-[color:var(--theme-base)]/85 absolute right-0 top-2 z-20 flex h-[5.5rem] w-[5.5rem] flex-col items-center justify-center gap-0.5 rounded-md border-2 text-center"
           style={{
             borderColor: 'var(--color-brand)',
             color: 'var(--color-brand)',

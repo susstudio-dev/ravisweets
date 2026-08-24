@@ -37,6 +37,13 @@ import numpy as np
 import onnxruntime as ort
 from PIL import Image, ImageFilter
 
+# Red-cloth masters need their cutouts colour-corrected after every rebuild —
+# without this, `--force` silently resurrects the red-tinted kaju katli the
+# owner flagged on 2026-08-24. The registry of affected masters lives with
+# the fix. (Plain module import: this script runs with scripts/photography on
+# sys.path.)
+from despill import APPLIED as DESPILL_APPLIED, despill
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT_DIR = os.path.join(ROOT, "apps", "storefront", "public", "products")
@@ -136,6 +143,9 @@ def main() -> None:
             img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
 
         img.save(out, "WEBP", quality=QUALITY, method=6)
+        if base in DESPILL_APPLIED:
+            despill(out, out, **DESPILL_APPLIED[base])
+            print(f"[cutouts]   {base}: despilled (red-cloth master — see despill.py)")
         built += 1
         out_bytes += os.path.getsize(out)
         done.append(base)

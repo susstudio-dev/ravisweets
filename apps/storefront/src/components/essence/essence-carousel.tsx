@@ -50,6 +50,24 @@ export interface EssencePiece {
  * navigation, Home/End, and the numbered rail doubles as direct access. A
  * carousel you can only swipe is a carousel half the audience cannot use.
  *
+ * ── THE 2026-08-24 RESHAPE (owner feedback, verbatim intent) ───────────────
+ * "Lot of text in the top … no focus on the product; the cards can be
+ * scrolled with mouse scroll; the cards should be there left and right
+ * initially; in the right we can bring the details of it clearly." Hence:
+ *
+ *   - TWO COLUMNS at lg: the stage owns the left, and the reading panel is a
+ *     ruled right-hand column instead of a strip under the stage — the words
+ *     sit beside the deck at eye level, never below the fold.
+ *   - STARTS IN THE MIDDLE of the drop, not at piece 01, so the fan opens
+ *     with cards to BOTH sides. Order is unharmed — the rail still counts
+ *     01–10 and Home/End still jump to the ends.
+ *   - THE WHEEL DRIVES THE DECK. Scrolling over the stage steps the fan one
+ *     card per beat; at either end the wheel falls through to the page, so
+ *     this never becomes an unbounded scroll trap. deltaX is honoured too,
+ *     so a trackpad's horizontal swipe does what it looks like it should.
+ *     (A mount "deal" animation shipped with this reshape and was reverted
+ *     the same day — see the initial={false} note on the cards.)
+ *
  * ── AUTOPLAY, AND WHEN IT STOPS ────────────────────────────────────────────
  * Owner request 2026-08-13: the carousel should move on its own. It advances
  * every 4.5s and wraps 10 -> 01.
@@ -72,9 +90,20 @@ export interface EssencePiece {
 /** One beat. Long enough to read a name, short enough to feel alive. */
 const AUTOPLAY_MS = 4500;
 
-export function EssenceCarousel({ pieces }: { pieces: EssencePiece[] }) {
+export function EssenceCarousel({
+  pieces,
+  price,
+  cta,
+}: {
+  pieces: EssencePiece[];
+  /** e.g. "₹2,400" — shown in the reading panel so the terms sit with the piece. */
+  price?: string;
+  /** The waitlist action, so a visitor never has to leave the fan to act. */
+  cta?: { href: string; label: string };
+}) {
   const reduced = useReducedMotion();
-  const [active, setActive] = useState(0);
+  // The fan opens mid-drop so cards spread to BOTH sides (2026-08-24).
+  const [active, setActive] = useState(() => Math.floor((pieces.length - 1) / 2));
   const stageRef = useRef<HTMLDivElement>(null);
 
   // Autoplay is one intent (`playing`) gated by four transient conditions.
@@ -122,6 +151,82 @@ export function EssenceCarousel({ pieces }: { pieces: EssencePiece[] }) {
     return () => node.removeEventListener('keydown', onKey);
   }, [count]);
 
+  /*
+   * THE WHEEL DRIVES THE DECK (owner, 2026-08-24: "the cards can be scrolled
+   * with mouse scroll"). Attached natively with { passive: false } — React's
+   * root-level wheel listeners are passive, so an onWheel prop could never
+   * call preventDefault.
+   *
+   * WHAT IT CLAIMS, AND WHAT IT NEVER TOUCHES. Reviewed adversarially
+   * 2026-08-24; every rule below answers a confirmed defect:
+   *
+   *   - ctrlKey wheels are ZOOM (trackpad pinch and Ctrl+wheel both arrive
+   *     this way) and are never claimed — preventDefault on them is exactly
+   *     the mechanism that suppresses browser zoom, and a low-vision visitor
+   *     enlarging the page must win over a carousel every time.
+   *   - deltaMode is normalised per mode: pixels pass through, lines scale so
+   *     one Firefox notch (3 lines) is one step, and PAGE mode (deltaY ±1) is
+   *     one step per notch outright — untreated it contributed ~1px toward
+   *     the threshold while still being swallowed, a true scroll trap.
+   *   - Past either end the event is DECLINED and the page scrolls — except
+   *     inside a short grace window after the final step, because the same
+   *     trackpad gesture that lands on the last card keeps emitting inertia
+   *     deltas, and falling through mid-gesture flings the page the visitor
+   *     never meant to scroll. A fresh gesture at a resting boundary scrolls
+   *     normally.
+   *   - Honesty note: mid-deck, wheel-over-stage IS captive by design (the
+   *     owner asked for the wheel to drive the cards); the beat lock is short
+   *     and both ends release, so the capture is bounded at a few seconds of
+   *     deliberate traversal, and keyboard/rail/arrows remain untrapped.
+   *
+   * The accumulator + beat lock turn continuous deltas into discrete card
+   * steps: 60px of intent per step, one step per 350ms, and the accumulator
+   * resets when the direction flips so a wobble never banks credit toward
+   * the wrong side. The active index is read through a ref — the listener
+   * would otherwise close over a stale `active`.
+   */
+  const activeRef = useRef(active);
+  activeRef.current = active;
+  useEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const STEP = 60;
+    const BEAT_MS = 350;
+    const END_GRACE_MS = 300;
+    let acc = 0;
+    let lockUntil = 0;
+    function onWheel(e: WheelEvent) {
+      if (e.ctrlKey) return; // zoom gesture — never the deck's business
+      const raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (raw === 0) return;
+      const delta =
+        e.deltaMode === 2
+          ? Math.sign(raw) * STEP // page mode: one notch, one step
+          : raw * (e.deltaMode === 1 ? 30 : 1); // lines -> px (one 3-line notch ≈ one step)
+      const now = performance.now();
+      const next = activeRef.current + (delta > 0 ? 1 : -1);
+      if (next < 0 || next >= pieces.length) {
+        // Inertia from the gesture that just reached this end stays swallowed;
+        // a fresh gesture at a resting boundary scrolls the page.
+        if (now < lockUntil + END_GRACE_MS) e.preventDefault();
+        acc = 0;
+        return;
+      }
+      e.preventDefault();
+      if (now < lockUntil) return;
+      if (Math.sign(acc) !== Math.sign(delta)) acc = 0;
+      acc += delta;
+      if (Math.abs(acc) >= STEP) {
+        acc = 0;
+        lockUntil = now + BEAT_MS;
+        setPlaying(false); // a hand on the wheel is a hand on the wheel
+        setActive(next);
+      }
+    }
+    node.addEventListener('wheel', onWheel, { passive: false });
+    return () => node.removeEventListener('wheel', onWheel);
+  }, [pieces.length]);
+
   // A hidden tab should not be animating. `visibilitychange` is read once on
   // mount too, in case the component hydrates in an already-background tab.
   useEffect(() => {
@@ -146,188 +251,253 @@ export function EssenceCarousel({ pieces }: { pieces: EssencePiece[] }) {
   if (reduced) return <FlatGrid pieces={pieces} />;
 
   return (
-    <div>
-      {/* ── THE STAGE ───────────────────────────────────────────────── */}
-      <div
-        ref={stageRef}
-        tabIndex={0}
-        role="group"
-        aria-roledescription="carousel"
-        aria-label="The ten pieces"
-        // `pointerType` guard: on a touch screen `pointerenter` fires on tap and
-        // never gets its matching leave, which would pause autoplay for good on
-        // exactly the devices that cannot hover.
-        onPointerEnter={(e) => e.pointerType === 'mouse' && setHovering(true)}
-        onPointerLeave={(e) => e.pointerType === 'mouse' && setHovering(false)}
-        // React's onFocus/onBlur map to focusin/focusout, so these are
-        // focus-WITHIN semantics and cover the cards and the stage alike.
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className="focus-visible:ring-theme-accent/60 relative h-[19rem] select-none overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 md:h-[23rem]"
-        style={{ perspective: '1400px', perspectiveOrigin: '50% 45%' }}
-      >
-        <motion.div
-          className="absolute inset-0"
-          style={{ transformStyle: 'preserve-3d' }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.14}
-          onDragStart={() => setDragging(true)}
-          onDragEnd={(_, info) => {
-            setDragging(false);
-            // Velocity as well as distance: a quick flick should advance even
-            // when the finger barely travelled.
-            if (info.offset.x < -60 || info.velocity.x < -450) take(active + 1);
-            else if (info.offset.x > 60 || info.velocity.x > 450) take(active - 1);
-            else setPlaying(false); // a drag that went nowhere is still a hand on the wheel
-          }}
+    /*
+     * The fan and its words, side by side (owner, 2026-08-24: "in the right
+     * we can bring the details of it clearly"). Below lg the panel drops
+     * under the rail, which is the same reading order linearised.
+     */
+    <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-12">
+      <div className="min-w-0">
+        {/* ── THE STAGE ───────────────────────────────────────────────── */}
+        <div
+          ref={stageRef}
+          tabIndex={0}
+          role="group"
+          aria-roledescription="carousel"
+          aria-label="The ten pieces"
+          // `pointerType` guard: on a touch screen `pointerenter` fires on tap and
+          // never gets its matching leave, which would pause autoplay for good on
+          // exactly the devices that cannot hover.
+          onPointerEnter={(e) => e.pointerType === 'mouse' && setHovering(true)}
+          onPointerLeave={(e) => e.pointerType === 'mouse' && setHovering(false)}
+          // React's onFocus/onBlur map to focusin/focusout, so these are
+          // focus-WITHIN semantics and cover the cards and the stage alike.
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          // Taller than the strip layout it replaced: the headline above gave
+          // back a display step, and the stage is what the page is FOR.
+          className="focus-visible:ring-theme-accent/60 relative h-[20rem] select-none overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 md:h-[26rem]"
+          style={{ perspective: '1400px', perspectiveOrigin: '50% 45%' }}
         >
-          {pieces.map((piece, i) => {
-            const offset = i - active;
-            if (Math.abs(offset) > 3) return null;
-            const abs = Math.abs(offset);
-            const isActive = offset === 0;
-            return (
-              <motion.button
-                key={piece.no}
-                type="button"
-                onClick={() => take(i)}
-                // Only the active card is a tab stop; the rail below is the
-                // keyboard route to the others, so Tab does not walk ten cards.
-                tabIndex={isActive ? 0 : -1}
-                aria-label={`Piece ${piece.no}, ${piece.name}${isActive ? ' — showing' : ''}`}
-                aria-current={isActive}
-                className="absolute left-1/2 top-1/2 h-[15rem] w-[10.5rem] cursor-pointer rounded-lg md:h-[18rem] md:w-[13rem]"
-                initial={false}
-                animate={{
-                  x: `calc(-50% + ${offset * 58}%)`,
-                  y: '-50%',
-                  z: -abs * 130,
-                  rotateY: offset * -34,
-                  scale: isActive ? 1 : 0.88 - abs * 0.04,
-                  opacity: abs > 2 ? 0 : 1 - abs * 0.26,
-                }}
-                transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
-                style={{ zIndex: 10 - abs, transformStyle: 'preserve-3d' }}
-              >
-                <PieceCard piece={piece} active={isActive} index={i} />
-              </motion.button>
-            );
-          })}
-        </motion.div>
+          <motion.div
+            className="absolute inset-0"
+            style={{ transformStyle: 'preserve-3d' }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.14}
+            onDragStart={() => setDragging(true)}
+            onDragEnd={(_, info) => {
+              setDragging(false);
+              // Velocity as well as distance: a quick flick should advance even
+              // when the finger barely travelled.
+              if (info.offset.x < -60 || info.velocity.x < -450) take(active + 1);
+              else if (info.offset.x > 60 || info.velocity.x > 450) take(active - 1);
+              else setPlaying(false); // a drag that went nowhere is still a hand on the wheel
+            }}
+          >
+            {pieces.map((piece, i) => {
+              const offset = i - active;
+              if (Math.abs(offset) > 3) return null;
+              const abs = Math.abs(offset);
+              const isActive = offset === 0;
+              return (
+                <motion.button
+                  key={piece.no}
+                  type="button"
+                  onClick={() => take(i)}
+                  // Only the active card is a tab stop; the rail below is the
+                  // keyboard route to the others, so Tab does not walk ten cards.
+                  tabIndex={isActive ? 0 : -1}
+                  aria-label={`Piece ${piece.no}, ${piece.name}${isActive ? ' — showing' : ''}`}
+                  aria-current={isActive}
+                  className="absolute left-1/2 top-1/2 h-[15rem] w-[10.5rem] cursor-pointer rounded-lg md:h-[18rem] md:w-[13rem]"
+                  /*
+                   * initial={false} is LOAD-BEARING, twice over. (1) motion
+                   * serialises the initial pose into the SSR HTML, so anything
+                   * other than the animate pose here blanks the static
+                   * export's stage until hydration. (2) Cards mount and
+                   * unmount as the ±3 window slides, and there is no exit
+                   * animation — a mount pose replays on every jump ≥2 (rail,
+                   * Home/End, the autoplay wrap 10→01), which read as the fan
+                   * blinking empty and re-dealing. A "deal" entrance was
+                   * tried on 2026-08-24 and reverted for exactly these two
+                   * failures — do not reintroduce one without an AnimatePresence
+                   * exit story and an SSR-safe gate.
+                   */
+                  initial={false}
+                  animate={{
+                    x: `calc(-50% + ${offset * 58}%)`,
+                    y: '-50%',
+                    z: -abs * 130,
+                    rotateY: offset * -34,
+                    scale: isActive ? 1 : 0.88 - abs * 0.04,
+                    opacity: abs > 2 ? 0 : 1 - abs * 0.26,
+                  }}
+                  transition={{ duration: DURATION.slow, ease: EASE.emphasised }}
+                  style={{ zIndex: 10 - abs, transformStyle: 'preserve-3d' }}
+                >
+                  <PieceCard piece={piece} active={isActive} index={i} />
+                </motion.button>
+              );
+            })}
+          </motion.div>
 
-        <StageEdgeFade />
-      </div>
+          <StageEdgeFade />
+        </div>
 
-      {/* ── ARROWS + THE NUMBERED RAIL ──────────────────────────────── */}
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <RailArrow label="Previous piece" onClick={() => take(active - 1)} disabled={active === 0}>
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        </RailArrow>
+        {/* ── ARROWS + THE NUMBERED RAIL ──────────────────────────────── */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <RailArrow
+            label="Previous piece"
+            onClick={() => take(active - 1)}
+            disabled={active === 0}
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          </RailArrow>
 
-        {/* The rail IS the index — "eaten in order, 01 to 10" is the drop's
+          {/* The rail IS the index — "eaten in order, 01 to 10" is the drop's
             own concept, so the control that selects a piece states its rank. */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5">
-          {pieces.map((piece, i) => {
-            const on = i === active;
-            return (
-              <button
-                key={piece.no}
-                type="button"
-                onClick={() => take(i)}
-                aria-label={`Show piece ${piece.no}, ${piece.name}`}
-                aria-current={on}
-                className={cn(
-                  'field-value focus-visible:ring-theme-accent relative min-h-[34px] min-w-[34px] overflow-hidden rounded-md border px-1.5 text-[11px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2',
-                  on
-                    ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
-                    : 'text-theme-ink/60 hover:text-theme-ink border-[color:var(--color-border)]',
-                )}
-              >
-                {piece.no}
-                {/*
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            {pieces.map((piece, i) => {
+              const on = i === active;
+              return (
+                <button
+                  key={piece.no}
+                  type="button"
+                  onClick={() => take(i)}
+                  aria-label={`Show piece ${piece.no}, ${piece.name}`}
+                  aria-current={on}
+                  className={cn(
+                    'field-value focus-visible:ring-theme-accent relative min-h-[34px] min-w-[34px] overflow-hidden rounded-md border px-1.5 text-[11px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2',
+                    on
+                      ? 'border-theme-accent bg-theme-accent text-[color:var(--theme-base)]'
+                      : 'text-theme-ink/60 hover:text-theme-ink border-[color:var(--color-border)]',
+                  )}
+                >
+                  {piece.no}
+                  {/*
                   The beat, made visible. Keyed on `active` so it restarts with
                   every advance, and unmounted whenever autoplay is not actually
                   running — a bar that kept filling while paused would be a lie
                   about what happens next.
                 */}
-                {on && running && (
-                  <motion.span
-                    key={active}
-                    aria-hidden="true"
-                    className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[color:var(--theme-base)]/70"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
-                  />
-                )}
-              </button>
-            );
-          })}
+                  {on && running && (
+                    <motion.span
+                      key={active}
+                      aria-hidden="true"
+                      className="bg-[color:var(--theme-base)]/70 absolute inset-x-0 bottom-0 h-[2px] origin-left"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <RailArrow
+            label="Next piece"
+            onClick={() => take(active + 1)}
+            disabled={active === count - 1}
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </RailArrow>
+
+          {/* WCAG 2.2.2 — and the only way back once autoplay has been stopped. */}
+          <button
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            aria-label={playing ? 'Pause the carousel' : 'Play the carousel'}
+            aria-pressed={playing}
+            className="text-theme-ink/70 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[color:var(--color-border)] transition-colors focus-visible:outline-none focus-visible:ring-2"
+          >
+            {playing ? (
+              <Pause className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : (
+              <Play className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+          </button>
         </div>
-
-        <RailArrow
-          label="Next piece"
-          onClick={() => take(active + 1)}
-          disabled={active === count - 1}
-        >
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        </RailArrow>
-
-        {/* WCAG 2.2.2 — and the only way back once autoplay has been stopped. */}
-        <button
-          type="button"
-          onClick={() => setPlaying((p) => !p)}
-          aria-label={playing ? 'Pause the carousel' : 'Play the carousel'}
-          aria-pressed={playing}
-          className="text-theme-ink/70 hover:text-theme-ink focus-visible:ring-theme-accent inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[color:var(--color-border)] transition-colors focus-visible:outline-none focus-visible:ring-2"
-        >
-          {playing ? (
-            <Pause className="h-3.5 w-3.5" aria-hidden="true" />
-          ) : (
-            <Play className="h-3.5 w-3.5" aria-hidden="true" />
-          )}
-        </button>
       </div>
 
-      {/* ── THE READING PANEL ───────────────────────────────────────── */}
+      {/* ── THE READING PANEL — the right column ─────────────────────── */}
       {/* Outside the perspective container on purpose — see the header note on
-          text in rotated planes. This is where the words stay crisp. */}
-      <div className="mt-8 min-h-[11rem]" aria-live="polite" aria-atomic="true">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current.no}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: DURATION.quick, ease: EASE.standard }}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <p className="field-label">
-              {current.no} of {String(count).padStart(2, '0')}
-              <span className="mx-2 opacity-40" aria-hidden="true">
-                ·
-              </span>
-              {current.fresh ? 'Fresh · Hyderabad' : 'Travels nationwide'}
-            </p>
-            <h3 className="font-display text-theme-ink mt-2 text-2xl leading-tight md:text-3xl">
-              {current.name}
-            </h3>
-            <p className="text-theme-ink/70 mx-auto mt-3 max-w-xl leading-relaxed">
-              {current.line}
-            </p>
-            <dl className="mx-auto mt-5 grid max-w-md grid-cols-2 border-y border-[color:var(--color-rule)]">
-              <div className="py-3">
-                <dt className="field-label">Technique</dt>
-                <dd className="field-value text-theme-ink mt-1 text-xs">{current.technique}</dd>
-              </div>
-              <div className="border-l border-[color:var(--color-rule)] py-3 pl-4">
-                <dt className="field-label">Heritage</dt>
-                <dd className="field-value text-theme-ink mt-1 text-xs">{current.heritage}</dd>
-              </div>
-            </dl>
-          </motion.div>
-        </AnimatePresence>
+          text in rotated planes. This is where the words stay crisp. A ruled
+          left edge marks it as the fan's record.
+
+          The live region wraps ONLY the crossfade. The price/CTA block below
+          is a sibling on purpose: aria-atomic re-announces the whole region
+          on every advance, and with the CTA inside it a screen reader heard
+          "Join the waitlist · ₹2,400 · the box of ten" appended to every
+          piece, every 4.5 seconds of autoplay.
+
+          The min-height sits on the live wrapper and is sized for the
+          TALLEST entry at each breakpoint (long names wrap to two lines, long
+          `line`s to three on a phone) — undersize it and the CTA below pumps
+          up and down on every beat, moving under a thumb mid-tap. */}
+      <div className="lg:border-l lg:border-[color:var(--color-rule)] lg:pl-10">
+        <div
+          className="min-h-[19rem] sm:min-h-[17rem] lg:min-h-[18rem]"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.no}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: DURATION.quick, ease: EASE.standard }}
+              className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left"
+            >
+              <p className="field-label">
+                {current.no} of {String(count).padStart(2, '0')}
+                <span className="mx-2 opacity-40" aria-hidden="true">
+                  ·
+                </span>
+                {current.fresh ? 'Fresh · Hyderabad' : 'Travels nationwide'}
+              </p>
+              <h3 className="font-display text-theme-ink mt-2 text-2xl leading-tight md:text-3xl">
+                {current.name}
+              </h3>
+              <p className="text-theme-ink/70 mx-auto mt-3 max-w-xl leading-relaxed lg:mx-0">
+                {current.line}
+              </p>
+              <dl className="mx-auto mt-5 grid max-w-md grid-cols-2 border-y border-[color:var(--color-rule)] lg:mx-0">
+                <div className="py-3">
+                  <dt className="field-label">Technique</dt>
+                  <dd className="field-value text-theme-ink mt-1 text-xs">{current.technique}</dd>
+                </div>
+                <div className="border-l border-[color:var(--color-rule)] py-3 pl-4">
+                  <dt className="field-label">Heritage</dt>
+                  <dd className="field-value text-theme-ink mt-1 text-xs">{current.heritage}</dd>
+                </div>
+              </dl>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/*
+          The drop's terms and the one action, WITH the details rather than a
+          screen below them. Outside the crossfade so they never blink per
+          piece, and outside the live region so they are announced once,
+          not on every advance.
+        */}
+        {(price || cta) && (
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 lg:justify-start">
+            {cta && (
+              <a href={cta.href} target="_blank" rel="noreferrer" className="stamp">
+                {cta.label}
+              </a>
+            )}
+            {price && (
+              <p className="field-value text-theme-ink text-sm font-bold">
+                {price} · THE BOX OF TEN
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -394,7 +564,7 @@ function PieceCard({
         'relative flex h-full w-full flex-col overflow-hidden rounded-lg border transition-shadow duration-300',
         active
           ? 'border-theme-accent/45 shadow-lifted'
-          : 'border-[color:var(--color-border)] shadow-soft',
+          : 'shadow-soft border-[color:var(--color-border)]',
       )}
       style={{
         backgroundColor: 'var(--color-surface)',
@@ -462,17 +632,20 @@ function PieceCard({
   );
 }
 
-/** Softens the stage edges so cards leave the frame instead of being cut. */
+/** Softens the stage edges so cards leave the frame instead of being cut.
+ *  Narrower than the strip-era md:w-28: the stage now shares the row with the
+ *  reading panel, and 7rem of fade a side on a half-width stage was eating the
+ *  ±2 cards the two-column fan exists to show. */
 function StageEdgeFade() {
   return (
     <>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-[color:var(--theme-base)] to-transparent md:w-28"
+        className="pointer-events-none absolute inset-y-0 left-0 z-20 w-10 bg-gradient-to-r from-[color:var(--theme-base)] to-transparent md:w-16"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-l from-[color:var(--theme-base)] to-transparent md:w-28"
+        className="pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-[color:var(--theme-base)] to-transparent md:w-16"
       />
     </>
   );

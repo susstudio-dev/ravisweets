@@ -175,20 +175,20 @@ export default function EssencePage() {
       <div data-register="carbon" className="bg-theme-base text-theme-ink">
         {/*
           ── THE TEN OPEN THE PAGE ──────────────────────────────────────────
-          Owner, 2026-08-13: "for me carousel is the main thing". It used to sit
-          fourth — below the headline, a 60-word blurb, the CTA row and the stat
-          table — a full screen of text on a laptop, so the thing the page is
-          FOR was something you had to go looking for.
-
-          Headline and stage now share the first screen. That is what the
-          tightened padding and the one-step-smaller h1 buy: `section-y` plus
-          `display-xl` spent the whole viewport before the carousel began.
-          Everything that explains the drop moved below it — a visitor still
-          reading has already seen the thing they are reading about.
+          Owner, 2026-08-13: "for me carousel is the main thing"; owner,
+          2026-08-24: "lot of text in the top … making no focus on the
+          product". Two passes in the same direction. The first moved the
+          carousel from fourth position to the first screen; this one takes
+          the headline down another display step and off its second line, so
+          the fan and its reading panel own the viewport. The h1 keeps its
+          words — it is the drop's whole pitch — it just stops being the
+          biggest object on the page. Everything that explains the drop stays
+          below the fan: a visitor still reading has already seen the thing
+          they are reading about.
         */}
         <section
           aria-labelledby="pieces-heading"
-          className="container-site pb-10 pt-8 md:pb-14 md:pt-12"
+          className="container-site pb-10 pt-6 md:pb-14 md:pt-8"
         >
           <Reveal>
             <p className="flex flex-wrap items-baseline gap-x-2.5">
@@ -196,7 +196,7 @@ export default function EssencePage() {
               <span className="field-label">The Essence · Drop {DROP.number}</span>
               <span className="field-label">· {DROP.season}</span>
             </p>
-            <h1 className="font-display text-display-md md:text-display-lg mt-3 max-w-4xl leading-[1.04]">
+            <h1 className="font-display text-display-md mt-2 max-w-3xl leading-[1.08]">
               Ten sweets that exist nowhere else. {DROP.boxes} numbered boxes. Then gone.
             </h1>
           </Reveal>
@@ -211,12 +211,18 @@ export default function EssencePage() {
             perspective, and an ancestor mid-transform is the kind of thing that
             quietly flattens a 3D scene.
           */}
-          <h2 id="pieces-heading" className="field-label mt-8">
+          <h2 id="pieces-heading" className="field-label mt-6">
             Drop {DROP.number} manifest · the ten, in order
           </h2>
 
+          {/* Price + waitlist ride in the reading panel, beside the fan —
+              the terms sit with the piece instead of a screen below it. */}
           <div className="mt-4">
-            <EssenceCarousel pieces={PIECES} />
+            <EssenceCarousel
+              pieces={PIECES}
+              price={DROP.price}
+              cta={{ href: WA_HREF, label: 'Join the waitlist' }}
+            />
           </div>
         </section>
 
@@ -224,10 +230,10 @@ export default function EssencePage() {
         <section className="container-site pb-16 md:pb-20">
           <Reveal>
             <p className="text-theme-ink/70 max-w-2xl text-lg leading-relaxed">
-              A collector box of ten single-bite pieces — protein-led, free of refined sugar,
-              built on desi superfoods, each pairing a real technique with a Telangana or
-              Andhra heritage cue. Eaten in order, 01 to 10. Every season, two or three
-              pieces rotate out and the drop is numbered again.
+              A collector box of ten single-bite pieces — protein-led, free of refined sugar, built
+              on desi superfoods, each pairing a real technique with a Telangana or Andhra heritage
+              cue. Eaten in order, 01 to 10. Every season, two or three pieces rotate out and the
+              drop is numbered again.
             </p>
           </Reveal>
 
@@ -276,10 +282,9 @@ export default function EssencePage() {
       <section className="container-site section-y-tight">
         <Reveal>
           <p className="text-text-muted mx-auto max-w-3xl text-sm leading-relaxed">
-            The seven shelf-stable pieces courier anywhere in India. The fresh pieces are
-            made within 48 hours of dispatch and travel cold-chain to metro pin codes —
-            everywhere else, the box carries a claim card for the fresh three at our
-            Hyderabad counter.
+            The seven shelf-stable pieces courier anywhere in India. The fresh pieces are made
+            within 48 hours of dispatch and travel cold-chain to metro pin codes — everywhere else,
+            the box carries a claim card for the fresh three at our Hyderabad counter.
           </p>
         </Reveal>
       </section>
