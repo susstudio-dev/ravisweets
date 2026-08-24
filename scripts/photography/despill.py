@@ -27,6 +27,12 @@
 # `--force` re-run can no longer silently resurrect the red version (that trap
 # was confirmed in the 2026-08-24 review). Key is the master's base filename.
 #
+# WHEN A CUTOUT'S PIXELS CHANGE, BUMP ITS CACHE REVISION TOO: /products/* is
+# served with a 30-day no-revalidate cache, so returning browsers keep the old
+# bytes under the unchanged URL. CUTOUT_REVISION in
+# apps/storefront/src/lib/cutouts.ts is the bust — this exact miss shipped the
+# despilled katli to production while every prior visitor still saw it red.
+#
 # DO NOT add whole categories wholesale: gongura, red karam and the kesar
 # range are legitimately red, and this would bleach them. One file at a time,
 # eyes on the output.
