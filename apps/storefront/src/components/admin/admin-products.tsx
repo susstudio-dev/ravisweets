@@ -1,10 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowRight, ArrowUp, ImagePlus, Plus, Save, Search, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Archive,
+  ArchiveRestore,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  ImagePlus,
+  Plus,
+  Save,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
 import {
   CATALOGUE,
+  HARDCODED_CATALOGUE,
+  TEMPLATES,
   type CategorySlug,
   type DietaryTag,
   type Product,
@@ -13,8 +27,12 @@ import {
 import {
   EMPTY_CATALOGUE_OVERRIDES,
   type CatalogueOverrides,
+  type ProductRemovalReport,
+  deleteProduct,
+  inspectProductRemoval,
   listCatalogueOverrides,
   mergeProductOverrides,
+  productFromOverride,
   updateProductImages,
   upsertProductBuilderEligible,
   upsertProductCategory,
@@ -31,6 +49,41 @@ import {
 } from '@/lib/supabase/products';
 import { MediaPickerDialog } from '@/components/admin/media-picker';
 import { mediaPublicUrl } from '@/lib/media/public-url';
+
+/**
+ * Products that must never be permanently deleted — only archived.
+ *
+ * These are the SKUs `HARDCODED_CATALOGUE` defines, which is also what
+ * `generate-product-seed.mjs` emits into 0014_seed_products.sql. That seed
+ * inserts `on conflict do nothing` and does not mention `archived`, so
+ * re-pasting it RESURRECTS any of these that were deleted, with archived back
+ * at false. `bake-catalogue-from-source.mjs` brings them back too. A delete
+ * here is a change that quietly undoes itself on someone else's deploy, which
+ * is worse than no delete at all.
+ *
+ * Note the size: `HARDCODED_CATALOGUE` opens with 23 object literals and then
+ * spreads fourteen generated groups whose helpers mint ids programmatically.
+ * It is 151 products — the entire live catalogue. So this set currently
+ * protects everything, and Delete arms only for SKUs created through
+ * /admin/products/new after the fact. Use the predicate, never the number.
+ */
+const SEED_IDS = new Set(HARDCODED_CATALOGUE.map((p) => p.id));
+
+/**
+ * Products a corporate hamper template is built from, and the template that
+ * names each one.
+ *
+ * These references are hand-maintained ids in
+ * packages/shared/src/catalogue/templates.ts with no foreign key behind them,
+ * and the quote builder skips any it cannot resolve (`if (!info) continue`).
+ * So removing one of these does not raise anything — it silently drops a line
+ * from the hamper while the template still advertises it, and the corporate
+ * quote goes out UNDER-PRICED. Blocking is the only safe answer; the template
+ * has to be edited first.
+ */
+const TEMPLATE_PRODUCT_IDS = new Map<string, string>(
+  Object.values(TEMPLATES).flatMap((t) => t.items.map((i) => [i.productId, t.title] as const)),
+);
 
 const CATEGORY_OPTIONS: { value: CategorySlug; label: string }[] = [
   { value: 'sweets', label: 'Sweets' },
@@ -63,7 +116,22 @@ import { useSession } from '@/lib/supabase/session-context';
 export function AdminProducts() {
   const { configured } = useSession();
   const [query, setQuery] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
   const [active, setActive] = useState<Product | null>(null);
+  /** Product ids whose archive/restore is in flight, so their rows can say so. */
+  const [busyIds, setBusyIds] = useState<ReadonlySet<string>>(new Set());
+  /**
+   * Deleted in this session. They linger in the bundled CATALOGUE until the
+   * next Publish, and without this they would be indistinguishable from a
+   * product the 0014 seed was never applied for.
+   */
+  const [deletedIds, setDeletedIds] = useState<ReadonlySet<string>>(new Set());
+  /**
+   * Outcome of the last removal, kept on screen rather than shouted once.
+   * `kind` is load-bearing: a failure rendered in the same gold wash as a
+   * success reads as a success.
+   */
+  const [notice, setNotice] = useState<{ text: string; kind: 'info' | 'error' } | null>(null);
   // The admin used to render the bundled CATALOGUE and nothing else, so an
   // owner edited a price, the write landed, and the screen kept showing the
   // hardcoded number. Everything below is the merge of bundle + database.
@@ -79,21 +147,121 @@ export function AdminProducts() {
     void refresh();
   }, [refresh]);
 
-  const rows = useMemo(
-    () => CATALOGUE.map((p) => mergeProductOverrides(p, overrides)),
-    [overrides],
+  /**
+   * Flip `archived` and re-read. Shared by the row's Restore button and the
+   * drawer's danger zone so there is one write, one audit action and one error
+   * channel rather than two of each.
+   *
+   * `upsertProductFlags` already ends in `.select('id')` + `wrote()`, so a
+   * write that RLS made invisible reports as a failure instead of a cheerful
+   * no-op.
+   */
+  const setArchived = useCallback(
+    async (p: Product, next: boolean): Promise<boolean> => {
+      // A Set, not a single id: two rows can be restored at once, and a shared
+      // slot would leave the loser's row stuck reading "Restoring…" forever.
+      setBusyIds((prev) => new Set(prev).add(p.id));
+      setNotice(null);
+      try {
+        const r = await upsertProductFlags(p.id, { archived: next });
+        if (!r.ok) {
+          setNotice({ text: `${next ? 'Archive' : 'Restore'} failed: ${r.reason}`, kind: 'error' });
+          return false;
+        }
+        await logAdminAction(
+          next ? 'archive-product' : 'unarchive-product',
+          'product',
+          p.id,
+          { archived: !next },
+          { archived: next },
+        );
+        await refresh();
+        // Only a product that has been through a Publish is actually on the
+        // live site; one created here and archived before its first bake
+        // never was.
+        const live = CATALOGUE.some((c) => c.id === p.id);
+        setNotice({
+          text: next
+            ? live
+              ? `${p.title} archived. It stays on ravisweets.com until the next Publish.`
+              : `${p.title} archived. It had not been published yet, so nothing changes for shoppers.`
+            : `${p.title} restored. It returns to the shop at the next Publish.`,
+          kind: 'info',
+        });
+        return true;
+      } catch (err) {
+        setNotice({
+          text: `${next ? 'Archive' : 'Restore'} failed: ${err instanceof Error ? err.message : String(err)}`,
+          kind: 'error',
+        });
+        return false;
+      } finally {
+        // finally, not a line per exit: a throw here used to leave the row
+        // permanently disabled with no way back but a page reload.
+        setBusyIds((prev) => {
+          const nextSet = new Set(prev);
+          nextSet.delete(p.id);
+          return nextSet;
+        });
+      }
+    },
+    [refresh],
   );
 
+  // BUNDLE ∪ DATABASE, and the union is not a nicety.
+  //
+  // This list used to be `CATALOGUE.map(...)` — the catalogue baked at build
+  // time. Two kinds of row exist only in the database and were therefore
+  // invisible here:
+  //
+  //   1. Anything created in /admin/products/new, until the next Publish. The
+  //      owner added a product and the screen they were standing on did not
+  //      list it.
+  //   2. Anything ARCHIVED. The bake reads with the anon key and RLS hides
+  //      archived rows from anon, so an archived product leaves the generated
+  //      catalogue at the next Publish. Without the union, archiving is a
+  //      one-way door — the product is gone from the shop AND from this list,
+  //      and only a SQL console could bring it back.
+  //
+  // The archived row is already in `overrides`: this read carries the staff
+  // JWT, so `is_admin()` is true and RLS returns it. It just had no name to
+  // render under until PRODUCT_OVERRIDE_COLUMNS started selecting slug/title.
+  const rows = useMemo(() => {
+    const merged = CATALOGUE.map((p) => mergeProductOverrides(p, overrides));
+    const bundled = new Set(CATALOGUE.map((p) => p.id));
+    const dbOnly: Product[] = [];
+    for (const [id, o] of overrides.products) {
+      if (bundled.has(id)) continue;
+      dbOnly.push(productFromOverride(id, o, overrides));
+    }
+    // By id, matching how generate-catalogue.mjs orders products it does not
+    // find in the curated list.
+    dbOnly.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    return [...merged, ...dbOnly];
+  }, [overrides]);
+
+  const bundledIds = useMemo(() => new Set(CATALOGUE.map((p) => p.id)), []);
+
   const filtered = useMemo(() => {
-    if (!query.trim()) return rows;
+    // Archived products are hidden by default — they are retired stock, and a
+    // list that mixes them in reads as though the shop still sells them.
+    const visible = showArchived
+      ? rows
+      : rows.filter((p) => !overrides.products.get(p.id)?.archived);
+    if (!query.trim()) return visible;
     const q = query.toLowerCase();
-    return rows.filter(
+    return visible.filter(
       (p) =>
         p.title.toLowerCase().includes(q) ||
         p.slug.toLowerCase().includes(q) ||
         p.category.includes(q),
     );
-  }, [query, rows]);
+  }, [query, rows, showArchived, overrides]);
+
+  const archivedCount = useMemo(
+    () => rows.filter((p) => overrides.products.get(p.id)?.archived).length,
+    [rows, overrides],
+  );
 
   // Nothing seeded is a completely different situation from a broken read, and
   // both look like "the bundled prices" on screen — so say which one it is.
@@ -107,11 +275,15 @@ export function AdminProducts() {
             Catalogue
           </p>
           <h1 className="font-display text-theme-ink mt-1 text-3xl md:text-4xl">
-            Products ({CATALOGUE.length})
+            {/* Counts what the table below actually shows. `rows.length`
+                would keep asserting 151 over a list of 146 after archiving
+                five — the one number the owner reads as "the whole shop". */}
+            Products ({filtered.length}
+            {filtered.length !== rows.length ? ` of ${rows.length}` : ''})
           </h1>
           <p className="text-theme-ink/65 mt-1 text-sm">
             {configured
-              ? 'Live values from the database, falling back to the bundled catalogue for anything not seeded yet. Inline edit on price, stock, sale, image upload + flags. Click "Add product" to launch a new SKU.'
+              ? 'Live values from the database, falling back to the bundled catalogue for anything not seeded yet. Inline edit on price, stock, sale, image upload + flags. Open a product to archive or delete it. Adding, archiving and deleting all reach shoppers only at the next Publish.'
               : 'Read-only — connect Supabase to edit.'}
           </p>
         </div>
@@ -124,19 +296,59 @@ export function AdminProducts() {
         </Link>
       </header>
 
-      <label className="relative block max-w-md">
-        <Search
-          className="text-theme-ink/40 absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
-          aria-hidden="true"
-        />
-        <input
-          type="search"
-          placeholder="Search by title, slug, or category…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="bg-surface-elevated text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
-        />
-      </label>
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="relative block w-full max-w-md">
+          <Search
+            className="text-theme-ink/40 absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            placeholder="Search by title, slug, or category…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="bg-surface-elevated text-theme-ink placeholder:text-theme-ink/40 focus-visible:border-theme-accent focus-visible:ring-theme-accent/30 w-full rounded-full border border-[color:var(--color-border)] px-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2"
+          />
+        </label>
+        {/* Only offered once something is actually archived — an empty toggle
+            is a question nobody asked. */}
+        {archivedCount > 0 && (
+          <label className="text-theme-ink/70 inline-flex cursor-pointer items-center gap-2 text-xs font-semibold">
+            <input
+              type="checkbox"
+              checked={showArchived}
+              onChange={(e) => setShowArchived(e.target.checked)}
+              className="border-theme-ink/30 text-theme-accent focus:ring-theme-accent h-4 w-4 rounded"
+            />
+            Show archived ({archivedCount})
+          </label>
+        )}
+      </div>
+
+      {/* aria-live so archiving — which unmounts the drawer and drops focus
+          back to the body — is announced rather than only drawn. Matches
+          publish-panel.tsx's outcome region. */}
+      <div aria-live="polite" className="empty:hidden">
+        {notice && (
+          <p
+            className={`flex items-start justify-between gap-3 rounded-lg border px-3 py-2 text-xs font-medium ${
+              notice.kind === 'error'
+                ? 'border-red-300 bg-red-50 text-red-800'
+                : 'text-theme-ink/85 border-[color:var(--color-border)] bg-theme-glow/10'
+            }`}
+          >
+            <span>{notice.text}</span>
+            <button
+              type="button"
+              onClick={() => setNotice(null)}
+              aria-label="Dismiss"
+              className={`shrink-0 ${notice.kind === 'error' ? 'text-red-800/60 hover:text-red-800' : 'text-theme-ink/50 hover:text-theme-ink'}`}
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </p>
+        )}
+      </div>
 
       {overrides.error && (
         <p className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-800">
@@ -168,7 +380,20 @@ export function AdminProducts() {
               const totalStock = p.variants.reduce((s, v) => s + v.stock_available, 0);
               // Per-row only once SOMETHING is seeded — when the table is empty
               // the banner above already says it, 83 times over is just noise.
-              const missingRow = overrides.products.size > 0 && !overrides.products.has(p.id);
+              // A product deleted in this session is still in the bundled
+              // CATALOGUE until the next Publish, so it re-renders here as a
+              // normal row. Without this it would take the `Not in DB` tag —
+              // whose drawer banner tells the owner to apply the 0014 seed —
+              // seconds after they deleted it on purpose. Same state, opposite
+              // meanings, and the wrong instruction is the one on screen.
+              const justDeleted = deletedIds.has(p.id);
+              const missingRow =
+                !justDeleted && overrides.products.size > 0 && !overrides.products.has(p.id);
+              const archived = overrides.products.get(p.id)?.archived ?? false;
+              // The mirror of `missingRow`: in the database, not in the bundle.
+              // Either it was created here and has not been baked yet, or it is
+              // archived and has already been baked out.
+              const unpublished = !missingRow && !bundledIds.has(p.id);
               return (
                 <tr
                   key={p.id}
@@ -195,16 +420,72 @@ export function AdminProducts() {
                       {p.featured && <Tag>Featured</Tag>}
                       {p.bestseller && <Tag>Bestseller</Tag>}
                       {p.new && <Tag>New</Tag>}
-                      {overrides.products.get(p.id)?.archived && <WarnTag>Archived</WarnTag>}
+                      {justDeleted && <WarnTag>Deleted</WarnTag>}
+                      {archived && <WarnTag>Archived</WarnTag>}
                       {missingRow && <WarnTag>Not in DB</WarnTag>}
+                      {unpublished && !archived && <WarnTag>Not published</WarnTag>}
+                      {/* Reachable via createProduct's best-effort rollback:
+                          product inserted, variant insert failed, cleanup
+                          delete never landed. It is unsellable and it holds a
+                          unique slug, so the owner needs a way to see it. */}
+                      {!justDeleted && !missingRow && p.variants.length === 0 && (
+                        <WarnTag>No SKUs</WarnTag>
+                      )}
                     </div>
                   </td>
                   <td className="text-theme-ink/40 px-4 py-3 text-right">
-                    <ArrowRight className="ml-auto h-4 w-4" aria-hidden="true" />
+                    {archived ? (
+                      <button
+                        type="button"
+                        // stopPropagation is load-bearing: the <tr> opens the
+                        // drawer, and without this the restore fires and the
+                        // panel flies open over the result.
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void setArchived(p, false);
+                        }}
+                        disabled={!configured || busyIds.has(p.id)}
+                        // Sets its own ink: the cell is text-theme-ink/40 for a
+                        // decorative arrow, which on the only control an
+                        // archived row exposes would fail contrast.
+                        className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-3 py-1.5 text-[11px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <ArchiveRestore className="h-3.5 w-3.5" aria-hidden="true" />
+                        {busyIds.has(p.id) ? 'Restoring…' : 'Restore'}
+                      </button>
+                    ) : (
+                      <ArrowRight className="ml-auto h-4 w-4" aria-hidden="true" />
+                    )}
                   </td>
                 </tr>
               );
             })}
+            {/* Archiving the last visible product is a new way for this table
+                to empty out, and column headings over a blank box explain
+                nothing. Name the reason and offer the way back. */}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-theme-ink/65 px-4 py-8 text-center text-sm">
+                  {archivedCount > 0 && !showArchived ? (
+                    <>
+                      Nothing to show.{' '}
+                      {rows.length === archivedCount
+                        ? `All ${archivedCount} product(s) are archived.`
+                        : 'No product matches your search.'}{' '}
+                      <button
+                        type="button"
+                        onClick={() => setShowArchived(true)}
+                        className="text-theme-accent font-semibold underline underline-offset-2"
+                      >
+                        Show archived ({archivedCount})
+                      </button>
+                    </>
+                  ) : (
+                    'No product matches your search.'
+                  )}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -217,6 +498,19 @@ export function AdminProducts() {
           key={active.id}
           product={active}
           seeded={overrides.products.has(active.id)}
+          deleted={deletedIds.has(active.id)}
+          archived={overrides.products.get(active.id)?.archived ?? false}
+          published={bundledIds.has(active.id)}
+          deletable={!SEED_IDS.has(active.id)}
+          onArchive={(next) => setArchived(active, next)}
+          onRemoved={(message, deletedId) => {
+            setActive(null);
+            // setArchived already refreshed and posted its own notice; a delete
+            // has not, so it passes one here.
+            if (message) setNotice({ text: message, kind: 'info' });
+            if (deletedId) setDeletedIds((prev) => new Set(prev).add(deletedId));
+            void refresh();
+          }}
           onSaved={refresh}
           onClose={() => setActive(null)}
         />
@@ -228,16 +522,42 @@ export function AdminProducts() {
 function ProductDrawer({
   product,
   seeded,
+  deleted,
+  archived,
+  published,
+  deletable,
+  onArchive,
+  onRemoved,
   onSaved,
   onClose,
 }: {
   product: Product;
   /** Whether this product has a row in `products`. Nothing saves when false. */
   seeded: boolean;
+  /** Destroyed in this session, so `seeded: false` has a different cause. */
+  deleted: boolean;
+  /** Current `products.archived`. Not on Product — the type has no such field. */
+  archived: boolean;
+  /**
+   * Whether this product is in the bundled catalogue, i.e. whether it has ever
+   * been through a Publish. A product created here and archived before its
+   * first bake was never on ravisweets.com, so the copy must not claim it is.
+   */
+  published: boolean;
+  /** False for seed products, which may only ever be archived. See SEED_IDS. */
+  deletable: boolean;
+  /** Flips `archived`; resolves false if the write did not land. */
+  onArchive: (next: boolean) => Promise<boolean>;
+  /**
+   * Close the drawer. The optional message becomes the list's notice, and
+   * `deletedId` marks a row as destroyed-this-session so it is not mislabelled
+   * "Not in DB" while it lingers in the bundled catalogue until the next bake.
+   */
+  onRemoved: (message?: string, deletedId?: string) => void;
   onSaved: () => void;
   onClose: () => void;
 }) {
-  const { configured } = useSession();
+  const { configured, hasRole } = useSession();
   const [flags, setFlags] = useState({
     featured: product.featured,
     bestseller: product.bestseller,
@@ -311,6 +631,249 @@ function ProductDrawer({
   );
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  /* ─── removal ─────────────────────────────────────────────────────────── */
+
+  const [removing, setRemoving] = useState(false);
+  /**
+   * Synchronous re-entrancy latch. State is too slow to gate an irreversible
+   * action — two clicks in one tick both read `removing === false`.
+   */
+  const inFlight = useRef(false);
+  /**
+   * False once the drawer is gone. Every `await` in a removal flow is a point
+   * where the owner may have closed the panel, and resuming past that would
+   * pop a confirm over a dismissed dialog or setState on a dead component.
+   */
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+  /** Typed slug, the confirmation for a delete that cannot be undone. */
+  const [confirmSlug, setConfirmSlug] = useState('');
+  const [report, setReport] = useState<ProductRemovalReport | null>(null);
+  /** Only founders and admins may permanently destroy catalogue rows. */
+  const mayDelete = deletable && hasRole('founder', 'admin');
+
+  // Probe the blast radius when the drawer opens on a deletable product, so
+  // the button can arm — or refuse with a reason on screen — before the owner
+  // has typed anything. Re-probed immediately before the delete, because this
+  // result is stale by then.
+  useEffect(() => {
+    if (!configured || !mayDelete) return;
+    let live = true;
+    void inspectProductRemoval(product.id).then((r) => {
+      if (live) setReport(r);
+    });
+    return () => {
+      live = false;
+    };
+  }, [configured, mayDelete, product.id]);
+
+  /**
+   * Why a delete is refused, or null when it is allowed.
+   *
+   * A failed probe is a BLOCK, never a pass: "this product has no FSSAI
+   * batches" and "I could not find out whether it does" look identical in a
+   * zero, and only one of them is safe to destroy records over.
+   */
+  /**
+   * Set when a corporate hamper template is built from this product.
+   *
+   * BLOCKS ARCHIVE AS WELL AS DELETE, and archive is the one that matters:
+   * seed products can never be deleted, so archive is the only removal anyone
+   * can perform on the live catalogue — and it produces the identical result
+   * at the next bake, because RLS hides archived rows from the anon key the
+   * catalogue generator reads with.
+   *
+   * The consequence is silent under-charging rather than an error: the quote
+   * builder skips any item id it cannot resolve, so the template goes on
+   * advertising a hamper it no longer prices in full.
+   */
+  const templateBlock = (() => {
+    const t = TEMPLATE_PRODUCT_IDS.get(product.id);
+    return t
+      ? `The "${t}" corporate hamper template is built from this product. Removing it drops that line from the hamper while the template still advertises it, so quotes go out under-priced. Edit packages/shared/src/catalogue/templates.ts first.`
+      : null;
+  })();
+
+  /**
+   * Why a delete is refused, or null when nothing refuses it.
+   *
+   * A null report is NOT a refusal message — it means the probe has not
+   * answered yet, which is a loading state and must not be dressed as a
+   * warning. The caller renders that case separately; the delete button stays
+   * not rendered at all until `canDelete` is true, and `destroy()` re-checks
+   * against a fresh probe regardless.
+   */
+  function blockedReason(r: ProductRemovalReport | null): string | null {
+    if (templateBlock) return templateBlock;
+    if (!r) return null;
+    if (r.error) return `Could not check what this would delete (${r.error}).`;
+    if (r.batches > 0)
+      return `${r.batches} FSSAI batch record(s) hang off this product's SKUs. Those are regulated traceability records and the delete would cascade through them.`;
+    if (r.stockAdjustments > 0)
+      return `${r.stockAdjustments} stock-ledger entr(ies) hang off this product's SKUs. That ledger is append-only by policy, but a delete cascades through it anyway.`;
+    if (r.ordersOpen > 0)
+      return `${r.ordersOpen} order(s) containing this product have not been packed yet. Fulfil or cancel them first — the SKU rows carry the GST tariff code those invoices need.`;
+    return null;
+  }
+
+  /** A probe that has not answered is never a pass — only `report` proves it. */
+  const canDelete = report !== null && blockedReason(report) === null;
+
+  async function archiveOrRestore() {
+    const next = !archived;
+    // Archiving a hamper component under-prices every corporate quote that
+    // template feeds. Restoring is always safe.
+    if (next && templateBlock) {
+      fail(`Archive refused. ${templateBlock}`);
+      return;
+    }
+    if (
+      next &&
+      // One sentence, matching every other confirm in this admin. The panel
+      // behind it already explains the mechanics; a paragraph in a native
+      // alert only trains the owner to click through the one that matters.
+      !window.confirm(
+        published
+          ? `Archive ${product.title}? It stays on ravisweets.com until the next Publish. You can restore it here.`
+          : `Archive ${product.title}? You can restore it here.`,
+      )
+    )
+      return;
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setRemoving(true);
+    setError(null);
+    try {
+      const ok = await onArchive(next);
+      // Archiving closes the panel — the product is retired and there is
+      // nothing left to edit on it. Restoring keeps it open: the `archived`
+      // prop updates from the parent's refresh and the owner usually carries
+      // on editing. Either way the notice comes from onArchive.
+      if (ok && next && mounted.current) onRemoved();
+    } catch (err) {
+      fail(`Archive failed: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      inFlight.current = false;
+      if (mounted.current) setRemoving(false);
+    }
+  }
+
+  async function destroy() {
+    if (!configured) return;
+    // RE-ENTRANCY GUARD ON A REF, NOT ON `removing`.
+    //
+    // `removing` is React state, so a second click landing in the same tick —
+    // or any time before the first render after setRemoving(true) — still sees
+    // the old value and passes. For an irreversible cascade that is a deleted
+    // product and a second delete racing behind it. A ref updates
+    // synchronously and closes the window entirely.
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setRemoving(true);
+    setError(null);
+    try {
+      await runDestroy();
+    } catch (err) {
+      fail(`Delete failed: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      inFlight.current = false;
+      if (mounted.current) setRemoving(false);
+    }
+  }
+
+  /** The body of destroy(), so the guard/try/finally above stays readable. */
+  async function runDestroy() {
+    // Re-probe: the report on screen was taken when the drawer opened, and a
+    // variant added since is invisible to it — along with every batch and
+    // ledger row hanging off that variant.
+    const fresh = await inspectProductRemoval(product.id);
+    // Closed mid-probe. Stop before the confirm — popping a modal over a panel
+    // the owner has already dismissed, and then deleting, is indefensible.
+    if (!mounted.current) return;
+    setReport(fresh);
+    const blocked = blockedReason(fresh);
+    if (blocked) {
+      fail(`Delete refused. ${blocked}`);
+      return;
+    }
+    if (confirmSlug.trim() !== product.slug) {
+      fail(`Type the slug "${product.slug}" exactly to confirm.`);
+      return;
+    }
+    // Only things the cascade actually DESTROYS belong in this list. Past
+    // orders do not: orders.lines is a jsonb snapshot with no foreign key, so
+    // deleting the product does not touch them. Listing them as casualties and
+    // then saying receipts survive contradicts itself inside one dialog.
+    const destroyed = [
+      `its ${fresh.variantIds.length} SKU(s)`,
+      fresh.reviews > 0 && `${fresh.reviews} customer review(s)`,
+      fresh.locationStock > 0 && `${fresh.locationStock} branch stock row(s)`,
+    ].filter(Boolean) as string[];
+    const orderNote =
+      fresh.ordersTotal > 0
+        ? `\n\n${fresh.ordersTotal} past order(s) name this product. Those receipts keep rendering — order lines are snapshots — but their links to it stop working, and the GST tariff code lives only on the SKU rows about to be deleted.`
+        : '';
+    if (
+      !window.confirm(
+        `Permanently delete ${product.title}? This destroys ${destroyed.join(', ')}, and cannot be undone.${orderNote}`,
+      )
+    )
+      return;
+
+    // Log BEFORE the delete: once the cascade has run, these counts exist
+    // nowhere else. A stale log entry (delete logged, then delete failed) is a
+    // far smaller problem than a destroyed FSSAI ledger with no record of it.
+    const logged = await logAdminAction(
+      'delete-product',
+      'product',
+      product.id,
+      {
+        product: {
+          id: product.id,
+          slug: product.slug,
+          title: product.title,
+          category: product.category,
+        },
+        variantIds: fresh.variantIds,
+        cascaded: fresh,
+      },
+      null,
+    );
+    // Refuse rather than proceed unlogged. The likeliest cause is a JWT that
+    // lost its admin role — in which case the delete would fail anyway — and
+    // the alternative is an irreversible cascade nobody can account for.
+    if (!logged) {
+      fail(
+        'Delete stopped: the audit log could not be written, so this deletion would leave no record. ' +
+          'Sign out and back in to refresh your admin token, then try again.',
+      );
+      return;
+    }
+    const r = await deleteProduct(product.id);
+    if (!r.ok) {
+      await logAdminAction(
+        'delete-product-failed',
+        'product',
+        product.id,
+        { reason: r.reason },
+        null,
+      );
+      fail(`Delete failed: ${r.reason}`);
+      return;
+    }
+    onRemoved(
+      published
+        ? `${product.title} deleted permanently. It leaves the shop at the next Publish — add a redirect in apps/storefront/public/_redirects for /product/${product.slug} so the old URL does not 404.`
+        : `${product.title} deleted permanently. It had never been published, so no live URL is affected.`,
+      product.id,
+    );
+  }
 
   function toggleDietary(t: DietaryTag) {
     setDietaryTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
@@ -580,7 +1143,10 @@ function ProductDrawer({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink rounded-full p-1.5"
+          // Closing mid-removal would strand an in-flight irreversible write
+          // behind a dismissed panel.
+          disabled={removing}
+          className="text-theme-ink/55 hover:bg-theme-glow/15 hover:text-theme-ink rounded-full p-1.5 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -1026,9 +1592,12 @@ function ProductDrawer({
 
       {notSeeded && (
         <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
-          {
-            "Nothing here can be saved — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md)."
-          }
+          {/* Two different reasons the row is absent, and only one of them is
+              fixed by a seed paste. Telling someone who just deleted a product
+              to re-apply 0014 points them at undoing their own decision. */}
+          {deleted
+            ? 'This product was deleted. It stays in the bundled catalogue until the next Publish, which is why it is still listed — nothing here can be saved.'
+            : "Nothing here can be saved — this product isn't in the database yet. Apply supabase/migrations/0014_seed_products.sql first (see DEPLOYMENT.md)."}
         </p>
       )}
 
@@ -1051,17 +1620,142 @@ function ProductDrawer({
         <button
           type="button"
           onClick={onClose}
-          className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold"
+          disabled={removing}
+          className="text-theme-ink/85 hover:border-theme-accent hover:text-theme-accent rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40"
         >
           Close
         </button>
       </div>
 
+      {/* Removal lives here and never in the table row: the row is a
+          click-through that opens this panel, and a destructive control inside
+          it is a misclick generator. */}
+      <section className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/5 p-4">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-red-700">
+          Remove this product
+        </h3>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void archiveOrRestore()}
+            disabled={!configured || removing || !seeded || (!archived && templateBlock !== null)}
+            className={`text-theme-ink/85 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+              // Red on hover only when the press actually retires something.
+              // Restore brings a product back, and colouring it destructive
+              // contradicts the row-level Restore, which hovers to the accent.
+              archived
+                ? 'hover:border-theme-accent hover:text-theme-accent'
+                : 'hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-700'
+            }`}
+          >
+            {archived ? (
+              <ArchiveRestore className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : (
+              <Archive className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+            {removing ? 'Working…' : archived ? 'Restore product' : 'Archive product'}
+          </button>
+          {archived && <WarnTag>Archived</WarnTag>}
+        </div>
+
+        {!archived && templateBlock ? (
+          <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-800">
+            {templateBlock}
+          </p>
+        ) : (
+          <p className="text-theme-ink/65 mt-2 text-[11px]">
+            Archiving hides the product and nothing more — variants, reviews and stock stay intact,
+            and you can restore it from this screen. It leaves the shop at the next{' '}
+            <strong>Publish</strong>
+            {published ? '; until then it is still on ravisweets.com' : ''}.
+          </p>
+        )}
+
+        {/* The permanent option. Disabled for every seed product, which today
+            is the whole catalogue — see SEED_IDS. */}
+        <div className="mt-4 border-t border-red-500/20 pt-4">
+          {!deletable ? (
+            <p className="text-theme-ink/65 text-[11px]">
+              <strong>Permanent delete is not available for this product.</strong> It is defined in
+              the bundled catalogue (<code>packages/shared/src/catalogue/products.ts</code>), which
+              also generates the seed migration — so a delete here would be undone the next time
+              anyone applies the seed or re-bakes from source. Remove it from that file and re-run{' '}
+              <code>generate:seed</code> instead. Archive is the reversible option above.
+            </p>
+          ) : !hasRole('founder', 'admin') ? (
+            <p className="text-theme-ink/65 text-[11px]">
+              Permanent delete is restricted to founder and admin accounts.
+            </p>
+          ) : (
+            <>
+              <p className="text-theme-ink/65 text-[11px]">
+                Permanent delete destroys the product, its{' '}
+                {report?.variantIds.length ?? product.variants.length} SKU(s), and every
+                review attached to it. <strong>This cannot be undone.</strong>
+              </p>
+
+              {report && !report.error && (
+                <ul className="text-theme-ink/70 mt-2 space-y-0.5 text-[11px]">
+                  <li>Reviews: {report.reviews}</li>
+                  <li>Branch stock rows: {report.locationStock}</li>
+                  <li>FSSAI batches: {report.batches}</li>
+                  <li>Stock-ledger entries: {report.stockAdjustments}</li>
+                  <li>
+                    Orders referencing it: {report.ordersTotal}
+                    {report.ordersOpen > 0 && ` (${report.ordersOpen} not yet packed)`}
+                  </li>
+                </ul>
+              )}
+
+              {blockedReason(report) ? (
+                <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-800">
+                  {blockedReason(report)}
+                </p>
+              ) : !canDelete ? (
+                // Not a warning — the probe simply has not answered. With
+                // Supabase unconfigured it never will, so say which it is
+                // rather than spinning forever in amber.
+                <p className="text-theme-ink/55 mt-3 text-[11px]">
+                  {configured
+                    ? 'Checking what this would delete…'
+                    : 'Connect Supabase to check what this would delete.'}
+                </p>
+              ) : (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <label className="text-theme-ink/70 text-[11px] font-semibold">
+                    Type <code>{product.slug}</code> to confirm
+                    <input
+                      type="text"
+                      value={confirmSlug}
+                      onChange={(e) => setConfirmSlug(e.target.value)}
+                      autoComplete="off"
+                      // Ring, not just a border hue: this is the field that
+                      // arms an irreversible delete, and every other input on
+                      // the screen pairs outline-none with a visible ring.
+                      className="bg-surface-elevated text-theme-ink mt-1 block w-64 rounded-full border border-[color:var(--color-border)] px-3 py-1.5 text-xs font-normal focus-visible:border-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/30"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => void destroy()}
+                    disabled={removing || confirmSlug.trim() !== product.slug}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-red-500/40 px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    {removing ? 'Deleting…' : 'Delete forever'}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
       <p className="text-theme-ink/55 mt-4 text-[11px]">
         Note: edits land in the <code>products</code> + <code>variants</code> tables and this screen
-        reads them straight back. The storefront still ships the catalogue bundled at build, so a
-        change here reaches shoppers only after Phase 3&rsquo;s build-time fetch + webhook rebuild
-        is wired.
+        reads them straight back. The storefront ships the catalogue bundled at build, so anything
+        changed here — price, copy, archive, delete — reaches shoppers only after the next Publish.
       </p>
 
       <MediaPickerDialog

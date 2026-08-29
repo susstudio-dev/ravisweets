@@ -34,6 +34,10 @@ interface FestivalOption {
   defaultBanner: string;
 }
 
+/** Products that still exist. `curated_product_ids` is a bare id list with no
+ *  foreign key, so it outlives anything archived or deleted in /admin. */
+const LIVE_PRODUCT_IDS = new Set(CATALOGUE.map((p) => p.id));
+
 const FESTIVALS: FestivalOption[] = [
   {
     slug: 'pongal',
@@ -189,11 +193,21 @@ export function AdminFestivals() {
       if (has) {
         return { ...prev, curated_product_ids: prev.curated_product_ids.filter((x) => x !== id) };
       }
-      if (prev.curated_product_ids.length >= 12) {
+      // Count only ids that still exist. A product archived or deleted in
+      // /admin renders no chip here, but used to keep consuming one of the 12
+      // slots — so the picker refused a thirteenth pick while showing eleven.
+      if (prev.curated_product_ids.filter((x) => LIVE_PRODUCT_IDS.has(x)).length >= 12) {
         window.alert('Curate at most 12 products under the festival hero — pick the most-loved.');
         return prev;
       }
-      return { ...prev, curated_product_ids: [...prev.curated_product_ids, id] };
+      // PRUNE dead ids on every add, not just count around them. Counting the
+      // live subset while storing the whole list lets the stored array drift
+      // past the cap: curate 12, archive 4, add 4 more — the badge reads 12/12
+      // and the row holds 16. Restore one of the four and the hero renders 13
+      // against a cap the UI insists is 12. A dead id also cannot be
+      // deselected, because it renders no chip to click.
+      const live = prev.curated_product_ids.filter((x) => LIVE_PRODUCT_IDS.has(x));
+      return { ...prev, curated_product_ids: [...live, id] };
     });
   }
 
@@ -420,7 +434,7 @@ export function AdminFestivals() {
               Featured products under the festival hero
             </h2>
             <span className="text-theme-ink/65 text-xs font-semibold">
-              {active.curated_product_ids.length}/12 picked
+              {active.curated_product_ids.filter((x) => LIVE_PRODUCT_IDS.has(x)).length}/12 picked
             </span>
           </div>
           <input

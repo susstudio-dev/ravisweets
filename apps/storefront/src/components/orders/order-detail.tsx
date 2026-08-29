@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Package, Sparkles, Truck } from 'lucide-react';
 import { motion } from 'motion/react';
-import { formatMoney } from '@ravisweets/shared';
+import { CATALOGUE, formatMoney } from '@ravisweets/shared';
 import { getOrder } from '@/lib/orders/store';
 import type { Order, OrderStatus } from '@/lib/orders/types';
 import { Reveal } from '@/components/motion/reveal';
@@ -21,6 +21,9 @@ import { useReducedMotion } from '@/lib/motion/use-reduced-motion';
  * placed date, line items and totals as ruled rows on a `.docket--perf` — one
  * of the two surfaces the perf edge is reserved for (the other is the hero).
  */
+
+/** Slugs that still have a statically exported product page to link to. */
+const SHOPPABLE_SLUGS = new Set(CATALOGUE.map((p) => p.slug));
 
 const STATUS_STEPS: OrderStatus[] = ['placed', 'packed', 'shipped', 'delivered'];
 
@@ -183,12 +186,21 @@ export function OrderDetail({ orderId }: { orderId: string }) {
                 <div className="flex min-w-0 items-center gap-3">
                   <OrderLineThumb imageUrl={l.imageUrl} />
                   <div className="min-w-0">
-                    <Link
-                      href={`/product/${l.productSlug}`}
-                      className="text-theme-ink hover:text-theme-accent font-medium transition-colors"
-                    >
-                      {l.productTitle}
-                    </Link>
+                    {/* An order line is a SNAPSHOT — it keeps rendering long
+                        after the product it names has been archived or deleted.
+                        The link cannot: /product/[slug] is statically exported
+                        from CATALOGUE with no dynamicParams, so a retired slug
+                        is a hard 404. Show the name, drop the link. */}
+                    {SHOPPABLE_SLUGS.has(l.productSlug) ? (
+                      <Link
+                        href={`/product/${l.productSlug}`}
+                        className="text-theme-ink hover:text-theme-accent font-medium transition-colors"
+                      >
+                        {l.productTitle}
+                      </Link>
+                    ) : (
+                      <span className="text-theme-ink font-medium">{l.productTitle}</span>
+                    )}
                     <p className="text-theme-ink/60 text-xs">
                       {l.variantTitle} · × {l.quantity}
                     </p>

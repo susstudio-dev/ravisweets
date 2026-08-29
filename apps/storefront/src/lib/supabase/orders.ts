@@ -235,17 +235,28 @@ export async function sendOrderEmail(
   }
 }
 
+/**
+ * Append to the audit log.
+ *
+ * Returns whether the row actually landed. Every existing caller ignores it,
+ * which is fine for a reversible edit — the audit trail is nice to have and a
+ * failed insert should never block the save that succeeded. But an IRREVERSIBLE
+ * action must check: audit_log's insert policy is `is_admin()`-gated, so a
+ * session whose JWT lost its role writes nothing, and a destructive cascade
+ * with no record of who ran it or what it destroyed is unrecoverable in a way
+ * the action itself is not.
+ */
 export async function logAdminAction(
   action: string,
   entityType: string,
   entityId: string | null,
   before: unknown,
   after: unknown,
-): Promise<void> {
+): Promise<boolean> {
   const supa = await getSupabase();
-  if (!supa) return;
+  if (!supa) return false;
   const { data: { user } } = await supa.auth.getUser();
-  await supa.from('audit_log').insert({
+  const { error } = await supa.from('audit_log').insert({
     admin_user_id: user?.id ?? null,
     action,
     entity_type: entityType,
@@ -253,4 +264,5 @@ export async function logAdminAction(
     before_data: before ?? null,
     after_data: after ?? null,
   });
+  return !error;
 }

@@ -3,7 +3,7 @@
 import { getSupabase } from './client';
 import type { CategorySlug, DietaryTag, Product, ProductImage } from '@ravisweets/shared';
 import { PRODUCT_PALETTES } from '@/lib/theme/palette';
-import { wrote } from './write-result';
+import { wrote, type WriteResult } from './write-result';
 
 /* ─── reads ──────────────────────────────────────────────────────────────────
  *
@@ -33,6 +33,16 @@ import { wrote } from './write-result';
  * falling back to the bundled value.
  */
 export interface ProductOverride {
+  /**
+   * IDENTITY, not an editable column. Selected so that a row with no bundled
+   * counterpart — created in /admin, or archived and therefore already dropped
+   * out of the last bake — can still be named on screen. `mergeProductOverrides`
+   * deliberately does NOT merge these onto a bundled Product: slug and title are
+   * hand-authored in the catalogue, and letting seed data win would rewrite copy
+   * nobody asked to change.
+   */
+  slug: string;
+  title: string;
   description: string | null;
   category: CategorySlug | null;
   dietary_tags: DietaryTag[] | null;
@@ -52,11 +62,27 @@ export interface ProductOverride {
   nutrition: Product['nutrition'] | null;
 }
 
-/** The variant columns the admin can edit. `price_amount` is in paise. */
+/**
+ * The variant columns the admin can edit, plus enough identity to rebuild a
+ * variant for a product the bundle has never heard of.
+ *
+ * `price_amount` IS RUPEES. The column name invites a paise assumption and the
+ * comment here used to repeat it, but scripts/generate-catalogue.mjs:281-306
+ * documents the check against the three things that actually touch the column:
+ * generate-product-seed.mjs copies `variant.price.amount` in verbatim, the
+ * admin's inline editor round-trips it with no scaling, and the seeded rows
+ * read 279 and 3300 rather than 27900 and 330000. Do not "fix" it with a ÷100.
+ */
 export interface VariantOverride {
+  /** Duplicated from the `variants` map key so `variantsByProduct` stands alone. */
+  id: string;
   title: string;
   price_amount: number;
   stock_available: number;
+  product_id: string;
+  weight_grams: number;
+  sku: string;
+  price_currency: Product['variants'][number]['price']['currency'];
 }
 
 export interface CatalogueOverrides {
@@ -64,6 +90,13 @@ export interface CatalogueOverrides {
   products: Map<string, ProductOverride>;
   /** Keyed by variants.id. */
   variants: Map<string, VariantOverride>;
+  /**
+   * Keyed by products.id, each array pre-sorted the way the catalogue bake
+   * orders variants (weight, then price, then id). `variants` above is keyed
+   * the wrong way round for anyone asking "what SKUs does this product have?",
+   * which is exactly what rebuilding an unbundled product needs.
+   */
+  variantsByProduct: Map<string, VariantOverride[]>;
   /**
    * Why the read produced nothing, when it produced nothing for a bad reason.
    * An empty map is ambiguous on its own — unseeded database, unconfigured
@@ -78,18 +111,26 @@ export interface CatalogueOverrides {
 export const EMPTY_CATALOGUE_OVERRIDES: CatalogueOverrides = {
   products: new Map(),
   variants: new Map(),
+  variantsByProduct: new Map(),
   error: null,
 };
 
 // Explicit column lists rather than `*`: this is the contract of what the
 // admin owns. Anything not named here is bundle-owned, and selecting it would
 // only invite a future merge to overwrite hand-authored copy with seed data.
+//
+// `slug` and `title` are the exception that proves the rule — they are selected
+// for IDENTIFICATION, not for editing, so that a row the bundle does not
+// contain can still be listed. See ProductOverride: the merge skips them.
 const PRODUCT_OVERRIDE_COLUMNS =
-  'id, description, category, dietary_tags, shelf_life_days, unit_mode, images, featured, ' +
-  'bestseller, is_new, archived, builder_eligible, on_sale, sale_price, sale_percent_off, ' +
-  'sale_ends_at, sale_label, nutrition';
+  'id, slug, title, description, category, dietary_tags, shelf_life_days, unit_mode, images, ' +
+  'featured, bestseller, is_new, archived, builder_eligible, on_sale, sale_price, ' +
+  'sale_percent_off, sale_ends_at, sale_label, nutrition';
 
-const VARIANT_OVERRIDE_COLUMNS = 'id, title, price_amount, stock_available';
+// Same reasoning: product_id/weight_grams/sku/price_currency are not editable
+// here, but without them an unbundled product's variants cannot be rebuilt.
+const VARIANT_OVERRIDE_COLUMNS =
+  'id, product_id, title, weight_grams, price_amount, price_currency, sku, stock_available';
 
 type OverrideRow = ProductOverride & {
   id: string;
@@ -116,6 +157,7 @@ export async function listCatalogueOverrides(): Promise<CatalogueOverrides> {
     return {
       products: new Map(),
       variants: new Map(),
+      variantsByProduct: new Map(),
       // A missing column (42703) is the likeliest failure here and it takes the
       // whole select down with it, so name the message rather than swallowing
       // it — "run migration 0003" is only obvious once you can read the error.
@@ -124,6 +166,7 @@ export async function listCatalogueOverrides(): Promise<CatalogueOverrides> {
   }
   const products = new Map<string, ProductOverride>();
   const variants = new Map<string, VariantOverride>();
+  const variantsByProduct = new Map<string, VariantOverride[]>();
   for (const row of data as unknown as OverrideRow[]) {
     const { id, variants: rowVariants, ...override } = row;
     products.set(id, override);
@@ -131,20 +174,48 @@ export async function listCatalogueOverrides(): Promise<CatalogueOverrides> {
       // A variant row always has a price; guard anyway so one malformed row
       // cannot poison the whole map with NaN prices.
       if (typeof v.price_amount !== 'number') continue;
-      variants.set(v.id, {
+      const entry: VariantOverride = {
+        id: v.id,
         title: v.title ?? '',
         price_amount: v.price_amount,
         stock_available: v.stock_available ?? 0,
-      });
+        // `product_id` is embedded per row, but fall back to the parent's id:
+        // the embed guarantees the relationship even if the column were ever
+        // dropped from the select.
+        product_id: v.product_id ?? id,
+        weight_grams: v.weight_grams ?? 0,
+        sku: v.sku ?? '',
+        price_currency: v.price_currency ?? 'INR',
+      };
+      variants.set(v.id, entry);
+      const bucket = variantsByProduct.get(entry.product_id);
+      if (bucket) bucket.push(entry);
+      else variantsByProduct.set(entry.product_id, [entry]);
     }
   }
-  return { products, variants, error: null };
+  // Same order the catalogue bake uses (weight, then price, then id), so a
+  // product rebuilt from the database lists its SKUs the way the shop would.
+  for (const bucket of variantsByProduct.values()) {
+    bucket.sort(
+      (a, b) =>
+        a.weight_grams - b.weight_grams ||
+        a.price_amount - b.price_amount ||
+        // Tie-break on id, matching the bake. `sku` is nullable in the schema,
+        // so two blank skus would compare equal and leave the order undefined.
+        (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+    );
+  }
+  return { products, variants, variantsByProduct, error: null };
 }
 
 /**
- * Variant-only convenience for callers that price things and nothing else
- * (cart lines, stock badges). Delegates rather than issuing its own narrower
- * query — one query shape to keep working is enough.
+ * Variant-only convenience for callers that price things and nothing else.
+ * Delegates rather than issuing its own narrower query — one query shape to
+ * keep working is enough.
+ *
+ * NOTE: currently has NO callers. The cart-line and stock-badge consumers this
+ * was written for read the bundled catalogue instead. Kept as intended API;
+ * do not go looking for the consumer, there isn't one.
  */
 export async function listVariantOverrides(): Promise<Map<string, VariantOverride>> {
   return (await listCatalogueOverrides()).variants;
@@ -192,6 +263,84 @@ export function mergeProductOverrides(product: Product, overrides: CatalogueOver
     sale_ends_at: p.sale_ends_at ?? undefined,
     sale_label: p.sale_label ?? undefined,
     nutrition: p.nutrition ?? undefined,
+  };
+}
+
+/**
+ * A `products` row the bundled catalogue has never heard of, rendered as a
+ * Product so the admin list can show it like any other.
+ *
+ * TWO KINDS OF ROW END UP HERE, and the admin is unusable without both:
+ *
+ *   1. Created in /admin/products/new. It exists only in the database until the
+ *      next Publish bakes it, so before this function the owner added a product
+ *      and it did not appear in the list they were looking at.
+ *   2. Archived. The catalogue bake reads with the ANON key and RLS hides
+ *      archived rows from anon, so an archived product drops out of
+ *      GENERATED_CATALOGUE at the next Publish — and out of a list built from
+ *      CATALOGUE with it. Without this, archiving is a ONE-WAY DOOR: nothing in
+ *      the UI could ever find the product again to un-archive it.
+ *
+ * A row with NO VARIANTS still comes back, with an empty `variants` array.
+ * The catalogue bake drops such a row (nothing on the site could price it) and
+ * this used to as well — but the bake at least prints a warning, whereas the
+ * admin is the only screen that could repair it. Dropping it here made it
+ * unreachable: no row, no drawer, no archive, no delete, while it kept holding
+ * its id and its unique slug, so re-creating the product with the same slug
+ * failed with a raw Postgres unique violation and nothing to act on. That is
+ * the same one-way door this function exists to close. It is reachable in
+ * practice: createProduct inserts the product first and its rollback delete is
+ * best-effort, so a connection dropped between the two leaves exactly this.
+ *
+ * `archived` is deliberately absent from the result: the shared Product type has
+ * no such field, and a baked catalogue can never contain an archived row. Read
+ * it from `overrides.products.get(id)?.archived` instead.
+ *
+ * Everything the admin cannot edit falls back to the same defaults createProduct
+ * inserts, so a row made here and a row made there render identically.
+ */
+export function productFromOverride(
+  id: string,
+  o: ProductOverride,
+  overrides: CatalogueOverrides,
+): Product {
+  const rows = overrides.variantsByProduct.get(id) ?? [];
+  return {
+    id,
+    slug: o.slug,
+    title: o.title,
+    description: o.description ?? '',
+    category: o.category ?? 'sweets',
+    dietary_tags: o.dietary_tags ?? [],
+    ingredients: [],
+    allergens: [],
+    storage_instructions: '',
+    shelf_life_days: o.shelf_life_days ?? 0,
+    images: o.images ?? [],
+    variants: rows.map((v) => ({
+      id: v.id,
+      title: v.title,
+      weight_grams: v.weight_grams,
+      price: { amount: v.price_amount, currency: v.price_currency },
+      sku: v.sku,
+      stock_available: v.stock_available,
+    })),
+    region_availability: ['in'],
+    featured: o.featured ?? false,
+    bestseller: o.bestseller ?? false,
+    new: o.is_new ?? false,
+    theme_palette: PRODUCT_PALETTES.house,
+    garnish: 'paisley',
+    builder_eligible: o.builder_eligible ?? false,
+    rubric_passed_on: '',
+    source_url: '',
+    unit_mode: o.unit_mode ?? 'weight',
+    on_sale: o.on_sale ?? false,
+    sale_price: o.sale_price ?? undefined,
+    sale_percent_off: o.sale_percent_off ?? undefined,
+    sale_ends_at: o.sale_ends_at ?? undefined,
+    sale_label: o.sale_label ?? undefined,
+    nutrition: o.nutrition ?? undefined,
   };
 }
 
@@ -562,4 +711,188 @@ export async function upsertProductFlags(
     .eq('id', productId)
     .select('id');
   return wrote(data, error, 'Flags');
+}
+
+/* ─── removal ────────────────────────────────────────────────────────────────
+ *
+ * Two operations, and the difference between them is the whole point.
+ *
+ * ARCHIVE is `upsertProductFlags(id, { archived: true })` — no helper needed,
+ * it already exists and already reports honestly. RLS hides the row from anon,
+ * so the next catalogue bake drops it and the product leaves the shop. It is
+ * reversible from the same screen, and nothing is destroyed.
+ *
+ * DELETE is below, and it is not reversible by anything. `products` is the
+ * parent of four cascades — variants, reviews (and review_helpful_votes behind
+ * them), and through variants the FSSAI batch and stock-adjustment ledgers.
+ * Referential actions bypass RLS, so the append-only stock ledger is destroyed
+ * even though its policy grants insert and nothing else. Hence the pre-flight.
+ */
+
+/**
+ * What a permanent delete is about to take with it.
+ *
+ * `error` is not decoration. A probe that fails must NOT read as "nothing
+ * there" — that is the difference between "this product has no FSSAI batches"
+ * and "I could not find out whether it does", and only one of them is safe to
+ * delete over.
+ */
+export interface ProductRemovalReport {
+  /** Customer-written, read live on the storefront, gone on the next page load. */
+  reviews: number;
+  /** FSSAI lot / made-on / expires-on records. BLOCKS the delete. */
+  batches: number;
+  /** Append-only stock ledger. BLOCKS the delete. */
+  stockAdjustments: number;
+  locationStock: number;
+  ordersTotal: number;
+  /**
+   * Orders still at status `placed` — i.e. NOT YET PACKED. Deliberately not
+   * called "unpaid": order_status is
+   * ('placed','packed','shipped','delivered','cancelled') with no paid state,
+   * and `orders.payment` is opaque jsonb, so payment is not queryable here.
+   * Many of these are fully paid. BLOCKS a delete — the owner still has to
+   * pack and invoice them.
+   */
+  ordersOpen: number;
+  /**
+   * The variant ids the counts were actually taken over, read fresh by this
+   * probe rather than supplied by the caller. A caller's list is as old as its
+   * last refresh, and a variant created since is exactly what the re-probe
+   * before a delete exists to notice.
+   */
+  variantIds: string[];
+  error: string | null;
+}
+
+export const EMPTY_REMOVAL_REPORT: ProductRemovalReport = {
+  reviews: 0,
+  batches: 0,
+  stockAdjustments: 0,
+  locationStock: 0,
+  ordersTotal: 0,
+  ordersOpen: 0,
+  variantIds: [],
+  error: null,
+};
+
+/**
+ * Count what the cascade would destroy, BEFORE destroying it.
+ *
+ * Call this twice: once when the drawer opens (so the button can arm or refuse
+ * with a reason on screen), and again immediately before the delete. The first
+ * result is stale by then — a variant added in between is invisible to it, and
+ * with it every batch and ledger row hanging off that variant.
+ *
+ * Every table here is admin-readable. `head: true` keeps it to six counts
+ * rather than six payloads.
+ */
+export async function inspectProductRemoval(productId: string): Promise<ProductRemovalReport> {
+  const supa = await getSupabase();
+  if (!supa) return { ...EMPTY_REMOVAL_REPORT, error: 'supabase-not-configured' };
+
+  // Read the variant ids HERE rather than trusting the caller's. A drawer that
+  // opened five minutes ago holds the variant list from its last refresh, and
+  // the whole point of re-probing before a delete is to catch a SKU added
+  // since — along with every batch and ledger row hanging off it.
+  const { data: variantRows, error: variantErr } = await supa
+    .from('variants')
+    .select('id')
+    .eq('product_id', productId);
+  if (variantErr) {
+    return { ...EMPTY_REMOVAL_REPORT, error: variantErr.message };
+  }
+  const variantIds = (variantRows ?? []).map((v) => v.id as string);
+
+  const count = async (
+    run: () => PromiseLike<{ count: number | null; error: { message: string } | null }>,
+  ): Promise<{ n: number; error: string | null }> => {
+    try {
+      const { count: n, error } = await run();
+      if (error) return { n: 0, error: error.message };
+      return { n: n ?? 0, error: null };
+    } catch (err) {
+      return { n: 0, error: err instanceof Error ? err.message : String(err) };
+    }
+  };
+
+  // No variants means nothing can hang off them — skip those three probes
+  // rather than issuing `.in('variant_id', [])`, which matches everything in
+  // some PostgREST versions and nothing in others.
+  const hasVariants = variantIds.length > 0;
+  const zero = Promise.resolve({ n: 0, error: null });
+
+  const [reviews, batches, adjustments, locations, orders, unpaid] = await Promise.all([
+    count(() => supa.from('reviews').select('id', { count: 'exact', head: true }).eq('product_id', productId)),
+    hasVariants
+      ? count(() => supa.from('product_batches').select('id', { count: 'exact', head: true }).in('variant_id', variantIds))
+      : zero,
+    hasVariants
+      ? count(() => supa.from('stock_adjustments').select('id', { count: 'exact', head: true }).in('variant_id', variantIds))
+      : zero,
+    hasVariants
+      ? // `variant_id`, not `id`: variant_location_stock is keyed on
+        // (variant_id, location) and has no id column at all.
+        count(() => supa.from('variant_location_stock').select('variant_id', { count: 'exact', head: true }).in('variant_id', variantIds))
+      : zero,
+    // NOTE: `.eq('status','placed')` means NOT YET PACKED, not "unpaid" —
+    // order_status has no paid state and `payment` is opaque jsonb. Callers
+    // must word the message accordingly.
+    count(() => supa.from('orders').select('id', { count: 'exact', head: true }).contains('lines', [{ productId }])),
+    count(() =>
+      supa
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'placed')
+        .contains('lines', [{ productId }]),
+    ),
+  ]);
+
+  // ANY failed probe poisons the whole report. Reporting five clean counts and
+  // one silent failure as "clean" is exactly the shape of mistake that gets an
+  // FSSAI ledger deleted.
+  const firstError =
+    reviews.error ??
+    batches.error ??
+    adjustments.error ??
+    locations.error ??
+    orders.error ??
+    unpaid.error ??
+    null;
+
+  return {
+    reviews: reviews.n,
+    batches: batches.n,
+    stockAdjustments: adjustments.n,
+    locationStock: locations.n,
+    ordersTotal: orders.n,
+    ordersOpen: unpaid.n,
+    variantIds,
+    error: firstError,
+  };
+}
+
+/**
+ * Permanently delete a product and everything the database cascades from it.
+ *
+ * Callers must have checked `inspectProductRemoval` and the seed-product rule
+ * first — neither is enforced here, and no migration is required to reach this
+ * (0001_init.sql's "admin writes products" policy is `for all`, which covers
+ * DELETE).
+ *
+ * `.select('id')` is load-bearing, not habit. PostgREST answers a DELETE that
+ * matched zero rows with 204 and `error: null`, which under RLS is
+ * indistinguishable from success — see write-result.ts. Without it, an account
+ * whose JWT lost its admin role gets "Deleted ✓" over an untouched database and
+ * the product reappears on the next refresh looking like a bug somewhere else.
+ */
+export async function deleteProduct(productId: string): Promise<WriteResult> {
+  const supa = await getSupabase();
+  if (!supa) return { ok: false, reason: 'supabase-not-configured' };
+  const { data, error } = await supa
+    .from('products')
+    .delete()
+    .eq('id', productId)
+    .select('id');
+  return wrote(data, error, 'Product delete');
 }

@@ -118,6 +118,25 @@ function resolveEnv(key) {
  * ordering feed the next.
  */
 /**
+ * The catalogue as last committed, read as DATA rather than as text.
+ *
+ * Call this BEFORE loadHardcodedCatalogue — see the note at its call site.
+ * Returns [] when the snapshot cannot be read or is legitimately empty; the
+ * caller must treat [] as "no baseline" and fall back rather than as "nothing
+ * was there before".
+ */
+async function loadCommittedSnapshot() {
+  if (!existsSync(OUT_FILE)) return [];
+  try {
+    const snapshot = await import('../packages/shared/src/catalogue/products.generated.ts');
+    return snapshot.GENERATED_CATALOGUE ?? [];
+  } catch (err) {
+    warn(`Could not read the committed snapshot as data — ${err.message}`);
+    return [];
+  }
+}
+
+/**
  * Load the hardcoded array, healing the output file if it is in the way.
  *
  * products.ts imports the generated module, so that module must exist AND
@@ -130,6 +149,9 @@ function resolveEnv(key) {
  *   · the file is corrupt — a half-written file from a killed build, or a bad
  *     emitter. Without the retry that is a dead end: the one command that
  *     rewrites the file cannot start until the file is already good.
+ *
+ * NOTE both recovery paths BLANK the output file, which is why
+ * loadCommittedSnapshot must run before this does.
  */
 async function loadHardcodedCatalogue() {
   const specifier = '../packages/shared/src/catalogue/products.ts';
@@ -436,6 +458,18 @@ async function main() {
     giveUp('NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY are not set.');
   }
 
+  /*
+   * READ THE COMMITTED SNAPSHOT FIRST — before anything can overwrite it.
+   *
+   * This must happen ahead of loadHardcodedCatalogue(), which writes an EMPTY
+   * module over OUT_FILE on both of its recovery paths (a missing file, and a
+   * file that fails to import). Reading afterwards can therefore return the
+   * blank file this script just wrote rather than the committed content — and
+   * a blank baseline silently disarms every guard below, which is the precise
+   * failure they exist to prevent.
+   */
+  const committedProducts = await loadCommittedSnapshot();
+
   const hardcoded = await loadHardcodedCatalogue();
   const curatedOrder = new Map(hardcoded.map((p, i) => [p.id, i]));
 
@@ -490,6 +524,100 @@ async function main() {
   }
 
   /*
+   * THE COMMITTED SNAPSHOT, AS DATA RATHER THAN AS TEXT.
+   *
+   * The two guards below used to count `/products/` and `'non-veg'` across the
+   * whole committed file and compare that to a count across the whole database
+   * result. That conflates two opposite events:
+   *
+   *   · a product the database still has LOST its photos  — a regression, and
+   *     exactly what the guards exist to catch;
+   *   · a product LEFT the catalogue                      — an archive or a
+   *     delete the owner performed on purpose in /admin.
+   *
+   * Only the first is a reason to refuse. Under the text counts the second was
+   * indistinguishable from it, so archiving any photographed product made this
+   * script refuse to write — and because the refusal is a bare `return` that
+   * build-cloudflare.mjs deliberately swallows, the Publish reported success,
+   * the deploy went green, and the product stayed on the shop. Every unrelated
+   * price and copy edit since the last good bake was held back with it.
+   *
+   * Comparing over the SURVIVING id set separates the two. Products that left
+   * are excluded from both sides of the comparison; products that stayed are
+   * compared exactly as before.
+   *
+   * Fail soft, always: if the snapshot cannot be read as data we fall back to
+   * the old whole-file counts, which are over-strict rather than unsafe.
+   */
+  const structured = committedProducts.length > 0;
+  if (!structured) {
+    warn('No readable committed snapshot — falling back to whole-file counts.');
+    warn('Removal detection and the removal floor are INERT for this build.');
+  }
+
+  /*
+   * SURVIVING IS BUILT FROM THE RAW ROWS, NOT FROM `products`.
+   *
+   * `products` is post-mapProduct, and mapProduct returns null for a row whose
+   * category is outside the union or that has no variants. Those rows ARE in
+   * the database — they were rejected here, not removed by anyone. Deriving
+   * `surviving` from `products` would file them as deliberate removals and
+   * subtract them from both sides of every guard below, so a product that lost
+   * its photos AND tripped a value guard would sail through unnoticed. Exactly
+   * the silent-success shape these guards exist to catch.
+   */
+  const surviving = new Set(rows.map((r) => r.id));
+  const stillHere = committedProducts.filter((p) => surviving.has(p.id));
+  const removed = committedProducts.filter((p) => !surviving.has(p.id));
+
+  /*
+   * Both sides of every comparison are scoped to the SAME set: products that
+   * appear in the committed snapshot AND still exist in the database.
+   *
+   * Scoping only the "was" side would let a newly added product mask a real
+   * regression — add one product with two photos while three surviving
+   * products lose one each, and a whole-database "now" count comes out level.
+   */
+  const committedIds = new Set(committedProducts.map((p) => p.id));
+  const comparable = products.filter((p) => committedIds.has(p.id));
+
+  /*
+   * REMOVAL FLOOR — the safety the photography guard was providing by accident.
+   *
+   * Once the guards ignore removals, nothing else catches a bulk one. The
+   * existing empty checks (`!rows.length`, `!products.length`) only catch a
+   * BLANK result; the unguarded band is 1..N-1, which is a decimated shop
+   * rather than an empty one — an RLS change, a half-applied migration, or a
+   * mis-scoped admin action could all land there.
+   *
+   * A NEW env var on purpose. Both guards below are gated on
+   * ALLOW_CATALOGUE_REGRESSION, so reusing it to permit one deliberate bulk
+   * retirement would disarm the photography guard in the same motion and
+   * re-open the exact 2026-08-13 silent-revert incident it documents.
+   */
+  if (removed.length) {
+    say(`${removed.length} product(s) left the catalogue: ${removed.map((p) => p.id).join(', ')}`);
+  }
+  const removalFloor = Math.max(3, Math.ceil(committedProducts.length * 0.1));
+  if (removed.length > removalFloor && process.env.ALLOW_CATALOGUE_REMOVALS !== 'true') {
+    warn('');
+    warn(`  REFUSING TO WRITE — ${removed.length} products would leave the catalogue.`);
+    warn(`  committed snapshot: ${committedProducts.length} product(s)`);
+    warn(`  database returned:  ${products.length} product(s)`);
+    warn(`  floor for one build: ${removalFloor}`);
+    warn('');
+    warn('  A handful of archived or deleted products is routine. This many at');
+    warn('  once usually means the database is not the one you think it is, a');
+    warn('  migration is half-applied, or an RLS policy changed.');
+    warn('');
+    warn('  If this really is a deliberate bulk retirement, re-run with');
+    warn('  ALLOW_CATALOGUE_REMOVALS=true.');
+    warn('');
+    warn(`  Keeping the committed ${path.relative(ROOT, OUT_FILE)} as-is.`);
+    return;
+  }
+
+  /*
    * REGRESSION GUARD — a build must not un-ship the photography.
    *
    * This generator's whole philosophy is "stale beats blank": every failure
@@ -513,16 +641,22 @@ async function main() {
    */
   const committed = existsSync(OUT_FILE) ? readFileSync(OUT_FILE, 'utf8') : '';
   const countPhotos = (text) => (text.match(/url: '\/products\//g) ?? []).length;
-  const wasPhotographed = countPhotos(committed);
-  const nowPhotographed = products.reduce(
-    (n, p) => n + p.images.filter((i) => i.url?.startsWith('/products/')).length,
-    0,
-  );
+  const photosOf = (list) =>
+    list.reduce((n, p) => n + (p.images ?? []).filter((i) => i.url?.startsWith('/products/')).length, 0);
+  // Products that LEFT are excluded from both sides — see the snapshot block
+  // above. Only products present in both the snapshot and the database are
+  // compared, so an archive or delete cannot masquerade as lost photography.
+  const wasPhotographed = structured ? photosOf(stillHere) : countPhotos(committed);
+  const nowPhotographed = structured ? photosOf(comparable) : photosOf(products);
   if (wasPhotographed > nowPhotographed && process.env.ALLOW_CATALOGUE_REGRESSION !== 'true') {
     warn('');
     warn('  REFUSING TO WRITE — the database has fewer photographs than the repo.');
     warn(`  committed snapshot: ${wasPhotographed} product image(s)`);
     warn(`  database returned:  ${nowPhotographed} product image(s)`);
+    if (structured) {
+      warn('  (products archived or deleted since the last bake are excluded from');
+      warn('   both counts, so this is genuinely lost photography, not a removal.)');
+    }
     warn('');
     warn('  This almost always means the catalogue migrations have not been');
     warn('  applied to this Supabase project yet. Apply them IN THIS ORDER,');
@@ -560,13 +694,20 @@ async function main() {
    * supabase/migrations/0024_nonveg_pickles.sql.
    */
   const countNonVeg = (text) => (text.match(/'non-veg'/g) ?? []).length;
-  const wasNonVeg = countNonVeg(committed);
-  const nowNonVeg = products.filter((p) => p.dietary_tags.includes('non-veg')).length;
+  // Same scoping as the photography guard: a retired non-veg pickle is a
+  // removal, not a mis-tagged one.
+  const nonVegOf = (list) => list.filter((p) => (p.dietary_tags ?? []).includes('non-veg')).length;
+  const wasNonVeg = structured ? nonVegOf(stillHere) : countNonVeg(committed);
+  const nowNonVeg = structured ? nonVegOf(comparable) : nonVegOf(products);
   if (wasNonVeg > nowNonVeg && process.env.ALLOW_CATALOGUE_REGRESSION !== 'true') {
     warn('');
     warn('  REFUSING TO WRITE — the database has fewer non-veg products than the repo.');
     warn(`  committed snapshot: ${wasNonVeg} non-veg product(s)`);
     warn(`  database returned:  ${nowNonVeg} non-veg product(s)`);
+    if (structured) {
+      warn('  (products archived or deleted since the last bake are excluded from');
+      warn('   both counts, so this is a RETAGGING, not a removal.)');
+    }
     warn('');
     warn('  This almost always means the pickle non-veg migrations have not been');
     warn('  applied to this Supabase project yet. Apply them IN THIS ORDER,');
