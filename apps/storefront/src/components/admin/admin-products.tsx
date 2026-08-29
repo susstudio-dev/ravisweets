@@ -597,11 +597,28 @@ function ProductDrawer({
     typeof product.sale_price === 'number' ? 'flat' : 'percent',
   );
   const [salePercent, setSalePercent] = useState<number>(product.sale_percent_off ?? 10);
-  // sale_price is stored in paise; admin enters rupees for ergonomics.
+  /*
+   * SALE PRICE IS RUPEES — the same unit as variant.price.amount.
+   *
+   * This used to scale by 100 in both directions, on the strength of the
+   * `-- paise` comment in 0003_product_sale_pricing.sql. The consumer decides
+   * the unit, and computeEffectivePrice (packages/shared/src/types/product.ts)
+   * does `Math.min(product.sale_price, variant.price.amount)` — where the
+   * variant amount is rupees, as generate-catalogue.mjs documents at length.
+   *
+   * So a ₹200 sale on a ₹279 product was written as 20000, and Math.min then
+   * clamped it back to 279: the product rendered "on sale" at full price with
+   * 0% off. Flat sale pricing had never worked. Percent-off was unaffected —
+   * it derives from the regular price and never touches this column.
+   *
+   * A row still holding a paise value stays inert after this change (it is far
+   * larger than the regular price, so Math.min keeps clamping) rather than
+   * suddenly discounting by 100x. Re-enter any flat sale price to fix it.
+   */
   const [salePriceRupees, setSalePriceRupees] = useState<number>(
     typeof product.sale_price === 'number'
-      ? Math.round(product.sale_price / 100)
-      : Math.round(((product.variants[0]?.price.amount ?? 0) * 0.85) / 100),
+      ? product.sale_price
+      : Math.round((product.variants[0]?.price.amount ?? 0) * 0.85),
   );
   const [saleEndsAt, setSaleEndsAt] = useState<string>(
     product.sale_ends_at ? product.sale_ends_at.slice(0, 16) : '',
@@ -683,11 +700,13 @@ function ProductDrawer({
   /**
    * Set when a corporate hamper template is built from this product.
    *
-   * BLOCKS ARCHIVE AS WELL AS DELETE, and archive is the one that matters:
-   * seed products can never be deleted, so archive is the only removal anyone
-   * can perform on the live catalogue — and it produces the identical result
-   * at the next bake, because RLS hides archived rows from the anon key the
-   * catalogue generator reads with.
+   * REFUSES A DELETE; WARNS ON AN ARCHIVE. Both produce the same catalogue
+   * removal at the next bake — RLS hides archived rows from the anon key the
+   * generator reads with — and since seed products can never be deleted,
+   * archive is the only removal anyone can perform on the live catalogue. But
+   * archive is reversible and is the emergency lever (a contaminated batch,
+   * a mispriced SKU), so it states the cost and lets the owner decide. Delete
+   * cannot be taken back, so it refuses.
    *
    * The consequence is silent under-charging rather than an error: the quote
    * builder skips any item id it cannot resolve, so the template goes on
@@ -727,21 +746,23 @@ function ProductDrawer({
 
   async function archiveOrRestore() {
     const next = !archived;
-    // Archiving a hamper component under-prices every corporate quote that
-    // template feeds. Restoring is always safe.
-    if (next && templateBlock) {
-      fail(`Archive refused. ${templateBlock}`);
-      return;
-    }
     if (
       next &&
-      // One sentence, matching every other confirm in this admin. The panel
-      // behind it already explains the mechanics; a paragraph in a native
-      // alert only trains the owner to click through the one that matters.
+      // Archiving a hamper component under-prices every corporate quote that
+      // template feeds, so the consequence is spelled out — but archive is
+      // reversible and is the only way to pull a product in a hurry, so this
+      // warns rather than refuses. Delete, which is not reversible, still
+      // blocks outright. Restoring is always safe and asks nothing.
       !window.confirm(
-        published
-          ? `Archive ${product.title}? It stays on ravisweets.com until the next Publish. You can restore it here.`
-          : `Archive ${product.title}? You can restore it here.`,
+        templateBlock
+          ? `${templateBlock}\n\nArchive ${product.title} anyway? You can restore it here.`
+          : // One sentence otherwise, matching every other confirm in this
+            // admin. The panel behind it already explains the mechanics; a
+            // paragraph in a native alert only trains the owner to click
+            // through the one that matters.
+            published
+            ? `Archive ${product.title}? It stays on ravisweets.com until the next Publish. You can restore it here.`
+            : `Archive ${product.title}? You can restore it here.`,
       )
     )
       return;
@@ -1061,11 +1082,11 @@ function ProductDrawer({
       saleLabel !== (product.sale_label ?? '') ||
       (onSale &&
         ((saleMode === 'percent' && salePercent !== (product.sale_percent_off ?? -1)) ||
-          (saleMode === 'flat' && salePriceRupees * 100 !== (product.sale_price ?? -1))));
+          (saleMode === 'flat' && salePriceRupees !== (product.sale_price ?? -1))));
     if (saleChanged) {
       const r = await upsertProductSale(product.id, {
         on_sale: onSale,
-        sale_price: onSale && saleMode === 'flat' ? salePriceRupees * 100 : null,
+        sale_price: onSale && saleMode === 'flat' ? salePriceRupees : null,
         sale_percent_off: onSale && saleMode === 'percent' ? salePercent : null,
         sale_ends_at: onSale && saleEndsAt ? new Date(saleEndsAt).toISOString() : null,
         sale_label: onSale && saleLabel.trim() ? saleLabel.trim() : null,
@@ -1083,7 +1104,7 @@ function ProductDrawer({
         {
           on_sale: onSale,
           mode: saleMode,
-          sale_price: saleMode === 'flat' ? salePriceRupees * 100 : null,
+          sale_price: saleMode === 'flat' ? salePriceRupees : null,
           sale_percent_off: saleMode === 'percent' ? salePercent : null,
         },
       );
@@ -1436,12 +1457,16 @@ function ProductDrawer({
             {/* Live preview of the strikethrough */}
             <div className="bg-theme-glow/15 rounded-lg px-3 py-2 text-xs">
               <span className="text-theme-ink/55">Preview · </span>
+              {/* Rupees throughout — variant.price.amount is NOT paise. The
+                  strikethrough used to divide by 100 and the percent branch by
+                  100 twice, so a ₹279 product previewed as ₹3 struck through
+                  and ₹0 on sale. Same unit confusion as the write path above. */}
               <span className="text-theme-ink/55 line-through">
-                {`₹${Math.round((product.variants[0]?.price.amount ?? 0) / 100)}`}
+                {`₹${product.variants[0]?.price.amount ?? 0}`}
               </span>
               <span className="font-display text-theme-accent ml-2 text-base">
                 {saleMode === 'percent'
-                  ? `₹${Math.round(((product.variants[0]?.price.amount ?? 0) * (100 - salePercent)) / 100 / 100)}`
+                  ? `₹${Math.round(((product.variants[0]?.price.amount ?? 0) * (100 - salePercent)) / 100)}`
                   : `₹${salePriceRupees}`}
               </span>
               <span className="ml-2 rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
@@ -1639,7 +1664,7 @@ function ProductDrawer({
           <button
             type="button"
             onClick={() => void archiveOrRestore()}
-            disabled={!configured || removing || !seeded || (!archived && templateBlock !== null)}
+            disabled={!configured || removing || !seeded}
             className={`text-theme-ink/85 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] px-4 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
               // Red on hover only when the press actually retires something.
               // Restore brings a product back, and colouring it destructive
@@ -1659,18 +1684,20 @@ function ProductDrawer({
           {archived && <WarnTag>Archived</WarnTag>}
         </div>
 
-        {!archived && templateBlock ? (
+        {/* A warning, not a barrier: archive is reversible and is the only way
+            to pull a product quickly, so it states the cost and lets the owner
+            decide. The delete below still refuses outright. */}
+        {!archived && templateBlock && (
           <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] font-medium text-amber-800">
             {templateBlock}
           </p>
-        ) : (
-          <p className="text-theme-ink/65 mt-2 text-[11px]">
-            Archiving hides the product and nothing more — variants, reviews and stock stay intact,
-            and you can restore it from this screen. It leaves the shop at the next{' '}
-            <strong>Publish</strong>
-            {published ? '; until then it is still on ravisweets.com' : ''}.
-          </p>
         )}
+        <p className="text-theme-ink/65 mt-2 text-[11px]">
+          Archiving hides the product and nothing more — variants, reviews and stock stay intact,
+          and you can restore it from this screen. It leaves the shop at the next{' '}
+          <strong>Publish</strong>
+          {published ? '; until then it is still on ravisweets.com' : ''}.
+        </p>
 
         {/* The permanent option. Disabled for every seed product, which today
             is the whole catalogue — see SEED_IDS. */}

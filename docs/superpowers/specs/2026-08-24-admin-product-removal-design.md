@@ -184,8 +184,16 @@ as BLOCK, never as clean.
 | `product_batches` | FSSAI lot/expiry — regulated traceability |
 | `stock_adjustments` | Append-only ledger; RLS grants insert only, yet the FK cascade destroys it because referential actions bypass RLS |
 | Unpaid `placed` orders | The owner still has to pack and price it |
-| Corporate template reference | `pricing.ts:118` does `if (!info) continue` — the line survives in the shared URL and prices at ₹0, silently under-charging |
+| Corporate template reference | `pricing.ts:118` does `if (!info) continue` — the line survives in the shared URL and prices at ₹0, silently under-charging. **Blocks DELETE; warns on ARCHIVE** — see below |
 | Seed product | §4 |
+
+**Archive warns where delete refuses.** Both operations remove the product from
+`CATALOGUE` at the next bake, so both under-price a hamper the template still
+advertises. But archive is reversible and is the emergency lever — a
+contaminated batch, a mispriced SKU — and refusing it would mean editing
+`templates.ts` before pulling a product from sale. So archive names the
+template and the consequence in its confirm and lets the owner through; delete,
+which cannot be taken back, refuses outright.
 
 **WARN (delete still allowed):** reviews + helpful votes (customer-written, read
 live, gone on next page load, not restored by re-inserting the product — the most
@@ -291,11 +299,23 @@ own failure, and an unlogged irreversible cascade is the worst outcome here.
   percentOff            = 0
   ```
 
-  So a flat sale renders as "on sale" at full price with 0% off. Percent-off
-  sales are unaffected (they derive from `regular`). Fix by dropping every
-  ×100/÷100 on this field in the drawer — `:601`, `:1063`, `:1067`, `:1085`,
-  `:1444`. **Not touched here: it changes money behaviour and wants its own
-  decision.**
+  So a flat sale rendered as "on sale" at full price with 0% off. Percent-off
+  sales were unaffected (they derive from `regular`).
+
+  **FIXED 2026-08-25** at the owner's direction. Every ×100/÷100 on this field
+  is gone from the drawer, and the live preview — which divided
+  `variant.price.amount` by 100 once for the strikethrough and twice for the
+  percent branch, rendering a ₹279 product as ₹3 — now reads in rupees too.
+
+  The `-- paise` comment on `products.sale_price` in
+  `0003_product_sale_pricing.sql:12` is the origin of the confusion and is
+  wrong, but the migration is applied and is not edited retroactively; the
+  authoritative note now lives on the state that owns the field.
+
+  **A row still holding a paise value stays inert** — it is far larger than the
+  regular price, so `Math.min` keeps clamping — rather than suddenly
+  discounting by 100×. Any flat sale price configured before this must be
+  re-entered to take effect.
 
 ## 8a. Found during review, fixed here
 
