@@ -222,46 +222,69 @@ export default async function CategoryPage({ params }: PageProps) {
   return (
     <>
       {/*
-        THE SWITCHER, THEN THE COUNTER (owner, 2026-08-24). Two rounds of the
-        same feedback shaped this head. 2026-08-11 moved the title into a
-        sticky left rail so products started below the masthead; 2026-08-24
-        finished the thought: the aisles themselves become the header (a
-        switcher bar over everything, active tile marked), the left rail
-        carries ONLY the refine panel, and the title stands directly over the
-        grid's SHOWING strip — "gift hampers near the showing 5 of 5". The
-        h1 and switcher stay OUTSIDE the Suspense boundary: they are
+        THE TITLE HEADS THE RAIL; THE SWITCHER HEADS THE GRID.
+
+        Three rounds of the same feedback shaped this head. 2026-08-11 moved
+        the title into a sticky left rail so products started below the
+        masthead; 2026-08-24 made the aisles themselves the header, a full-
+        width switcher over everything, and left the rail filters-only;
+        2026-08-30 called the result out for what it had become — "lots of
+        space wasted": a 100px band of circle tiles across the top, a title
+        column that started level with it, and an empty rail head beside them,
+        so the first product sat some 300px down the page.
+
+        So the head is now two columns from the very first pixel. The rail
+        opens with the eyebrow and h1 (it had nothing at its top before, which
+        is the space the owner was pointing at) and runs straight on into the
+        refine panel. The grid column opens with the switcher, compacted to
+        pills — "on top of the sweets", where the aisles are a control over the
+        products rather than a second hero. Nothing is stacked above both
+        columns any more, so the first row of cards is roughly one card-height
+        higher on every category page.
+
+        The h1 and switcher stay OUTSIDE the Suspense boundary: they are
         server-rendered and must remain in the static HTML — the grid behind
         useSearchParams contributes nothing to the export.
       */}
       <section aria-labelledby="cat-heading" className="container-site pb-20 pt-6">
-        <CategorySwitcher active={slug as CategorySlug} />
-
-        <div className="mt-6 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
           {/*
             Sticky AND scrollable — see the long note on the same aside in
-            shop-view. Since 2026-08-24 the rail is the refine panel and
-            nothing else, so every pixel of it is a filter. aria-label
-            because the h1 it used to be labelled by now heads the grid
-            column instead. The category's UNFILTERED set goes in — the
-            panel measures every chip's count against it, so it must not
-            receive the filtered list.
+            shop-view. The rail carries the title and then the refine panel and
+            nothing else. The category's UNFILTERED set goes into the panel —
+            it measures every chip's count against it, so it must not receive
+            the filtered list.
           */}
           <aside
             aria-label="Refine products"
-            className="rail-scroll lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1"
+            className="rail-scroll min-w-0 lg:sticky lg:top-20 lg:-mx-1 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:px-1"
           >
-            <Suspense fallback={null}>
-              <CategoryFilters products={products} />
-            </Suspense>
-          </aside>
-
-          <div>
             <Reveal>
               <p className="field-label">{meta.eyebrow}</p>
-              <h1 id="cat-heading" className="font-display text-display-md text-theme-ink mt-1">
+              {/*
+                One step down from display-md: at 240px the old size broke
+                "Festival specials" across three lines and pushed the filters
+                below the fold.
+              */}
+              <h1 id="cat-heading" className="font-display text-heading text-theme-ink mt-1">
                 {meta.title}
               </h1>
             </Reveal>
+            <div className="mt-5 border-t border-[color:var(--color-rule)] pt-5">
+              <Suspense fallback={null}>
+                <CategoryFilters products={products} />
+              </Suspense>
+            </div>
+          </aside>
+
+          {/*
+            min-w-0: this track holds a horizontally scrolling row of twelve
+            pills. Without it the track can take its automatic minimum size
+            from that row's content rather than from the column, and widen
+            the grid instead of scrolling.
+          */}
+          <div className="min-w-0">
+            <CategorySwitcher active={slug as CategorySlug} />
             <div className="mt-4">
               <Suspense fallback={<div />}>
                 <CategoryBrowser categorySlug={slug as CategorySlug} products={products} />

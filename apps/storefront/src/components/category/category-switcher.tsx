@@ -8,10 +8,12 @@ import { cn } from '@/lib/cn';
  *
  * Owner, 2026-08-24: "in all the categories we should be able to see this bar
  * above the sweets to change the category instantly." The homepage rail's
- * circle-tile grammar, compacted into a switcher: smaller circles, the same
- * glyphs and Flavour Atlas tints, plus the one thing the rail never needed —
- * an active state, since on a category page one of these tiles is where you
- * already stand.
+ * vocabulary — the same glyphs and Flavour Atlas tints — laid on its side as
+ * a pill row, plus the one thing the rail never needed: an active state,
+ * since on a category page one of these is where you already stand.
+ *
+ * 2026-08-30: the tiles became pills and moved from above the whole page to
+ * directly above the grid — see the note on the <ul> below.
  *
  * This is the FULL taxonomy (all 12 routed categories), not the rail's
  * curated eight: a switcher that cannot reach four of the aisles would
@@ -71,10 +73,19 @@ const SWITCHER_CATEGORIES: SwitcherCategory[] = [
  * diya joined 2026-08-24 when the switcher extended the set to the full
  * taxonomy.
  */
-export function CategoryGlyph({ name, color }: { name: GlyphName; color: string }) {
+export function CategoryGlyph({
+  name,
+  color,
+  className = 'h-9 w-9 md:h-11 md:w-11',
+}: {
+  name: GlyphName;
+  color: string;
+  /** The rail's circle size by default; the switcher pill passes a small one. */
+  className?: string;
+}) {
   const s = { stroke: color, strokeWidth: 2.25, fill: 'none', strokeLinecap: 'round' } as const;
   return (
-    <svg viewBox="0 0 48 48" className="h-9 w-9 md:h-11 md:w-11" aria-hidden="true">
+    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
       {name === 'diamond' && (
         <>
           <rect x="14" y="14" width="20" height="20" transform="rotate(45 24 24)" strokeLinejoin="round" {...s} />
@@ -167,12 +178,24 @@ export function CategorySwitcher({ active }: { active?: CategorySlug }) {
   return (
     <nav aria-label="Categories">
       {/*
-        One row, always — the rail's scroll grammar at switcher scale. Snap
-        points keep a tile whole under the thumb; the edge bleed advertises
-        the overflow. Twelve tiles never fit a laptop container, so the row
-        scrolls at every width rather than pretending otherwise at lg.
+        A PILL ROW, NOT A TILE GRID (owner, 2026-08-30: "make it smaller, use
+        the space efficiently"). The circle tiles this started as cost ~100px
+        of vertical space above every category page — a second hero for a
+        control the shopper uses once. Laid on their side as 34px pills, the
+        same twelve aisles and the same tinted glyphs cost a third of that,
+        and now sit directly over the grid they switch rather than over the
+        whole page. The homepage rail keeps the circles: there they ARE the
+        content.
+
+        Still one scrolling row with snap points — twelve pills do not fit a
+        laptop container either, and pretending otherwise at lg would only
+        hide the last four aisles. What went with the tiles is the negative-
+        margin edge bleed to the viewport: the row now sits in the grid's
+        right-hand track, and a box deliberately wider than its own column
+        would scroll pills through the rail's gutter. A pill cut in half at
+        the column edge advertises the overflow just as well.
       */}
-      <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 scroll-pl-4 sm:-mx-6 sm:px-6 sm:scroll-pl-6 lg:gap-4">
+      <ul className="flex snap-x gap-2 overflow-x-auto pb-1">
         {SWITCHER_CATEGORIES.map((cat) => {
           const pal = PRODUCT_PALETTES[cat.palette];
           const on = cat.slug === active;
@@ -181,30 +204,24 @@ export function CategorySwitcher({ active }: { active?: CategorySlug }) {
               <Link
                 href={`/category/${cat.slug}`}
                 aria-current={on ? 'page' : undefined}
-                className="group flex w-[4.5rem] flex-col items-center gap-1.5 focus-visible:outline-none md:w-20"
+                className={cn(
+                  'flex h-[34px] items-center gap-1.5 whitespace-nowrap rounded-full border pl-1.5 pr-3 text-xs transition-all duration-200 hover:shadow-lifted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-ring)] focus-visible:ring-offset-2',
+                  on ? 'text-theme-accent font-semibold' : 'text-theme-ink/80 font-medium',
+                )}
+                style={{
+                  backgroundColor: on ? pal.base : 'transparent',
+                  borderColor: on ? pal.accent : 'var(--color-rule)',
+                }}
               >
+                {/* The tint survives the shrink by moving into a 24px disc —
+                    a bare 16px glyph on the page ground reads as grey. */}
                 <span
-                  className={cn(
-                    'flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-200 group-hover:shadow-lifted group-focus-visible:ring-2 group-focus-visible:ring-[color:var(--color-ring)] group-focus-visible:ring-offset-2 md:h-16 md:w-16',
-                    on && 'ring-theme-accent shadow-lifted ring-2 ring-offset-2 ring-offset-[color:var(--theme-base)]',
-                  )}
-                  style={{
-                    backgroundColor: pal.base,
-                    borderColor: `${pal.accent}55`,
-                  }}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: pal.base }}
                 >
-                  <span className="flex scale-[0.8] items-center justify-center">
-                    <CategoryGlyph name={cat.glyph} color={pal.accent} />
-                  </span>
+                  <CategoryGlyph name={cat.glyph} color={pal.accent} className="h-4 w-4" />
                 </span>
-                <span
-                  className={cn(
-                    'group-hover:text-theme-accent text-center text-xs leading-tight transition-colors',
-                    on ? 'text-theme-accent font-semibold' : 'font-medium',
-                  )}
-                >
-                  {cat.label}
-                </span>
+                {cat.label}
               </Link>
             </li>
           );

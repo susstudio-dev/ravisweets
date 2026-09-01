@@ -67,42 +67,47 @@ export function CategoryBrowser({
 
   return (
     <div>
-      {mixed && (
-        <div
-          role="group"
-          aria-label="Veg or non-veg"
-          className="mb-4 flex border-b border-[color:var(--color-rule)]"
-        >
-          {tabs.map((t) => {
-            const on = activeTab === t.value;
-            return (
-              <button
-                key={t.value}
-                type="button"
-                aria-pressed={on}
-                onClick={() =>
-                  setState({ ...state, vtype: t.value === 'all' ? [] : [t.value] })
-                }
-                className={cn(
-                  'field-label -mb-px flex min-h-[44px] items-center gap-1.5 border-b-2 px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
-                  on
-                    ? 'border-theme-accent text-theme-accent'
-                    : 'border-transparent text-theme-ink/60 hover:text-theme-ink',
-                )}
-              >
-                {t.label}
-                <span className={cn('field-value text-[10px]', on ? 'opacity-80' : 'opacity-55')}>
-                  {t.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      )}
+      {/*
+        ONE RULED LINE FOR BOTH (2026-08-30). The count used to own a ruled
+        block of its own directly under a second ruled block of tabs — two
+        rules and ~70px to say "showing 6 of 6" on a page where the owner
+        was already short of space. Tabs left, count right, one rule; on the
+        unmixed shelves (everything but Pickles today) the row is just the
+        count, so it costs a single line either way.
+      */}
+      <div className="mb-4 flex items-end justify-between gap-4 border-b border-[color:var(--color-rule)]">
+        {mixed ? (
+          <div role="group" aria-label="Veg or non-veg" className="flex">
+            {tabs.map((t) => {
+              const on = activeTab === t.value;
+              return (
+                <button
+                  key={t.value}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() =>
+                    setState({ ...state, vtype: t.value === 'all' ? [] : [t.value] })
+                  }
+                  className={cn(
+                    'field-label -mb-px flex min-h-[40px] items-center gap-1.5 border-b-2 px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-accent',
+                    on
+                      ? 'border-theme-accent text-theme-accent'
+                      : 'border-transparent text-theme-ink/60 hover:text-theme-ink',
+                  )}
+                >
+                  {t.label}
+                  <span className={cn('field-value text-[10px]', on ? 'opacity-80' : 'opacity-55')}>
+                    {t.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <span aria-hidden="true" />
+        )}
 
-      {/* The result count, typed into the record on its own ruled line. */}
-      <div className="mb-6 border-b border-[color:var(--color-rule)] pb-2.5">
-        <p className="field-value text-theme-ink text-sm" aria-live="polite">
+        <p className="field-value text-theme-ink/70 pb-2 text-xs" aria-live="polite">
           SHOWING {shown.length} OF {products.length}
         </p>
       </div>
